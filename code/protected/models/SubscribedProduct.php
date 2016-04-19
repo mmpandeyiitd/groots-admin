@@ -1,0 +1,257 @@
+<?php
+
+/**
+ * This is the model class for table "subscribed_product".
+ *
+ * The followings are the available columns in table 'subscribed_product':
+ * @property string $subscribed_product_id
+ * @property string $base_product_id
+ * @property string $store_id
+ * @property string $store_price
+ * @property string $store_offer_price
+ * @property string $weight
+ * @property string $length
+ * @property string $width
+ * @property string $height
+ * @property string $warranty
+ * @property integer $prompt
+ * @property string $prompt_key
+ * @property integer $status
+ * @property string $checkout_url
+ * @property string $created_date
+ * @property string $modified_date
+ * @property integer $is_deleted
+ * @property string $sku
+ * @property integer $quantity
+ * @property integer $is_cod
+ * @property integer $subscribe_shipping_charge
+ *
+ * The followings are the available model relations:
+ * @property StoreFront[] $storeFronts
+ * @property BaseProduct $baseProduct
+ * @property Store $store
+ */
+class SubscribedProduct extends CActiveRecord {
+
+    /**
+     * @return string the associated database table name
+     */
+    public $action;
+    public $title;
+    public $effective_price;
+    public $discout_per;
+
+    public function tableName() {
+        return 'subscribed_product';
+    }
+
+    /**
+     * @return array validation rules for model attributes.
+     */
+    public function rules() {
+        // NOTE: you should only define rules for those attributes that
+        // will receive user inputs.
+        return array(
+            array('base_product_id, store_id,subscribed_product_id', 'required'),
+            array('diameter, status, is_deleted, quantity, is_cod, subscribe_shipping_charge', 'numerical', 'integerOnly' => true),
+            array('base_product_id, store_id, weight, length, width, height', 'length', 'max' => 10),
+            array('store_price, store_offer_price', 'length', 'max' => 12),
+            array('grade', 'length', 'max' => 100),
+            array('checkout_url', 'length', 'max' => 2083),
+            array('sku', 'length', 'max' => 128),
+            array('created_date, modified_date', 'safe'),
+            array('title,effective_price,discout_per', 'safe', 'on' => 'search'),
+            //array('', 'safe', 'on'=>'search'),
+            // The following rule is used by search().
+            // @todo Please remove those attributes that should not be searched.
+            array('subscribed_product_id, base_product_id, store_id, store_price, store_offer_price, weight, length, width, height, grade, status, checkout_url, created_date, modified_date, is_deleted, sku, diameter,quantity, is_cod, subscribe_shipping_charge', 'safe', 'on' => 'search'),
+        );
+    }
+
+    /**
+     * @return array relational rules.
+     */
+    public function relations() {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
+            //'RetailerProductQuotation' => array(self::MANY_MANY, 'RetailerProductQuotation', ' retailer_product_quotation(subscribed_product_id,effective_price)'),
+            // 'store' => array(self::BELONGS_TO, 'Store', 'store_id'),
+            'BaseProduct' => array(self::BELONGS_TO, 'BaseProduct', 'base_product_id'),
+                //'RetailerProductQuotation' => array(self::BELONGS_TO, 'RetailerProductQuotation', 'subscribed_product_id','joinType'=>'FULL JOIN'),
+                //'RetailerProductQuotation' => array(self::BELONGS_TO, 'RetailerProductQuotation', 'subscribed_product_id'),
+        );
+    }
+
+    /**
+     * @return array customized attribute labels (name=>label)
+     */
+    public function attributeLabels() {
+        return array(
+            'subscribed_product_id' => 'Subscribed Product',
+            'base_product_id' => 'Base Product',
+            'store_id' => 'Store',
+            'store_price' => 'Store Price',
+            'store_offer_price' => 'Store Offer Price',
+            'weight' => 'Weight',
+            'length' => 'Length',
+            'width' => 'Width',
+            'height' => 'Height',
+            'diameter' => 'diameter',
+            'grade' => 'grade',
+            'status' => 'Status',
+            'checkout_url' => 'Checkout Url',
+            'created_date' => 'Created Date',
+            'modified_date' => 'Modified Date',
+            'is_deleted' => 'Is Deleted',
+            'sku' => 'Sku',
+            'quantity' => 'Quantity',
+            'is_cod' => 'Is Cod',
+            'subscribe_shipping_charge' => 'Subscribe Shipping Charge',
+            'title' => 'title',
+            'effective_price' => 'effective_price',
+            'discout_per' => 'discout_per',
+        );
+    }
+
+    /**
+     * Retrieves a list of models based on the current search/filter conditions.
+     *
+     * Typical usecase:
+     * - Initialize the model fields with values from filter form.
+     * - Execute this method to get CActiveDataProvider instance which will filter
+     * models according to data in model fields.
+     * - Pass data provider to CGridView, CListView or any similar widget.
+     *
+     * @return CActiveDataProvider the data provider that can return the models
+     * based on the search/filter conditions.
+     */
+    public function search() {
+        // @todo Please modify the following code to remove attributes that should not be searched.
+
+        $criteria = new CDbCriteria;
+        // $criteria->order = 'subscribed_product_id DESC';
+        //$criteria->with = array('RetailerProductQuotation' => array("select" => "effective_price"));
+        // $criteria->compare('effective_price', $this->effective_price, true);
+        $criteria->with = array('BaseProduct' => array("select" => "title"));
+//        $criteria->compare('title', $this->title, true);
+        // $criteria->compare('discout_per', $this->discout_per, true);
+        $criteria->compare('subscribed_product_id', $this->subscribed_product_id, true);
+        $criteria->compare('base_product_id', $this->base_product_id, true);
+        $criteria->compare('store_id', $this->store_id, true);
+        $criteria->compare('store_price', $this->store_price, true);
+        $criteria->compare('store_offer_price', $this->store_offer_price, true);
+        $criteria->compare('weight', $this->weight, true);
+        $criteria->compare('length', $this->length, true);
+        $criteria->compare('width', $this->width, true);
+        $criteria->compare('height', $this->height, true);
+        $criteria->compare('title', $this->title, true);
+        //$criteria->compare('warranty', $this->warranty, true);
+//        $criteria->compare('prompt', $this->prompt);
+//        $criteria->compare('prompt_key', $this->prompt_key, true);
+        $criteria->compare('status', $this->status);
+        $criteria->compare('checkout_url', $this->checkout_url, true);
+        $criteria->compare('created_date', $this->created_date, true);
+        $criteria->compare('modified_date', $this->modified_date, true);
+        $criteria->compare('is_deleted', $this->is_deleted);
+        $criteria->compare('sku', $this->sku, true);
+        $criteria->compare('quantity', $this->quantity);
+        $criteria->compare('is_cod', $this->is_cod);
+        $criteria->compare('subscribe_shipping_charge', $this->subscribe_shipping_charge);
+
+
+
+        // $criteria->with=array('RetailerProductQuotation'=>array("select"=>"discout_per"));
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 10,
+            ),
+        ));
+    }
+
+    /**
+     * Returns the static model of the specified AR class.
+     * Please note that you should have this exact method in all your CActiveRecord descendants!
+     * @param string $className active record class name.
+     * @return SubscribedProduct the static model class
+     */
+    public static function model($className = __CLASS__) {
+        return parent::model($className);
+    }
+
+    public function getinfobyid($id) {
+        $connection = Yii::app()->db;
+        $sql = " SELECT sp.sku,sp.`subscribe_shipping_charge`,s.seller_name,s.store_id,s.mobile_numbers,group_concat(`category_name` separator '>') as cate_info FROM `subscribed_product` as sp join base_product as bp on bp.base_product_id=sp.`base_product_id` join store as s on s.`store_id`=sp.`store_id` join product_category_mapping as pcm on pcm.`base_product_id`=sp.`base_product_id` join category as c on c.category_id=pcm.category_id WHERE sp.`subscribed_product_id`='" . $id . "'";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del = $command->queryAll();
+    }
+
+    public function getcategoryid($id) {
+        $connection = Yii::app()->db;
+        $sql = "SELECT c.category_id,c.category_name FROM `subscribed_product` as sp join base_product as bp on bp.base_product_id=sp.`base_product_id` join product_category_mapping as pcm on pcm.`base_product_id`=sp.`base_product_id` join category as c on c.category_id=pcm.category_id WHERE sp.`subscribed_product_id`='" . $id . "'";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del1 = $command->queryAll();
+    }
+
+    public function getdatarecords($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `grade` FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del2 = $command->queryAll();
+    }
+
+    public function getdatarecords_new($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `diameter` FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del3 = $command->queryAll();
+    }
+
+    public function getdatarecords_new1($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `quantity` FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del3 = $command->queryAll();
+    }
+
+    public function data_sub($bp, $sid, $mrp, $new_data, $a, $qunt, $wsp) {
+        // echo "hello";die;
+
+        $connection = Yii::app()->db;
+        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+    }
+
+    public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity) {
+        // echo "hello";die;
+
+        $connection = Yii::app()->db;
+        $sql = "insert into subscribed_product set store_offer_price='" . $sprice . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "', store_id='" . $sid . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+    }
+
+    public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity) {
+        $connection = Yii::app()->db;
+        $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
+        $command = $connection->createCommand($sql);
+        if (!$command->execute()) {
+            $connection = Yii::app()->db;
+            $sql = "insert into  subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $base_product_id . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "', store_id='" . $store_id . "' ";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+        }
+        //return $category_id_del= $command->queryAll();
+    }
+
+}
