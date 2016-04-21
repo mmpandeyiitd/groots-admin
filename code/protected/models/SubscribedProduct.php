@@ -288,10 +288,10 @@ class SubscribedProduct extends CActiveRecord {
     }
 
     public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity) {
-        // echo "hello";die;
+        //echo $diameter;die;
 
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price='" . $sprice . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "', store_id='" . $sid . "' ";
+        $sql = "insert into subscribed_product set store_offer_price=$sprice ,store_price= $mrp, base_product_id= $bp,grade =$grade,diameter =$diameter,quantity =$quantity, store_id=$sid";
         $command = $connection->createCommand($sql);
         $command->execute();
     }

@@ -821,7 +821,7 @@ class BaseProduct extends CActiveRecord {
 
     public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $grade, $diameter,$qunt) {
 
-       $sql = "update subscribed_product set store_price='" . $store_price . "',store_offer_price='" . $store_offer_price . "',grade='" . $grade . "',diameter='" . $diameter . "',quantity='" . $qunt . "' where base_product_id='" . $baseid . "' AND store_id='" . $s_id . "'";
+       $sql = "update subscribed_product set store_price=$store_price,store_offer_price=$store_offer_price ,grade='.$grade.',diameter=$diameter,quantity=$qunt where base_product_id= $baseid AND store_id=$s_id";
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();

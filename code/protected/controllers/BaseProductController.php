@@ -160,6 +160,7 @@ class BaseProductController extends Controller {
             if (isset($_POST['a'])) {
                 $a = $_POST['a'];
             }
+          //  echo $_POST['new_data'];die;
             if (isset($_POST['new_data'])) {
                 $new_data = $_POST['new_data'];
             }
@@ -189,7 +190,7 @@ class BaseProductController extends Controller {
                     exit();
                 }
                 if (!is_numeric($_POST['WSP'])) {
-                    Yii::app()->user->setFlash('WSP', 'WSP must be a number.');
+                    Yii::app()->user->setFlash('WSP', 'Store offer price must be a number.');
                     $this->render('create', array(
                         'model' => $model,
                         'mrp' => $mrp,
@@ -214,6 +215,34 @@ class BaseProductController extends Controller {
                     ));
                     exit();
                 }
+               // echo $diameter;die;
+                 if (!is_numeric($_POST['qunt'])) {
+                    Yii::app()->user->setFlash('WSP', ' Quantity must be a number.');
+                    $this->render('create', array(
+                        'model' => $model,
+                        'mrp' => $mrp,
+                        'wsp' => $wsp,
+                        'diameter' => $diameter,
+                        'grade' => $grade,
+                        'qunt' => $qunt,
+                        'specific_keyfield' => $specific_keyfield,
+                    ));
+                    exit();
+                }
+                  if (!is_numeric($_POST['new_data'])) {
+                    Yii::app()->user->setFlash('WSP', ' Diameter must be a number.');
+                    $this->render('create', array(
+                        'model' => $model,
+                        'mrp' => $mrp,
+                        'wsp' => $wsp,
+                        'diameter' => $diameter,
+                        'grade' => $grade,
+                        'qunt' => $qunt,
+                        'specific_keyfield' => $specific_keyfield,
+                    ));
+                    exit();
+                }
+                
 
 
 //                if ((empty($model->size_brand) && !empty($model->size) || (!empty($model->size_brand) && empty($model->size)))) {
@@ -480,6 +509,7 @@ class BaseProductController extends Controller {
                 ));
                 exit();
             }
+            
 
 //            if ((empty($model->size_brand) && !empty($model->size) || (!empty($model->size_brand) && empty($model->size)))) {
 //                Yii::app()->user->setFlash('WSP', 'Size and Size Brand both fill');
@@ -1089,7 +1119,7 @@ class BaseProductController extends Controller {
                                 } else {
 
                                     // print_r($cols]);die;
-                                    //echo $model1->action;die;
+                                    //echo $data[$cols['Diameter']];die;
                                    if($model1->action=='create')
                                    { #................subscription...............#
                                     $model_subscribe = new SubscribedProduct();
