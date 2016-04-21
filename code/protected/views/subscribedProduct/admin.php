@@ -60,21 +60,19 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $model->search(),
     'filter' => $model,
     'columns' => array(
-        'subscribed_product_id',
-        // array(
-//               'name' => 'subscribed_product_id',
-//                 'type' => 'raw',
-//               'value' => '$data->BaseProduct->title',
-//           ),
-        'store_id',
+        //'subscribed_product_id',
+        
+        array(
+            'header'=>'Title',
+             'name' => 'subscribed_product_id',
+                 'type' => 'raw',
+               'value' => '$data->BaseProduct->title',
+           ),
+       // 'store_id',
+        // 'diameter',
         'store_price',
         'store_offer_price',
-        array(
-            'header' => 'Title',
-            'name' => 'title',
-            'type' => 'raw',
-            'value' => '$data->BaseProduct->title',
-        ),
+       
       
         'link' => array(
             'header' => 'Action',

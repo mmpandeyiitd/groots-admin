@@ -26,15 +26,15 @@ class SubscribedProductController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'admin', 'mappedProduct'),
+                'actions' => array('index', 'view', 'admin', 'mappedProduct', 'listallproduct', 'Updatebaseproducrt'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'mappedProduct'),
+                'actions' => array('create', 'update', 'admin', 'mappedProduct', 'listallproduct', 'Updatebaseproducrt'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete', 'mappedProduct'),
+                'actions' => array('admin', 'delete', 'mappedProduct', 'listallproduct', 'Updatebaseproducrt'),
                 'users' => array('admin'),
             ),
             array('deny', // deny all users
@@ -58,6 +58,10 @@ class SubscribedProductController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'C') == 0) {
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
         $model = new SubscribedProduct;
 
         // Uncomment the following line if AJAX validation is needed
@@ -80,6 +84,10 @@ class SubscribedProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'U') == 0) {
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -96,49 +104,58 @@ class SubscribedProductController extends Controller {
     }
 
     public function actionmappedProduct() {
+        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
         //$model=$this->loadModel($id);
         $effective_price = '';
 
         $model_subscribe = new RetailerProductQuotation();
-        $rs= $model_subscribe->check_retailer_id($_REQUEST['id'], $_REQUEST['retailer_id']);
+        $rs = $model_subscribe->check_retailer_id($_REQUEST['id'], $_REQUEST['retailer_id']);
+        $sub_data = $model_subscribe->updatesubproduct($_REQUEST['id']);
+        //  echo '<pre>'; print_r($sub_data);die;
+        $store_price = $sub_data['0']['store_price'];
+        $store_offer_price = $sub_data['0']['store_offer_price'];
 
         if ($_POST == Array()) {
+
             $this->render('create_re', array(
                 'model_subscribe' => $model_subscribe,
+                'store_price' => $store_price,
+                'store_offer_price' => $store_offer_price,
             ));
         } else {
-        if (!empty($rs)) {
+            if (!empty($rs)) {
                 Yii::app()->user->setFlash('error', 'retailer_id and subscribed_product_id  already exist');
-             $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
+                $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
             }
-            if(isset($_POST['RetailerProductQuotation']['effective_price']) && $_POST['RetailerProductQuotation']['effective_price'] != ''){
-                if($model_subscribe->numeric($_POST['RetailerProductQuotation']['effective_price']) == FALSE){
-                   Yii::app()->user->setFlash('error', ' effective price numeric only');
-                 $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
+            if (isset($_POST['RetailerProductQuotation']['effective_price']) && $_POST['RetailerProductQuotation']['effective_price'] != '') {
+                if ($model_subscribe->numeric($_POST['RetailerProductQuotation']['effective_price']) == FALSE) {
+                    Yii::app()->user->setFlash('error', ' effective price numeric only');
+                    $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
                 }
             }
-            if(isset($_POST['RetailerProductQuotation']['discout_per']) && $_POST['RetailerProductQuotation']['discout_per'] != ''){
-                if($model_subscribe->numeric($_POST['RetailerProductQuotation']['discout_per']) == FALSE){
-                 Yii::app()->user->setFlash('error', ' discout percentage numeric only');
-                $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
+            if (isset($_POST['RetailerProductQuotation']['discout_per']) && $_POST['RetailerProductQuotation']['discount_per'] != '') {
+                if ($model_subscribe->numeric($_POST['RetailerProductQuotation']['discout_per']) == FALSE) {
+                    Yii::app()->user->setFlash('error', ' discout percentage numeric only');
+                    $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
                 }
             }
-            if ($_POST['RetailerProductQuotation']['effective_price'] != '' && $_POST['RetailerProductQuotation']['discout_per'] != '') {
+            if ($_POST['RetailerProductQuotation']['effective_price'] != '' && $_POST['RetailerProductQuotation']['discount_per'] != '') {
                 Yii::app()->user->setFlash('error', ' effective price or discout percentage only one field fill');
-                $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
-            } else if ($_POST['RetailerProductQuotation']['discout_per']>100) {
+                $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
+            } else if ($_POST['RetailerProductQuotation']['discount_per'] > 100) {
                 Yii::app()->user->setFlash('error', 'Discout percentage Not Greater than 100 %');
-               $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
-            }
-            else if ($_POST['RetailerProductQuotation']['effective_price'] != '' && $_POST['RetailerProductQuotation']['discout_per'] == '') {
-                $_POST['RetailerProductQuotation']['discout_per'] = 0;
-            } else if ($_POST['RetailerProductQuotation']['effective_price'] == '' && $_POST['RetailerProductQuotation']['discout_per'] != '') {
+                $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
+            } else if ($_POST['RetailerProductQuotation']['effective_price'] != '' && $_POST['RetailerProductQuotation']['discount_per'] == '') {
+                $_POST['RetailerProductQuotation']['discount_per'] = 0;
+            } else if ($_POST['RetailerProductQuotation']['effective_price'] == '' && $_POST['RetailerProductQuotation']['discount_per'] != '') {
                 $_POST['RetailerProductQuotation']['effective_price'] = 0;
-            } 
-            else {
+            } else {
                 Yii::app()->user->setFlash('error', ' Effective price or Discout percentage both of field one field mandatory');
                 //$this->redirect(array('create_re'));
-                $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
+                $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
             }
 
             $model_subscribe->attributes = $_POST['RetailerProductQuotation'];
@@ -153,12 +170,11 @@ class SubscribedProductController extends Controller {
             if ($model_subscribe->save()) {
                 $model_subscribe->subscribed_product_id = $_REQUEST['id'];
                 $model_subscribe->retailer_id = $_REQUEST['retailer_id'];
-               Yii::app()->user->setFlash('success', 'created Sucessfully');
-                $this->redirect(array('retailerProductQuotation/admin&id='.$_REQUEST["retailer_id"].''));
+                Yii::app()->user->setFlash('success', 'created Sucessfully');
+                $this->redirect(array('retailerProductQuotation/admin&id=' . $_REQUEST["retailer_id"] . ''));
             } else {
                 Yii::app()->user->setFlash('error', ' Error !!');
-                 $this->redirect(array('subscribedProduct/mappedProduct&id='.$_REQUEST["id"].'&retailer_id='.$_REQUEST["retailer_id"].''));
-                
+                $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
             }
         }
     }
@@ -190,23 +206,75 @@ class SubscribedProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-        
-        
-        
-        
-        
-         //echo '<pre>';
+        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
+        //echo '<pre>';
         //print_r($data);die;
         $model = new SubscribedProduct('search');
         $model->unsetAttributes(); // clear any default values
+
         if (isset($_GET['SubscribedProduct'])) {
             $model->attributes = $_GET['SubscribedProduct'];
-         //$model->attributes=$_REQUEST['id'];
+            //$model->attributes=$_REQUEST['id'];
         }
         $this->render('admin', array(
             'model' => $model,
             // 'base_product_id' => $model_base_product->base_product_id,
             'id' => $_REQUEST['id'],
+        ));
+    }
+
+    public function actionlistallproduct() {
+        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
+        //echo '<pre>';
+        //print_r($data);die;
+
+        $model = new SubscribedProduct('search');
+        $model->unsetAttributes(); // clear any default values
+
+        if (isset($_POST['downloadbutton'])) {
+
+            if (isset($_POST['selectedIds'])) {
+                $no_of_selectedIds = count($_POST['selectedIds']);
+                if ($no_of_selectedIds > 0) {
+                    $base_product_ids = implode(',', $_POST['selectedIds']);
+                    ob_clean();
+                    $response = $model->downloadCSVByIDs($base_product_ids);
+                    ob_flush();
+                    exit();
+                }
+            } else {
+                $sub_ids = $model->allcheckproductlcsv();
+                if (count($sub_ids) > 0) {
+                    for ($i = 0; $i < count($sub_ids); $i++) {
+                        $subpro_id[] = implode(',', $sub_ids[$i]);
+                    }
+                    if (count($sub_ids) > 0) {
+                        //echo "hello222";die;
+                        $subpro_id_new = implode(',', $subpro_id);
+                    }
+                }
+                ob_clean();
+                $response = $model->downloadCSVByIDs($subpro_id_new);
+                ob_flush();
+                exit();
+            }
+            // Yii::app()->user->setFlash('premission_info', 'done.');
+        }
+
+        if (isset($_GET['SubscribedProduct'])) {
+            $model->attributes = $_GET['SubscribedProduct'];
+            //$model->attributes=$_REQUEST['id'];
+        }
+        $this->render('admin_all', array(
+            'model' => $model,
+                // 'base_product_id' => $model_base_product->base_product_id,
+                //'id' => $_REQUEST['id'],
         ));
     }
 

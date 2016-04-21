@@ -43,12 +43,12 @@ if (Yii::app()->controller->id == "DashboardPage") {
    // $id== $_REQUEST['id'];
     
     if (Yii::app()->controller->action->id == "create" && substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'R') > 0) {
-    echo '<li><a href="index.php?r=retailerProductQuotation/admin&id=adminlist">Retailer Product List</a></li> ';
+  //  echo '<li><a href="index.php?r=retailerProductQuotation/admin&id=adminlist">Retailer Product List</a></li> ';
     } else if (Yii::app()->controller->action->id == "update" && substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'R') > 0) {
-        echo '<li><a href="index.php?r=retailerProductQuotation/admin&id=adminlist">Retailer Product List</a></li> ';
+       // echo '<li><a href="index.php?r=retailerProductQuotation/admin&id=adminlist">Retailer Product List</a></li> ';
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'C') > 0) {
-        echo '<li><a href="index.php?r=retailerProductQuotation/create">Create Retailer Product </a></li> '
-        . '<li><a href="index.php?r=retailer/admin">Mapped Retailer </a></li>';
+        //echo '<li><a href="index.php?r=retailerProductQuotation/create">Create Retailer Product </a></li> '
+       // . '<li><a href="index.php?r=retailer/admin">Mapped Retailer </a></li>';
     }
 }
 elseif (Yii::app()->controller->id == "store") {
@@ -67,13 +67,14 @@ elseif (Yii::app()->controller->id == "store") {
 
     if (Yii::app()->controller->action->id == "create"  && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') > 0) {
 
-        echo '<li><a href="index.php?r=baseProduct/admin&store_id=' . $store_id . '">product List</a></li> ';
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
 
         echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
         <li><a href="index.php?r=baseProduct/bulkupload&store_id=1">Bulk Upload product</a></li>        
          ';
     }
+    
    /* else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
 
         echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
@@ -82,11 +83,45 @@ elseif (Yii::app()->controller->id == "store") {
          <li><a href="index.php?r=baseProduct/configurablegrid&store_id=' . $store_id . '">Add Recommended</a></li> ';
     }*/else if (Yii::app()->controller->action->id == "update"  && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') > 0) {
 
-        echo '<li><a href="index.php?r=baseProduct/admin&store_id=' . $store_id . '">product List</a></li> ';
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
     } elseif (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
-        echo '<li><a href="index.php?r=baseProduct/admin&store_id=' . $store_id . '">product List</a></li> ';
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
     }
-} elseif (Yii::app()->controller->id == "lookbook" && (Yii::app()->controller->action->id == "Adminphoto" || Yii::app()->controller->action->id == "photogallarycreate" || Yii::app()->controller->action->id == "Photogallaryupdate")) {
+} elseif($_REQUEST['r']=='SubscribedProduct/listallproduct'){
+
+    if (Yii::app()->controller->action->id == "create"  && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') > 0) {
+
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
+    } else if (Yii::app()->controller->action->id == "listallproduct" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
+
+        echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
+        <li><a href="index.php?r=baseProduct/bulkupload&store_id=1">Bulk Upload product</a></li>        
+         ';
+    }
+    
+   /* else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
+
+        echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
+        <li><a href="index.php?r=baseProduct/bulkupload&store_id=' . $store_id . '">Bulk Upload product</a></li>        
+         <li><a href="index.php?r=baseProduct/media&store_id=' . $store_id . '">Bulk Upload Media</a></li>        
+         <li><a href="index.php?r=baseProduct/configurablegrid&store_id=' . $store_id . '">Add Recommended</a></li> ';
+    }*/else if (Yii::app()->controller->action->id == "update"  && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') > 0) {
+
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
+    } elseif (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
+        echo '<li><a href="index.php?r=SubscribedProduct/listallproduct=' . $store_id . '">product List</a></li> ';
+    }
+}
+
+
+
+
+
+
+
+
+
+elseif (Yii::app()->controller->id == "lookbook" && (Yii::app()->controller->action->id == "Adminphoto" || Yii::app()->controller->action->id == "photogallarycreate" || Yii::app()->controller->action->id == "Photogallaryupdate")) {
     if (Yii::app()->controller->action->id == "photogallarycreate" && substr_count(Yii::app()->session['premission_info']['module_info']['photogallery'], 'R') > 0) {
         echo '<li><a href="index.php?r=lookbook/Adminphoto&store_id=' . $store_id . '">Photo Gallery List</a></li> ';
     } else if (Yii::app()->controller->action->id == "Photogallaryupdate"  && substr_count(Yii::app()->session['premission_info']['module_info']['photogallery'], 'R') > 0) {

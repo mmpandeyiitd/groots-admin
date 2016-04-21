@@ -1,6 +1,6 @@
 <?php 
 #   ......show action ......#
-
+//print_r($_REQUEST);die;
 if(Yii::app()->controller->id=="store"){
     
     if(Yii::app()->controller->action->id=="create"){
@@ -45,6 +45,13 @@ if(Yii::app()->controller->id=="store"){
     } elseif(Yii::app()->controller->action->id=="configurable_group"){
         
        echo "Add product In Recommended";
+    }    
+     
+}else if($_REQUEST['r']=='SubscribedProduct/listallproduct'){
+    
+    if(Yii::app()->controller->action->id=="listallproduct"){
+        
+       echo "product List"; 
     }    
      
 }else if(Yii::app()->controller->id=="storeFront"){

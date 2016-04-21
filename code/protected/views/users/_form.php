@@ -396,92 +396,7 @@
         </div>
 
 
-        <hr/>  
-         <div class="row">
-            <label ><span style="color:#002a80;">Subscribed Product</span></label>
-            <table>
-                <tr>
-                    <td>
-                        <input type="radio" name="subscribedProduct_menu_info" value="S"  <?php
-                        if (strstr($subscribedProduct_menu_info, "S")) {
-                            echo "checked='checked'";
-                        }
-                        ?>>
-
-                        <label>Show</label>
-                    </td>
-                    <td>
-                        <input type="radio" name="subscribedProduct_menu_info" value="H" <?php
-                        if (strstr($subscribedProduct_menu_info, "H")) {
-                            echo "checked='checked'";
-                        }
-                        ?>>
-                        <label>Hide</label>
-                    </td>
-                </tr>
-            </table>
-
-        </div>
-
-        <div class="row" >
-            <label ><span style="color:#C3329B">Permission</span></label>
-            <div class="check_permsnbox">
-
-                <div class="check-awesome" style="float: left;">  
-                    <input type="checkbox" name="subscribedProduct[]" id="check-005" value="R"  <?php
-                    if (strstr($subscribedProduct, "R")) {
-                        echo "checked='checked'";
-                    }
-                    ?>>
-                    <label for="check-005">
-                        <span class="check"></span>
-                        <span class="box"></span>
-                        Read
-                    </label>
-                </div>
-
-
-
-                <div class="check-awesome" style="float: left;">  
-                    <input type="checkbox" name="subscribedProduct[]" id="check-006" value="C" <?php
-                    if (strstr($subscribedProduct, "C")) {
-                        echo "checked='checked'";
-                    }
-                    ?>>
-                    <label for="check-006">
-                        <span class="check"></span>
-                        <span class="box"></span>
-                        Create
-                    </label>
-                </div>
-
-                <div class="check-awesome" style="float: left;">  
-                    <input type="checkbox" name="subscribedProduct[]" id="check-007" value="U"  <?php
-                    if (strstr($subscribedProduct, "U")) {
-                        echo "checked='checked'";
-                    }
-                    ?>>
-                    <label for="check-007">
-                        <span class="check"></span>
-                        <span class="box"></span>
-                        Update
-                    </label>
-                </div>
-
-                <!-- <div class="check-awesome" style="float: left;">  
-                              <input type="checkbox" name="retailers[]" id="check-8" value="D"  <?php
-//                            if (strstr($retailers, "D")) {
-//                                echo "checked='checked'";
-//                            }
-                ?>>
-                              <label for="check-8">
-                                <span class="check"></span>
-                                <span class="box"></span>
-                              Delete
-                              </label>subscribedProduct_menu_info
-                       </div>-->
-            </div>
-        </div>
+        
 
 
         <hr/>  
@@ -741,9 +656,96 @@
                        </div>-->
             </div>
         </div>
+ 
+        <hr/>  
+         <div class="row">
+            <label ><span style="color:#002a80;">Mapped Product</span></label>
+            <table>
+                <tr>
+                    <td>
+                        <input type="radio" name="subscribedProduct_menu_info" value="S"  <?php
+                        if (strstr($subscribedProduct_menu_info, "S")) {
+                            echo "checked='checked'";
+                        }
+                        ?>>
+
+                        <label>Show</label>
+                    </td>
+                    <td>
+                        <input type="radio" name="subscribedProduct_menu_info" value="H" <?php
+                        if (strstr($subscribedProduct_menu_info, "H")) {
+                            echo "checked='checked'";
+                        }
+                        ?>>
+                        <label>Hide</label>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="row" >
+            <label ><span style="color:#C3329B">Permission</span></label>
+            <div class="check_permsnbox">
+
+                <div class="check-awesome" style="float: left;">  
+                    <input type="checkbox" name="subscribedProduct[]" id="check-005" value="R"  <?php
+                    if (strstr($subscribedProduct, "R")) {
+                        echo "checked='checked'";
+                    }
+                    ?>>
+                    <label for="check-005">
+                        <span class="check"></span>
+                        <span class="box"></span>
+                        Read
+                    </label>
+                </div>
 
 
-        <hr/>    
+
+                <div class="check-awesome" style="float: left;">  
+                    <input type="checkbox" name="subscribedProduct[]" id="check-006" value="C" <?php
+                    if (strstr($subscribedProduct, "C")) {
+                        echo "checked='checked'";
+                    }
+                    ?>>
+                    <label for="check-006">
+                        <span class="check"></span>
+                        <span class="box"></span>
+                        Create
+                    </label>
+                </div>
+
+                <div class="check-awesome" style="float: left;">  
+                    <input type="checkbox" name="subscribedProduct[]" id="check-007" value="U"  <?php
+                    if (strstr($subscribedProduct, "U")) {
+                        echo "checked='checked'";
+                    }
+                    ?>>
+                    <label for="check-007">
+                        <span class="check"></span>
+                        <span class="box"></span>
+                        Update
+                    </label>
+                </div>
+
+                <!-- <div class="check-awesome" style="float: left;">  
+                              <input type="checkbox" name="retailers[]" id="check-8" value="D"  <?php
+//                            if (strstr($retailers, "D")) {
+//                                echo "checked='checked'";
+//                            }
+                ?>>
+                              <label for="check-8">
+                                <span class="check"></span>
+                                <span class="box"></span>
+                              Delete
+                              </label>subscribedProduct_menu_info
+                       </div>-->
+            </div>
+        </div>
+
+
+        <hr/>  
 
         <div class="row">
             <label><span style="color:#002a80;">Orders</span></label>

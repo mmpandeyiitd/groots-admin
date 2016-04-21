@@ -206,6 +206,15 @@ class Retailer extends CActiveRecord
         }
         return $row;
     }
+    public function data_retailers($rid){
+      //  echo "hello";die;
+         $connection = Yii::app()->db;
+            $sql = "SELECT name,email,mobile FROM `retailer` where id=$rid";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+           // $retailer_name = $command->queryScalar();
+            return $category_id_del = $command->queryAll();
+         }
 
     public function getRetailerNameByID($retialerid) {
         $retailer_name = '';

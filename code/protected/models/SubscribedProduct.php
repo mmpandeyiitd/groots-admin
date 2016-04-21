@@ -130,6 +130,45 @@ class SubscribedProduct extends CActiveRecord {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
+        // echo "hello";die;
+        //$model->mapp_product(); getSubcribeid_all
+        if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+            $retailer_id = $_GET['id'];
+            $sub_ids = $this->getSubcribeid($retailer_id);
+            $sub_ids_all = $this->getSubcribeid_all();
+
+            if (count($sub_ids) > 0) {
+                for ($i = 0; $i < count($sub_ids); $i++) {
+                    $subpro_id[] = implode(',', $sub_ids[$i]);
+                    // $subpro_id_new=  implode(',', $subpro_id[$i]);
+                }
+                if (count($sub_ids) > 0) {
+                    //echo "hello222";die;
+                    $subpro_id_new = implode(',', $subpro_id);
+                }
+            }
+            if (count($sub_ids_all) > 0) {
+                for ($i = 0; $i < count($sub_ids_all); $i++) {
+                    $subpro_id_all[] = implode(',', $sub_ids_all[$i]);
+                    //$subpro_id_new=  implode(',', $subpro_id_all[$i]);
+                }
+                if (count($sub_ids_all) > 0) {
+                    //echo "hello222";die;
+                    $subpro_id_new_all = implode(',', $subpro_id_all);
+                }
+            }
+
+            if (!empty($criteria->condition)) {
+                $criteria->condition .= ' AND ';
+            }
+            if (count($sub_ids) > 0) {
+                $criteria->condition .= 'subscribed_product_id not in (' . $subpro_id_new . ')';
+            } else {
+                $criteria->condition .= 'subscribed_product_id in (' . $subpro_id_new_all . ')';
+            }
+        }
+
+
         // $criteria->order = 'subscribed_product_id DESC';
         //$criteria->with = array('RetailerProductQuotation' => array("select" => "effective_price"));
         // $criteria->compare('effective_price', $this->effective_price, true);
@@ -196,6 +235,22 @@ class SubscribedProduct extends CActiveRecord {
         return $category_id_del1 = $command->queryAll();
     }
 
+    public function getSubcribeid($id) {
+        $connection = Yii::app()->db;
+        $sql = "SELECT subscribed_product_id FROM `retailer_product_quotation` where retailer_id=$id";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del1 = $command->queryAll();
+    }
+
+    public function getSubcribeid_all() {
+        $connection = Yii::app()->db;
+        $sql = "SELECT subscribed_product_id FROM `subscribed_product";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del1 = $command->queryAll();
+    }
+
     public function getdatarecords($id) {
 
         $connection = Yii::app()->db;
@@ -245,13 +300,68 @@ class SubscribedProduct extends CActiveRecord {
         $connection = Yii::app()->db;
         $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
         $command = $connection->createCommand($sql);
-        if (!$command->execute()) {
-            $connection = Yii::app()->db;
-            $sql = "insert into  subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $base_product_id . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "', store_id='" . $store_id . "' ";
-            $command = $connection->createCommand($sql);
-            $command->execute();
-        }
+
+        $command->execute();
+
+        /* if (!$command->execute()) {
+          $connection = Yii::app()->db;
+          echo$sql = "insert into  subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $base_product_id . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "', store_id='" . $store_id . "' ";
+          die;$command = $connection->createCommand($sql);
+          $command->execute();
+          } */
         //return $category_id_del= $command->queryAll();
+    }
+
+    public function allcheckproductlcsv() {
+        $connection = Yii::app()->db;
+        $sql = "SELECT `base_product_id` FROM `subscribed_product`";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $bsae_id = $command->queryAll();
+    }
+
+    public static function downloadCSVByIDs($base_product_ids) {
+        if (!empty($base_product_ids)) {
+            //$sqlchksubsid = "select `bp`.`base_product_id` AS `Base product_id`,`bp`.`title` AS `title`,`bp`.`description` AS `Description`,`bp`.`color` AS `Color`,`bp`.`size` AS `Size`,`bp`.`configurable_with` AS `Configurable_With`,`bp`.`minimum_order_quantity` AS `Available_Quantity`,`bp`.`order_placement_cut_off_date` AS `Order_Placement_Cut_Off_Date`,`bp`.`delevry_date` AS `Delevry_Date`,`bp`.`tags` AS `Tags`,`bp`.`specofic_keys` AS `Attributes`,(case `bp`.`status` when 1 then 'Enable' else 'Disable' end) AS `status`,(case `bp`.`gender` when 1 then 'Men' when 2 then 'Women' else 'unisex' end) AS `gender`,`sp`.`store_price` AS `MRP`,`sp`.`store_offer_price` AS `WSP`,`bp`.`available_quantity` AS `available_quantity`,`s`.`store_name` AS `store_name`,group_concat(distinct `sf`.`store_front_name` separator ',') AS `linesheet` from ((((`base_product` `bp` left join `linesheet_products_mapping` `lp` on((`bp`.`base_product_id` = `lp`.`base_product_id`))) left join `store_front` `sf` on((`sf`.`store_front_id` = `lp`.`store_front_id`))) left join `store` `s` on((`s`.`store_id` = `bp`.`store_id`))) left join `subscribed_product` `sp` on((`bp`.`base_product_id` = `sp`.`base_product_id`))) where `bp`.base_product_id in($base_product_ids) group by `bp`.`base_product_id`";
+            $sqlchksubsid = "select `bp`.`base_product_id` AS `Base product id`,`bp`.`title` AS `title`,`bp`.`description` AS `Description`,`bp`.`color` AS `Color`,(case `bp`.`status` when 1 then 'Enable' else 'Disable' end) AS `status`,`sp`.`store_price` AS `store price`,`sp`.`store_offer_price` AS `store offer price`,`sp`.`quantity` AS `quantity`,`s`.`store_name` AS `store_name`,group_concat(distinct `sf`.`store_front_name` separator ',') AS `linesheet` from ((((`base_product` `bp` left join `store_front_products_mapping` `lp` on((`bp`.`base_product_id` = `lp`.`base_product_id`))) left join `store_front` `sf` on((`sf`.`store_front_id` = `lp`.`store_front_id`))) left join `store` `s` on((`s`.`store_id` = `bp`.`store_id`))) left join `subscribed_product` `sp` on((`bp`.`base_product_id` = `sp`.`base_product_id`))) where `bp`.base_product_id in($base_product_ids) group by `bp`.`base_product_id`";
+            $connection = Yii::app()->db;
+            $command = $connection->createCommand($sqlchksubsid);
+            $command->execute();
+            $assocDataArray = $command->queryAll();
+            $fileName = "ProductList.csv";
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            if (isset($assocDataArray['0'])) {
+                $fp = fopen('php://output', 'w');
+                $columnstring = implode(',', array_keys($assocDataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($assocDataArray AS $values) {
+                    if (!empty($values['Attributes'])) {
+
+                        $json_array = json_decode($values['Attributes'], true);
+
+                        if (count($json_array) > 0) {
+                            $json_var = array();
+                            foreach ($json_array['specific_key'] as $key => $value) {
+                                $json_var[] = trim($key) . ATTRIBUTE_SEPARATOR . trim($value);
+                            }
+
+                            $values['Attributes'] = implode(NEXT_ATTRIBUTE_SEPARATOR, $json_var);
+                        }
+                    }
+                    fputcsv($fp, $values);
+                }
+                fclose($fp);
+            }
+            ob_flush();
+        }
     }
 
 }
