@@ -238,7 +238,7 @@ class BaseProductController extends Controller {
                   exit();
                   } */
 
-//echo '<pre>';print_r($_POST['BaseProduct']['diameter']);die;
+//echo '<pre>';print_r(model);die;
                 if ($model->save()) {
 //               echo'<pre>';
 //               
@@ -546,11 +546,12 @@ class BaseProductController extends Controller {
                     // $diameter = $_POST['new_data'];
                     $diameter = $new_data['0']['diameter'];
                 }
-                if ($_POST['qunt'] == 0) {
-                    $quantity = $qunt['0']['quantity'];
-                    //  $quantity=$_POST['qunt'];
+                if ($_POST['qunt'] == '' ) {
+                     $quantity = $qunt['0']['quantity'];
+                    //  $quantity=
                 } else {
-                    $quantity = $_POST['qunt'];
+                   
+                   $quantity = $_POST['qunt'];
                     // $quantity=$qunt['0']['quantity'];
                 }
 

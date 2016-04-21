@@ -90,7 +90,7 @@ class RetailerProductQuotation extends CActiveRecord {
      * based on the search/filter conditions.
      */
     public function search() {
-       
+
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
@@ -162,7 +162,7 @@ class RetailerProductQuotation extends CActiveRecord {
 
     public function updatedata_retelar($ef, $dp, $rid, $sid) {
         $connection = Yii::app()->db;
-        $sql = "update retailer_product_quotation set effective_price='" . $ef . "',discount_per ='" . $dp . "' where retailer_id='" . $rid . "' and subscribed_product_id='" . $sid . "' ";
+        $sql = "update retailer_product_quotation set effective_price=$ef ,discount_per =$dp where retailer_id=$rid and subscribed_product_id=$sid";
         $command = $connection->createCommand($sql);
 
         $command->execute();
@@ -172,7 +172,7 @@ class RetailerProductQuotation extends CActiveRecord {
 
 
         $connection = Yii::app()->db;
-        $sql = "SELECT `id` FROM `retailer_product_quotation` WHERE `retailer_id` ='" . $r_id . "' AND `subscribed_product_id` ='" . $s_id . "'";
+        $sql = "SELECT `id` FROM `retailer_product_quotation` WHERE `retailer_id` = $r_id AND `subscribed_product_id` = $s_id";
         $command = $connection->createCommand($sql);
         $command->execute();
         return $category_id_del = $command->queryAll();
@@ -221,14 +221,15 @@ class RetailerProductQuotation extends CActiveRecord {
         //echo $subpro_id_new;die;
     }
 
-      public function updatelog($id, $rid) {
+    public function updatelog($id, $rid) {
         //  echo "hello";die;
         $connection = Yii::app()->db;
-       $sql = "INSERT INTO retailer_product_quotation_log (`retailer_id`,`subscribed_product_id`, `effective_price`,`discount_per`,`status`) (SELECT `retailer_id`,`subscribed_product_id`, `effective_price`,`discount_per`,`status`FROM `retailer_product_quotation` WHERE retailer_id =$rid AND subscribed_product_id=$id)";
+        $sql = "INSERT INTO retailer_product_quotation_log (retailer_id,subscribed_product_id,effective_price,discount_per,status) (SELECT retailer_id,subscribed_product_id,effective_price,discount_per,status FROM retailer_product_quotation WHERE retailer_id =$rid AND subscribed_product_id=$id)";
         $command = $connection->createCommand($sql);
         $command->execute();
         // DELETE FROM `retailer_product_quotation` WHERE 
     }
+
     public function Delete_retelar($id, $rid) {
         //  echo "hello";die;
         $connection = Yii::app()->db;

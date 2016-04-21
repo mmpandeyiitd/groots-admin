@@ -245,7 +245,7 @@ class SubscribedProduct extends CActiveRecord {
 
     public function getSubcribeid_all() {
         $connection = Yii::app()->db;
-        $sql = "SELECT subscribed_product_id FROM `subscribed_product";
+        $sql = "SELECT subscribed_product_id FROM subscribed_product";
         $command = $connection->createCommand($sql);
         $command->execute();
         return $category_id_del1 = $command->queryAll();

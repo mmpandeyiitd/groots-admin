@@ -175,7 +175,10 @@ class RetailerProductQuotationController extends Controller {
             } else if ($_POST['discout_per'] > 100) {
                 Yii::app()->user->setFlash('error', 'Discout percentage Not Greater than 100 %');
                $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
-            } else if ($_POST['effective_price'] != '' && $_POST['discout_per'] == '' ||$_POST['discout_per'] == '0') {
+            } else if ($_POST['effective_price'] == '' && $_POST['discout_per'] != '' ||$_POST['discout_per'] != '0') {
+                $_POST['effective_price'] = 0;
+            }
+            else if ($_POST['effective_price'] != '' && $_POST['discout_per'] == '' ||$_POST['discout_per'] == '0') {
                 $_POST['discout_per'] = 0;
             } else if ($_POST['effective_price'] == '0'|| $_POST['effective_price'] == '' && $_POST['discout_per'] != '') {
                 $_POST['RetailerProductQuotation']['effective_price'] = 0;
