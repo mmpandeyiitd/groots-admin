@@ -1124,7 +1124,17 @@ class BaseProductController extends Controller {
                                         $model_subscribe->base_product_id = $model1->base_product_id;
                                         //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
                                         $model_subscribe->store_id = $model1->store_id;
-                                        $model_subscribe->store_price = $mrp;
+                                        if ($wsp != '') {
+                                            $model_subscribe->store_offer_price = $wsp;
+                                        } else {
+                                            $model_subscribe->store_offer_price = 0;
+                                        }
+                                        if ($mrp != '') {
+                                            $model_subscribe->store_price = $mrp;
+                                        } else {
+                                            $model_subscribe->store_price = 0;
+                                        }
+
                                         if ($data[$cols['Diameter']] != '') {
                                             $model_subscribe->diameter = $data[$cols['Diameter']];
                                         } else {
@@ -1140,17 +1150,27 @@ class BaseProductController extends Controller {
                                         } else {
                                             $model_subscribe->quantity = 0;
                                         }
-                                        $model_subscribe->store_offer_price = $wsp;
+
                                         //$model_subscribe->quantity = $data[$cols['quantity']];
                                         $model_subscribe->save();
-                                        $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $mrp, $wsp, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                        $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
                                     }#...................end...................#
                                     if ($model1->action == 'update') {
                                         $model_subscribe = new SubscribedProduct();
                                         $model_subscribe->base_product_id = $model1->base_product_id;
                                         //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
                                         $model_subscribe->store_id = $model1->store_id;
-                                        $model_subscribe->store_price = $mrp;
+                                       // $model_subscribe->store_price = $mrp;
+                                         if (is_numeric($wsp)) {
+                                            $model_subscribe->store_offer_price = $wsp;
+                                        } else {
+                                            $model_subscribe->store_offer_price = 0;
+                                        }
+                                        if (is_numeric($mrp)) {
+                                            $model_subscribe->store_price = $mrp;
+                                        } else {
+                                            $model_subscribe->store_price = 0;
+                                        }
                                         if (is_numeric($data[$cols['Diameter']])) {
                                             $model_subscribe->diameter = $data[$cols['Diameter']];
                                         } else {
@@ -1166,7 +1186,7 @@ class BaseProductController extends Controller {
                                         } else {
                                             $model_subscribe->quantity = 0;
                                         }
-                                        $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                        $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
                                     }
 
                                     if (isset($row['media']) && !empty($row['media'])) {
