@@ -112,25 +112,30 @@ class DashboardPage extends CActiveRecord {
 
     public function getOrderCount($start_date, $end_date) {
         $total_order = 0;
+        $store_id=1;
+      
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
         } else {
             $store_id = Yii::app()->session['brand_id'];
         }
-
-
+         $store_id=1;
+        
         if ($issuperadmin == 1) {
-            $sql = "select count(order_id) from order_header where 1=1";
+            $sql = "select order_id from order_header  WHERE 1=1";
             if (!empty($start_date) && !empty($end_date)) {
-                $sql = $sql . " and (created_date BETWEEN '" . "$start_date" . "' AND '" . "$end_date" . "')";
+               // $sql = $sql . " and (created_date BETWEEN '" . "$start_date" . "' AND '" . "$end_date" . "')";
             }
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
             $command->execute();
-            $total_order = $command->queryScalar();
+            $total_order = $command->queryAll();
+           // print_r($total_order);die;
+            //echo count($total_order);die;
+            
         } else if (is_numeric($store_id)) {
-            $sql = "select DISTINCT oh.order_id from order_header oh left join order_line ol on ol.order_id=oh.order_id where ol.store_id='" . $store_id . "'";
+           $sql = "select DISTINCT oh.order_id from order_header oh left join order_line ol on ol.order_id=oh.order_id where ol.store_id='" . $store_id . "'";
             if (!empty($start_date) && !empty($end_date)) {
                 $sql = $sql . " and (created_date BETWEEN '" . "$start_date" . "' AND '" . "$end_date" . "')";
             }
@@ -139,6 +144,7 @@ class DashboardPage extends CActiveRecord {
             $command->execute();
             $total_order = $command->queryAll();
         }
+      
         return count($total_order);
     }
 

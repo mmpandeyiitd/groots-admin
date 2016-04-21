@@ -89,6 +89,7 @@ Yii::app()->clientScript->registerScript('search', "
 <!--    <input name="inactivebutton" class="activebutton" value="Inactive" type="submit">-->
     <!--<input name="pdfbutton" class="activebutton" value="Download PDF" type="submit">-->
   <!--  <a href="index.php?r=BaseProduct/report" class="button_new" target="_blank"  >Download PDF</a>-->
+  
 
     <input name="downloadbutton" class="activebutton" value="Download CSV File" type="submit">
 

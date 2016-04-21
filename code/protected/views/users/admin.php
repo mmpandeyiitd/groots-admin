@@ -61,7 +61,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $model->search(),
     'filter' => $model,
     'columns' => array(
-        'id',
+       // 'id',
          array(
             'name' => 'name',
             'value' => '($data->name == "")?"N/A":$data->name'

@@ -257,6 +257,7 @@ if ($issuperadmin == 1) {
                 <label for="quantity"><?php echo 'quantity ' ?></label>
                 <input type="text" name="qunt" value="<?php echo $qunt; ?>"/>
             </div>
+            
           
         <div style="clear:both;"></div>
         <div class="row">
@@ -278,6 +279,61 @@ if ($issuperadmin == 1) {
                 </label>
             </div>
             <div style="clear:both;"></div>
+            <div class="row">
+            <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
+            <?php
+            // print_R($images);
+            $this->widget('CMultiFileUpload', array(
+                'name' => 'images',
+                'model' => $model,
+                'accept' => 'jpeg|jpg|gif|png', // useful for verifying files
+                'duplicate' => 'Duplicate file!', // useful, i think
+                'denied' => 'Invalid file type', // useful, i think
+                'options' => array(
+                    'afterFileSelect' => 'function(e ,v ,m){
+	                	var fileSize = e.files[0].size;
+			            if(fileSize>1024*1024*2){
+			            	alert("Exceeds file upload limit 2MB");
+			                $("div.MultiFile-list div:last-child a.MultiFile-remove").click();
+			            }                     
+			            return true;
+	                }',
+                ),
+                'max' => 5, //max 5 files allowed
+            ));
+            ?>
+            <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>
+        </div>
+
+        <?php
+        $media = array();
+        $media = Media::model()->getMediaByBaseProductId($model->base_product_id);
+        if (isset($media)) {
+            ?>
+            <label>&nbsp;</label>
+            <table id="media_gallery" class="table table-striped table-hover table-bordered">
+                <thead >
+                    <tr>
+                        <th style="font-weight:normal;">Image</th>
+                        <th style="font-weight:normal;" >Is Default</th>
+                        <th style="font-weight:normal;" >Remove</th>
+                    </tr>
+                </thead>
+
+                <tbody id="media_gallery_body">
+                    <?php foreach ($media as $_media) { ?>
+                        <tr style=" margin-top:5px;">					
+                            <td><img style="width: 100px;" src="<?php echo $_media->thumb_url; ?>"></td>
+                            <td style="text-align:center;"><input type="radio" name="media_is_default" value="<?php echo $_media->media_id; ?>" <?php if ($_media->is_default) echo 'checked'; ?>></td>
+                            <td style="text-align:center;"><input type="checkbox" name="media_remove[]" value="<?php echo $_media->media_id; ?>"></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+        <div style="clear:both;"></div>
 
             <div class="buttons">
                 <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('id' => 'buttonid')); ?>

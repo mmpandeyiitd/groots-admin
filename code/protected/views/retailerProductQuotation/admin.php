@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs = array(
-    'retailerProductQuotation' => array('admin'),
+    //'retailerProductQuotation' => array('admin'),
     'Manage',
 );
 
@@ -42,32 +42,84 @@ if (Yii::app()->session['is_super_admin'] == 1) {
 //);
 }
 ?>
+<?php
+$model_retailers = new Retailer();
+$rdetils = $model_retailers->data_retailers($_REQUEST['id']);
+//echo '<pre>';
+//print_r($rdetils);die;
+?>
+<h5>
+    <?php
+    echo "Name : " . $rdetils['0']['name'];
+    echo '</br>';
+    echo "Email : " . $rdetils['0']['email'];
+    echo '</br>';
+    echo "Mobile :" . $rdetils['0']['mobile'];
+    ?></h5>
+
 
 <!--<h1 class="item_title">Manage Brands</h1>-->
-<h2>Manage Retailer Product Quotations</h2>
+<!--<h2>Manage Retailer Product Quotations</h2>-->
 <div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
- <?php if (Yii::app()->user->hasFlash('success')): ?><div class="flash-error label label-success" style="margin-left: 15px;"><?php echo Yii::app()->user->getFlash('success'); ?></div><?php endif; ?>
-            <?php if (Yii::app()->user->hasFlash('error')): ?><div class="flash-error label label-important" style="margin-left: 15px;"  ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
+     <?php
+    $this->renderPartial('_search', array(
+       // 'model' => $model,
+         'model_grid' => $model_grid,
+    ));
+    ?>
 
-    <?php
+</div><!-- search-form -->
+<?php if (Yii::app()->user->hasFlash('success')): ?>
+    <div class="flash-error label label-success" style="margin-left: 15px;">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+    </div>
+<?php endif; ?>
+<?php if (Yii::app()->user->hasFlash('error')): ?>
+    <div class="flash-error label label-important" style="margin-left: 15px;"  >
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
+
+<?php
+$retailer_id=$_REQUEST['id'];
 $this->widget('zii.widgets.grid.CGridView', array(
     'itemsCssClass' => 'table table-striped table-bordered table-hover',
     'id' => 'ympdm-store-grid',
-    'dataProvider' => $model->search(),
-    'filter' => $model,
+    'dataProvider' => $model_grid->search(),
+    'filter' => $model_grid,
     'columns' => array(
-		'id',
-		'retailer_id',
-		'subscribed_product_id',
-		'effective_price',
-		'discout_per',
-		'status',
-		/*array(
-			'class'=>'CButtonColumn',
-		),*/
-	),
-)); ?>
+        array(
+            'name' => 'title',
+            'type' => 'raw',
+        ),
+        'effective_price',
+        'discount_per',
+    
+          'link' => array(
+                'header' => 'Edit',
+                'type' => 'raw',
+                'value' => function ($data)use ($retailer_id) {
+                    return CHtml::button("Edit", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerProductQuotation/update", array("id" =>$data->subscribed_product_id, 'retailer_id' =>$retailer_id)) . "'"));
+                },
+                        'visible' => $visible_action_edit
+                    ),
+                        'link1' => array(
+                'header' => 'Delete',
+                'type' => 'raw',
+                'value' => function ($data)use ($retailer_id) {
+                    return CHtml::button("Delete", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerProductQuotation/View", array("id" =>$data->subscribed_product_id, 'retailer_id' =>$retailer_id)) . "'"));
+                },
+                        'visible' => $visible_action_edit
+                    ),
+        
+       /*  'link1' => array(
+         'header' => 'Action',
+           'type' => 'raw',
+           'value' => 'CHtml::button("Delete",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailerProductQuotation/delete",array("id"=>$data->retailer_id))."\'"))',
+        ),*/
+    ),
+       
+   
+));
+
+?>

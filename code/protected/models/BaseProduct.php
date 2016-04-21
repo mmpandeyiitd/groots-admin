@@ -110,8 +110,6 @@ class BaseProduct extends CActiveRecord {
             $this->fileType = $file->type;
             $this->binaryfile = file_get_contents($file->tempName);
         }
-
-
         return parent::beforeSave();
     }
 
@@ -823,10 +821,16 @@ class BaseProduct extends CActiveRecord {
 
     public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $grade, $diameter,$qunt) {
 
-        $sql = "update subscribed_product set store_price='" . $store_price . "',store_offer_price='" . $store_offer_price . "',grade='" . $grade . "',diameter='" . $diameter . "',quantity='" . $qunt . "' where base_product_id='" . $baseid . "' AND store_id='" . $s_id . "'";
+       $sql = "update subscribed_product set store_price='" . $store_price . "',store_offer_price='" . $store_offer_price . "',grade='" . $grade . "',diameter='" . $diameter . "',quantity='" . $qunt . "' where base_product_id='" . $baseid . "' AND store_id='" . $s_id . "'";
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
+//        if (!$command->execute()) {
+//          $connection = Yii::app()->db;
+//            $sql ="insert into subscribed_product set store_offer_price='" . $store_offer_price . "',store_price='" . $store_price . "', base_product_id='" . $baseid . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $qunt . "', store_id='" . $s_id . "' ";
+//            $command = $connection->createCommand($sql);
+//            $command->execute();
+//          }
     }
 
     public static function Update_sizechart($base_product_id, $mage, $image_url) {

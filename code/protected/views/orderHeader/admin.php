@@ -117,13 +117,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'type' => 'raw',
            // 'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
         ),
-        array(
-            'name' => 'status',
-            'type' => 'raw',
-            // 'filter' => array('' => 'Select', '1' => 'Enable', '0' => 'Disable'),
-            // 'value' => '($data->status == "1")?"Enable":"Disable"',
-            'htmlOptions' => array('width' => 90),
-        ),
+//        array(
+//            'name' => 'status',
+//            'type' => 'raw',
+//             'filter' => array('' => 'all', '1' => 'Enable', '0' => 'Disable'),
+//             'value' => '($data->status == "1")?"Enable":"Disable"',
+//            'htmlOptions' => array('width' => 90),
+//        ),
         'created_date',
         'link' => array(
             'header' => 'Action',

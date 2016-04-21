@@ -91,46 +91,7 @@ if ($issuperadmin == 1) {
             else
                 $imagethumb = '';
             ?>
-            <?php if ($model->isNewRecord) { ?>
-                <div class="row">
-                    <?php echo $form->labelEx($model, 'Search By title Name'); ?>
-                    <?php
-                    if ($model->isNewRecord) {
-                        $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
-                            'name' => 'normal',
-                            'source' => $this->createUrl("baseProduct/ajax", array('store_id' => $_REQUEST['store_id'])),
-                            // additional javascript options for the autocomplete plugin
-                            'options' => array(
-                                'minLength' => '1',
-                                'change' => 'js:function(event, ui) {
-                    $("#BaseProduct_title").val(ui.item.title);
-                    $("#BaseProduct_description").val(ui.item.description);
-                    $("#BaseProduct_season").val(ui.item.season);
-                    $("#BaseProduct_color").val(ui.item.color);
-                    $("#BaseProduct_minimum_order_quantity").val(ui.item.minimum_order_quantity);
-                    $("#BaseProduct_available_quantity").val(ui.item.available_quantity);
-                    $("#BaseProduct_fabric").val(ui.item.fabric);
-                    $("#BaseProduct_order_placement_cut_off_date").val(ui.item.order_placement_cut_off_date);
-                    $("#BaseProduct_delevry_date").val(ui.item.delevry_date);
-                    $("#BaseProduct_size").val(ui.item.size);
-                    $("#BaseProduct_size_brand").val(ui.item.size_brand);
-                    $("#BaseProduct_tags").val(ui.item.tags);
-                    $("#BaseProduct_specofic_keys").val(ui.item.specofic_keys);
-                }'
-                            ),
-                            'htmlOptions' => array(
-                                'style' => 'height:20px;',
-                            ),
-                        ));
-                    }/* else {
-                      echo $form->textField($model, 'title', array('size' => 60, 'maxlength' => 255));
-                      } */
-                    ?> 
-
-                </div>
-
-            <?php } ?>
-           <div class="row">
+            <div class="row">
                 <?php echo $form->labelEx($model, 'title  '); ?>
                 <?php echo $form->textField($model, 'title', array('size' => 60, 'maxlength' => 255)); ?>
                 <?php echo $form->error($model, 'title'); ?>
@@ -258,7 +219,61 @@ if ($issuperadmin == 1) {
                 <label for="quantity"><?php echo 'quantity ' ?></label>
                 <input type="text" name="qunt" value="<?php echo $qunt; ?>"/>
             </div>
+<div class="row">
+            <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
+            <?php
+            // print_R($images);
+            $this->widget('CMultiFileUpload', array(
+                'name' => 'images',
+                'model' => $model,
+                'accept' => 'jpeg|jpg|gif|png', // useful for verifying files
+                'duplicate' => 'Duplicate file!', // useful, i think
+                'denied' => 'Invalid file type', // useful, i think
+                'options' => array(
+                    'afterFileSelect' => 'function(e ,v ,m){
+	                	var fileSize = e.files[0].size;
+			            if(fileSize>1024*1024*2){
+			            	alert("Exceeds file upload limit 2MB");
+			                $("div.MultiFile-list div:last-child a.MultiFile-remove").click();
+			            }                     
+			            return true;
+	                }',
+                ),
+                'max' => 5, //max 5 files allowed
+            ));
+            ?>
+            <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>
+        </div>
 
+        <?php
+        $media = array();
+        $media = Media::model()->getMediaByBaseProductId($model->base_product_id);
+        if (isset($media)) {
+            ?>
+            <label>&nbsp;</label>
+            <table id="media_gallery" class="table table-striped table-hover table-bordered">
+                <thead >
+                    <tr>
+                        <th style="font-weight:normal;">Image</th>
+                        <th style="font-weight:normal;" >Is Default</th>
+                        <th style="font-weight:normal;" >Remove</th>
+                    </tr>
+                </thead>
+
+                <tbody id="media_gallery_body">
+                    <?php foreach ($media as $_media) { ?>
+                        <tr style=" margin-top:5px;">					
+                            <td><img style="width: 100px;" src="<?php echo $_media->thumb_url; ?>"></td>
+                            <td style="text-align:center;"><input type="radio" name="media_is_default" value="<?php echo $_media->media_id; ?>" <?php if ($_media->is_default) echo 'checked'; ?>></td>
+                            <td style="text-align:center;"><input type="checkbox" name="media_remove[]" value="<?php echo $_media->media_id; ?>"></td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+        <div style="clear:both;"></div>
           
         <div style="clear:both;"></div>
         <div class="row">

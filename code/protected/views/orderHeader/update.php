@@ -222,6 +222,7 @@ if(isset($_GET['id'])){
                     $total_discount=  $unit_price_discounts_array[0]*array_sum($qtys_array); 
                     $grand_discount+=$total_discount;
                     $wsptotal = '';
+                  //  echo $status_array[0];die;
                     
                      if ($status_array[0] == 'Confirmed'||$status_array[0] == 'Shipped'||$status_array[0] == 'Delivered'||$status_array[0] == 'Cancelled'||$status_array[0] == 'ReturnedRequested'||$status_array[0] == 'ReturnedComplete'){
                         $updationclose =FALSE;
@@ -276,8 +277,8 @@ if(isset($_GET['id'])){
                                     <span>                                       
                                         
                                         <select name="Status[]" class="selectNew" style="width:120px;">
-                                            <option value="Pending<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'pending') echo 'selected="selected"'; ?> >Pending </option>
-                                            <option value="Processing<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'processing') echo 'selected="selected"'; ?> >Processing </option>
+                                            <option value="Pending<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
+                                            <option value="Processing<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Processing') echo 'selected="selected"'; ?> >Processing </option>
                                             <option value="Confirmed<><?php echo $orderline_ids;?>" <?php if ($status_array[0]== 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
                                             <option value="Shipped<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Shipped') echo 'selected="selected"'; ?>>Shipped</option>
                                             <option value="Delivered<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Delivered') echo 'selected="selected"'; ?> >Delivered</option>
@@ -294,7 +295,7 @@ if(isset($_GET['id'])){
                                      <table class = "table">
                                     <tbody>
                                         <tr>
-                                            <td style="width: 198px;display: block;">size:</td>
+                                            <td style="width: 212px;display: block;">size:</td>
                                             <td><?php echo $sizes_array[$j]; ?></td>
                                         </tr>
                                          <tr>

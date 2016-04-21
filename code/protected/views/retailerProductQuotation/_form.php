@@ -18,40 +18,38 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'retailer_id'); ?>
-		<?php echo $form->textField($model,'retailer_id'); ?>
-		<?php echo $form->error($model,'retailer_id'); ?>
-	</div>
+	 <div class="row">
+                <label for="retailer_id"><?php echo 'Retailer Id *' ?></label>
+                <input type="text" name="retailer_id" value="<?php echo  $retailer_id; ?>" readonly/>
+            </div>
+    
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'subscribed_product_id'); ?>
-		<?php echo $form->textField($model,'subscribed_product_id'); ?>
-		<?php echo $form->error($model,'subscribed_product_id'); ?>
-	</div>
+                <label for="subscribed_product_id"><?php echo 'Subscribed Product Id*' ?></label>
+                <input type="text" name="subscribed_product_id" value="<?php echo  $subscribed_product_id; ?>"readonly/>
+            </div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'effective_price'); ?>
-		<?php echo $form->textField($model,'effective_price'); ?>
-		<?php echo $form->error($model,'effective_price'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'discout_per'); ?>
-		<?php echo $form->textField($model,'discout_per'); ?>
-		<?php echo $form->error($model,'discout_per'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		  <?php echo $form->dropdownlist($model, 'status', array('1' => 'Enable', '0' => 'Disable')); ?>
-		<?php echo $form->error($model,'status'); ?>
-	</div>
-
+                <label for="store_price"><?php echo 'Store Price*' ?></label>
+                <input type="text" name="store_price" value="<?php echo  $store_price; ?>"readonly/>
+            </div>
+        <div class="row">
+                <label for="store_offer_price"><?php echo 'Store Offer Price*' ?></label>
+                <input type="text" name="store_offer_price" value="<?php echo  $store_offer_price; ?>"readonly/>
+            </div>
+     <div class="row">
+                <label for="effective_price"><?php echo 'Effective Price*' ?></label>
+                <input type="text" name="effective_price" value="<?php echo  $effective_price; ?>"/>
+            </div>
+    <div class="row">
+                <label for="discout_per"><?php echo 'Discount *' ?></label>
+                <input type="text" name="discout_per" value="<?php echo  $discout_per; ?>"/>
+            </div>
+	
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+		
+            <button  name="data" type="submit" value="SAVE">Save</button>
 	</div>
-
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->

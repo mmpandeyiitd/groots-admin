@@ -1,0 +1,3 @@
+
+Row : 2 Product not updated. Color is too short (minimum is 7 characters).
+Row : 2 Product 50 updated. Color is too short (minimum is 7 characters).

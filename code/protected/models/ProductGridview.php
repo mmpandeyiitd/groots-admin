@@ -107,7 +107,8 @@ class ProductGridview extends CActiveRecord
 
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin == 1) {
-            $adminid = $_GET['store_id'];
+             $adminid = $_GET['store_id'];
+            // echo   $adminid;die;
             if (!empty($criteria->condition)) {
                 $criteria->condition .= ' AND ';
             }
@@ -119,9 +120,7 @@ class ProductGridview extends CActiveRecord
             }
             $criteria->condition .= 't.store_id =' . $adminid;
         }
-
-		$criteria->compare('base_product_id',$this->base_product_id,true);
-		
+                $criteria->compare('base_product_id',$this->base_product_id,true);
 		$criteria->compare('title',$this->title,true);
 		$criteria->compare('status',$this->status);
 		$criteria->compare('store_price',$this->store_price,true);
