@@ -238,7 +238,7 @@ class BaseProductController extends Controller {
                   exit();
                   } */
 
-//echo '<pre>';print_r($_POST['BaseProduct']['diameter']);die;
+//echo '<pre>';print_r(model);die;
                 if ($model->save()) {
 //               echo'<pre>';
 //               
