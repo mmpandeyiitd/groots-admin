@@ -74,12 +74,12 @@ class BaseProduct extends CActiveRecord {
 // will receive user inputs.
         return array(
             array('title,store_id', 'required'),
-            array('admin_id, store_id,status,available_quantity,gender,recommended,featured', 'numerical', 'integerOnly' => true),
+            array('store_id,status,,featured', 'numerical', 'integerOnly' => true),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
             //array('grade', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in fabric.'),
             // array('style_no', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in style no.'),
-            array('minimum_order_quantity,pack_size', 'numerical', 'integerOnly' => true, 'min' => 1,),
+            array('pack_size', 'numerical', 'integerOnly' => true, 'min' => 1,),
             array('title,size,pack_unit', 'length', 'max' => 255),
             array('color', 'length', 'max' => 100),
             array('color', 'length', 'min' => 2),
@@ -93,7 +93,7 @@ class BaseProduct extends CActiveRecord {
             array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('store_price,store_offer_price', 'safe', 'on' => 'search'),
-            array('base_product_id,gender,admin_id,pack_size,pack_unit,configurable_with,title, description, color, size, store_id, status, created_date, modified_date,available_quantity', 'safe', 'on' => 'search'),
+            array('base_product_id,pack_size,pack_unit,title, description, color, size, store_id, status, created_date, modified_date', 'safe', 'on' => 'search'),
         );
     }
 
