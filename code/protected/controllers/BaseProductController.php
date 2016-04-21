@@ -160,7 +160,7 @@ class BaseProductController extends Controller {
             if (isset($_POST['a'])) {
                 $a = $_POST['a'];
             }
-          //  echo $_POST['new_data'];die;
+            //  echo $_POST['new_data'];die;
             if (isset($_POST['new_data'])) {
                 $new_data = $_POST['new_data'];
             }
@@ -215,8 +215,8 @@ class BaseProductController extends Controller {
                     ));
                     exit();
                 }
-               // echo $diameter;die;
-                 if (!is_numeric($_POST['qunt'])) {
+                // echo $diameter;die;
+                if (!is_numeric($_POST['qunt'])) {
                     Yii::app()->user->setFlash('WSP', ' Quantity must be a number.');
                     $this->render('create', array(
                         'model' => $model,
@@ -229,7 +229,7 @@ class BaseProductController extends Controller {
                     ));
                     exit();
                 }
-                  if (!is_numeric($_POST['new_data'])) {
+                if (!is_numeric($_POST['new_data'])) {
                     Yii::app()->user->setFlash('WSP', ' Diameter must be a number.');
                     $this->render('create', array(
                         'model' => $model,
@@ -242,7 +242,7 @@ class BaseProductController extends Controller {
                     ));
                     exit();
                 }
-                
+
 
 
 //                if ((empty($model->size_brand) && !empty($model->size) || (!empty($model->size_brand) && empty($model->size)))) {
@@ -509,7 +509,7 @@ class BaseProductController extends Controller {
                 ));
                 exit();
             }
-            
+
 
 //            if ((empty($model->size_brand) && !empty($model->size) || (!empty($model->size_brand) && empty($model->size)))) {
 //                Yii::app()->user->setFlash('WSP', 'Size and Size Brand both fill');
@@ -560,8 +560,8 @@ class BaseProductController extends Controller {
                   $diameter=$diameter['0']['diameter'];
 
                   } */
-               // echo '<pre>';
-             //   print_r($_POST);die;
+                // echo '<pre>';
+                //   print_r($_POST);die;
                 if ($a == Array()) {
                     $grade = $_POST['a'];
                 } else {
@@ -576,12 +576,12 @@ class BaseProductController extends Controller {
                     // $diameter = $_POST['new_data'];
                     $diameter = $new_data['0']['diameter'];
                 }
-                if ($_POST['qunt'] == '' ) {
-                     $quantity = $qunt['0']['quantity'];
+                if ($_POST['qunt'] == '') {
+                    $quantity = $qunt['0']['quantity'];
                     //  $quantity=
                 } else {
-                   
-                   $quantity = $_POST['qunt'];
+
+                    $quantity = $_POST['qunt'];
                     // $quantity=$qunt['0']['quantity'];
                 }
 
@@ -888,7 +888,7 @@ class BaseProductController extends Controller {
         $this->render('admin', array(
             'model_grid' => $model_grid,
                 // 'model'=>$model,
-                 //'search' => $search,
+                //'search' => $search,
         ));
     }
 
@@ -1042,13 +1042,12 @@ class BaseProductController extends Controller {
                                         $model1 = $this->loadModel(trim($data[$cols['Base product id']]));
                                         // echo'<pre>';  print_r($model1);die;
                                     } catch (Exception $e) {
-                                       fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Base product id']]} does not exist.");
-                                        
+                                        fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Base product id']]} does not exist.");
+
                                         continue;
                                     }
                                 } else {
                                     $model1 = new BaseProduct;
-                                   
                                 }
 
                                 $model1->action = $model->action;
@@ -1112,7 +1111,7 @@ class BaseProductController extends Controller {
                                 if (!$model1->save(true)) {
 
                                     foreach ($model1->getErrors() as $errors) {
-                                       // echo "hello";die;
+                                        // echo "hello";die;
                                         $error[] = implode(' AND ', $errors);
                                     }
                                     fwrite($handle1, "\nRow : " . $i . " Product not $action. " . implode(' AND ', $error));
@@ -1120,24 +1119,55 @@ class BaseProductController extends Controller {
 
                                     // print_r($cols]);die;
                                     //echo $data[$cols['Diameter']];die;
-                                   if($model1->action=='create')
-                                   { #................subscription...............#
-                                    $model_subscribe = new SubscribedProduct();
-                                    $model_subscribe->base_product_id = $model1->base_product_id;
-                                    //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                    $model_subscribe->store_id = $model1->store_id;
-                                    $model_subscribe->store_price = $mrp;
-                                    $model_subscribe->diameter = $data[$cols['Diameter']];
-                                    $model_subscribe->grade = $data[$cols['Grade']];
-                                    $model_subscribe->store_offer_price = $wsp;
-                                    $model_subscribe->quantity = $data[$cols['quantity']];
-                                    $model_subscribe->save();
-                                    $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                   }#...................end...................#
-                                   if($model1->action=='update')
-                                   {
-                                       $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                   }
+                                    if ($model1->action == 'create') { #................subscription...............#
+                                        $model_subscribe = new SubscribedProduct();
+                                        $model_subscribe->base_product_id = $model1->base_product_id;
+                                        //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                        $model_subscribe->store_id = $model1->store_id;
+                                        $model_subscribe->store_price = $mrp;
+                                        if ($data[$cols['Diameter']] != '') {
+                                            $model_subscribe->diameter = $data[$cols['Diameter']];
+                                        } else {
+                                            $model_subscribe->diameter = 0;
+                                        }
+                                        if ($data[$cols['Grade']] != '') {
+                                            $model_subscribe->grade = $data[$cols['Grade']];
+                                        } else {
+                                            $model_subscribe->grade = 0;
+                                        }
+                                        if ($data[$cols['quantity']] != '') {
+                                            $model_subscribe->quantity = $data[$cols['quantity']];
+                                        } else {
+                                            $model_subscribe->quantity = 0;
+                                        }
+                                        $model_subscribe->store_offer_price = $wsp;
+                                        //$model_subscribe->quantity = $data[$cols['quantity']];
+                                        $model_subscribe->save();
+                                        $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $mrp, $wsp, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                    }#...................end...................#
+                                    if ($model1->action == 'update') {
+                                        $model_subscribe = new SubscribedProduct();
+                                        $model_subscribe->base_product_id = $model1->base_product_id;
+                                        //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                        $model_subscribe->store_id = $model1->store_id;
+                                        $model_subscribe->store_price = $mrp;
+                                        if (is_numeric($data[$cols['Diameter']])) {
+                                            $model_subscribe->diameter = $data[$cols['Diameter']];
+                                        } else {
+                                            $model_subscribe->diameter = 0;
+                                        }
+                                        if ($data[$cols['Grade']] != '') {
+                                            $model_subscribe->grade = $data[$cols['Grade']];
+                                        } else {
+                                            $model_subscribe->grade = 0;
+                                        }
+                                        if (is_numeric($data[$cols['quantity']])) {
+                                            $model_subscribe->quantity = $data[$cols['quantity']];
+                                        } else {
+                                            $model_subscribe->quantity = 0;
+                                        }
+                                        $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                    }
 
                                     if (isset($row['media']) && !empty($row['media'])) {
 
