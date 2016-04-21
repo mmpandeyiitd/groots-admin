@@ -221,6 +221,14 @@ class RetailerProductQuotation extends CActiveRecord {
         //echo $subpro_id_new;die;
     }
 
+      public function updatelog($id, $rid) {
+        //  echo "hello";die;
+        $connection = Yii::app()->db;
+       $sql = "INSERT INTO retailer_product_quotation_log (`retailer_id`,`subscribed_product_id`, `effective_price`,`discount_per`,`status`) (SELECT `retailer_id`,`subscribed_product_id`, `effective_price`,`discount_per`,`status`FROM `retailer_product_quotation` WHERE retailer_id =$rid AND subscribed_product_id=$id)";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        // DELETE FROM `retailer_product_quotation` WHERE 
+    }
     public function Delete_retelar($id, $rid) {
         //  echo "hello";die;
         $connection = Yii::app()->db;
