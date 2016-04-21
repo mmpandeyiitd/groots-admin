@@ -41,10 +41,10 @@ if ($issuperadmin == 1) {
 
 <?php if (Yii::app()->user->hasFlash('success')): ?>
     <div class="row" id="logfile" >
-        To view logs of recently uploaded Style click : <a id='loglink' target='_blank' href='log/<?php echo $logfile; ?>'>Bulk Upload Style Log File
+        To view logs of recently uploaded product click : <a id='loglink' target='_blank' href='log/<?php echo $logfile; ?>'>Bulk Upload product Log File
 
         </a>
-        To download csv click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'> Style.
+        To download csv click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'> product.
 
         </a>
 
