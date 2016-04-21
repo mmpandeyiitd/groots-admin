@@ -89,7 +89,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'link1' => array(
          'header' => '',
            'type' => 'raw',
-           'value' => 'CHtml::button("Mapp",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'"))',
+           'value' => 'CHtml::button("Map",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'"))',
         ),
         'link2' => array(
          'header' => '',

@@ -74,7 +74,7 @@ class OrderHeader extends CActiveRecord {
         return array(
             array('order_number, user_id,shipping_phone', 'required'),
             array('user_id, source_id,shipping_phone,shipping_pincode, campaign_id, buyer_shipping_cost', 'numerical', 'integerOnly' => true),
-            array('order_number, billing_name, order_source, utm_source', 'length', 'max' => 255),
+            array('order_number, billing_name, utm_source', 'length', 'max' => 255),
             array('payment_method', 'length', 'max' => 16),
             array('payment_status', 'length', 'max' => 12),
             array('billing_phone, shipping_phone, payment_source', 'length', 'max' => 15),
@@ -145,7 +145,7 @@ class OrderHeader extends CActiveRecord {
             'payment_ref_id' => 'Payment Ref',
             'payment_gateway_name' => 'Payment Gateway Name',
             'payment_source' => 'Payment Source',
-            'order_source' => 'Order Source',
+           // 'order_source' => 'Order Source',
             'timestamp' => 'Timestamp',
             'transaction_id' => 'Transaction',
             'bank_transaction_id' => 'Bank Transaction',
