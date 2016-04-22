@@ -83,17 +83,17 @@ class BaseProduct extends CActiveRecord {
             array('title,size,pack_unit', 'length', 'max' => 255),
             array('color', 'length', 'max' => 100),
             array('color', 'length', 'min' => 2),
-            array('description,tags', 'length', 'max' => 1000),
+            array('description,tags', 'length', 'max' => 2000),
             array('specofic_keys', 'length', 'max' => 1500),
             //array('order_placement_cut_off_date,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
-            array('description,admin_type', 'length', 'max' => 250),
-            array(' description, created_date, modified_date', 'safe'),
+            array('admin_type', 'length', 'max' => 250),
+            array('created_date, modified_date', 'safe'),
             // The following rule is used by search().
 // @todo Please remove those attributes that should not be searched.
             array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('store_price,store_offer_price', 'safe', 'on' => 'search'),
-            array('base_product_id,pack_size,pack_unit,title, description, color, store_id, status, created_date, modified_date', 'safe', 'on' => 'search'),
+            array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
         );
     }
 
@@ -135,7 +135,7 @@ class BaseProduct extends CActiveRecord {
             // 'gender' => 'Gender',
             // 'recommended' => 'Recommended',
             //'featured' => 'Featured',
-            //'description' => 'Description',
+            'description' => 'Description',
             'color' => 'Color',
             'grade' => 'grade',
             // 'size_brand' => 'Size Brand',
