@@ -1104,9 +1104,10 @@ class BaseProductController extends Controller {
                                     Yii::app()->user->setFlash('error', 'Store ID does not match');
                                     break;
                                 }
-//                             echo '<pre>';
+                           // echo '<pre>';
 //                             print_r($cols);
-//                               print_r($data);die;
+                           // echo  $row['description'] = str_replace("’", "'", trim($data[$cols['description']]));die;
+                              // print_r($cols);die;
                                 if (isset($cols['Base product id']))
                                     $baseid = str_replace("’", "'", trim($data[$cols['Base product id']]));
                                 if (isset($cols['title']))
@@ -1157,7 +1158,7 @@ class BaseProductController extends Controller {
                                 $action = $model->action == 'update' ? 'updated' : 'created';
                                 $model_subscribe = new SubscribedProduct();
                                 if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && is_numeric($data[$cols['quantity']]) && (is_numeric($mrp) && $mrp > $wsp)) {
-                                    // echo "hello";die;
+                                    // echo $row['pack_unit'];die;
                                     $model_subscribe->store_offer_price = $wsp;
                                     $model_subscribe->diameter = $data[$cols['Diameter']];
                                     $model_subscribe->store_price = $mrp;
