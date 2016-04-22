@@ -264,9 +264,11 @@ class RetailerProductQuotationController extends Controller {
         $model_grid->unsetAttributes();
         // $model_grid = new ProductGridviewRetelar('search');
         // $model_grid->unsetAttributes();
-        $model->unsetAttributes();  // clear any default values
+       /* $model->unsetAttributes();  // clear any default values
         if (isset($_GET['RetailerProductQuotation']))
-            $model->attributes = $_GET['RetailerProductQuotation'];
+            $model->attributes = $_GET['RetailerProductQuotation'];*/
+        if (isset($_GET['ProductGridviewRetelar']))
+            $model_grid->attributes = $_GET['ProductGridviewRetelar'];
 
         $this->render('admin', array(
             // 'model' => $model,
