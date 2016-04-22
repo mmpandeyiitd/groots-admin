@@ -94,6 +94,7 @@ class RetailerProductQuotation extends CActiveRecord {
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
+     
         //echo "ss";die;
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $retailer_id = $_GET['id'];

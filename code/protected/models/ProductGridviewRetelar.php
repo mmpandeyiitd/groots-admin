@@ -74,12 +74,17 @@ class ProductGridviewRetelar extends CActiveRecord {
      *
      * @return CActiveDataProvider the data provider that can return the models
      * based on the search/filter conditions.
+     *
      */
+   
     public function search() {
+       //echo $_GET['effective_price'];
+        
        //  echo "hello";die;
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
+    
         // echo $this->title;die;
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $retailer_id = $_GET['id'];
@@ -96,10 +101,12 @@ class ProductGridviewRetelar extends CActiveRecord {
         $criteria->compare('title', $this->title, true);
         $criteria->compare('discount_per', $this->discount_per, true);
         $criteria->compare('status', $this->status);
+        
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
+             
     }
 
     /**
