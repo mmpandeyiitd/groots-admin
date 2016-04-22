@@ -121,7 +121,6 @@ class SolrBackLog extends CActiveRecord
         $sql = "DELETE FROM {$this->tableName()} WHERE subscribed_product_id IN (
         SELECT subscribed_product_id FROM subscribed_product WHERE base_product_id = {$baseProductId}
         )";
-
         $connection = Yii::app() -> db;
         $command = $connection -> createCommand($sql);
         $command -> execute();

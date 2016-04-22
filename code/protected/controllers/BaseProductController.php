@@ -285,13 +285,7 @@ class BaseProductController extends Controller {
                     $model_subscribe->quantity = $qunt;
                     $model_subscribe->store_offer_price = $_POST['WSP'];
                     $model_subscribe->data_sub($model->base_product_id, $model->store_id, $_POST['MRP'], $new_data, $a, $qunt, $_POST['WSP']);
-//                   if($model_subscribe->save())
-//                   {
-//                       echo "hello";die;
-//                   }else
-//                   {
-//                       echo "hello111";die;
-//                   }
+
                     #...................end...................#
                     $cat_object = new Category();
                     $base_product_id = $model->base_product_id;
@@ -410,10 +404,7 @@ class BaseProductController extends Controller {
         $getrecord = new ProductCategoryMapping();
         $record = $getrecord->getRecordById($id);
         $imageinfo = $getrecord->getImageById($id);
-        // $model_subscribe = new SubscribedProduct();
-        //echo '<pre>';
-        //  print_r($model_subscribe['diameter']);
-//die;
+        
         $mrp = '';
         $wsp = '';
         $specific_keyfield = '';
@@ -421,11 +412,8 @@ class BaseProductController extends Controller {
         $a = $model_subscribe->getdatarecords($id);
         $new_data = $model_subscribe->getdatarecords_new($id);
         $qunt = $model_subscribe->getdatarecords_new1($id);
-        // echo $id;die;
         $model = $this->loadModel($id);
-        // echo $_POST['BaseProduct'];die;
         if (isset($_POST['BaseProduct'])) {
-            // echo "hello";die;
             $model->attributes = $_POST['BaseProduct'];
 
             $specific_key = array();
@@ -487,9 +475,6 @@ class BaseProductController extends Controller {
             if ($new_data == Array()) {
                 $diameter = $_POST['new_data'];
             } else {
-                //echo '<pre>';  print_r($_POST);die;
-                //echo $new_data['0']['new_data'];die;
-                // $diameter = $_POST['new_data'];
                 $diameter = $new_data['0']['diameter'];
             }
             if ($_POST['qunt'] == '') {
@@ -498,10 +483,7 @@ class BaseProductController extends Controller {
             } else {
 
                 $quantity = $_POST['qunt'];
-                // $quantity=$qunt['0']['quantity'];
             }
-
-            //echo '<pre>'; print_r($_POST);die;
             if (isset($_POST['color'])) {
                 $model->color = $_POST['color'];
             }
@@ -524,16 +506,12 @@ class BaseProductController extends Controller {
              if ($a == Array()) {
                     $grade = $_POST['a'];
                 } else {
-                    // $grade = $_POST['a'];
                     $grade = $a['0']['grade'];
                 }
                 if ($new_data == Array()) {
                     $diameter = $_POST['new_data'];
                 } else {
-                    //echo '<pre>';  print_r($_POST);die;
-                    //echo $new_data['0']['new_data'];die;
-                    // $diameter = $_POST['new_data'];
-                    $diameter = $new_data['0']['diameter'];
+                   $diameter = $new_data['0']['diameter'];
                 }
                 if ($_POST['qunt'] == '') {
                     $quantity = $qunt['0']['quantity'];
@@ -559,18 +537,6 @@ class BaseProductController extends Controller {
                 ));
                 exit();
             }
-
-
-//            if ((empty($model->size_brand) && !empty($model->size) || (!empty($model->size_brand) && empty($model->size)))) {
-//                Yii::app()->user->setFlash('WSP', 'Size and Size Brand both fill');
-//                $this->render('create', array(
-//                    'model' => $model,
-//                    'mrp' => $mrp,
-//                    'wsp' => $wsp,
-//                    'specific_keyfield' => $specific_keyfield,
-//                ));
-//                exit();
-//            }
             /* if ((empty($model->color_index) && !empty($model->color) || (!empty($model->color_index) && empty($model->color)))) {
               Yii::app()->user->setFlash('WSP', 'Color and Color Index both fill');
               $this->render('create', array(
@@ -591,27 +557,6 @@ class BaseProductController extends Controller {
 
                 $base_product_id = $model->base_product_id;
                 $store_id = $model->store_id;
-                //$mrp = $_POST['MRP'];
-                //$wsp = $_POST['WSP'];
-                /* if($_POST['a']==''){
-                  $grade = $_POST['a'];
-                  }
-                  else
-                  {
-                  $grade=$a['0']['grade'];
-
-                  }
-                  if($_POST['new_data']==''){
-
-                  $diameter= $_POST['new'];
-                  }
-                  else
-                  {
-                  $diameter=$diameter['0']['diameter'];
-
-                  } */
-                // echo '<pre>';
-                 //  print_r($_POST['qunt']);die;
                 if ($a != Array()) {
                     $grade = $_POST['a'];
                 } else {
@@ -854,36 +799,12 @@ class BaseProductController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
-
-//public function actionIndex()
-//{
-//$criteria = new CDbCriteria();
-//
-//if(isset($_GET['q']))
-//{
-//$q = $_GET['q'];
-//$criteria->compare('title', $q, true, 'OR');
-////$criteria->compare('attribute2', $q, true, 'OR');
-//}
-//
-//$dataProvider=new CActiveDataProvider('BaseProduct',array('criteria'=>$criteria));
-//
-//$this->render('index',array(
-//'dataProvider'=>$dataProvider,
-//));
-//}
-
     /**
      * Manages all models.
      */
     public function actionAdmin() {
-//        echo '<pre>';
-//        print_r($_SESSION);die;
-
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') == 0) {
-            // echo "hello";die;
-
-            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
 
@@ -1034,9 +955,6 @@ class BaseProductController extends Controller {
                     $this->render('bulkupload', array('model' => $model));
                 }
                 $i = 0;
-
-                // print_r($model);die;
-//description,color,size,,status,categoryIds,MRP,WSP,image
                 $requiredFields = array('title', 'categoryIds', 'store id', 'Store Price', 'Store Offer Price');
                 $defaultFields = array('title', 'categoryIds', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity');
 
@@ -1370,6 +1288,14 @@ class BaseProductController extends Controller {
                                         }
                                     }
                                 }
+                              /*  if ($model->action == 'create' && !empty($baseid)) {
+                                    //.......................solor backloag.................//
+                                    $solrBackLog = new SolrBackLog();
+                                    //$is_deleted =  ($model->status == 1) ? 0 : 1;
+                                    $is_deleted = '0';
+                                    $solrBackLog->insertByBaseProductId($baseid, $is_deleted);
+                                    //.........................end.....................................//
+                                }*/
 
                                 if ($model->action == 'update' && !empty($baseid)) {
                                     //.......................solor backloag.................//
