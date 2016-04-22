@@ -93,7 +93,7 @@ class BaseProduct extends CActiveRecord {
             array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('store_price,store_offer_price', 'safe', 'on' => 'search'),
-            array('base_product_id,pack_size,pack_unit,title,description,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
+            array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
         );
     }
 
