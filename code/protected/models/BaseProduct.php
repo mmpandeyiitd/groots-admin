@@ -226,13 +226,9 @@ class BaseProduct extends CActiveRecord {
         $criteria->compare('featured', $this->featured, true);
         $criteria->compare('store_price', $this->store_price, true);
         $criteria->compare('store_offer_price', $this->store_offer_price, true);
-// $criteria->compare('video_url', $this->video_url, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
-//            'pagination' => array(
-//               // 'pageSize' => 10,
-//            ),
         ));
     }
 

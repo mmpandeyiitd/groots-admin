@@ -157,7 +157,7 @@ class SubscribedProductController extends Controller {
                 //$this->redirect(array('create_re'));
                 $this->redirect(array('subscribedProduct/mappedProduct&id=' . $_REQUEST["id"] . '&retailer_id=' . $_REQUEST["retailer_id"] . ''));
             }
-
+             
             $model_subscribe->attributes = $_POST['RetailerProductQuotation'];
             $model_subscribe->subscribed_product_id = $_REQUEST['id'];
             $model_subscribe->retailer_id = $_REQUEST['retailer_id'];
@@ -170,6 +170,7 @@ class SubscribedProductController extends Controller {
             if ($model_subscribe->save()) {
                 $model_subscribe->subscribed_product_id = $_REQUEST['id'];
                 $model_subscribe->retailer_id = $_REQUEST['retailer_id'];
+                 $model_subscribe->solrbacklogRetailerProductQuotation($model_subscribe->subscribed_product_id,$model_subscribe->retailer_id = $_REQUEST['retailer_id']);
                 Yii::app()->user->setFlash('success', 'created Sucessfully');
                 $this->redirect(array('retailerProductQuotation/admin&id=' . $_REQUEST["retailer_id"] . ''));
             } else {

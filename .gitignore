@@ -28,6 +28,8 @@ EIFGENs
 
 nbproject/*
 
+csvupload/*
+
 build/
 
 nbbuild/

@@ -1,4 +1,0 @@
-
-Row : 2 Product 50 updated. 
-Row : 3 Product not updated. Pack Size is too small (minimum is 1).
-Row : 3 Product 51 updated. Pack Size is too small (minimum is 1).

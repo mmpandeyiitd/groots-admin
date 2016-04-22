@@ -285,15 +285,23 @@ class SubscribedProduct extends CActiveRecord {
         $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ";
         $command = $connection->createCommand($sql);
         $command->execute();
+        $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
+         FROM subscribed_product WHERE base_product_id =$bp";
+         $command = $connection->createCommand($sql);
+         $command->execute(); 
     }
 
     public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity) {
         //echo $diameter;die;
-
-        $connection = Yii::app()->db;
-       $sql = "insert into subscribed_product set store_offer_price=$sprice ,store_price= $mrp, base_product_id= $bp,grade ='".$grade."',diameter =$diameter,quantity =$quantity, store_id=$sid";
-       $command = $connection->createCommand($sql);
-        $command->execute();
+         $connection = Yii::app()->db;
+         $sql = "insert into subscribed_product set store_offer_price=$sprice ,store_price= $mrp, base_product_id= $bp,grade ='".$grade."',diameter =$diameter,quantity =$quantity, store_id=$sid";
+         $command = $connection->createCommand($sql);
+         $command->execute();
+          $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
+         FROM subscribed_product WHERE base_product_id =$bp";
+         $command = $connection->createCommand($sql);
+         $command->execute(); 
+         
     }
 
     public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity) {
