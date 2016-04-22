@@ -118,12 +118,12 @@ class SolrBackLog extends CActiveRecord
     * Insert subscribed product ids in solr back log from base product id 
     */
     public function insertByBaseProductId($baseProductId, $is_deleted) {
-        $sql = "DELETE FROM {$this->tableName()} WHERE subscribed_product_id IN (
+       /* $sql = "DELETE FROM {$this->tableName()} WHERE subscribed_product_id IN (
         SELECT subscribed_product_id FROM subscribed_product WHERE base_product_id = {$baseProductId}
-        )";
+        )";*/
         $connection = Yii::app() -> db;
-        $command = $connection -> createCommand($sql);
-        $command -> execute();
+        //$command = $connection -> createCommand($sql);
+      //  $command -> execute();
 
         $sql = "INSERT INTO {$this->tableName()} (subscribed_product_id, is_deleted)
         SELECT subscribed_product_id, {$is_deleted} FROM subscribed_product WHERE base_product_id = {$baseProductId} AND is_deleted = 0 AND status = 1";
