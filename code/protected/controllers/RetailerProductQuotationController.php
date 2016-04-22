@@ -56,6 +56,7 @@ class RetailerProductQuotationController extends Controller {
             $re_id=$_REQUEST['retailer_id'];
             $model->updatelog($sub_id,$re_id);
             $model->Delete_retelar($sub_id,$re_id);
+            $model->solrbacklogRetailerProductQuotation($sub_id,$re_id);
            
         }
         $this->redirect(array('retailerProductQuotation/admin&id=' . $re_id . ''));
@@ -155,8 +156,6 @@ class RetailerProductQuotationController extends Controller {
         // print_r( $ret_data);die;\
 
         if (isset($_POST['data'])) {
-           // echo '<pre>';
-           // print_r($_POST);die;
             if (isset($_POST['effective_price']) && $_POST['effective_price'] != '') {
                 if ($model->numeric($_POST['effective_price']) == FALSE) {
                     Yii::app()->user->setFlash('error', ' effective price numeric only');

@@ -165,8 +165,19 @@ class RetailerProductQuotation extends CActiveRecord {
         $connection = Yii::app()->db;
         $sql = "update retailer_product_quotation set effective_price=$ef ,discount_per =$dp where retailer_id=$rid and subscribed_product_id=$sid";
         $command = $connection->createCommand($sql);
-
         $command->execute();
+        $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
+         FROM retailer_product_quotation WHERE retailer_id =$rid AND subscribed_product_id =$sid";
+         $command = $connection->createCommand($sql);
+         $command->execute();
+    }
+    public function solrbacklogRetailerProductQuotation($sid,$rid)
+    {
+        $connection = Yii::app()->db;
+        $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
+         FROM retailer_product_quotation WHERE retailer_id =$rid AND subscribed_product_id =$sid";
+         $command = $connection->createCommand($sql);
+         $command->execute();
     }
 
     public function check_retailer_id($s_id, $r_id) {
