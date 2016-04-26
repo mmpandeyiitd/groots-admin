@@ -162,14 +162,31 @@ class RetailerProductQuotationController extends Controller {
                     $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
                 }
             }
+            if($_POST['discout_per']==''){
+                $_POST['discout_per']=0;
+            }
+            
             if (isset($_POST['discout_per']) && $_POST['discout_per'] != '') {
                 if ($model->numeric($_POST['discout_per']) == FALSE) {
                      Yii::app()->user->setFlash('error', ' discout percentage numeric only');
                     $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
                 }
             }
-             if (( $_POST['effective_price'] =='0') && ( $_POST['discout_per'] == '0')) {
-                Yii::app()->user->setFlash('error', ' effective price or discout percentage only one field fill');
+             if (( $_POST['effective_price'] ==0) && ( $_POST['discout_per'] == '')) {
+                Yii::app()->user->setFlash('error', ' effective price or discout percentage only one field mandatory');
+               $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
+            } 
+             if (( $_POST['effective_price'] ==0) && ( $_POST['discout_per'] == 0)) {
+                Yii::app()->user->setFlash('error', ' effective price or discout percentage one field mandatory');
+               $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
+            } 
+             if (( $_POST['effective_price'] !=0) && ( $_POST['discout_per'] != 0)) {
+                Yii::app()->user->setFlash('error', ' effective price or discout percentage one field mandatory');
+               $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
+            } 
+            
+             if (( $_POST['effective_price'] =='') && ( $_POST['discout_per'] == 0)) {
+                Yii::app()->user->setFlash('error', ' effective price or discout percentage one field mandatory');
                $this->redirect(array('retailerProductQuotation/update&id=' . $_POST['subscribed_product_id'] . '&retailer_id=' . $_POST['retailer_id'] . ''));
             } else if ($_POST['discout_per'] > 100) {
                 Yii::app()->user->setFlash('error', 'Discout percentage Not Greater than 100 %');

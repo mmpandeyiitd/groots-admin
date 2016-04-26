@@ -127,7 +127,7 @@ class OrderHeaderController extends Controller {
                     $status_data=  explode('<>',$status[$p]);
                     $update_status=$status_data[0];
                     $orderline_ids=$status_data[1];
-                    $lineinfo = $linedescinfo->UpdatedStatus($update_status, $orderline_ids);
+                    $lineinfo = $linedescinfo->UpdatedStatus($update_status, $orderline_ids,$_REQUEST['order_id']);
                  }
                   }
              if(isset($_POST['unit_price_discount'])&&isset($_POST['unit_price_discount_old'])&&!empty($_POST['orderline_ids_discount'])){  

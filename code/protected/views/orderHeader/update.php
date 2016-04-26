@@ -255,7 +255,7 @@ if(isset($_GET['id'])){
                                 <table class = "table">
                                     <tbody>
                                         <tr>
-                                            <td>Order Sub_id:</td>
+                                            <td>Order Sub id:</td>
                                             <td><?php echo $orderline_ids; ?></td>
                                         </tr>
 
@@ -280,7 +280,7 @@ if(isset($_GET['id'])){
                                             <option value="Pending<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
                                             <option value="Processing<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Processing') echo 'selected="selected"'; ?> >Processing </option>
                                             <option value="Confirmed<><?php echo $orderline_ids;?>" <?php if ($status_array[0]== 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
-                                            <option value="Shipped<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Shipped') echo 'selected="selected"'; ?>>Shipped</option>
+                                            <option value="Shipped<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'shipped') echo 'selected="selected"'; ?>>Shipped</option>
                                             <option value="Delivered<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Delivered') echo 'selected="selected"'; ?> >Delivered</option>
                                             <option value="Cancelled<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'Cancelled') echo 'selected="selected"'; ?> >Cancelled</option>
                                             <option value="ReturnedRequested<><?php echo $orderline_ids;?>" <?php if ($status_array[0] == 'ReturnedRequested') echo 'selected="selected"'; ?> >Return Requested</option>
@@ -296,7 +296,7 @@ if(isset($_GET['id'])){
                                     <tbody>
                                         <tr>
                                             <td style="width: 212px;display: block;">size:</td>
-                                            <td><?php echo $sizes_array[$j]; ?></td>
+                                            <td><?php if($sizes_array!=Array ()){echo $sizes_array[$j];} ?></td>
                                         </tr>
                                          <tr>
                                             <td>Oder Quanty Update:</td>

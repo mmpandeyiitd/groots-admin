@@ -91,7 +91,7 @@ if(Yii::app()->controller->id=="store"){
        echo "Press Release List"; 
     }
 }else if(Yii::app()->controller->id=="dashboardPage"){
-      echo "Dasboard Page";
+      echo "Dashboard Page";
 }else if(Yii::app()->controller->id=="lookbook"){
      if(Yii::app()->controller->action->id=="create"){
         echo "Creat Lookbook";
