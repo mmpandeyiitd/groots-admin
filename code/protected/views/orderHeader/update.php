@@ -151,10 +151,12 @@ if(isset($_GET['id'])){
                         <div class="clearfix spacerNew"></div>
 
     <?php } ?>
+            </div>
                     <div class="clearfix"></div> 
                   <?php 
+                   $updationclose =TRUE;
                   for ($i=0;$i<$maxorder;$i++) {
-                      $updationclose =TRUE;
+                    //  $updationclose =FALSE;
                       $base_product_ids_array=array();
                       $product_names_array=array();
                       $sizes_array=array();
@@ -222,9 +224,9 @@ if(isset($_GET['id'])){
                     $total_discount=  $unit_price_discounts_array[0]*array_sum($qtys_array); 
                     $grand_discount+=$total_discount;
                     $wsptotal = '';
-                  //  echo $status_array[0];die;
-                    
-                     if ($status_array[0] == 'Confirmed'||$status_array[0] == 'Shipped'||$status_array[0] == 'Delivered'||$status_array[0] == 'Cancelled'||$status_array[0] == 'ReturnedRequested'||$status_array[0] == 'ReturnedComplete'){
+                  //echo $status_array[0];die;
+                   // echo $orderline_ids;die;
+                    if ($status_array[0] == 'Confirmed'  || $status_array[0] == 'Shipped'||$status_array[0] == 'Delivered'||$status_array[0] == 'Cancelled'||$status_array[0] == 'ReturnedRequested'||$status_array[0] == 'ReturnedComplete'){
                         $updationclose =FALSE;
                       }
                     
@@ -300,23 +302,22 @@ if(isset($_GET['id'])){
                                         </tr>
                                          <tr>
                                             <td>Oder Quanty Update:</td>
-                                            <td> <?php if($updationclose){?>
+                                            
+                                         <td> <?php if($updationclose){?>
+                                             <?php if ($status_array[0] == 'Confirmed'  || $status_array[0] == 'Shipped'||$status_array[0] == 'Delivered'||$status_array[0] == 'Cancelled'||$status_array[0] == 'ReturnedRequested'||$status_array[0] == 'ReturnedComplete'){ $updationclose =FALSE;}?>
                                             <input type="text" class="form-control size" name="sizeqty[]" id="size4_<?php echo $orderheader_id[$j].'<:>'.$base_product_ids_array[$j]; ?>" placeholder="0"  style="width:80px;" value="<?php if (isset($qtys_array[$j])) echo $qtys_array[$j]; ?>" onblur="sizecount1(<?php echo $orderheader_id[$j].".".$base_product_ids_array[$j];?>)">
                                             <input type="hidden"  name="sizeqty_old[]" placeholder="0"  value="<?php if (isset($qtys_array[$j])) echo $qtys_array[$j]; ?>" >
                                             <input type="hidden" name="uniq_order_size[]" placeholder="0"  style="width:80px;"
                                             value="<?php echo $orderline_ids_array[$j].'>'.$base_product_ids_array[$j]; ?>" > <?php }else{ echo $qtys_array[$j];}?>
                                        </td>
                                         </tr>
-                                          <?php }}?>
+                                            <?php }}?>
                                     </tbody></table>
-                                  
-                                                                       
-                                </div>
+                                  </div>
                             </div>
 
                         </div>
                     </div>  
-                </div>
                 <input type="hidden" id="id" name="id[]" value="<?php //echo $model[$key]->attributes['id']; ?>"/>
                 <input type="hidden" id="order_id" name="order_id" value="<?php echo $modelOrder->attributes['order_id']; ?>"/> 
 
@@ -338,8 +339,12 @@ if(isset($_GET['id'])){
                   <h3><b>Discounted Grand Total:</b><span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
                   <input type="hidden" id="grand_total" class="button_new" name="grand_total" value="<?php echo $grandtotal; ?>"/>
                   <input type="hidden" class="button_new" value="<?php echo $isize; ?>" id="isize" name="isize" /> 
-                  <?php if ($updationclose){?> <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> <?php }?>
+                  <?php if($maxorder==1){?>
+                      <?php if ($updationclose){?> <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> <?php }?>
                     <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
+                  <?php }else{?> <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> 
+                    <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
+                  <?php }?>
                 </div> 
             </div>
         </div>

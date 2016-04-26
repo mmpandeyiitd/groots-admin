@@ -123,6 +123,11 @@ class DashboardPageController extends Controller {
             if (isset($_POST['filter'])) {
                   $start_date = $_POST['start_date'];
                   $end_date =  $_POST['end_date'];
+                  if($start_date>$end_date){
+                     Yii::app()->user->setFlash('error', 'End date always greater than Start date');
+                      Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+                  }
+                  
           
             }
         //}

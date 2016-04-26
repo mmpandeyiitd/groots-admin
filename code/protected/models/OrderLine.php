@@ -236,8 +236,8 @@ class OrderLine extends CActiveRecord
         $lineidinfo =FALSE;
        if(!empty($status)&&!empty($orderline_ids)){
           
-            $sql="update order_line set status='".$status."' where id in ($orderline_ids)";
-            $connection = Yii::app()->secondaryDb;
+           $sql="update order_line set status='".$status."' where id in ($orderline_ids)";
+           $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
             $command->execute();
             $sql="update order_header set status='".$status."' where order_id =$order_id";

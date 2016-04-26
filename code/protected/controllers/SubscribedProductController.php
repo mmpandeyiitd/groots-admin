@@ -166,11 +166,11 @@ class SubscribedProductController extends Controller {
 //             $model_subscribe->discout_per = $_POST['discout_per'];
 //              $model_subscribe->status = $_POST['status'];
 //               echo '<pre>';
-//            print_r($model_subscribe);die;
+//           print_r($model_subscribe);die;
             if ($model_subscribe->save()) {
                 $model_subscribe->subscribed_product_id = $_REQUEST['id'];
                 $model_subscribe->retailer_id = $_REQUEST['retailer_id'];
-                 $model_subscribe->solrbacklogRetailerProductQuotation($model_subscribe->subscribed_product_id,$model_subscribe->retailer_id = $_REQUEST['retailer_id']);
+                $model_subscribe->solrbacklogRetailerProductQuotation($model_subscribe->subscribed_product_id,$model_subscribe->retailer_id = $_REQUEST['retailer_id']);
                 Yii::app()->user->setFlash('success', 'created Sucessfully');
                 $this->redirect(array('retailerProductQuotation/admin&id=' . $_REQUEST["retailer_id"] . ''));
             } else {

@@ -707,7 +707,7 @@ class BaseProductController extends Controller {
                 }
 
 
-                Yii::app()->user->setFlash('success', 'Style updated successfully');
+                Yii::app()->user->setFlash('success', 'Product updated successfully');
                 $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
             }
         }
@@ -1781,7 +1781,7 @@ class BaseProductController extends Controller {
                             $baseproductids = $_POST['userids'];
                         }
                         if (count($baseproductids) == 0) {
-                            Yii::app()->user->setFlash('error', 'Please Select Atleast one style. ');
+                            Yii::app()->user->setFlash('error', 'Please Select Atleast one Product. ');
                             $this->redirect(array('configurable_group', 'id' => $id, 'store_id' => $store_id, 'category_id' => $category));
                             die;
                         }
@@ -1877,7 +1877,7 @@ class BaseProductController extends Controller {
                             // print_r($baseproductids);
                         }
                         if (count($baseproductids) == 0) {
-                            Yii::app()->user->setFlash('error', 'Please Select Atleast one style. ');
+                            Yii::app()->user->setFlash('error', 'Please Select Atleast one Product. ');
                             $this->redirect(array('addedstyle', 'id' => $id, 'store_id' => $store_id, 'category_id' => $category));
                             die;
                         }

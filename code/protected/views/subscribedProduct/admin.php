@@ -77,7 +77,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'link' => array(
             'header' => 'Action',
             'type' => 'raw',
-            'value' => 'CHtml::button("Mapped",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("subscribedProduct/mappedProduct",array("id"=>$data->subscribed_product_id,"retailer_id" => $_REQUEST["id"]))."\'"))',
+            'value' => 'CHtml::button("Map",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("subscribedProduct/mappedProduct",array("id"=>$data->subscribed_product_id,"retailer_id" => $_REQUEST["id"]))."\'"))',
         ),
     ),
 ));
