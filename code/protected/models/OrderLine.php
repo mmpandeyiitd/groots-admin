@@ -232,7 +232,7 @@ class OrderLine extends CActiveRecord
         }
     } 
     
-     public function UpdatedStatus($status, $orderline_ids){
+     public function UpdatedStatus($status, $orderline_ids,$order_id){
         $lineidinfo =FALSE;
        if(!empty($status)&&!empty($orderline_ids)){
           
@@ -240,6 +240,11 @@ class OrderLine extends CActiveRecord
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
             $command->execute();
+            $sql="update order_header set status='".$status."' where order_id =$order_id";
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+           
         }
     } 
     

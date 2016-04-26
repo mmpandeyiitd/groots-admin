@@ -390,7 +390,6 @@ class OrderHeader extends CActiveRecord {
 
         if (!empty($order_ids)) {
             $sql = "update `order_header` set status='" . 'cancelled' . "' where order_id in($order_ids)";
-
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
             $succ1 = $command->execute();
