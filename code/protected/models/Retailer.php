@@ -47,7 +47,7 @@ class Retailer extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, retailer_code, VAT_number, email, password, mobile, address, city, state, website, contact_person1, contact_person2, product_categories, categories_of_interest, store_size, status', 'required'),
+			array('name, retailer_code, VAT_number, email, password, mobile, address, city, state, website, contact_person1, product_categories, categories_of_interest, store_size', 'required'),
 			array('id, store_size, status', 'numerical', 'integerOnly'=>true),
 			array('name, image, website, contact_person1, contact_person2, categories_of_interest', 'length', 'max'=>250),
 			array('retailer_code, mobile', 'length', 'max'=>10),

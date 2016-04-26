@@ -54,7 +54,15 @@ if(Yii::app()->controller->id=="store"){
        echo "product List"; 
     }    
      
-}else if(Yii::app()->controller->id=="storeFront"){
+}else if($_REQUEST['r']=='subscribedProduct/mappedProduct'){
+    
+    if(Yii::app()->controller->action->id=="mappedProduct"){
+        
+       echo "MAP PRODUCT"; 
+    }    
+     
+}
+else if(Yii::app()->controller->id=="storeFront"){
      if(Yii::app()->controller->action->id=="create"){
         echo "Creat Line Sheet";
     }elseif(Yii::app()->controller->action->id=="update"){

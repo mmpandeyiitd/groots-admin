@@ -119,31 +119,8 @@
         <?php echo $form->textField($model, 'categories_of_interest', array('size' => 6, 'maxlength' => 150)); ?>
         <?php echo $form->error($model, 'categories_of_interest'); ?>
     </div>
-     <div class="row">
-        <?php echo $form->labelEx($model, 'status'); ?>
-        <?php echo $form->dropDownList($model, 'status', array('0' => 'Disable', '1' => 'Enable')); ?>    
-        <?php echo $form->error($model, 'status'); ?>
-    </div>
-     <div class="row">
-                <?php echo $form->labelEx($model, 'status'); ?>
-                <div class="check-awesome" style="float: left;">  
-                    <?php if (!$model->isNewRecord) { ?>
-                    <input  name="status" type="checkbox" id="check-one" value="1" <?php
-                        if ($model->status == 1) {
-                            echo 'checked';
-                        }
-                        ?>>
-                            <?php } else { ?>
-                        <input name="status" type="checkbox" id="check-one" value="1" checked >
-                    <?php } ?> 
-                    <label for="check-one">
-                        <span class="check"></span>
-                        <span class="box"></span>
-                        Publish
-                    </label>
-                </div>
-                <?php echo $form->error($model, 'status'); ?>
-            </div>
+     
+    
     <div class=" buttons">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
         <?php //echo  CHtml::button("See Request", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerRequest/admin", array('retailer_id' => $retailer_id)) . "'")); ?>

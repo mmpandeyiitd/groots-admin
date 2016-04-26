@@ -66,13 +66,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'name',
 		'email',
                 'city',
-                  array(
-            'name' => 'status',
-            'type' => 'raw',
-             'filter' => array('' => 'All', '1' => 'Enable', '0' => 'Disable'),
-             'value' => '($data->status == "1")?"Enable":"Disable"',
+//                  array(
+//            'name' => 'status',
+//            'type' => 'raw',
+//             'filter' => array('' => 'All', '1' => 'Enable', '0' => 'Disable'),
+//             'value' => '($data->status == "1")?"Enable":"Disable"',
            // 'htmlOptions' => array('width' => 90),
-        ),
+     //   ),
                 //'status',
         'link' => array(
             'header' => 'Action',
