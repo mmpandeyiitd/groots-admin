@@ -583,11 +583,12 @@ class BaseProduct extends CActiveRecord {
 
     public function getproductCount() {
         $issuperadmin = Yii::app()->session['is_super_admin'];
-        if ($issuperadmin) {
+       /* if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
         } else {
             $store_id = Yii::app()->session['brand_id'];
-        }
+        }*/
+        $store_id=1;
         $row = 0;
         if ($issuperadmin == 1) {
             $sql = "select count(base_product_id) from subscribed_product";
