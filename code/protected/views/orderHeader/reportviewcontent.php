@@ -1,15 +1,14 @@
-
 <?php
+$brand_info = array();
 foreach ($model as $key => $value) {
     $store_id = $value->store_id;
     if (!empty($store_id)) {
         break;
     }
 }
-$brand_info = array();
 if (is_numeric($store_id)) {
     $store_model = new Store();
-    $brand_info = $store_model->findAllByAttributes(array('store_id' => 4));
+    $brand_info = $store_model->findAllByAttributes(array('store_id' => 1));
     $maxrecord = count($brand_info);
     $brand_name = '';
     $brand_seller = '';
@@ -20,7 +19,6 @@ if (is_numeric($store_id)) {
     $brand_pincode = '';
     $brand_email = '';
     $brand_mobile = '';
-
     if ($maxrecord > 0) {
         for ($i = 0; $i < $maxrecord; $i++) {
             $brand_name = $brand_info[$i]['store_name'];
@@ -34,10 +32,9 @@ if (is_numeric($store_id)) {
             $brand_mobile = $brand_info[$i]['mobile_numbers'];
         }
     }
-}
-?>  
+   
+}?>  
 <!-- Custom Fonts -->
-
 <style >
     body {
         width: 100%;
@@ -81,6 +78,7 @@ if (is_numeric($store_id)) {
         vertical-align: top;
     }
 </style>
+
 <div class="container">
     <table border="1">
         <tr>
@@ -113,7 +111,7 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td colspan="3">
-                <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
+                <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country;  ?></p>
             </td>
             <td colspan="2">
                 VAT/TIN 33696318777<br>
@@ -138,22 +136,23 @@ if (is_numeric($store_id)) {
         $grandtotal = 0;
         $grand_producttotal = 0;
         $qtytotal = 0;
+        $i=0;
         foreach ($model as $key => $value) {
             $subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
-
             $linedescinfo = new OrderLine;
             $lineinfo = $linedescinfo->getlinedescById($value->id);
             $lineinfodeltail = $linedescinfo->getlinedetailcById($value->id);
-            if (!empty($lineinfo)) {
-                $qtytotal = $lineinfo[0]['qty'] + $lineinfo[1]['qty'] + $lineinfo[2]['qty'] + $lineinfo[3]['qty'] + $lineinfo[4]['qty'] + $lineinfo[5]['qty'];
+           if (!empty($lineinfo)) {
+             
+                $qtytotal = $lineinfo[$i]['product_qty'] + $lineinfo[1]['product_qty'] + $lineinfo[2]['product_qty'] + $lineinfo[3]['product_qty'] + $lineinfo[4]['$lineinfo'] + $lineinfo[5]['product_qty'];
             }
             $wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price'] - $lineinfodeltail[0]['unit_price_discount']);
             $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;
+            
             ?>  
-
             <tr>
                 <td>
                     <?php echo $model[$key]->attributes['product_name']; ?>
@@ -174,7 +173,7 @@ if (is_numeric($store_id)) {
 
         <tr>
             <td><strong>Total</strong></td>
-            <td><?php echo $grand_producttotal; ?></td>
+            <td><?php echo $qtytotal; ?></td>
             <td><?php echo $wsptotal; ?></td>
             <td><?php echo '0.0'; ?></td>
             <td><?php echo $grandtotal; ?></td>

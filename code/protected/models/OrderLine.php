@@ -187,23 +187,23 @@ class OrderLine extends CActiveRecord
     
     public function getlinedetailcById($lineid = null){
         $lineidinfo ='';
-        
+       // echo $lineid;die;
         if(!empty($lineid))
         {
             $connection = Yii::app()->secondaryDb;
             $sql = "Select * FROM order_line where id = $lineid";
             $command = $connection->createCommand($sql);
             $command->execute();
-            $lineidinfo= $command->queryAll();
+            $lineidinfo = $command->queryAll();
         }
         return $lineidinfo;
     } 
-    public function getlinedescById($lineid = null){
+    public function getlinedescById($lineid= null){
         $lineidinfo ='';
         
         if(!empty($lineid)){
             $connection = Yii::app()->secondaryDb;
-            $sql = "Select * FROM line_description where line_id = $lineid";
+            $sql = "Select * FROM order_line where id = $lineid";
             $command = $connection->createCommand($sql);
             $command->execute();
             $lineidinfo= $command->queryAll();
@@ -232,14 +232,15 @@ class OrderLine extends CActiveRecord
         }
     } 
     
-     public function UpdatedStatus($status, $orderline_ids,$order_id){
+     public function UpdatedStatus($status,$order_id){
         $lineidinfo =FALSE;
-       if(!empty($status)&&!empty($orderline_ids)){
+       // echo $status;die;
+       if(!empty($status)){
           
-           $sql="update order_line set status='".$status."' where id in ($orderline_ids)";
+          /* $sql="update order_line set status='".$status."' where id in ($orderline_ids)";
            $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
-            $command->execute();
+            $command->execute();*/
             $sql="update order_header set status='".$status."' where order_id =$order_id";
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
@@ -278,10 +279,8 @@ class OrderLine extends CActiveRecord
         }
        
     } 
-
-
-
-        /** CODE EDITED AND ADDED BY MOHD ALAM **/
+    
+    /** CODE EDITED AND ADDED BY MOHD ALAM **/
     protected function afterSave()
     {
         parent::afterSave();
@@ -308,6 +307,7 @@ class OrderLine extends CActiveRecord
         $data = array('login_id'=>'','user_id'=>Yii::app()->session['user_id'],'name'=>'order line','action'=>'delete','oldAttrs'=>$oldAttrs,'newAttrs'=>$newAttrs);
         $log->insertOrderlineLog($data);
     }
+    
 
     protected function afterFind()
     {
@@ -324,6 +324,91 @@ class OrderLine extends CActiveRecord
     public function setOldAttributes($attrs)
     {
         $this->oldAttrs = $attrs;
+    }
+     public static function sgSendMail($mailArray)
+    {
+      //echo $email.$pass;die;
+        // $url  = 'http://sendgrid.com/';
+    $url  = 'https://api.sendgrid.com/';
+    $user = 'rishabhsingla';
+    $pass = 'lwi@pranav123';
+
+    $params             = array();
+    $params['api_user'] = $user;
+    $params['api_key']  = $pass;
+    $i                  = 0;
+    $json_string        = array();
+    foreach ($mailArray['to'] as $to)
+    {
+    if($to['email']=="grootsadmin@gmail.com")
+        {
+            continue;
+        }
+        if ($i == 0)
+        {
+            $params['to']        = $to['email'];
+         //   $params['toname']    = $to['name'];
+            $json_string['to'][] = $to['email'];
+        }
+        else
+        {
+            $json_string['to'][] = $to['email'];
+        }
+        $i++;
+    }
+
+
+    $params['from'] = $mailArray['from'];
+
+    if ($mailArray['fromname'] && $mailArray['fromname'] != '')
+    {
+        $params['fromname'] = $mailArray['fromname'];
+    }
+
+    $params['subject'] = $mailArray['subject'];
+
+    if ($mailArray['html'] && $mailArray['html'] != '')
+    {
+        $params['html'] = $mailArray['html'];
+    }
+
+    if ($mailArray['text'] && $mailArray['text'] != '')
+    {
+        $params['text'] = $mailArray['text'];
+    }
+
+    if ($mailArray['replyto'] && $mailArray['replyto'] != '')
+    {
+        $params['replyto'] = $mailArray['replyto'];
+    }
+
+    if (isset($mailArray['files']))
+    {
+        foreach ($mailArray['files'] as $file)
+        {
+            $params['files[' . $file['name'] . ']'] = '@' . $file['path'];
+        }
+    }
+
+    $params['x-smtpapi'] = json_encode($json_string);
+    $request             = $url . 'api/mail.send.json';
+    // Generate curl request
+    $session             = curl_init($request);
+    // Tell curl to use HTTP POST
+    curl_setopt($session, CURLOPT_POST, true);
+    // Tell curl that this is the body of the POST
+    curl_setopt($session, CURLOPT_POSTFIELDS, $params);
+    // Tell curl not to return headers, but do return the response
+    curl_setopt($session, CURLOPT_HEADER, false);
+    curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+
+    // obtain response
+    $response = curl_exec($session);
+    curl_close($session);
+
+    // print everything out
+    return $response;
+       
     }
 
 }

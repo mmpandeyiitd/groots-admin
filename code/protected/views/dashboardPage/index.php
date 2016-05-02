@@ -38,14 +38,14 @@ $total_shippedOrder = $dasboard_obj->GetShippedOrder($start_date,$end_date);
 $total_cancelledOrder = $dasboard_obj->GetCancelledorder($start_date,$end_date);
 $total_returnOrder = $dasboard_obj->GetReturnorder($start_date,$end_date);
 
-$Total_linesheet=$dasboard_obj->getTotalLinesheet();
+$Total_linesheet=$dasboard_obj->getTotalLinesheet($start_date, $end_date);
 
 
 $base_model_obj = new BaseProduct();
-$totalproduct = $base_model_obj->getproductCount();
+$totalproduct = $base_model_obj->getproductCount($start_date,$end_date);
 
 $retailer_obj = new Retailer();
-$totalretailers = $retailer_obj->gettotal_retailersForindex();
+$totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_date);
 ?>
 
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
@@ -56,44 +56,64 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex();
     <h4>Orders</h4>
     <div class="right_date">
         <?php
-        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+       $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'model' => $model,
            'name' => 'start_date',
-           // 'attribute' => 'start_date',
-            // 'flat' => false, //remove to hide the datepicker
+           'attribute' => 'start_date',
+            'flat' => false, //remove to hide the datepicker
             'options' => array(
                 'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-                // 'minDate' => 0,
-                'dateFormat' => 'dd-mm-yy',
-                
-            ),
+               // 'minDate' => 0,
+               'dateFormat' => 'dd-mm-yy',
+               
+           ),
             'value'=>$start_date,
             'htmlOptions' => array(
-                'style' => ''
-            ),
-        ));
+             'style' => ''
+         ),
+      ));
+    
         ?>
         <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
 
         <label>To</label>
         <!--<input name="end_date" class=""  type="text" value="" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
         <?php
-        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-            'model' => $model,
-            'name' => 'end_date',
-         //   'attribute' => 'end_date',
-            // 'flat' => false, //remove to hide the datepicker
-            'options' => array(
-                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-                // 'minDate' => 0,
-                'dateFormat' => 'dd-mm-yy',
-               
-            ),
-             'value'=>$end_date,
-            'htmlOptions' => array(
-                'style' => ''
-            ),
-        ));
+//        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+//            'model' => $model,
+//            'name' => 'end_date',
+//         //   'attribute' => 'end_date',
+//            // 'flat' => false, //remove to hide the datepicker
+//            'options' => array(
+//                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
+//                // 'minDate' => 0,
+//                'dateFormat' => 'dd-mm-yy',
+//               
+//            ),
+//             'value'=>$end_date,
+//            'htmlOptions' => array(
+//                'style' => ''
+//            ),
+//        ));
+        
+        $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'attribute' => 'end_date', 
+            'value'=>$model->end_date,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array(),
+            )); 
+           echo $form->error($model,'end_date'); 
+        
+        
+        
+        
         ?>        
         <input name="filter" class="button_new" type="submit" value="Filter" />
     </div>
@@ -109,7 +129,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex();
             </td>
             <td class="gray">
                 <h5><?php echo $total_shippedOrder; ?></h5>
-                <span>Shipped</span>
+                <span>Confirmed</span>
             </td>
             <td>
                 <h5><?php echo $total_cancelledOrder; ?></h5>
@@ -117,7 +137,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex();
             </td>
             <td class="gray" >
                 <h5><?php echo $total_returnOrder; ?></h5>
-                <span>Return</span>
+                <span>Delivered</span>
             </td>
         </tr>
     </table>
@@ -141,7 +161,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex();
             </div>
             <div class="conten_boxright">
                 <span>Total Category</span>
-                <span><?php echo $Total_linesheet -2; ?></span>
+                <span><?php if($Total_linesheet!=0){echo $Total_linesheet -2;}else{echo "0";} ?></span>
             </div>
         </div>
     </div>

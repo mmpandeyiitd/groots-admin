@@ -62,6 +62,14 @@ if(Yii::app()->controller->id=="store"){
     }    
      
 }
+else if($_REQUEST['r']=='SubscribedProduct/admin'){
+    
+    if(Yii::app()->controller->action->id=="admin"){
+        
+       echo "MAP PRODUCT"; 
+    }    
+     
+}
 else if(Yii::app()->controller->id=="storeFront"){
      if(Yii::app()->controller->action->id=="create"){
         echo "Creat Line Sheet";
@@ -79,13 +87,13 @@ else if(Yii::app()->controller->id=="storeFront"){
     }
 }else if(Yii::app()->controller->id=="retailerProductQuotation"){
      if(Yii::app()->controller->action->id=="create"){
-        echo "Creat Retailer Product";
+        echo "Creat Buyers Product";
     }elseif(Yii::app()->controller->action->id=="update"){
         
-        echo "Edit Retailer Product"; 
+        echo "Edit Buyers Product"; 
     }
     elseif(Yii::app()->controller->action->id=="admin"){        
-       echo "Line Retailer Product"; 
+       echo "Line Buyers Product"; 
     }
    
 }else if(Yii::app()->controller->id=="pressRelease"){
@@ -136,18 +144,18 @@ else if(Yii::app()->controller->id=="storeFront"){
     
 }elseif(Yii::app()->controller->id=="retailer"){
   if(Yii::app()->controller->action->id=="admin"){
-        echo "Retailer List";
+        echo "Buyers List";
     }elseif(Yii::app()->controller->action->id=="create"){
-        echo "create Retailer";
+        echo "create Buyers";
     }
     elseif(Yii::app()->controller->action->id=="update"){
-        echo "Edit Retailer";
+        echo "Edit Buyers";
     }else{
         echo Yii::app()->controller->action->id." ".Yii::app()->controller->id;
     }
 }elseif(Yii::app()->controller->id=="retailerRequest"){
     if(Yii::app()->controller->action->id=="admin"){
-        echo "Retailer Request List";
+        echo "Buyers Request List";
     }else{
         echo Yii::app()->controller->action->id." ".Yii::app()->controller->id;
     }

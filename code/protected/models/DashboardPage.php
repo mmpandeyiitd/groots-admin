@@ -89,7 +89,7 @@ class DashboardPage extends CActiveRecord {
         return parent::model($className);
     }
 
-    public function getTotalLinesheet() {
+    public function getTotalLinesheet($start_date, $end_date) {
 
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
@@ -97,10 +97,15 @@ class DashboardPage extends CActiveRecord {
         } else {
             $store_id = Yii::app()->session['brand_id'];
         }
+        $cDate = date("Y-m-d H:i:s", strtotime($start_date));
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $row = 0;
         if ($issuperadmin) {
-            $sql = "select count(category_id) from category";
+            $sql = "select count(category_id) from category where 1=1";
         }
+         if (!empty($start_date) && !empty($end_date)) {
+                 $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
+            }
         // echo $sql;die;
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
@@ -123,11 +128,8 @@ class DashboardPage extends CActiveRecord {
         $store_id = 1;
 
         if ($issuperadmin == 1) {
-
             $cDate = date("Y-m-d H:i:s", strtotime($start_date));
-            $eDate = date("Y-m-d", strtotime($end_date));
-            $cdate1 = $eDate . ' 23:59:00';
-            // echo $eDate1;die;
+            $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
             $sql = "select order_id from order_header  WHERE 1=1";
             //echo $start_date; echo "kuldeep".$end_date;die;
             if (!empty($start_date) && !empty($end_date)) {
@@ -162,8 +164,7 @@ class DashboardPage extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
-        $eDate = date("Y-m-d", strtotime($end_date));
-        $cdate1 = $eDate . ' 23:59:00';
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $pendding_order = 0;
         if ($issuperadmin == 1) {
             $sql = "select count(order_id) from order_header where status= '" . "pending" . "'";
@@ -196,13 +197,12 @@ class DashboardPage extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
-        $eDate = date("Y-m-d", strtotime($end_date));
-        $cdate1 = $eDate . ' 23:59:00';
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $pendding_order = 0;
         if ($issuperadmin == 1) {
-            $sql = "select count(order_id) from order_header where status= '" . "shipped" . "'";
+            $sql = "select count(order_id) from order_header where status= '" . "Confirmed" . "'";
             if (!empty($start_date) && !empty($end_date)) {
-                $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
+                 $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
             }
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sql);
@@ -229,8 +229,7 @@ class DashboardPage extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
          $cDate = date("Y-m-d H:i:s", strtotime($start_date));
-        $eDate = date("Y-m-d", strtotime($end_date));
-        $cdate1 = $eDate . ' 23:59:00';
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $pendding_order = 0;
         if ($issuperadmin == 1) {
             $sql = "select count(order_id) from order_header where status= '" . "Cancelled" . "'";
@@ -262,11 +261,10 @@ class DashboardPage extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
-        $eDate = date("Y-m-d", strtotime($end_date));
-        $cdate1 = $eDate . ' 23:59:00';
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $pendding_order = 0;
         if ($issuperadmin == 1) {
-            $sql = "select count(order_id) from order_header where status= '" . "returned" . "'";
+            $sql = "select count(order_id) from order_header where status= '" . "Delivered" . "'";
             if (!empty($start_date) && !empty($end_date)) {
                 $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
             }
