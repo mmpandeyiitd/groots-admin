@@ -145,7 +145,7 @@ if (is_numeric($store_id)) {
             $lineinfodeltail = $linedescinfo->getlinedetailcById($value->id);
            if (!empty($lineinfo)) {
              
-                $qtytotal = $lineinfo[$i]['product_qty'] + $lineinfo[1]['product_qty'] + $lineinfo[2]['product_qty'] + $lineinfo[3]['product_qty'] + $lineinfo[4]['$lineinfo'] + $lineinfo[5]['product_qty'];
+                $qtytotal = $lineinfo[0]['product_qty'] + $lineinfo[1]['product_qty'] + $lineinfo[2]['product_qty'] + $lineinfo[3]['product_qty'] + $lineinfo[4]['$lineinfo'] + $lineinfo[5]['product_qty'];
             }
             $wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price'] - $lineinfodeltail[0]['unit_price_discount']);
             $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
