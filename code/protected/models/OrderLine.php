@@ -198,12 +198,12 @@ class OrderLine extends CActiveRecord
         }
         return $lineidinfo;
     } 
-    public function getlinedescById($lineid= null){
+    public function getlinedescById($lineid = null){
         $lineidinfo ='';
         
         if(!empty($lineid)){
             $connection = Yii::app()->secondaryDb;
-            $sql = "Select * FROM order_line where id = $lineid";
+            $sql = "Select * FROM line_description where line_id = $lineid";
             $command = $connection->createCommand($sql);
             $command->execute();
             $lineidinfo= $command->queryAll();
