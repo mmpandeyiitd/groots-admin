@@ -2,7 +2,7 @@
 /* @var $this RetailerController */
 /* @var $model Retailer */
 $this->breadcrumbs=array(
-	'Retailers'=>array('admin'),
+	'Buyers'=>array('admin'),
 	 $model->name=>array('update','id'=>$model->id),
 	'Update',
 );

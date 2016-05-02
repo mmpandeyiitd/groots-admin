@@ -19,7 +19,7 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	 <div class="row">
-                <label for="retailer_id"><?php echo 'Retailer Id *' ?></label>
+                <label for="retailer_id"><?php echo 'Buyers Id *' ?></label>
                 <input type="text" name="retailer_id" value="<?php echo  $retailer_id; ?>" readonly/>
             </div>
     

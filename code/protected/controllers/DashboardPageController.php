@@ -114,22 +114,20 @@ class DashboardPageController extends Controller {
      */
     public function actionIndex() {
         $model = new DashboardPage;
-//          echo '<pre>';
-//        print_r($_SESSION);die;
         $start_date = '';
         $end_date = '';
         //if (isset($_POST['DashboardPage'])) {
-            //$model->attributes = $_POST['DashboardPage'];
-            if (isset($_POST['filter'])) {
-                  $start_date = $_POST['start_date'];
-                  $end_date =  $_POST['end_date'];
-                  if($start_date>$end_date){
-                     Yii::app()->user->setFlash('error', 'End date always greater than Start date');
-                      Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-                  }
-                  
-          
+        //$model->attributes = $_POST['DashboardPage'];
+        if (isset($_POST['filter'])) {
+            $start_date = $_POST['DashboardPage']['start_date'];
+            $end_date = $_POST['DashboardPage']['end_date'];
+            $cDate = date("Y-m-d H:i:s", strtotime($start_date));
+            $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
+            if ($cDate > $cdate1) {
+                Yii::app()->user->setFlash('error', 'End date always greater than Start date');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
+        }
         //}
         $this->render('index', array(
             'model' => $model,
@@ -179,10 +177,10 @@ class DashboardPageController extends Controller {
 
     protected function beforeAction($action) {
 
-       $session = Yii::app()->session['user_id'];
+        $session = Yii::app()->session['user_id'];
 
         if ($session == '') {
-           echo Yii::app()->controller->redirect("index.php?r=site/login");
+            echo Yii::app()->controller->redirect("index.php?r=site/login");
         }
         return true;
     }

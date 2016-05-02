@@ -55,8 +55,9 @@ class RetailerProductQuotationController extends Controller {
             $sub_id=$_REQUEST['id'];
             $re_id=$_REQUEST['retailer_id'];
             $model->updatelog($sub_id,$re_id);
-            $model->Delete_retelar($sub_id,$re_id);
             $model->solrbacklogRetailerProductQuotation($sub_id,$re_id);
+            $model->Delete_retelar($sub_id,$re_id);
+            
            
         }
         $this->redirect(array('retailerProductQuotation/admin&id=' . $re_id . ''));

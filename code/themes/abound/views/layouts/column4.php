@@ -30,11 +30,11 @@ if (Yii::app()->controller->id == "DashboardPage") {
     }
 } else if (Yii::app()->controller->id == "retailer") {
     if (Yii::app()->controller->action->id == "create" && substr_count(Yii::app()->session['premission_info']['module_info']['retailers'], 'R') > 0) {
-        echo '<li><a href="index.php?r=retailer/admin">Admin Retailer List</a></li> ';
+        echo '<li><a href="index.php?r=retailer/admin">Admin Buyers List</a></li> ';
     } else if (Yii::app()->controller->action->id == "update" && substr_count(Yii::app()->session['premission_info']['module_info']['retailers'], 'R') > 0) {
-        echo '<li><a href="index.php?r=retailer/admin">Admin Retailer List</a></li> ';
+        echo '<li><a href="index.php?r=retailer/admin">Admin Buyers List</a></li> ';
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['retailers'], 'C') > 0) {
-        echo '<li><a href="index.php?r=retailer/create">Create Retailer </a></li> ';
+        echo '<li><a href="index.php?r=retailer/create">Create Buyers </a></li> ';
     }
 }  else if (Yii::app()->controller->id == "retailerProductQuotation") {
     //echo '<pre>';print_r($_REQUEST);die;

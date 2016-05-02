@@ -20,7 +20,7 @@
 
 	
        <div class="row">
-                <label for="grade"><?php echo 'Retailer Id *' ?></label>
+                <label for="grade"><?php echo 'Buyers Id *' ?></label>
                 <input type="text" name="a" value="<?php echo  $_REQUEST['retailer_id']; ?>" readonly/>
             </div>
      <div class="row">

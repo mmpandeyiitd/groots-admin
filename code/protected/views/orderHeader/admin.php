@@ -57,6 +57,7 @@ function confirmation_function() {
      <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
 <input name="cancelbutton" class="activebutton" value="Cancel Order" type="submit" 
        onclick='return confirm("Do you want to cancel");'/>
+<input  type="submit" name="sandbutton" class="activebutton" value="send CSV File" />
 <input  type="submit" name="downloadbutton" class="activebutton" value="Download CSV File" />
 <?php
 //$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
@@ -130,11 +131,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'type' => 'raw',
             'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
         ),
-        'link1' => array(
+        /*'link1' => array(
             'header' => 'Dispatch',
             'type' => 'raw',
             'value' => 'CHtml::button("Dispatch",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/dispatch",array("id"=>$data->order_id))."\'"))',
-        )
+        )*/
     ),
 ));
 

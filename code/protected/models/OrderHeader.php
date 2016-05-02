@@ -59,7 +59,8 @@ class OrderHeader extends CActiveRecord {
     private $oldAttrs = array();
     public $secondaryDb = null;
     public $store_id;
-   // public $status_array;
+
+    // public $status_array;
 
     public function tableName() {
         return 'order_header';
@@ -145,7 +146,7 @@ class OrderHeader extends CActiveRecord {
             'payment_ref_id' => 'Payment Ref',
             'payment_gateway_name' => 'Payment Gateway Name',
             'payment_source' => 'Payment Source',
-           // 'order_source' => 'Order Source',
+            // 'order_source' => 'Order Source',
             'timestamp' => 'Timestamp',
             'transaction_id' => 'Transaction',
             'bank_transaction_id' => 'Bank Transaction',
@@ -186,16 +187,16 @@ class OrderHeader extends CActiveRecord {
         } else {
             $store_id = Yii::app()->session['brand_id'];
         }
- $criteria = new CDbCriteria;
-        if(isset($_GET['retailer_id'])){
-             if (!empty($criteria->condition)) {
+        $criteria = new CDbCriteria;
+        if (isset($_GET['retailer_id'])) {
+            if (!empty($criteria->condition)) {
                 $criteria->condition .= ' AND ';
             }
-          $user_id=$_GET['retailer_id'];
-            $criteria->condition .= 'user_id  ='.$user_id ;
+            $user_id = $_GET['retailer_id'];
+            $criteria->condition .= 'user_id  =' . $user_id;
         }
-        
-       
+
+
 
         if (is_numeric($store_id)) {
             if (!empty($criteria->condition)) {
@@ -294,6 +295,14 @@ class OrderHeader extends CActiveRecord {
         return parent::model($className);
     }
 
+    public function allcheckproductlcsv() {
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT `order_id` FROM `order_header`";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $bsae_id = $command->queryAll();
+    }
+
     public function getDbConnection() {
         return Yii::app()->secondaryDb;
     }
@@ -349,8 +358,8 @@ class OrderHeader extends CActiveRecord {
         $row = $command->queryScalar();
         return $row;
     }
-    
-     public function getorder_lineDescription($order_id) {
+
+    public function getorder_lineDescription($order_id) {
         $connection = Yii::app()->secondaryDb;
         $sql = "select * from line_description where line_id in (select id from order_line where order_id=$order_id)";
         $command = $connection->createCommand($sql);
@@ -358,16 +367,16 @@ class OrderHeader extends CActiveRecord {
         $row = $command->queryAll();
         return $row;
     }
-    
+
     public function GetOrderdetail($order_id) {
         $connection = Yii::app()->db;
-        
-       // $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=353  group by `ol`.`colour``.`order_line` `ol`  where ol.order_id=$order_id  group by `ol`.`colour`";      
-      //   $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=$order_id group by `ol`.`colour`";      
-       $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`bp`.`minimum_order_quantity` separator ',') AS `min_order_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `order_line` `ol` left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id left join `cb_dev_groots`.subscribed_product sp on sp.subscribed_product_id=ol.subscribed_product_id  where ol.order_id=$order_id  group by `ol`.`colour`,`ol`.`product_name`";
+
+        // $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=353  group by `ol`.`colour``.`order_line` `ol`  where ol.order_id=$order_id  group by `ol`.`colour`";      
+        //   $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=$order_id group by `ol`.`colour`";      
+        $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`bp`.`minimum_order_quantity` separator ',') AS `min_order_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `order_line` `ol` left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id left join `cb_dev_groots`.subscribed_product sp on sp.subscribed_product_id=ol.subscribed_product_id  where ol.order_id=$order_id  group by `ol`.`colour`,`ol`.`product_name`";
 //echo $sql;die;
         $connection = Yii::app()->secondaryDb;
-       // $connection = Yii::app()->db;
+        // $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
         $row = $command->queryAll();
@@ -410,7 +419,9 @@ class OrderHeader extends CActiveRecord {
         // $succ = false;
         if (!empty($store_front_ids)) {
 
-            $sqlchksubsid = "select order_number as Order_ID,shipping_name as User_Name,shipping_phone as Contact_No,shipping_email as Email, shipping_address as Address, shipping_city as City, shipping_state as State,shipping_pincode as Pincode ,total as Amount from `order_header` where order_id in(" . $store_front_ids . ")";
+            $sqlchksubsid = "SELECT  `oh`.`order_number` AS Order_ID,  `unit_price` ,  `product_qty` , CONCAT(  `bp`.`pack_size` ,  `bp`.`pack_unit` ) AS 'pack_size',  `unit_price` *  `product_qty` AS  'total_price'
+FROM  `order_line`  `ol` LEFT JOIN  `order_header`  `oh` ON oh.order_id = ol.order_id
+LEFT JOIN  `cb_dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_product_id WHERE ol.`order_id` in(" . $store_front_ids . ")";
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($sqlchksubsid);
             $command->execute();
@@ -438,7 +449,77 @@ class OrderHeader extends CActiveRecord {
             ob_flush();
         }
     }
+    
 
-   
+    public static function downloadCSVByID($store_front_ids) {
+        // $succ = false;
+        if (!empty($store_front_ids)) {
+
+            $sqlchksubsid = "SELECT  `oh`.`order_number` AS Order_ID,  `unit_price` ,  `product_qty` , CONCAT(  `bp`.`pack_size` ,  `bp`.`pack_unit` ) AS 'pack_size',  `unit_price` *  `product_qty` AS  'total_price'
+FROM  `order_line`  `ol` LEFT JOIN  `order_header`  `oh` ON oh.order_id = ol.order_id
+LEFT JOIN  `cb_dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_product_id WHERE ol.`order_id` in(" . $store_front_ids . ")";
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sqlchksubsid);
+            $command->execute();
+            $assocDataArray = $command->queryAll();
+            $csv_name = "order_" . date("d-m-Y_H-i", time()) . ".csv";
+            $csv_filename = "feeds/order_csv/" . $csv_name;
+            $fp = fopen($csv_filename, 'w');
+            $print_result = 'OrderID,unit_price,product_qty,pack_size,total_price';
+            $val = explode(",", $print_result);
+            fputcsv($fp, $val);
+            if (isset($assocDataArray['0'])) {
+                $fp = fopen($csv_filename, 'w');
+                $columnstring = implode(',', array_keys($assocDataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($assocDataArray AS $values) {
+                    fputcsv($fp, $values);
+                }
+                fread($fp, 10);
+                fclose($fp);
+            }
+            ob_flush();
+            $from_email = 'grootsadmin@groots.in';
+            $from_name = 'Groots Dashboard Admin';
+            $subject = 'Order Report';
+
+            $body_text = 'Hi, Please find the Order Report as attached CSV file.';
+            $body_html = '';
+           // $body_text = '';
+
+            $mailArray = array(
+                'to' => array(
+                    '0' => array(
+                        'email' => 'kuldeep@canbrand.in',
+                    ),
+                     '1' => array(
+                        'email' => 'praveen@canbrand.in',
+                    )
+                ),
+                'from' => $from_email,
+                'fromname' => $from_name,
+                'subject' => $subject,
+                'html' => $body_html,
+                'text' => $body_text,
+                'replyto' => $from_email,
+                'files' => array(
+                    '0' => array(
+                        'name' => $csv_name,
+                        'path' => $csv_filename,
+                    )
+                ),
+            );
+            $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
+            $mailsend = new OrderLine();
+            $resp = $mailsend->sgSendMail($mailArray);
+            $myfile = fopen($urldata,'a') or die("Unable to open file!");
+            $txt = date('Y-m-d h:i:s') . " : " . $resp . "\n";
+            fwrite($myfile, $txt);
+            fclose($myfile);
+        }
+    }
 
 }

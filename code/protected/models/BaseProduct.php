@@ -581,18 +581,22 @@ class BaseProduct extends CActiveRecord {
         return false;
     }
 
-    public function getproductCount() {
+    public function getproductCount($start_date, $end_date) {
         $issuperadmin = Yii::app()->session['is_super_admin'];
-        if ($issuperadmin) {
+       /* if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
         } else {
             $store_id = Yii::app()->session['brand_id'];
-        }
+        }*/
+         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
+        $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
+        $store_id=1;
         $row = 0;
-        if ($issuperadmin == 1) {
-            $sql = "select count(base_product_id) from subscribed_product";
-        } else if (is_numeric($store_id)) {
+        if (is_numeric($store_id)) {
             $sql = "select count(base_product_id) from subscribed_product where store_id=" . $store_id;
+        } 
+        if (!empty($start_date) && !empty($end_date)) {
+        $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
         }
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);

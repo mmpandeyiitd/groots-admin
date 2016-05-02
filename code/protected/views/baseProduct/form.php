@@ -303,6 +303,7 @@ if ($issuperadmin == 1) {
             ));
             ?>
             <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>
+             <p class="fileupload_note" >Maximum 2 images upload</p>
         </div>
 
         <?php
@@ -321,14 +322,15 @@ if ($issuperadmin == 1) {
                 </thead>
 
                 <tbody id="media_gallery_body">
-                    <?php foreach ($media as $_media) { ?>
+                    <?php $i=1;
+                    foreach ($media as $_media) { ?>
                         <tr style=" margin-top:5px;">					
                             <td><img style="width: 100px;" src="<?php echo $_media->thumb_url; ?>"></td>
                             <td style="text-align:center;"><input type="radio" name="media_is_default" value="<?php echo $_media->media_id; ?>" <?php if ($_media->is_default) echo 'checked'; ?>></td>
                             <td style="text-align:center;"><input type="checkbox" name="media_remove[]" value="<?php echo $_media->media_id; ?>"></td>
                         </tr>
                         <?php
-                    }
+                      if ($i++ == 2) break; }
                 }
                 ?>
             </tbody>

@@ -3,7 +3,7 @@
 /* @var $model Retailer */
 
 $this->breadcrumbs = array(
-    'Retailers' => array('admin'),
+    'Buyers' => array('admin'),
     'Manage',
 );
 if (array_key_exists('retailers', Yii::app()->session['premission_info']['module_info'])) {
