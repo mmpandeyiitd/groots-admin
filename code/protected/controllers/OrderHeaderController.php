@@ -40,15 +40,15 @@ class OrderHeaderController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'sales_by_retailer','sales_by_retailer_detail', 'sale_by_style','sale_by_style_dateial', 'sale_summery','sale_summery_detail', 'view', 'admin', 'report', 'Dispatch'),
+                'actions' => array('index', 'sales_by_retailer', 'sales_by_retailer_detail', 'sale_by_style', 'sale_by_style_dateial', 'sale_summery', 'sale_summery_detail', 'view', 'Reportnew', 'admin', 'report', 'Dispatch'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'report', 'Dispatch'),
+                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete', 'admin', 'report'),
+                'actions' => array('admin', 'delete', 'admin', 'Reportnew', 'report'),
                 'users' => array('admin'),
             ),
             array('deny', // deny all users
@@ -97,83 +97,135 @@ class OrderHeaderController extends Controller {
         $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $modelOrder = $this->loadModel($id);
 
-
-        // $model1= new OrderLine; 
-        // echo "<pre>";
-        // print_r($_REQUEST);
+        $email = $modelOrder->attributes['billing_email'];
 
         if (isset($_POST['Update'])) {
-
-            //........................chk .....................//
             $totalchk = 0;
-            $unit_price_discount=array();
-//            foreach ($_POST['total_price_discount'] as $key => $value) {
-//                $totalchk = $value + $totalchk;
-//            }
-//            $totalchk = $totalchk + $_POST['gtotal_price_discount'];
-//
-//            if ($totalchk > $_POST['grand_total']) {
-//                Yii::app()->user->setFlash('error', 'Grand total can,t be less than Zero.');
-//                $this->redirect(array('OrderHeader/update', 'id' => $_REQUEST['order_id']));
-//            } else {
-                //....................end..........................//
-                $linedescinfo = new OrderLine;
-                $status=array();
-                
-                  if(isset($_POST['Status'])){
-                    $status= $_POST['Status'];
-                    $no_Status=  count($_POST['Status']);
-                  for($p=0;$p<$no_Status;$p++) {
-                    $status_data=  explode('<>',$status[$p]);
-                    $update_status=$status_data[0];
-                    $orderline_ids=$status_data[1];
-                    $lineinfo = $linedescinfo->UpdatedStatus($update_status, $orderline_ids,$_REQUEST['order_id']);
-                 }
-                  }
-             if(isset($_POST['unit_price_discount'])&&isset($_POST['unit_price_discount_old'])&&!empty($_POST['orderline_ids_discount'])){  
-                 $no_records=  count($_POST['unit_price_discount']);
-                 for($p=0;$p<$no_records;$p++) {
-                     
-                       $unit_price_discount=$_POST['unit_price_discount'][$p];
-                       $unit_price_discount_old=$_POST['unit_price_discount_old'][$p];
-                       $unit_price=$_POST['unit_price'][$p];
-                       $status_update=$status[$p];
-                         $orderline_ids_discount=$_POST['orderline_ids_discount'][$p];       
-                    //   die;
-                       if($unit_price_discount!=$unit_price_discount_old && $unit_price>=$unit_price_discount){
-                        $lineinfo = $linedescinfo->Updatediscountquantity($unit_price_discount, $orderline_ids_discount);
-                           Yii::app()->user->setFlash('success', 'Unit Price updated Successfully.');
-                        }
-                   }
-             }
-                if(isset($_POST['uniq_order_size'])&&isset($_POST['sizeqty'])&&isset($_POST['sizeqty_old'])){
-                  $no_records=  count($_POST['uniq_order_size']);
-               
-                  
-                for($i=0;$i<$no_records;$i++) {
-                    $uniq_order_size=$_POST['uniq_order_size'][$i];
-                     $size_detail=  explode('>', $uniq_order_size);
-                     $order_line_id=$size_detail[0];
-                     $baseproduct_id=$size_detail[1];
-                     $size_quantity=$_POST['sizeqty'][$i];
-                     $sizeqty_old=$_POST['sizeqty_old'][$i];
-                   //  $unit_price_discount_qnt=$_POST['unit_price_discount'][$i];
-                     
-                     if($sizeqty_old!=$size_quantity){
-                     $lineinfo = $linedescinfo->Updatesizequantity($order_line_id, $baseproduct_id,$size_quantity);
-                      Yii::app()->user->setFlash('success', 'Size Quantity updated Successfully.');
-                     }
-                }
-                }
+            $unit_price_discount = array();
+            //....................end..........................//
+            $linedescinfo = new OrderLine;
+            $linedescinforeport = new OrderHeader;
+            $status = array();
+            if (isset($_POST['Status']['0'])) {
+                $status = $_POST['Status'];
+                $no_Status = count($_POST['Status']['0']);
+                $update_status = $_POST['Status']['0'];
+                $status_data[0] = $_POST['Status']['0'];
+                $lineinfo = $linedescinfo->UpdatedStatus($update_status, $_REQUEST['order_id']);
 
-              //  $oderdescinfo = new OrderHeader;
+                //echo $reportdata;die;
+            }
+            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Out for Delivery') {
+                $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $from_email = 'grootsadmin@groots.in';
+                $from_name = 'Groots Dashboard Admin';
+                $subject = 'Groots Buyer Account';
+                $urldata = Yii::app()->params['target_app_url'];
+                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0]  . ',
+                                            <br/><br/>';
+                $body_text = '';
+
+                $mailArray = array(
+                    'to' => array(
+                        '0' => array(
+                            'email' => "$email",
+                        )
+                    ),
+                    'from' => $from_email,
+                    'fromname' => $from_name,
+                    'subject' => $subject,
+                    'html' => $body_html,
+                    'text' => $body_text,
+                    'replyto' => $from_email,
+                );
+                $mailsend = new OrderLine();
+                $resp = $mailsend->sgSendMail($mailArray);
+               
+            }
+             if ($status_data[0] = 'Delivered') {
+                $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $csv_name ='name.pdf';
+                $csv_filename = "feeds/order_csv/" . $csv_name;
+                $from_email = 'grootsadmin@groots.in';
+                $from_name = 'Groots Dashboard Admin';
+                $subject = 'Groots Buyer Account';
+                $urldata = Yii::app()->params['target_app_url'];
+                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0]  . ',
+                                            <br/><br/>';
+                $body_text = '';
+
+                $mailArray = array(
+                    'to' => array(
+                        '0' => array(
+                            'email' => "$email",
+                        )
+                    ),
+                    'from' => $from_email,
+                    'fromname' => $from_name,
+                    'subject' => $subject,
+                    'html' => $body_html,
+                    'text' => $body_text,
+                     'files' => array(
+                    '0' => array(
+                        'name' => $csv_name,
+                        'path' => $csv_filename,
+                    )
+                ),
+                    'replyto' => $from_email,
+                );
+                $mailsend = new OrderLine();
+                $resp = $mailsend->sgSendMail($mailArray);
+                $myfile = fopen($urldata, 'a') or die("Unable to open file!");
+                $txt = date('Y-m-d h:i:s') . " : " . $resp . "\n";
+                fwrite($myfile, $txt);
+                fclose($myfile);
+            }
+
+
+            if (isset($_POST['unit_price_discount']) && isset($_POST['unit_price_discount_old']) && !empty($_POST['orderline_ids_discount'])) {
+                $no_records = count($_POST['unit_price_discount']);
+                for ($p = 0; $p < $no_records; $p++) {
+
+                    $unit_price_discount = $_POST['unit_price_discount'][$p];
+                    $unit_price_discount_old = $_POST['unit_price_discount_old'][$p];
+                    $unit_price = $_POST['unit_price'][$p];
+                    $status_update = $status[$p];
+                    $orderline_ids_discount = $_POST['orderline_ids_discount'][$p];
+                    //   die;
+                    if ($unit_price_discount != $unit_price_discount_old && $unit_price >= $unit_price_discount) {
+                        $lineinfo = $linedescinfo->Updatediscountquantity($unit_price_discount, $orderline_ids_discount);
+                        Yii::app()->user->setFlash('success', 'Unit Price updated Successfully.');
+                    }
+                }
+            }
+            if (isset($_POST['uniq_order_size']) && isset($_POST['sizeqty']) && isset($_POST['sizeqty_old'])) {
+                $no_records = count($_POST['uniq_order_size']);
+
+
+                for ($i = 0; $i < $no_records; $i++) {
+                    $uniq_order_size = $_POST['uniq_order_size'][$i];
+                    $size_detail = explode('>', $uniq_order_size);
+                    $order_line_id = $size_detail[0];
+                    $baseproduct_id = $size_detail[1];
+                    $size_quantity = $_POST['sizeqty'][$i];
+                    $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    //  $unit_price_discount_qnt=$_POST['unit_price_discount'][$i];
+
+                    if ($sizeqty_old != $size_quantity) {
+                        $lineinfo = $linedescinfo->Updatesizequantity($order_line_id, $baseproduct_id, $size_quantity);
+                        Yii::app()->user->setFlash('success', 'Size Quantity updated Successfully.');
+                    }
+                }
+            }
+
+            //  $oderdescinfo = new OrderHeader;
             //  $orderinfo = $oderdescinfo->updatelinedescById($_POST['order_id'], $_POST['grand_total'], $_POST['gtotal_price_discount']);
 
 
 
-                $this->redirect(array('OrderHeader/update', 'id' => $_POST['order_id'],));
-               //  $this->redirect(array('OrderLine/update', 'id' => $_POST['id'], 'order_id' => $_POST['order_id'], 'status' => $_POST['Status'], 'unit_price_discount' => $_POST['unit_price_discount'], 'total_price_discount' => $_POST['total_price_discount']));
-           // }
+            $this->redirect(array('OrderHeader/update', 'id' => $_POST['order_id'],));
+            //  $this->redirect(array('OrderLine/update', 'id' => $_POST['id'], 'order_id' => $_POST['order_id'], 'status' => $_POST['Status'], 'unit_price_discount' => $_POST['unit_price_discount'], 'total_price_discount' => $_POST['total_price_discount']));
+            // }
         }
 
         #............update Shipping Address............
@@ -221,7 +273,6 @@ class OrderHeaderController extends Controller {
         $qty = array();
         $track_id = '';
         $remaining_qty = array();
-
         if (isset($_POST['save'])) {
 
             if (isset($_POST['order_id'])) {
@@ -263,6 +314,7 @@ class OrderHeaderController extends Controller {
 
             $flag = 0;
             $count_record = count($qty);
+
 
             for ($i = 0; $i < $count_record; $i++) {
                 $dispatch_model->subscribed_product_id = $subscribed_product[$i];
@@ -344,8 +396,8 @@ class OrderHeaderController extends Controller {
             'model' => $model,
         ));
     }
-    
-     public function actionsale_summery_detail() {
+
+    public function actionsale_summery_detail() {
         $model = new SalesSummery('search_1');
 
         $model->unsetAttributes();  // clear any default values
@@ -368,6 +420,7 @@ class OrderHeaderController extends Controller {
             'model' => $model,
         ));
     }
+
     public function actionsale_by_style_detail() {
         $model = new SaleByStyles('search_1');
 
@@ -391,8 +444,9 @@ class OrderHeaderController extends Controller {
             'model' => $model,
         ));
     }
-     public function actionsales_by_retailer_detail() {
-         $model = new OrderHeader('search');
+
+    public function actionsales_by_retailer_detail() {
+        $model = new OrderHeader('search');
 
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['SaleByRetailer']))
@@ -445,9 +499,55 @@ class OrderHeaderController extends Controller {
                     ob_flush();
                     exit();
                 }
-            } else {
-                Yii::app()->user->setFlash('premission_info', 'Please select at least one order.');
+            }else {
+                $sub_ids = $model->allcheckproductlcsv();
+                if (count($sub_ids) > 0) {
+                    for ($i = 0; $i < count($sub_ids); $i++) {
+                        $subpro_id[] = implode(',', $sub_ids[$i]);
+                    }
+                    if (count($sub_ids) > 0) {
+                        //echo "hello222";die;
+                        $subpro_id_new = implode(',', $subpro_id);
+                    }
+                }
+                ob_clean();
+                $response = $model->downloadCSVByIDs($subpro_id_new);
+                ob_flush();
+
+
+                // exit();
             }
+        }
+        if (isset($_POST['sandbutton'])) {
+
+            if (isset($_POST['selectedIds'])) {
+                $no_of_selectedIds = count($_POST['selectedIds']);
+                if ($no_of_selectedIds > 0) {
+                    $order_ids = implode(',', $_POST['selectedIds']);
+                    ob_clean();
+                    $response = $model->downloadCSVByID($order_ids);
+                    ob_flush();
+                    exit();
+                }
+            } else {
+                $sub_ids = $model->allcheckproductlcsv();
+                if (count($sub_ids) > 0) {
+                    for ($i = 0; $i < count($sub_ids); $i++) {
+                        $subpro_id[] = implode(',', $sub_ids[$i]);
+                    }
+                    if (count($sub_ids) > 0) {
+                        //echo "hello222";die;
+                        $subpro_id_new = implode(',', $subpro_id);
+                    }
+                }
+                ob_clean();
+                $response = $model->downloadCSVByID($subpro_id_new);
+                ob_flush();
+
+
+                // exit();
+            }
+            // Yii::app()->user->setFlash('premission_info', 'done.');
         }
 
 
@@ -485,11 +585,27 @@ class OrderHeaderController extends Controller {
     }
 
     public function actionReport($id) {
+        // echo "hello";die;
         $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $modelOrder = $this->loadModel($id);
         $this->renderPartial('reportview', array(
             'model' => $model,
             'modelOrder' => $modelOrder,
+        ));
+        //$this->renderPartial("reportview");
+    }
+
+    public function actionReportnew($id, $status, $email) {
+        //  echo $status;die;
+        $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
+        $modelOrder = $this->loadModel($id);
+        $store_model = new Store();
+        $this->renderPartial('reportviewdata', array(
+            'model' => $model,
+            'modelOrder' => $modelOrder,
+            'status' => $status,
+            'email' => $email,
+            'store_model'=> $store_model,
         ));
         //$this->renderPartial("reportview");
     }

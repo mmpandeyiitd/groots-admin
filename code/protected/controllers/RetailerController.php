@@ -110,11 +110,34 @@ class RetailerController extends Controller {
             $model->modified_date = date('Y-m-d H:i:s');
             $images = CUploadedFile::getInstancesByName('images');
             // echo count($images);die;
-             if (isset($_POST['status'])) {
+            if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
                 $model->status = 0;
             }
+            $from_email = 'grootsadmin@groots.in';
+            $from_name = 'Groots Dashboard Admin';
+            $subject = 'Groots Buyer Account';
+            $urldata = Yii::app()->params['target_app_url'];
+            $body_html = 'Hi  ' . $model->name . ' <br/> your account created successfully,<br/>Email</br>:  ' . $model->email . '<br/>Password</br>:  ' . $model->password . '<br/>you can download app </br>:  ' . $urldata . '
+                                            <br/><br/>';
+            $body_text = '';
+
+            $mailArray = array(
+                'to' => array(
+                    '0' => array(
+                        'email' => "$model->email",
+                    )
+                ),
+                'from' => $from_email,
+                'fromname' => $from_name,
+                'subject' => $subject,
+                'html' => $body_html,
+                'text' => $body_text,
+                'replyto' => $from_email,
+            );
+            $mailsend = new Store();
+            $resp = $model->sgSendMail($mailArray);
             if ($model->save()) {
                 if (isset($images) && count($images) > 0) {
                     foreach ($images as $image => $pic) {
@@ -200,8 +223,8 @@ class RetailerController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-        
-         //echo $_REQUEST['r'];die;
+
+        //echo $_REQUEST['r'];die;
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -215,13 +238,13 @@ class RetailerController extends Controller {
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
             $images = CUploadedFile::getInstancesByName('images');
-            $model_media=new MediaRetailer();
+            $model_media = new MediaRetailer();
             if (isset($_POST['media_remove'])) {
                 foreach ($_POST['media_remove'] as $keyrm => $valuerm) {
                     $mediaremove = $model_media->deleteMediaByMediaId($valuerm);
                 }
             }
-        if (isset($_POST['status'])) {
+            if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
                 $model->status = 0;
@@ -395,10 +418,10 @@ class RetailerController extends Controller {
             'model' => $model,
         ));
     }
-    
-      public function actionAdmin() {
+
+    public function actionAdmin() {
         // $model = new BaseProduct('search');
-          
+
         $model = new Retailer();
         // $model->unsetAttributes();
         //  $record = $model->getRecordById($id);
