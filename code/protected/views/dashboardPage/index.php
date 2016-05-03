@@ -56,7 +56,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
     <h4>Orders</h4>
     <div class="right_date">
         <?php
-       $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+      /* $this->widget('zii.widgets.jui.CJuiDatePicker', array(
             'model' => $model,
            'name' => 'start_date',
            'attribute' => 'start_date',
@@ -71,7 +71,21 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
             'htmlOptions' => array(
              'style' => ''
          ),
-      ));
+      ));*/
+       $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'attribute' => 'start_date', 
+            'value'=>$model->start_date,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array(),
+            )); 
+           echo $form->error($model,'start_date'); 
     
         ?>
         <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
@@ -177,6 +191,56 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
             </div>
         </div>
     </div>
+    <div class="dashboard-table">
+      <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
+    <h4>Download Orders Summary</h4>
+    <div class="right_date">
+        <?php
+    $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'name' => 'order_start_date', 
+            'value'=>$model->order_start_date,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array(),
+            )); 
+           echo $form->error($model,'order_start_date'); 
+    
+        ?>
+        <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
+
+        <label>To</label>
+        <!--<input name="end_date" class=""  type="text" value="" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
+        <?php
+         $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'name' => 'order_end_date', 
+            'value'=>$model->order_end_date,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array(),
+            )); 
+           echo $form->error($model,'order_end_date'); 
+        
+        
+        
+        
+        ?>        
+        <!--<input name="Download" class="button_new" type="submit" value="Download" />-->
+        <input  type="submit" name="downloadbutton" class="button_new" value="Download" />
+    </div>
+ 
+</div>
 
     <a href="index.php?r=orderHeader/admin" class="info_box">
 

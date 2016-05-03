@@ -285,5 +285,39 @@ class DashboardPage extends CActiveRecord {
         }
         return $pendding_order;
     }
+    public static function downloadCSVByIDs($oDate,$odate1) {
+    //    echo $oDate.$odate1;die;
+        // $succ = false;
+        
+
+            $sqlchksubsid = "SELECT product_name,grade,diameter,colour,CONCAT(pack_size,' ', pack_unit) AS pack_size ,sum(product_qty*pack_size) AS quantity FROM `order_line` WHERE (created_date BETWEEN '" . "$oDate" . "' AND '" . "$odate1" . "') group by subscribed_product_id";
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sqlchksubsid);
+            $command->execute();
+            $assocDataArray = $command->queryAll();
+            $fileName = "OrderLis.csv";
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            if (isset($assocDataArray['0'])) {
+                $fp = fopen('php://output', 'w');
+                $columnstring = implode(',', array_keys($assocDataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($assocDataArray AS $values) {
+                    fputcsv($fp, $values);
+                }
+                fclose($fp);
+            }
+            ob_flush();
+        
+    }
+    
 
 }

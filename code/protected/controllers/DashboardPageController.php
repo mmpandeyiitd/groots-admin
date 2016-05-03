@@ -116,6 +116,8 @@ class DashboardPageController extends Controller {
         $model = new DashboardPage;
         $start_date = '';
         $end_date = '';
+        $order_start_date = '';
+        $order_end_date = '';
         //if (isset($_POST['DashboardPage'])) {
         //$model->attributes = $_POST['DashboardPage'];
         if (isset($_POST['filter'])) {
@@ -125,6 +127,22 @@ class DashboardPageController extends Controller {
             $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
             if ($cDate > $cdate1) {
                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }
+        }
+        if (isset($_POST['downloadbutton'])) {
+            $order_start_date = $_POST['order_start_date'];
+            $order_end_date = $_POST['order_end_date'];
+            $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
+            $odate1 = date("Y-m-d H:i:s", strtotime($order_end_date));
+            if ($oDate != $odate1 && $oDate < $odate1) {
+                ob_clean();
+                $model->downloadCSVByIDs($oDate, $odate1);
+                ob_flush();
+                exit();
+            }
+            if ($oDate > $odate1) {
+                Yii::app()->user->setFlash('error', 'Order End date always greater than Order Start date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
