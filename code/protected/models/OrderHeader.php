@@ -89,14 +89,14 @@ class OrderHeader extends CActiveRecord {
             array('shipping_phone', 'length', 'max' => 10),
             array('shipping_phone', 'length', 'min' => 10),
             array('status', 'length', 'max' => 9),
-            array('cron_processed_flag', 'length', 'max' => 1),
-            array('source_name', 'length', 'max' => 254),
+//            array('cron_processed_flag', 'length', 'max' => 1),
+//            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
-            array('created_date, billing_address, shipping_address, timestamp, transaction_time, source_url', 'safe'),
+            array('created_date, billing_address, shipping_address, timestamp, transaction_time', 'safe'),
             // The following rule is used by search().
             array('store_id', 'safe', 'on' => 'search'),
             // @todo Please remove those attributes that should not be searched.
-            array('order_id,order_number, user_id, created_date, payment_method, payment_status, billing_name, billing_phone, billing_email, billing_address, billing_state, billing_city, billing_pincode, shipping_name, shipping_phone, shipping_email, shipping_address, shipping_state, shipping_city, shipping_pincode, shipping_charges, total, total_payable_amount, total_paid_amount, discount_amt, coupon_code, payment_ref_id, payment_gateway_name, payment_source, order_source, timestamp, transaction_id, bank_transaction_id, transaction_time, payment_mod, bankname, status, cron_processed_flag, source_url, source_type, source_id, source_name, campaign_id, buyer_shipping_cost, order_type, utm_source', 'safe', 'on' => 'search'),
+            array('order_id,order_number, user_id, created_date, payment_method, payment_status, billing_name, billing_phone, billing_email, billing_address, billing_state, billing_city, billing_pincode, shipping_name, shipping_phone, shipping_email, shipping_address, shipping_state, shipping_city, shipping_pincode, shipping_charges, total, total_payable_amount, total_paid_amount, discount_amt, coupon_code, payment_ref_id, payment_gateway_name, payment_source, order_source, timestamp, transaction_id, bank_transaction_id, transaction_time, payment_mod, bankname, status,order_type', 'safe', 'on' => 'search'),
         );
     }
 
@@ -154,15 +154,15 @@ class OrderHeader extends CActiveRecord {
             'payment_mod' => 'Payment Mod',
             'bankname' => 'Bankname',
             'status' => 'Status',
-            'cron_processed_flag' => 'Cron Processed Flag',
-            'source_url' => 'Source Url',
-            'source_type' => 'Source Type',
-            'source_id' => 'Source',
-            'source_name' => 'Source Name',
-            'campaign_id' => 'Campaign',
-            'buyer_shipping_cost' => 'Buyer Shipping Cost',
+//            'cron_processed_flag' => 'Cron Processed Flag',
+//            'source_url' => 'Source Url',
+//            'source_type' => 'Source Type',
+//            'source_id' => 'Source',
+//            'source_name' => 'Source Name',
+//            'campaign_id' => 'Campaign',
+//            'buyer_shipping_cost' => 'Buyer Shipping Cost',
             'order_type' => 'Order Type',
-            'utm_source' => 'Utm Source',
+            //'utm_source' => 'Utm Source',
         );
     }
 
@@ -267,15 +267,15 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('payment_mod', $this->payment_mod, true);
         $criteria->compare('bankname', $this->bankname, true);
         $criteria->compare('status', $this->status, true);
-        $criteria->compare('cron_processed_flag', $this->cron_processed_flag, true);
-        $criteria->compare('source_url', $this->source_url, true);
-        $criteria->compare('source_type', $this->source_type, true);
-        $criteria->compare('source_id', $this->source_id);
-        $criteria->compare('source_name', $this->source_name, true);
-        $criteria->compare('campaign_id', $this->campaign_id);
-        $criteria->compare('buyer_shipping_cost', $this->buyer_shipping_cost);
+        //$criteria->compare('cron_processed_flag', $this->cron_processed_flag, true);
+//        $criteria->compare('source_url', $this->source_url, true);
+//        $criteria->compare('source_type', $this->source_type, true);
+//        $criteria->compare('source_id', $this->source_id);
+//        $criteria->compare('source_name', $this->source_name, true);
+//        $criteria->compare('campaign_id', $this->campaign_id);
+//        $criteria->compare('buyer_shipping_cost', $this->buyer_shipping_cost);
         $criteria->compare('order_type', $this->order_type, true);
-        $criteria->compare('utm_source', $this->utm_source, true);
+        
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
