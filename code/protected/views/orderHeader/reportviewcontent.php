@@ -137,22 +137,27 @@ if (is_numeric($store_id)) {
         $grand_producttotal = 0;
         $qtytotal = 0;
         $i=0;
+//        echo '<pre>';
+//        //echo $model;
+//        print_r($model);die;
         foreach ($model as $key => $value) {
             $subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
             $linedescinfo = new OrderLine;
             $lineinfo = $linedescinfo->getlinedescById($value->id);
             $lineinfodeltail = $linedescinfo->getlinedetailcById($value->id);
-           if (!empty($lineinfo)) {
+           if (!empty($linedescinfo)) {
              
-                $qtytotal = $lineinfo[0]['product_qty'] + $lineinfo[1]['product_qty'] + $lineinfo[2]['product_qty'] + $lineinfo[3]['product_qty'] + $lineinfo[4]['$lineinfo'] + $lineinfo[5]['product_qty'];
+                $qtytotal = $qtytotal +$model[$key]->attributes['product_qty'];
             }
+           
             $wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price'] - $lineinfodeltail[0]['unit_price_discount']);
             $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;
             
             ?>  
+             <?php }?>
             <tr>
                 <td>
                     <?php echo $model[$key]->attributes['product_name']; ?>
@@ -162,7 +167,7 @@ if (is_numeric($store_id)) {
                 <td><?php echo '0.0'; ?></td>
                 <td><?php echo $wsptotal; ?></td>
             </tr>
-        <?php } ?>
+   
         <tr>
             <td>&nbsp;</td>
             <td>&nbsp;</td>

@@ -98,7 +98,19 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
-            <?php echo $form->textField($model, 'date_of_onboarding'); ?>
+            <?php  $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'attribute' => 'date_of_onboarding', 
+            'value'=>$model->date_of_onboarding,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array(),
+            ));  ?>
             <?php echo $form->error($model, 'date_of_onboarding'); ?>
         </div>
     </div>

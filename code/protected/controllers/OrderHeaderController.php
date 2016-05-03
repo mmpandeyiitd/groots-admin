@@ -142,14 +142,14 @@ class OrderHeaderController extends Controller {
                 $resp = $mailsend->sgSendMail($mailArray);
                
             }
-             if ($status_data[0] = 'Delivered') {
+            if ($status_data[0] == 'Delivered') {
                 $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
-                $csv_name ='name.pdf';
+                $csv_name ='order.pdf';
                 $csv_filename = "feeds/order_csv/" . $csv_name;
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
-                $urldata = Yii::app()->params['target_app_url'];
+                $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
                 $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0]  . ',
                                             <br/><br/>';
                 $body_text = '';
