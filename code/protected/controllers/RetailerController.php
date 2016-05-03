@@ -137,6 +137,8 @@ class RetailerController extends Controller {
                 'replyto' => $from_email,
             );
             $mailsend = new Store();
+            $pass = md5($model->password);
+            $model->password = $pass;
             $resp = $model->sgSendMail($mailArray);
             if ($model->save()) {
                 if (isset($images) && count($images) > 0) {
@@ -244,12 +246,6 @@ class RetailerController extends Controller {
                     $mediaremove = $model_media->deleteMediaByMediaId($valuerm);
                 }
             }
-            if (isset($_POST['status'])) {
-                $model->status = $_POST['status'];
-            } else {
-                $model->status = 0;
-            }
-
             if ($model->save()) {
                 if (isset($images) && count($images) > 0) {
                     foreach ($images as $image => $pic) {
