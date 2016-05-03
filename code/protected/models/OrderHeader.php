@@ -385,17 +385,17 @@ class OrderHeader extends CActiveRecord {
         return $row;
     }
 
-    public function updatelinedescById($lineid = null, $grand_total, $gtotal_price_discount) {
-        $lineidinfo = '';
-
-        if (!empty($lineid)) {
-            $connection = Yii::app()->secondaryDb;
-            $sql = "update order_header set grand_total='" . $grand_total . "',gtotal_price_discount='" . $gtotal_price_discount . "'  where order_id = $lineid";
-            $command = $connection->createCommand($sql);
-            $command->execute();
-        }
-        return $lineidinfo;
-    }
+//    public function updatelinedescById($lineid = null, $grand_total, $gtotal_price_discount) {
+//        $lineidinfo = '';
+//
+//        if (!empty($lineid)) {
+//            $connection = Yii::app()->secondaryDb;
+//            $sql = "update order_header set grand_total='" . $grand_total . "',gtotal_price_discount='" . $gtotal_price_discount . "'  where order_id = $lineid";
+//            $command = $connection->createCommand($sql);
+//            $command->execute();
+//        }
+//        return $lineidinfo;
+//    }
 
     public function CancelOrderByID($order_ids) {
         $succ = false;

@@ -443,7 +443,7 @@ if (isset($_GET['id'])) {
                 $counter++;
                 $isize++;
             }
-            $modelOrder->updatelinedescById($modelOrder->attributes['order_id'], $grandtotal, $grand_discount);
+//            $modelOrder->updatelinedescById($modelOrder->attributes['order_id'], $grandtotal, $grand_discount);
             ?> 
             <div class="order_bottomdetails">
                 <div class="span5 pull-right">
