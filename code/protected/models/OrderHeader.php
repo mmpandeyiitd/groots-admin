@@ -259,7 +259,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('payment_ref_id', $this->payment_ref_id, true);
         $criteria->compare('payment_gateway_name', $this->payment_gateway_name, true);
         $criteria->compare('payment_source', $this->payment_source, true);
-        $criteria->compare('order_source', $this->order_source, true);
+      // $criteria->compare('order_source', $this->order_source, true);
         $criteria->compare('timestamp', $this->timestamp, true);
         $criteria->compare('transaction_id', $this->transaction_id, true);
         $criteria->compare('bank_transaction_id', $this->bank_transaction_id, true);
