@@ -298,14 +298,14 @@ if (isset($_GET['id'])) {
                 if (!empty($shipping_charges)) {
                     $shipping_charges_array = explode(',', $shipping_charges);
                 }
-                $total_price_discounts = $orderline_detail[$i]['total_price_discount'];
+                /*$total_price_discounts = $orderline_detail[$i]['total_price_discount'];
                 if (!empty($total_price_discounts)) {
                     $total_price_discounts_array = explode(',', $total_price_discounts);
                 }
                 $unit_price_discounts = $orderline_detail[$i]['unit_price_discount'];
                 if (!empty($unit_price_discounts)) {
                     $unit_price_discounts_array = explode(',', $unit_price_discounts);
-                }
+                }*/
                 $seller_names = $orderline_detail[$i]['seller_name'];
                 if (!empty($seller_names)) {
                     $seller_names_array = explode(',', $seller_names);
@@ -318,8 +318,8 @@ if (isset($_GET['id'])) {
 
                 $total_price = $unit_prices_array[0] * array_sum($qtys_array);
                 $grandtotal+=$total_price;
-                $total_discount = $unit_price_discounts_array[0] * array_sum($qtys_array);
-                $grand_discount+=$total_discount;
+               // $total_discount = $unit_price_discounts_array[0] * array_sum($qtys_array);
+               // $grand_discount+=$total_discount;
                 $wsptotal = '';
                 //echo $status_array[0];die;
                 // echo $orderline_ids;die;

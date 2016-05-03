@@ -55,10 +55,10 @@ function confirmation_function() {
 <form method="post" action="">
        
      <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
-<input name="cancelbutton" class="activebutton" value="Cancel Order" type="submit" 
+<!--<input name="cancelbutton" class="activebutton" value="Cancel Order" type="submit" 
        onclick='return confirm("Do you want to cancel");'/>
 <input  type="submit" name="sandbutton" class="activebutton" value="send CSV File" />
-<input  type="submit" name="downloadbutton" class="activebutton" value="Download CSV File" />
+<input  type="submit" name="downloadbutton" class="activebutton" value="Download CSV File" />-->
 <?php
 //$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
 $pageSize = 10;

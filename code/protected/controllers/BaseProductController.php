@@ -955,8 +955,8 @@ class BaseProductController extends Controller {
                     $this->render('bulkupload', array('model' => $model));
                 }
                 $i = 0;
-                $requiredFields = array('title', 'categoryIds', 'store id', 'Store Price', 'Store Offer Price');
-                $defaultFields = array('title', 'categoryIds', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity');
+                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price','Pack Size');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Base product id');
@@ -1018,8 +1018,9 @@ class BaseProductController extends Controller {
                                 }
 
                                 $model1->action = $model->action;
-                                if (trim($data[$cols['store id']]) != 1) {
-                                    Yii::app()->user->setFlash('error', 'Store ID does not match');
+                                $store_id=1;
+                                if ($store_id != 1) {
+                                   Yii::app()->user->setFlash('error', 'Store ID does not match');
                                     break;
                                 }
                            // echo '<pre>';
@@ -1043,19 +1044,21 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['color']))
                                     $row['color'] = trim($data[$cols['color']]);
-                                if (isset($cols['quantity']))
+                                /*if (isset($cols['quantity']))
                                     $row['quantity'] = trim($data[$cols['quantity']]);
-                                if (isset($cols['store id']))
+                               if (isset($cols['store id']))
                                     $row['store_id'] = str_replace("’", "'", trim($data[$cols['store id']]));
                                 if (isset($cols['status']))
-                                    $row['status'] = 1;
-
-
+                                    $row['status'] = 1;*/
+                                 $row['store_id']=1;
+                                $row['status']=1;
+                                $row['quantity']=1;
                                 if (isset($cols['Store Price']))
                                     $mrp = trim($data[$cols['Store Price']]);
                                 if (isset($cols['Store Offer Price']))
                                     $wsp = trim($data[$cols['Store Offer Price']]);
-                                $categories = explode(';', trim($data[$cols['categoryIds']], ';'));
+                             //echo '<pre>';  print_r($cols);die;
+                                $categories = explode(';', trim($data[$cols['categoryId']], ';'));
                                 $cat_flag = 0;
                                 foreach ($categories as $category) {
 
@@ -1075,12 +1078,12 @@ class BaseProductController extends Controller {
                                 $error = array();
                                 $action = $model->action == 'update' ? 'updated' : 'created';
                                 $model_subscribe = new SubscribedProduct();
-                                if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && is_numeric($data[$cols['quantity']]) && (is_numeric($mrp) && $mrp > $wsp)) {
+                                if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp) && $mrp > $wsp)) {
                                     // echo $row['pack_unit'];die;
                                     $model_subscribe->store_offer_price = $wsp;
                                     $model_subscribe->diameter = $data[$cols['Diameter']];
                                     $model_subscribe->store_price = $mrp;
-                                    $model_subscribe->quantity = $data[$cols['quantity']];
+                                    $model_subscribe->quantity = 1;
                                     //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
                                     if (!$model1->save(true)) {
 
@@ -1094,10 +1097,11 @@ class BaseProductController extends Controller {
                                         // print_r($cols]);die;
                                         //echo $data[$cols['Diameter']];die;
                                         if ($model1->action == 'create') { #................subscription...............#
-                                            $model_subscribe = new SubscribedProduct();
+                                             $model_subscribe = new SubscribedProduct();
                                             $model_subscribe->base_product_id = $model1->base_product_id;
                                             //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                            $model_subscribe->store_id = $model1->store_id;
+                                            $model_subscribe->store_id = 1;
+                                           $model_subscribe->quantity=1;
                                             if ($wsp != '') {
                                                 $model_subscribe->store_offer_price = $wsp;
                                             } else {
@@ -1119,11 +1123,11 @@ class BaseProductController extends Controller {
                                             } else {
                                                 $model_subscribe->grade = 0;
                                             }
-                                            if ($data[$cols['quantity']] != '') {
+                                           /* if ($data[$cols['quantity']] != '') {
                                                 $model_subscribe->quantity = $data[$cols['quantity']];
                                             } else {
-                                                $model_subscribe->quantity = 0;
-                                            }
+                                                $model_subscribe->quantity = 1;
+                                            }*/
 
                                             //$model_subscribe->quantity = $data[$cols['quantity']];
                                             $model_subscribe->save();
@@ -1137,12 +1141,14 @@ class BaseProductController extends Controller {
                                             // $model_subscribe->store_price = $mrp;
 
 
-                                            if ((is_numeric($wsp)) && is_numeric($data[$cols['Diameter']]) && is_numeric($data[$cols['quantity']]) && (is_numeric($mrp))) {
+                                          //  if ((is_numeric($wsp)) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp))) {
                                                 // echo "hello";die;
+                                            if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp) && $mrp > $wsp)) {
                                                 $model_subscribe->store_offer_price = $wsp;
                                                 $model_subscribe->diameter = $data[$cols['Diameter']];
+                                                $model_subscribe->grade = $data[$cols['Grade']];
                                                 $model_subscribe->store_price = $mrp;
-                                                $model_subscribe->quantity = $data[$cols['quantity']];
+                                                $model_subscribe->quantity = 1;
                                                 $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
                                             }
                                         }
@@ -1223,7 +1229,7 @@ class BaseProductController extends Controller {
 
                                     $categories = '';
                                     //  is_numeric($data[$cols['categoryIds'])
-                                    $categories = explode(';', trim($data[$cols['categoryIds']], ';'));
+                                    $categories = explode(';', trim($data[$cols['categoryId']], ';'));
 
                                     $category_obj = new Category();
                                     if (isset($categories) && !empty($categories)) {
@@ -1518,7 +1524,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,description,categoryIds,store id,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,quantity,Status';
+        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -1529,7 +1535,7 @@ class BaseProductController extends Controller {
 
     public function actionUpdateFileDownload() {
         $file_name = 'Bulk_Upload_product_Update.csv';
-        $file_data = 'Base product id,title,description,categoryIds,store id,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,quantity,Status';
+        $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,

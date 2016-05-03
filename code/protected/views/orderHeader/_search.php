@@ -157,11 +157,6 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'order_source'); ?>
-		<?php echo $form->textField($model,'order_source',array('size'=>60,'maxlength'=>255)); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'timestamp'); ?>
 		<?php echo $form->textField($model,'timestamp'); ?>
 	</div>

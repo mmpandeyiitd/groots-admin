@@ -73,7 +73,7 @@ class BaseProduct extends CActiveRecord {
 // NOTE: you should only define rules for those attributes that
 // will receive user inputs.
         return array(
-            array('title,store_id', 'required'),
+            array('title,store_id,pack_size', 'required'),
             array('store_id,status,,featured', 'numerical', 'integerOnly' => true),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
@@ -820,7 +820,7 @@ class BaseProduct extends CActiveRecord {
 
     public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $grade, $diameter, $qunt) {
 
-        $sql = "update subscribed_product set store_price=$store_price,store_offer_price=$store_offer_price,grade='" . $grade . "',diameter=$diameter ,quantity=$qunt where base_product_id= $baseid AND store_id=$s_id";
+       $sql = "update subscribed_product set store_price=$store_price,store_offer_price=$store_offer_price,grade='" . $grade . "',diameter=$diameter ,quantity=$qunt where base_product_id= $baseid AND store_id=$s_id";
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();

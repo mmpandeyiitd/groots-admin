@@ -139,7 +139,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Status'); ?>
-            <?php echo $form->dropDownList($model, 'status', array('0' => 'Deactive', '1' => 'Active',)); ?>
+            <?php echo $form->dropDownList($model, 'status', array('1' => 'Active','0' => 'Deactive')); ?>
             <?php echo $form->error($model, 'status'); ?>
         </div>
         <div class=" buttons">
