@@ -95,7 +95,7 @@ if (is_numeric($store_id)) {
         </tr>-->
         <tr>
             <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
-            <td colspan="3">Website : www.yorder.com</td>
+            <td colspan="3">Website : www.canbrand.in</td>
         </tr>
         <tr>
             <td colspan="3">

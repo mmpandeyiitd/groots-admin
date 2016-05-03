@@ -190,52 +190,10 @@
 		<?php echo $form->label($model,'status'); ?>
 		<?php echo $form->textField($model,'status',array('size'=>9,'maxlength'=>9)); ?>
 	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'cron_processed_flag'); ?>
-		<?php echo $form->textField($model,'cron_processed_flag',array('size'=>1,'maxlength'=>1)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'source_url'); ?>
-		<?php echo $form->textArea($model,'source_url',array('rows'=>6, 'cols'=>50)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'source_type'); ?>
-		<?php echo $form->textField($model,'source_type',array('size'=>60,'maxlength'=>100)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'source_id'); ?>
-		<?php echo $form->textField($model,'source_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'source_name'); ?>
-		<?php echo $form->textField($model,'source_name',array('size'=>60,'maxlength'=>254)); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'campaign_id'); ?>
-		<?php echo $form->textField($model,'campaign_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'buyer_shipping_cost'); ?>
-		<?php echo $form->textField($model,'buyer_shipping_cost'); ?>
-	</div>
-
-	<div class="row">
+        <div class="row">
 		<?php echo $form->label($model,'order_type'); ?>
 		<?php echo $form->textField($model,'order_type',array('size'=>60,'maxlength'=>150)); ?>
 	</div>
-
-	<div class="row">
-		<?php echo $form->label($model,'utm_source'); ?>
-		<?php echo $form->textField($model,'utm_source',array('size'=>60,'maxlength'=>255)); ?>
-	</div>
-
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>
 	</div>
