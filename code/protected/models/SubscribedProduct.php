@@ -173,7 +173,7 @@ class SubscribedProduct extends CActiveRecord {
         //$criteria->with = array('RetailerProductQuotation' => array("select" => "effective_price"));
         // $criteria->compare('effective_price', $this->effective_price, true);
         $criteria->with = array('BaseProduct' => array("select" => "title"));
-//        $criteria->compare('title', $this->title, true);
+       $criteria->compare('title', $this->title, true);
         // $criteria->compare('discout_per', $this->discout_per, true);
         $criteria->compare('subscribed_product_id', $this->subscribed_product_id, true);
         $criteria->compare('base_product_id', $this->base_product_id, true);

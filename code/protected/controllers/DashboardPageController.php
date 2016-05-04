@@ -128,6 +128,9 @@ class DashboardPageController extends Controller {
             if ($cDate > $cdate1) {
                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }elseif ($cDate == $cdate1) {
+                Yii::app()->user->setFlash('error', 'Start date And End date not selected');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
         if (isset($_POST['downloadbutton'])) {
@@ -143,6 +146,9 @@ class DashboardPageController extends Controller {
             }
             if ($oDate > $odate1) {
                 Yii::app()->user->setFlash('error', 'Order End date always greater than Order Start date');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }elseif ($oDate == $odate1) {
+                Yii::app()->user->setFlash('error', 'Order Start date And End date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
