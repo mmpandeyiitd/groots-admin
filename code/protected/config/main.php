@@ -1,6 +1,5 @@
 <?php  require_once( dirname(__FILE__) . '/../components/Log.php');
 
-
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Brand Admin Panel',
@@ -73,7 +72,7 @@ i		'db'=>array(
 			'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'root',
+			'password' => 'jelly123#',
 			'charset' => 'utf8',
 		),
 
@@ -82,7 +81,7 @@ i		'db'=>array(
             'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_order',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'root',
+            'password' => 'jelly123#',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),  
@@ -91,7 +90,7 @@ i		'db'=>array(
             'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_log',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'root',
+            'password' => 'jelly123#',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),
@@ -125,6 +124,9 @@ i		'db'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
             'defaultPageSize' => 10,
+            'target_app_url'=> 'www.google.com',
+            'LOG_FILE_NAME_ORDER_CSV'  =>'LOG_FILE_NAME_ORDER_CSV','../../../feeds/order_csv.log',
+'email_app_url'=> 'http://admin.groots.dev.canbrand.in/',
 	),
 );
 
