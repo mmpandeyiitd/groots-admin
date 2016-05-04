@@ -137,12 +137,12 @@ class RetailerController extends Controller {
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
         <span style="float:right;">+91 99999 99999</span>
-        <img src="callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+        <img src="'.$emailurldata .'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
     <tr>
       <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url('.$emailurldata .'emailimage/bg-repeat.jpg) repeat-x;">
-        <img src="'.$emailurldata .''.$emailurldata .'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+        <img src="'.$emailurldata .'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
       </td>
     </tr>
     <tr style="display: block;">
@@ -157,7 +157,7 @@ class RetailerController extends Controller {
           </span>
           <br>
 
-        <a href="'.$urldata.'" style="background:url('.$emailurldata .'emailimage/android.png) no-repeat; text-indent:-2000px; display:block;width:225px; height:60px; background-size: contain;">you can download app</a>
+        <a href="'.$urldata.'" style="background:url('.$emailurldata .'emailimage/android.png) no-repeat; text-indent:-2000px; display:block;width:225px; height:60px; background-size: contain;"></a>
         <br> <br> 
       </p>
      </td>          
