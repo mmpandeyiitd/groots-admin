@@ -144,7 +144,7 @@ class OrderHeaderController extends Controller {
             }
             if ($status_data[0] == 'Delivered') {
                 $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
-                $csv_name ='order.pdf';
+                $csv_name ='order_' . $modelOrder->attributes['order_id'] . '.pdf';
                 $csv_filename = "feeds/order_csv/" .$csv_name;
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
