@@ -90,12 +90,12 @@ if (is_numeric($store_id)) {
                 <p><strong>Registered Office:</strong> <?php echo $brand_address . '<br>' . $brand_city . '<br>' . $brand_state . '<br>' . $brand_pincode . '<br>' . $brand_country; ?></p>
             </td>
         </tr>
-        <tr>
+       <tr>
             <td colspan="5">&nbsp;</td>
         </tr>
         <tr>
             <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
-            <td colspan="3">Website : www.canbrand.in</td>
+            <td colspan="3">Website : <?php echo "www.canbrand.in";?></td>
         </tr>
         <tr>
             <td colspan="3">
