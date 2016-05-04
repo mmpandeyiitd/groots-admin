@@ -90,12 +90,12 @@ if (is_numeric($store_id)) {
                 <p><strong>Registered Office:</strong> <?php echo $brand_address . '<br>' . $brand_city . '<br>' . $brand_state . '<br>' . $brand_pincode . '<br>' . $brand_country; ?></p>
             </td>
         </tr>
-       <!-- <tr>
+       <tr>
             <td colspan="5">&nbsp;</td>
-        </tr>-->
+        </tr>
         <tr>
             <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
-            <td colspan="3">Website : www.canbrand.in</td>
+            <td colspan="3">Website : <?php echo "www.canbrand.in";?></td>
         </tr>
         <tr>
             <td colspan="3">
@@ -109,7 +109,7 @@ if (is_numeric($store_id)) {
                 <p><?php echo $modelOrder->attributes['billing_address'] . ', ' . $modelOrder->attributes['billing_city'] . ', ' . $modelOrder->attributes['billing_state'] . ', ' . $modelOrder->attributes['billing_pincode']; ?></p>
             </td>
         </tr>
-        <!--<tr>
+        <tr>
             <td colspan="3">
                 <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country;  ?></p>
             </td>
@@ -121,7 +121,7 @@ if (is_numeric($store_id)) {
                 DT:29-02-2016
 
             </td>
-        </tr>-->
+        </tr>
 
         <tr>
             <th>Product</th>
