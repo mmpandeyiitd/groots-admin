@@ -72,7 +72,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
              'style' => ''
          ),
       ));*/
-       $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+        $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
             'model' => $model, 
             'attribute' => 'start_date', 
             'value'=>$model->start_date,   
@@ -83,7 +83,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
                //'minDate' => 0,
  
             ), //DateTimePicker options 
-            'htmlOptions' => array(),
+            'htmlOptions' => array('readonly'=>'true'),
             )); 
            echo $form->error($model,'start_date'); 
     
@@ -115,13 +115,13 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
             'attribute' => 'end_date', 
             'value'=>$model->end_date,   
             'options' => array( 
-                'dateFormat' => 'yy-mm-dd',
+              //  'dateFormat' => 'yy-mm-dd',
                'showAnim' => 'fold',
                'debug' => true,
                //'minDate' => 0,
  
             ), //DateTimePicker options 
-            'htmlOptions' => array(),
+            'htmlOptions' => array('readonly'=>'true'),
             )); 
            echo $form->error($model,'end_date'); 
         
@@ -207,7 +207,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
                //'minDate' => 0,
  
             ), //DateTimePicker options 
-            'htmlOptions' => array(),
+            'htmlOptions' => array('readonly'=>'true'),
             )); 
            echo $form->error($model,'order_start_date'); 
     
@@ -228,7 +228,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
                //'minDate' => 0,
  
             ), //DateTimePicker options 
-            'htmlOptions' => array(),
+            'htmlOptions' => array('readonly'=>'true'),
             )); 
            echo $form->error($model,'order_end_date'); 
         
