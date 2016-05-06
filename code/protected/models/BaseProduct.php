@@ -73,7 +73,7 @@ class BaseProduct extends CActiveRecord {
 // NOTE: you should only define rules for those attributes that
 // will receive user inputs.
         return array(
-            array('title,store_id,pack_size', 'required'),
+            array('title,store_id', 'required'),
             array('store_id,status,,featured', 'numerical', 'integerOnly' => true),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
@@ -129,8 +129,8 @@ class BaseProduct extends CActiveRecord {
      */
     public function attributeLabels() {
         return array(
-            'base_product_id' => 'Style System ID.',
-            'title' => 'Style Name',
+            'base_product_id' => 'base_product_id.',
+            'title' => 'title',
             'size_chart' => 'Size Chart',
             // 'gender' => 'Gender',
             // 'recommended' => 'Recommended',
@@ -818,10 +818,23 @@ class BaseProduct extends CActiveRecord {
         return $title;
     }
 
-    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $grade, $diameter, $qunt) {
+    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price,$qunt) {
 
-       $sql = "update subscribed_product set store_price=$store_price,store_offer_price=$store_offer_price,grade='" . $grade . "',diameter=$diameter ,quantity=$qunt where base_product_id= $baseid AND store_id=$s_id";
-        $connection = Yii::app()->db;
+       $sql ='update subscribed_product set store_price="'.$store_price.'",store_offer_price="'.$store_offer_price.'",quantity="'.$qunt.'" where base_product_id="'. $baseid.'" AND store_id="'.$s_id.'"';
+       $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+//        if (!$command->execute()) {
+//          $connection = Yii::app()->db;
+//            $sql ="insert into subscribed_product set store_offer_price='" . $store_offer_price . "',store_price='" . $store_price . "', base_product_id='" . $baseid . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $qunt . "', store_id='" . $s_id . "' ";
+//            $command = $connection->createCommand($sql);
+//            $command->execute();
+//          }
+    }
+     public static function Update_product_title($title,$bp) {
+
+       $sql ='update base_product set title="'.$title.'" where base_product_id="'. $bp.'"';
+       $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
 //        if (!$command->execute()) {
@@ -894,6 +907,49 @@ class BaseProduct extends CActiveRecord {
             }
             ob_flush();
         }
+    }
+     public static function downloadproductCSV() {
+       
+            //$sqlchksubsid = "select `bp`.`base_product_id` AS `Base product_id`,`bp`.`title` AS `title`,`bp`.`description` AS `Description`,`bp`.`color` AS `Color`,`bp`.`size` AS `Size`,`bp`.`configurable_with` AS `Configurable_With`,`bp`.`minimum_order_quantity` AS `Available_Quantity`,`bp`.`order_placement_cut_off_date` AS `Order_Placement_Cut_Off_Date`,`bp`.`delevry_date` AS `Delevry_Date`,`bp`.`tags` AS `Tags`,`bp`.`specofic_keys` AS `Attributes`,(case `bp`.`status` when 1 then 'Enable' else 'Disable' end) AS `status`,(case `bp`.`gender` when 1 then 'Men' when 2 then 'Women' else 'unisex' end) AS `gender`,`sp`.`store_price` AS `MRP`,`sp`.`store_offer_price` AS `WSP`,`bp`.`available_quantity` AS `available_quantity`,`s`.`store_name` AS `store_name`,group_concat(distinct `sf`.`store_front_name` separator ',') AS `linesheet` from ((((`base_product` `bp` left join `linesheet_products_mapping` `lp` on((`bp`.`base_product_id` = `lp`.`base_product_id`))) left join `store_front` `sf` on((`sf`.`store_front_id` = `lp`.`store_front_id`))) left join `store` `s` on((`s`.`store_id` = `bp`.`store_id`))) left join `subscribed_product` `sp` on((`bp`.`base_product_id` = `sp`.`base_product_id`))) where `bp`.base_product_id in($base_product_ids) group by `bp`.`base_product_id`";
+            $sqlchksubsid = "SELECT bp.base_product_id AS 'Subscribed Product ID',title AS Name, sp.store_offer_price AS 'Price(Store Offer Price)' FROM `base_product` `bp` LEFT JOIN  `subscribed_product` `sp` ON sp.base_product_id = bp.base_product_id ";
+            $connection = Yii::app()->db;
+            $command = $connection->createCommand($sqlchksubsid);
+            $command->execute();
+            $assocDataArray = $command->queryAll();
+            $fileName = "Bulk_Upload_product_Update.csv";
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+            if (isset($assocDataArray['0'])) {
+                $fp = fopen('php://output', 'w');
+                $columnstring = implode(',', array_keys($assocDataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($assocDataArray AS $values) {
+                    if (!empty($values['Attributes'])) {
+
+                        $json_array = json_decode($values['Attributes'], true);
+
+                        if (count($json_array) > 0) {
+                            $json_var = array();
+                            foreach ($json_array['specific_key'] as $key => $value) {
+                                $json_var[] = trim($key) . ATTRIBUTE_SEPARATOR . trim($value);
+                            }
+
+                            $values['Attributes'] = implode(NEXT_ATTRIBUTE_SEPARATOR, $json_var);
+                        }
+                    }
+                    fputcsv($fp, $values);
+                }
+                fclose($fp);
+            }
+            ob_flush();
+        
     }
 
 }

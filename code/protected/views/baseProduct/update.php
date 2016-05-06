@@ -56,7 +56,7 @@ $this->menu = array(//    array('label' => 'Manage Styles', 'url' => array('admi
     <li><a href="index.php?r=baseProduct/configurablegrid&store_id=<?php echo $store_id;?>">Add Recommended</a></li>
 </ul>-->
 <div class="portlet-content">
-  <?php $this->renderPartial('form', array('model' => $model, 'record' => $record, 'imageinfo' => $imageinfo,'a'=>$a,'new_data'=>$new_data,'qunt'=>$qunt,)); ?>
+  <?php $this->renderPartial('form', array('model' => $model, 'record' => $record, 'imageinfo' => $imageinfo,'a'=>$a,'new_data'=>$new_data,'qunt'=>$qunt,'Weight' => $Weight,'WeightUnit' => $WeightUnit,'Length' => $Length,'LengthUnit' => $LengthUnit,)); ?>
     </div>
 </div>
 

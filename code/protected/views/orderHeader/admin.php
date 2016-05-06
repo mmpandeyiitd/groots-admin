@@ -36,109 +36,166 @@ if ($issuperadmin == 0) {
         'Manage',
     );
 }
-
 ?>
 <script>
-function confirmation_function() {
-    confirm("Do you want to cancel");
-}
+    function confirmation_function() {
+        confirm("Do you want to cancel");
+    }
 </script>
 
 <div class="search-form" style="display:none">
- 
+
     <?php
     $this->renderPartial('_search', array(
         'model' => $model,
     ));
     ?>
 </div><!-- search-form -->
-<form method="post" action="">
-       
-     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/admin';?>">
+
+    <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+        <div class="Csv" style="color:green;">
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+             <?php echo Yii::app()->user->getFlash('prod'); ?>
+        </div>
+        <?php endif; ?>
 <!--<input name="cancelbutton" class="activebutton" value="Cancel Order" type="submit" 
-       onclick='return confirm("Do you want to cancel");'/>
+onclick='return confirm("Do you want to cancel");'/>
 <input  type="submit" name="sandbutton" class="activebutton" value="send CSV File" />
 <input  type="submit" name="downloadbutton" class="activebutton" value="Download CSV File" />-->
-<?php
+    <!--<input  type="submit" name="status" class="activebutton"  value="Change status" />-->
+    
+    <?php
 //$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
-$pageSize = 10;
-$pageSizeDropDown = CHtml::dropDownList(
-                'pageSize', $pageSize, array(10 => 10, 25 => 25, 50 => 50, 100 => 100), array(
-            'class' => 'change-pagesize',
-            'onchange' => "$.fn.yiiGridView.update('order-header-grid',{data:{pageSize:$(this).val()}});",
-                )
-);
-?>
-<?php
-$count = count($model);
-if (!empty($model)) {
+    $pageSize = 10;
+    $pageSizeDropDown = CHtml::dropDownList(
+                    'pageSize', $pageSize, array(10 => 10, 25 => 25, 50 => 50, 100 => 100,500 => 500), array(
+                'class' => 'change-pagesize',
+                'onchange' => "$.fn.yiiGridView.update('order-header-grid',{data:{pageSize:$(this).val()}});",
+                    )
+    );
     ?>
-    <div class="page-size-wrap">
-        <span>Show : </span><?= $pageSizeDropDown; ?>
+    <input name="status" class="activebutton" value="submit" type="submit">
+    <div class="dropdownCustom">
+<!--        <select onchange="changestatus(this);">-->
+        <select name="status1" value="changestatus">
+            <option>Change status</option>
+            <option value="pending">pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Paid">Paid</option>
+        </select>
+<!--        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Change status</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" value>
+            <li><input  type="submit" name="status" class="activebutton"  id="pending" value="pending" /></li>
+            <li><input  type="submit" name="status" class="activebutton"  id="Confirmed" value="Confirmed" /></li>
+            <li><input  type="submit" name="status" class="activebutton"  id="Out for Delivery" value="Out for Delivery" /></li>
+            <li><input  type="submit" name="status" class="activebutton"  id="Delivered" value="Delivered" /></li>
+            <li><input  type="submit" name="status" class="activebutton"  id="Cancelled" value="Cancelled" /></li>
+             <li><input  type="submit" name="status" class="activebutton"  id="Paid" value="Paid" /></li>
+        </ul>-->
     </div>
-<?php } ?>
-<?php
-Yii::app()->clientScript->registerCss('initPageSizeCSS', '.page-size-wrap{text-align: left;}');
+    <style>
+        
+        .page-size-wrap{float:left;}
+        .dropdownCustom {
+            float: right;
+        }
+    </style>
 
-$this->widget('zii.widgets.grid.CGridView', array(
-    'itemsCssClass' => 'table table-striped table-bordered table-hover',
-    'id' => 'order-header-grid',
-    'dataProvider' => $model->search('created_date DESC'),
-    'filter' => $model,
-    //  'summaryText'  => '{Start} - {End} / {count}',
-    'columns' => array(
-        
-         array(
-            'header' => 'check',
-            'name' => 'selectedIds[]',
-            'id' => 'selectedIds',
-            'value' => '$data->order_id',
-            'class' => 'CCheckBoxColumn',
-            'selectableRows' => '100',
-        ),
-        
-        array(
-            'header' => 'S.N.',
-            'type' => 'raw',
-            'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
-        ),
-        'order_number',
-         array(
+
+    <?php
+    $count = count($model);
+    if (!empty($model)) {
+        ?>
+        <div class="page-size-wrap">
+            <span>Show : </span><?= $pageSizeDropDown; ?>
+        </div>
+    <?php } ?>
+    <?php
+    Yii::app()->clientScript->registerCss('initPageSizeCSS', '.page-size-wrap{text-align: left;}');
+
+    $this->widget('zii.widgets.grid.CGridView', array(
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'id' => 'order-header-grid',
+        'dataProvider' => $model->search('created_date DESC'),
+        'filter' => $model,
+        //  'summaryText'  => '{Start} - {End} / {count}',
+        'columns' => array(
+            array(
+                'header' => 'check',
+                'name' => 'selectedIds[]',
+                'id' => 'selectedIds',
+                'value' => '$data->order_id',
+                'class' => 'CCheckBoxColumn',
+                'selectableRows' => '100',
+            ),
+            array(
+                'header' => 'S.N.',
+                'type' => 'raw',
+                'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+            ),
+            'order_number',   
+            array(
                 'header' => 'Billing name',
                 'name' => 'billing_name',
                 'type' => 'raw',
             ),
-        //'billing_name',
-        'shipping_city',
-        'shipping_state',
-        'payment_status',
-        array(
-            'header' => 'Amount',
-            'name' => 'total',
-            'type' => 'raw',
-           // 'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+                 array(
+                'header' => 'Address',
+                'name' => 'shipping_address',
+                'type' => 'raw',
+                'value'=> function($data){
+           return $data->shipping_address.' ( '.$data->shipping_city.' )';
+       }
+       ), 
+             array(
+                'header' => 'Demand Centre',
+                'name' => 'shipping_state',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Order status',
+                'name' => 'status',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Amount',
+                'name' => 'total',
+                'type' => 'raw',
+            // 'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+            ),
+            'created_date',
+            'link' => array(
+                'header' => 'Action',
+                'type' => 'raw',
+                'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
+            ),
+            'link1' => array(
+                'header' => 'Action',
+                'type' => 'raw',
+                'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"))',
+            ),
+        /* 'link1' => array(
+          'header' => 'Dispatch',
+          'type' => 'raw',
+          'value' => 'CHtml::button("Dispatch",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/dispatch",array("id"=>$data->order_id))."\'"))',
+          ) */
         ),
-//        array(
-//            'name' => 'status',
-//            'type' => 'raw',
-//             'filter' => array('' => 'all', '1' => 'Enable', '0' => 'Disable'),
-//             'value' => '($data->status == "1")?"Enable":"Disable"',
-//            'htmlOptions' => array('width' => 90),
-//        ),
-        'created_date',
-        'link' => array(
-            'header' => 'Action',
-            'type' => 'raw',
-            'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
-        ),
-        /*'link1' => array(
-            'header' => 'Dispatch',
-            'type' => 'raw',
-            'value' => 'CHtml::button("Dispatch",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/dispatch",array("id"=>$data->order_id))."\'"))',
-        )*/
-    ),
-));
-
-?>
-
+    ));
+    ?>
+ <input type="hidden" name="hidden1" id="hidden1"  />
 </form>
+<script type="text/javascript">
+    function changestatus (ve)
+    {
+       // alert( ve.value );
+       
+       
+    }
+    </script>
+    
+   

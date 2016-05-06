@@ -7,39 +7,39 @@
 /* @var $form CActiveForm */
 $count = 0;
 
-/*$issuperadmin = Yii::app()->session['is_super_admin'];
-if ($issuperadmin == 1) {
+/* $issuperadmin = Yii::app()->session['is_super_admin'];
+  if ($issuperadmin == 1) {
 
-    if (!(isset($_GET['store_id'])) || (empty($_GET['store_id']))) {
-        Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
-        $this->redirect(array('DashboardPage/index'));
-    }
-    $store_id = $_GET['store_id'];
-    if (Yii::app()->session['brand_admin_id'] != $store_id) {
-        Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
-        $this->redirect(array('DashboardPage/index'));
-    }
-    $store_name = Store::model()->getstore_nameByid($store_id);
-//    $this->breadcrumbs = array(
-//        'Brand' => array('store/admin'),
-//        $store_name => array('store/update', "id" => $store_id),
-//        'Style' => array('admin', "store_id" => $store_id),
-//        'Create',
-//    );
-} else {
-    if (!(isset($_GET['store_id'])) || (empty($_GET['store_id']))) {
-        Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
-        $this->redirect(array('DashboardPage/index'));
-    }
-    $store_id = $_GET['store_id'];
-    if (Yii::app()->session['brand_id'] != $store_id) {
-        Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
-        $this->redirect(array('DashboardPage/index'));
-    }
-//    $this->breadcrumbs = array(
-//        'Style' => array('admin', "store_id" => $store_id),
-//        'Create');
-}*/
+  if (!(isset($_GET['store_id'])) || (empty($_GET['store_id']))) {
+  Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
+  $this->redirect(array('DashboardPage/index'));
+  }
+  $store_id = $_GET['store_id'];
+  if (Yii::app()->session['brand_admin_id'] != $store_id) {
+  Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
+  $this->redirect(array('DashboardPage/index'));
+  }
+  $store_name = Store::model()->getstore_nameByid($store_id);
+  //    $this->breadcrumbs = array(
+  //        'Brand' => array('store/admin'),
+  //        $store_name => array('store/update', "id" => $store_id),
+  //        'Style' => array('admin', "store_id" => $store_id),
+  //        'Create',
+  //    );
+  } else {
+  if (!(isset($_GET['store_id'])) || (empty($_GET['store_id']))) {
+  Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
+  $this->redirect(array('DashboardPage/index'));
+  }
+  $store_id = $_GET['store_id'];
+  if (Yii::app()->session['brand_id'] != $store_id) {
+  Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
+  $this->redirect(array('DashboardPage/index'));
+  }
+  //    $this->breadcrumbs = array(
+  //        'Style' => array('admin', "store_id" => $store_id),
+  //        'Create');
+  } */
 ?>
 
 
@@ -92,7 +92,7 @@ if ($issuperadmin == 1) {
                 $imagethumb = '';
             ?>
             <div class="row">
-                <?php echo $form->labelEx($model, 'title  '); ?>
+                <?php echo $form->labelEx($model, 'Title  *'); ?>
                 <?php echo $form->textField($model, 'title', array('size' => 60, 'maxlength' => 255)); ?>
                 <?php echo $form->error($model, 'title'); ?>
             </div>
@@ -163,31 +163,31 @@ if ($issuperadmin == 1) {
                 });
             </script>
 
-           
-             <div class="row">
-                <label for="grade"><?php echo 'grade *' ?></label>
-                <input type="text" name="a" value="<?php echo $grade; ?>"/>
+
+            <div class="row">
+                <label for="grade"><?php echo 'grade ' ?></label>
+                <input type="text" name="grade" value="<?php echo $grade; ?>"/>
             </div>
             <div class="row">
-                <label for="diameter"><?php echo 'diameter *' ?></label>
-                <input type="text" name="new_data" value="<?php echo $diameter; ?>"/>
+                <label for="diameter"><?php echo 'diameter ' ?></label>
+                <input type="text" name="diameter" value="<?php echo $diameter; ?>"/>
             </div>
-             <div class="row">
+            <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_size');
                 echo $form->textField($model, 'pack_size', array('size' => 60, 'maxlength' => 255));
                 echo $form->error($model, 'pack_size');
                 ?>
             </div>
-          <div class="row">
+            <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_unit');
                 echo $form->textField($model, 'pack_unit', array('size' => 60, 'maxlength' => 255));
                 echo $form->error($model, 'pack_unit');
                 ?>
             </div>
-         
-          
+
+
 
             <?php
             if (isset($_GET['id']) && isset($_GET['store_id'])) {
@@ -213,24 +213,40 @@ if ($issuperadmin == 1) {
                 <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
                 <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
             </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Weight ' ?></label>
+                <input type="text" name="Weight" value="<?php echo $Weight; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Weight Unit' ?></label>
+                <input type="text" name="WeightUnit" value="<?php echo $WeightUnit; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Length' ?></label>
+                <input type="text" name="Length" value="<?php echo $Length; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
+                <input type="text" name="LengthUnit" value="<?php echo $LengthUnit; ?>"/>
+            </div>
         </div>
         <div class="">
-        <div class="row">
-                <label for="quantity"><?php echo 'quantity ' ?></label>
-                <input type="text" name="qunt" value="<?php echo $qunt; ?>"/>
-            </div>
-<div class="row">
-            <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
+
             <?php
-            // print_R($images);
-            $this->widget('CMultiFileUpload', array(
-                'name' => 'images',
-                'model' => $model,
-                'accept' => 'jpeg|jpg|gif|png', // useful for verifying files
-                'duplicate' => 'Duplicate file!', // useful, i think
-                'denied' => 'Invalid file type', // useful, i think
-                'options' => array(
-                    'afterFileSelect' => 'function(e ,v ,m){
+            echo $form->hiddenField($model, 'quantity', array('value' => '1'));
+            ?>
+            <div class="row">
+                <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
+                <?php
+                // print_R($images);
+                $this->widget('CMultiFileUpload', array(
+                    'name' => 'images',
+                    'model' => $model,
+                    'accept' => 'jpeg|jpg|gif|png', // useful for verifying files
+                    'duplicate' => 'Duplicate file!', // useful, i think
+                    'denied' => 'Invalid file type', // useful, i think
+                    'options' => array(
+                        'afterFileSelect' => 'function(e ,v ,m){
 	                	var fileSize = e.files[0].size;
 			            if(fileSize>1024*1024*2){
 			            	alert("Exceeds file upload limit 2MB");
@@ -238,115 +254,96 @@ if ($issuperadmin == 1) {
 			            }                     
 			            return true;
 	                }',
-                ),
-                'max' => 5, //max 5 files allowed
-            ));
-            ?>
-            <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>
-        </div>
-
-        <?php
-        $media = array();
-        $media = Media::model()->getMediaByBaseProductId($model->base_product_id);
-        if (isset($media)) {
-            ?>
-            <label>&nbsp;</label>
-            <table id="media_gallery" class="table table-striped table-hover table-bordered">
-                <thead >
-                    <tr>
-                        <th style="font-weight:normal;">Image</th>
-                        <th style="font-weight:normal;" >Is Default</th>
-                        <th style="font-weight:normal;" >Remove</th>
-                    </tr>
-                </thead>
-
-                <tbody id="media_gallery_body">
-                    <?php foreach ($media as $_media) { ?>
-                        <tr style=" margin-top:5px;">					
-                            <td><img style="width: 100px;" src="<?php echo $_media->thumb_url; ?>"></td>
-                            <td style="text-align:center;"><input type="radio" name="media_is_default" value="<?php echo $_media->media_id; ?>" <?php if ($_media->is_default) echo 'checked'; ?>></td>
-                            <td style="text-align:center;"><input type="checkbox" name="media_remove[]" value="<?php echo $_media->media_id; ?>"></td>
-                        </tr>
-                        <?php
-                    }
-                }
+                    ),
+                    'max' => 5, //max 5 files allowed
+                ));
                 ?>
-            </tbody>
-        </table>
-        <div style="clear:both;"></div>
-          
-        <div style="clear:both;"></div>
-        <div class="row">
-            <?php echo $form->labelEx($model, 'status'); ?>
-            <div class="check-awesome" style="float: left;">  
-                <?php if (!$model->isNewRecord) { ?>
-                    <input  name="status" type="checkbox" id="check-one" value="1" <?php
-                    if ($model->status == 1) {
-                        echo 'checked';
-                    }
-                    ?>>
-                        <?php } else { ?>
-                    <input name="status" type="checkbox" id="check-one" value="1" checked >
-                <?php } ?> 
-                <label for="check-one">
-                    <span class="check"></span>
-                    <span class="box"></span>
-                    Publish
-                </label>
+                <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>
             </div>
+
+            <?php
+            $media = array();
+            $media = Media::model()->getMediaByBaseProductId($model->base_product_id);
+            if (isset($media)) {
+                ?>
+                <label>&nbsp;</label>
+                <table id="media_gallery" class="table table-striped table-hover table-bordered">
+                    <thead >
+                        <tr>
+                            <th style="font-weight:normal;">Image</th>
+                            <th style="font-weight:normal;" >Is Default</th>
+                            <th style="font-weight:normal;" >Remove</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="media_gallery_body">
+                        <?php foreach ($media as $_media) { ?>
+                            <tr style=" margin-top:5px;">					
+                                <td><img style="width: 100px;" src="<?php echo $_media->thumb_url; ?>"></td>
+                                <td style="text-align:center;"><input type="radio" name="media_is_default" value="<?php echo $_media->media_id; ?>" <?php if ($_media->is_default) echo 'checked'; ?>></td>
+                                <td style="text-align:center;"><input type="checkbox" name="media_remove[]" value="<?php echo $_media->media_id; ?>"></td>
+                            </tr>
+                            <?php
+                        }
+                    }
+                    ?>
+                </tbody>
+            </table>
             <div style="clear:both;"></div>
 
-            <div class="buttons">
-                <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('id' => 'buttonid')); ?>
+           <div style="clear:both;"></div>
+
+                <div class="buttons">
+                    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('id' => 'buttonid')); ?>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+        <?php $this->endWidget(); ?>
+    </div><!-- form -->
 
-    <?php $this->endWidget(); ?>
-</div><!-- form -->
+    <SCRIPT lang="javascript">
 
-<SCRIPT lang="javascript">
+        function addMore() {
+            $("#product").append("<div style='clear:both;'></div><div class='product' >\n\
+                                <input type='text' name='kye_field[]'  />\n\
+                                <input type='text' name='kye_value[]'  />\n\
+                                <span class='cross_btn' onClick='deleteRow(this);'><i class='fa fa-times'></i></span>\n\
+                        </div>")
+        }
 
-    function addMore() {
-        $("#product").append("<div style='clear:both;'></div><div class='product' >\n\
-                            <input type='text' name='kye_field[]'  />\n\
-                            <input type='text' name='kye_value[]'  />\n\
-                            <span class='cross_btn' onClick='deleteRow(this);'><i class='fa fa-times'></i></span>\n\
-                    </div>")
-    }
-
-    function deleteRow(variable_click) {
-        $(variable_click).parent('div').remove();
-    }
+        function deleteRow(variable_click) {
+            $(variable_click).parent('div').remove();
+        }
 
 
 
 
-    $(document).ready(function () {
+        $(document).ready(function () {
 
-        $('a[href=#top]').click(function () {
-            $('html, body').animate({scrollTop: 0}, 'slow');
-            return false;
+            $('a[href=#top]').click(function () {
+                $('html, body').animate({scrollTop: 0}, 'slow');
+                return false;
+            });
+
         });
 
-    });
 
-
-//........Start Color picker...........||
-    function change_color(colorid) {
-        var get_color_code = document.getElementById(colorid).style.backgroundColor;
-        var color_name = colorid.slice(0, -1);
-        document.getElementById('color_code').style.backgroundColor = get_color_code;
-        document.getElementById('color_name').innerHTML = color_name;
-        document.getElementById('color_mainids').value = get_color_code + '~~' + color_name;
-    }
-//........End Color picker...........||
-</SCRIPT>
-<style type="text/css">
-    .miniColors-trigger { display: none;} 
-    .portlet-content .form form input[type="radio"] { width: 30px !important;}
-    .portlet-content .form form input[type="checkbox"] { width: 30px !important;}
-</style>
+        //........Start Color picker...........||
+        function change_color(colorid) {
+            var get_color_code = document.getElementById(colorid).style.backgroundColor;
+            var color_name = colorid.slice(0, -1);
+            document.getElementById('color_code').style.backgroundColor = get_color_code;
+            document.getElementById('color_name').innerHTML = color_name;
+            document.getElementById('color_mainids').value = get_color_code + '~~' + color_name;
+        }
+        //........End Color picker...........||
+    </SCRIPT>
+    <style type="text/css">
+        .miniColors-trigger { display: none;} 
+        .portlet-content .form form input[type="radio"] { width: 30px !important;}
+        .portlet-content .form form input[type="checkbox"] { width: 30px !important;}
+    </style>

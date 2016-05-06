@@ -72,7 +72,7 @@ elseif (Yii::app()->controller->id == "store") {
 
         echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
         <li><a href="index.php?r=baseProduct/bulkupload&store_id=1">Bulk Upload product</a></li>        
-         ';
+           ';
     }
     
    /* else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
@@ -95,7 +95,8 @@ elseif (Yii::app()->controller->id == "store") {
     } else if (Yii::app()->controller->action->id == "listallproduct" && substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
 
         echo '<li><a href="index.php?r=baseProduct/create&store_id=' . $store_id . '">Create product</a></li> 
-        <li><a href="index.php?r=baseProduct/bulkupload&store_id=1">Bulk Upload product</a></li>        
+        <li><a href="index.php?r=baseProduct/bulkupload&store_id=1">Bulk Upload product</a></li> 
+        
          ';
     }
     

@@ -128,27 +128,23 @@ class DashboardPageController extends Controller {
             if ($cDate > $cdate1) {
                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-            }elseif ($cDate == $cdate1) {
+            } elseif ($cDate == $cdate1) {
                 Yii::app()->user->setFlash('error', 'Start date And End date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
         if (isset($_POST['downloadbutton'])) {
-            $order_start_date = $_POST['order_start_date'];
-            $order_end_date = $_POST['order_end_date'];
+            $order_start_date = $_POST['DashboardPage']['order_start_date'];
             $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
-            $odate1 = date("Y-m-d H:i:s", strtotime($order_end_date));
-            if ($oDate != $odate1 && $oDate < $odate1) {
+            // $odate1 = date("Y-m-d H:i:s", strtotime($order_end_date));
+           
+            if (!isset($oDate)) {
                 ob_clean();
-                $model->downloadCSVByIDs($oDate, $odate1);
+                $model->downloadCSVByIDs($oDate);
                 ob_flush();
                 exit();
-            }
-            if ($oDate > $odate1) {
-                Yii::app()->user->setFlash('error', 'Order End date always greater than Order Start date');
-                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-            }elseif ($oDate == $odate1) {
-                Yii::app()->user->setFlash('error', 'Order Start date And End date not selected');
+            } else {
+                Yii::app()->user->setFlash('error', 'Date Not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }

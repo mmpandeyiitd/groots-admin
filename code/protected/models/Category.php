@@ -205,7 +205,7 @@ class Category extends CActiveRecord {
             $command = $connection->createCommand($sql);
             $command->execute();
             $catid = $command->queryAll();
-           
+
             if (isset($catid[0]['category_id'])) {
                 $catid[0]['category_id'];
                 $sqlbaseid = "SELECT distinct(base_product_id) FROM `product_category_mapping` WHERE category_id='" . $catid[0]['category_id'] . "' and `base_product_id`!='" . $id . "'";
@@ -334,7 +334,7 @@ class Category extends CActiveRecord {
             //..................insert solor backlog.........................// 
             $connectionsolr = Yii::app()->db;
             $sqlsolr = "INSERT INTO `cat_solr_back_log`(`category_id`, `is_deleted`) VALUES ('" . $category_id . "','1')";
-           $commandsolr = $connectionsolr->createCommand($sqlsolr);
+            $commandsolr = $connectionsolr->createCommand($sqlsolr);
             $commandsolr->execute();
         }
         $category_id_del = $this->getDefaultCategoryId();
@@ -401,19 +401,43 @@ class Category extends CActiveRecord {
     public function setOldAttributes($attrs) {
         $this->oldAttrs = $attrs;
     }
-    
-     public function createBaseproductMappings($baseproduct_id, $category_id) {
+
+    /* public function createBaseproductMappings($baseproduct_id, $category_id) {
+
+
+      $connection = Yii::app()->db;
+      $sql = "delete from product_category_mapping where category_id='" . $category_id . "'";
+      $command = $connection->createCommand($sql);
+      $command->execute();
+      $sqlins = "INSERT INTO `product_category_mapping`(`base_product_id`, `category_id`) VALUES ('" . $baseproduct_id . "','" . $category_id . "')";
+      $command = $connection->createCommand($sqlins);
+      $command->execute();
+
+      return true;
+      } */
+
+    public function createBaseproductMappings($baseproduct_id, $category_id) {
+        $connection = Yii::app()->db;
+        $sqlins = "update `product_category_mapping` set base_product_id = '" . $baseproduct_id . "', category_id = '" . $category_id . "' where base_product_id=" . $baseproduct_id;
+        $command = $connection->createCommand($sqlins);
+        $command->execute();
+        $sqlins = "INSERT INTO `product_category_mapping`(`base_product_id`, `category_id`) VALUES ('" . $baseproduct_id . "','" . $category_id . "')";
+        $command = $connection->createCommand($sqlins);
+        $command->execute();
+
+        return true;
+    }
+
+    public function createBaseproductMappings1($baseproduct_id, $category_id) {
 
 
         $connection = Yii::app()->db;
-        $sql = "delete from product_category_mapping where category_id='" . $category_id . "'";
-        $command = $connection->createCommand($sql);
+        /* $sql = "delete from product_category_mapping where category_id='" . $category_id . "'";
+          $command = $connection->createCommand($sql);
+          $command->execute(); */
+        $sqlins = "INSERT INTO `product_category_mapping`(`base_product_id`, `category_id`) VALUES ('" . $baseproduct_id . "','" . $category_id . "')";
+        $command = $connection->createCommand($sqlins);
         $command->execute();
-
-
-            $sqlins = "INSERT INTO `product_category_mapping`(`base_product_id`, `category_id`) VALUES ('" . $baseproduct_id . "','" . $category_id . "')";
-            $command = $connection->createCommand($sqlins);
-            $command->execute();
 
         return true;
     }

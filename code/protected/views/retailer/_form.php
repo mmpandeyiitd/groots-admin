@@ -98,7 +98,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
-            <?php  $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            <?php  /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
             'model' => $model, 
             'attribute' => 'date_of_onboarding', 
             'value'=>$model->date_of_onboarding,   
@@ -109,8 +109,27 @@
                //'minDate' => 0,
  
             ), //DateTimePicker options 
-            'htmlOptions' => array(),
-            ));  ?>
+            'htmlOptions' => array('readonly'=>'true'),
+            ));  */
+            
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'model' => $model,
+           'name' => 'date_of_onboarding',
+           'attribute' => 'date_of_onboarding',
+            'flat' => false, //remove to hide the datepicker
+            'options' => array(
+                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
+               // 'minDate' => 0,
+               'dateFormat' => 'dd-mm-yy',
+               
+           ),
+            'value'=>$model->date_of_onboarding,
+            'htmlOptions' => array(
+             'style' => '','readonly'=>'true'
+         ),
+      ));
+            
+            ?>
             <?php echo $form->error($model, 'date_of_onboarding'); ?>
         </div>
     </div>
