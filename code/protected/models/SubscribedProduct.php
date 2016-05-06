@@ -108,7 +108,7 @@ class SubscribedProduct extends CActiveRecord {
             'quantity' => 'Quantity',
             'is_cod' => 'Is Cod',
             'subscribe_shipping_charge' => 'Subscribe Shipping Charge',
-            'title' => 'title',
+            'title' => 'Title',
             'effective_price' => 'effective_price',
             'discout_per' => 'discout_per',
         );
@@ -170,10 +170,10 @@ class SubscribedProduct extends CActiveRecord {
 
 
         // $criteria->order = 'subscribed_product_id DESC';
-        //$criteria->with = array('RetailerProductQuotation' => array("select" => "effective_price"));
+        $criteria->join = "left join base_product bp on bp.base_product_id=t.base_product_id";
         // $criteria->compare('effective_price', $this->effective_price, true);
-        $criteria->with = array('BaseProduct' => array("select" => "title"));
-//        $criteria->compare('title', $this->title, true);
+        //$criteria->with = array('BaseProduct' => array("select" => "title"));
+        $criteria->compare('bp.title', $this->title, true);
         // $criteria->compare('discout_per', $this->discout_per, true);
         $criteria->compare('subscribed_product_id', $this->subscribed_product_id, true);
         $criteria->compare('base_product_id', $this->base_product_id, true);
@@ -184,7 +184,7 @@ class SubscribedProduct extends CActiveRecord {
         $criteria->compare('length', $this->length, true);
         $criteria->compare('width', $this->width, true);
         $criteria->compare('height', $this->height, true);
-        $criteria->compare('title', $this->title, true);
+        // $criteria->compare('title', $this->title, true);
         //$criteria->compare('warranty', $this->warranty, true);
 //        $criteria->compare('prompt', $this->prompt);
 //        $criteria->compare('prompt_key', $this->prompt_key, true);
@@ -260,6 +260,15 @@ class SubscribedProduct extends CActiveRecord {
         return $category_id_del2 = $command->queryAll();
     }
 
+    public function getdatarecords_data($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `weight`,weight_unit,length,length_unit FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del2 = $command->queryAll();
+    }
+
     public function getdatarecords_new($id) {
 
         $connection = Yii::app()->db;
@@ -278,11 +287,11 @@ class SubscribedProduct extends CActiveRecord {
         return $category_id_del3 = $command->queryAll();
     }
 
-    public function data_sub($bp, $sid, $mrp, $new_data, $a, $qunt, $wsp) {
+    public function data_sub($bp, $sid, $mrp, $new_data, $a, $qunt, $wsp, $Weight, $WeightUnit, $Length, $LengthUnit) {
         // echo "hello";die;
 
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ";
+        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . " ',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ,weight ='" . $Weight . " ',weight_unit =' " . $WeightUnit . " ',length ='" . $Length . " ',length_unit ='" . $LengthUnit . "  '";
         $command = $connection->createCommand($sql);
         $command->execute();
         $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
@@ -291,10 +300,10 @@ class SubscribedProduct extends CActiveRecord {
         $command->execute();
     }
 
-    public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity) {
+    public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity, $weight, $weight_unit, $length, $length_unit) {
         //echo $diameter;die;
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price=$sprice ,store_price= $mrp, base_product_id= $bp,grade ='" . $grade . "',diameter =$diameter,quantity =$quantity, store_id=$sid";
+        $sql = "insert into subscribed_product set store_offer_price='" . $sprice . " ' ,store_price= " . $mrp . ", base_product_id= " . $bp . ",grade ='" . $grade . " ',diameter =" . $diameter . ",quantity =$quantity, store_id=$sid,weight='" . $weight . " ',weight_unit='" . $weight_unit . " ',length='" . $length . " ',length_unit='" . $length_unit . " '";
         $command = $connection->createCommand($sql);
         $command->execute();
         $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
@@ -303,9 +312,9 @@ class SubscribedProduct extends CActiveRecord {
         $command->execute();
     }
 
-    public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity) {
+    public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit) {
         $connection = Yii::app()->db;
-        $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
+        $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "', weight='" . $Weight . "',weight_unit='" . $WeightUnit . " ',length='" . $Length . " ',length_unit='" . $LengthUnit . " ' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
         $command = $connection->createCommand($sql);
 
         $command->execute();

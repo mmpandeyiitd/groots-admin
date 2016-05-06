@@ -4,7 +4,7 @@
 if(Yii::app()->controller->id=="store"){
     
     if(Yii::app()->controller->action->id=="create"){
-        echo "Creat Store";
+        echo "create Store";
     }elseif(Yii::app()->controller->action->id=="update"){
         if(Yii::app()->session['is_super_admin']==1){
         echo "Edit Store";
@@ -22,10 +22,14 @@ if(Yii::app()->controller->id=="store"){
     
 }else if(Yii::app()->controller->id=="baseProduct"){
      if(Yii::app()->controller->action->id=="create"){
-        echo "Creat product";
-    }elseif(Yii::app()->controller->action->id=="update"){
+        echo "create product";
+    }elseif(Yii::app()->controller->action->id=="Update"){
         
-        echo "Edit  product"; 
+        echo "Edit product"; 
+    }
+    elseif(Yii::app()->controller->action->id=="update"){
+        
+        echo "Edit product"; 
     }
     elseif(Yii::app()->controller->action->id=="admin"){
         

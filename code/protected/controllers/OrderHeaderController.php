@@ -121,7 +121,7 @@ class OrderHeaderController extends Controller {
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
-                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0]  . ',
+                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
                                             <br/><br/>';
                 $body_text = '';
 
@@ -140,17 +140,16 @@ class OrderHeaderController extends Controller {
                 );
                 $mailsend = new OrderLine();
                 $resp = $mailsend->sgSendMail($mailArray);
-               
             }
             if ($status_data[0] == 'Delivered') {
                 $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
-                $csv_name ='order.pdf';
-                $csv_filename = "feeds/order_csv/" .$csv_name;
+                $csv_name = 'order_' . $modelOrder->attributes['order_id'] . '.pdf';
+                $csv_filename = "feeds/order_csv/" . $csv_name;
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
-                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0]  . ',
+                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
                                             <br/><br/>';
                 $body_text = '';
 
@@ -165,12 +164,12 @@ class OrderHeaderController extends Controller {
                     'subject' => $subject,
                     'html' => $body_html,
                     'text' => $body_text,
-                     'files' => array(
-                    '0' => array(
-                        'name' => $csv_name,
-                        'path' => $csv_filename,
-                    )
-                ),
+                    'files' => array(
+                        '0' => array(
+                            'name' => $csv_name,
+                            'path' => $csv_filename,
+                        )
+                    ),
                     'replyto' => $from_email,
                 );
                 $mailsend = new OrderLine();
@@ -461,6 +460,7 @@ class OrderHeaderController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+     
         $model = new OrderHeader('search');
 
         if (isset($_GET['pageSize'])) {
@@ -487,6 +487,100 @@ class OrderHeaderController extends Controller {
                 Yii::app()->user->setFlash('premission_info', 'Please select at least one order.');
             }
         }
+        if (isset($_GET['OrderHeader']))
+            $model->attributes = $_GET['OrderHeader'];
+     // echo '<pre>'; print_r ($_POST);die;
+        if (isset($_POST['status'])) {
+            if (isset($_POST['selectedIds'])) {
+                $no_of_selectedIds = count($_POST['selectedIds']);
+                for ($i = 0; $i < $no_of_selectedIds; $i++) {
+                    $connection = Yii::app()->secondaryDb;
+                    $sql = "SELECT billing_email FROM order_header WHERE order_id ='".$_POST['selectedIds'][$i]."'";
+                    $command = $connection->createCommand($sql);
+                    $command->execute();
+                   $emai_id = $command->queryAll();
+                   $email = $emai_id['0']['billing_email'];
+                   //$email= "kuldeep@canbrand.in";
+                    if ($_POST['status'] == 'Confirmed' || $_POST['status'] == 'Cancelled' || $_POST['status'] == 'Out for Delivery') {
+                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status'], $email);
+                        $from_email = 'grootsadmin@groots.in';
+                        $from_name = 'Groots Dashboard Admin';
+                        $subject = 'Groots Buyer Account';
+                        $urldata = Yii::app()->params['target_app_url'];
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status'] . ',
+                                            <br/><br/>';
+                        $body_text = '';
+
+                        $mailArray = array(
+                            'to' => array(
+                                '0' => array(
+                                    'email' => "$email",
+                                )
+                            ),
+                            'from' => $from_email,
+                            'fromname' => $from_name,
+                            'subject' => $subject,
+                            'html' => $body_html,
+                            'text' => $body_text,
+                            'replyto' => $from_email,
+                        );
+                        $mailsend = new OrderLine();
+                        $resp = $mailsend->sgSendMail($mailArray);
+                    }
+                    if ($_POST['status'] == 'Delivered') {
+                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status'], $email);
+                        $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
+                        $csv_filename = "feeds/order_csv/" . $csv_name;
+                        $from_email = 'grootsadmin@groots.in';
+                        $from_name = 'Groots Dashboard Admin';
+                        $subject = 'Groots Buyer Account';
+                        $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status'] . ',
+                                            <br/><br/>';
+                        $body_text = '';
+
+                        $mailArray = array(
+                            'to' => array(
+                                '0' => array(
+                                    'email' => "$email",
+                                )
+                            ),
+                            'from' => $from_email,
+                            'fromname' => $from_name,
+                            'subject' => $subject,
+                            'html' => $body_html,
+                            'text' => $body_text,
+                            'files' => array(
+                                '0' => array(
+                                    'name' => $csv_name,
+                                    'path' => $csv_filename,
+                                )
+                            ),
+                            'replyto' => $from_email,
+                        );
+                        $mailsend = new OrderLine();
+                        $resp = $mailsend->sgSendMail($mailArray);
+                        $myfile = fopen($urldata, 'a') or die("Unable to open file!");
+                        $txt = date('Y-m-d h:i:s') . " : " . $resp . "\n";
+                        fwrite($myfile, $txt);
+                        fclose($myfile);
+                    }
+                }
+                if ($no_of_selectedIds > 0) {
+                    $status_order = $_POST['status1'];
+                    $order_ids = implode(',', $_POST['selectedIds']);
+                    $active_record = $model->StatusOrderByID($order_ids, $status_order);
+                    //$active_record = $model->CancelOrderByID($order_ids);
+                    if ($active_record) {
+                        Yii::app()->user->setFlash('success', 'Selected order id status updated Successfully.');
+                    } else {
+                        Yii::app()->user->setFlash('premission_info', 'Please Try again.');
+                    }
+                }
+            } else {
+                Yii::app()->user->setFlash('premission_info', 'Please select at least one order.');
+            }
+        }
 
         if (isset($_POST['downloadbutton'])) {
 
@@ -499,7 +593,7 @@ class OrderHeaderController extends Controller {
                     ob_flush();
                     exit();
                 }
-            }else {
+            } else {
                 $sub_ids = $model->allcheckproductlcsv();
                 if (count($sub_ids) > 0) {
                     for ($i = 0; $i < count($sub_ids); $i++) {
@@ -519,7 +613,6 @@ class OrderHeaderController extends Controller {
             }
         }
         if (isset($_POST['sandbutton'])) {
-
             if (isset($_POST['selectedIds'])) {
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 if ($no_of_selectedIds > 0) {
@@ -605,7 +698,7 @@ class OrderHeaderController extends Controller {
             'modelOrder' => $modelOrder,
             'status' => $status,
             'email' => $email,
-            'store_model'=> $store_model,
+            'store_model' => $store_model,
         ));
         //$this->renderPartial("reportview");
     }
