@@ -73,6 +73,8 @@ Yii::app()->clientScript->registerScript('search', "
                 'class' => 'CCheckBoxColumn',
                 'selectableRows' => '100',
             ),
+        
+            
 //        array(
 //            'name' => 'store_front_id',
 //            'type' => 'raw',
@@ -116,6 +118,7 @@ Yii::app()->clientScript->registerScript('search', "
                     ),
                 
                 ),
+          
             ));
 
             $this->endWidget();

@@ -84,6 +84,7 @@ class SubscribedProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        //echo '<pre>'; print_r($_POST);die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -207,27 +208,62 @@ class SubscribedProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+       //echo '<pre>'; print_r($_POST);die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
-        //echo '<pre>';
-        //print_r($data);die;
-        $model = new SubscribedProduct('search');
-        $model->unsetAttributes(); // clear any default values
-
-        if (isset($_GET['SubscribedProduct'])) {
-            $model->attributes = $_GET['SubscribedProduct'];
+        
+        $model = new SubscribedProduct;
+        $model_grid = new RetailerproductquotationGridview('search');
+         if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
+            unset($_GET['pageSize']);
+        }
+        $model_grid->unsetAttributes(); // clear any default values
+        if (isset($_GET['RetailerproductquotationGridview'])) {
+            $model_grid->attributes = $_GET['RetailerproductquotationGridview'];
             //$model->attributes=$_REQUEST['id'];
         }
+        
+         if (isset($_POST['savedata'])) {
+           
+            if (isset($_POST['selectedIds'])) {
+              // echo '<pre>';print_r($_GET);die;
+                $no_of_selectedIds = count($_POST['selectedIds']);
+                $no_of_effective_price = count($_POST['effective_price']);
+                if ($no_of_selectedIds > 0) {
+
+                    for($i=0;$i<$no_of_selectedIds;$i++)
+                    {
+                        $val = $_POST['selectedIds'][$i];
+                       
+                        $ef=$_POST['effective_price'][$val];
+                        $df=$_POST['discount_price'][$val];
+                         $active_record= $model->savedatagridview($_REQUEST['id'],$val,$ef,$df);
+                        }
+                    if ($active_record=='') {
+                        Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
+                    } else {
+                        //$model->savedatagridview($_REQUEST['id'],$val,$ef,$df);
+                     }
+                }
+            }
+            else {
+            //echo "heoo";die;
+                Yii::app()->user->setFlash('premission_info', 'Please select at least one order.');
+            }
+        
+        }
         $this->render('admin', array(
-            'model' => $model,
-            // 'base_product_id' => $model_base_product->base_product_id,
-            'id' => $_REQUEST['id'],
+            //'model' => $model,
+             'model_grid' => $model_grid,
+            //'id' => $_REQUEST['id'],
         ));
     }
 
     public function actionlistallproduct() {
+       // echo '<pre>';print_r($_POST);die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -303,5 +339,47 @@ class SubscribedProductController extends Controller {
             Yii::app()->end();
         }
     }
+    public function actionAjaxupdate()
+{
+      
+        
+    $act = $_GET['act'];
+    if($act=='doSortOrder')
+    {
+        $sortOrderAll = $_POST['sortOrder'];
+        if(count($sortOrderAll)>0)
+        {
+            foreach($sortOrderAll as $menuId=>$sortOrder)
+            {
+                $model=$this->loadModel($menuId);
+                $model->sortOrder = $sortOrder;
+                $model->save();
+            }
+        }
+    }
+    else
+    {           
+        $autoIdAll = $_POST['autoId'];
+        if(count($autoIdAll)>0)
+        {
+            foreach($autoIdAll as $autoId)
+            {
+                $model=$this->loadModel($autoId);
+                if($act=='doDelete')
+                    $model->isDeleted = '1';
+                if($act=='doActive')
+                    $model->isActive = '1';
+                if($act=='doInactive')
+                    $model->isActive = '0';                     
+                if($model->save())
+                    echo 'ok';
+                else
+                    throw new Exception("Sorry",500);
+ 
+            }
+        }
+    }
+}
+
 
 }

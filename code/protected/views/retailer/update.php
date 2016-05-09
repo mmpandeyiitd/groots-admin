@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 ?>
 <div class="" id="yw0">
 <div class="portlet-content">
-  <?php $this->renderPartial('_form', array('model'=>$model)); ?>
+  <?php $this->renderPartial('form', array('model'=>$model)); ?>
 	</div>
 </div>
 

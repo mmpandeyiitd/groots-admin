@@ -37,48 +37,103 @@ if (Yii::app()->session['is_super_admin'] == 1) {
 //);
 }
 ?>
-
-<!--<h1 class="item_title">Manage Brands</h1>-->
-<h2>Subscribed Product List</h2>
+<?php
+$model_retailers = new Retailer();
+$rdetils = $model_retailers->data_retailers($_REQUEST['id']);
+//echo '<pre>';
+//print_r($rdetils);die;
+?>
+            
+    <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+        <div class="Csv" style="color:green;">
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+             <?php echo Yii::app()->user->getFlash('prod'); ?>
+        </div>
+        <?php endif; ?>
+ <?php
+//$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
+    $pageSize = 10;
+    $pageSizeDropDown = CHtml::dropDownList(
+                    'pageSize', $pageSize, array(10 => 10, 25 => 25, 50 => 50, 100 => 100,500 => 500), array(
+                'class' => 'change-pagesize',
+                'onchange' => "$.fn.yiiGridView.update('order-header-grid',{data:{pageSize:$(this).val()}});",
+                    )
+    );
+    ?>
+<h5 style="float: left;">
+    <?php
+    echo "Name : " . $rdetils['0']['name'];
+    echo '</br>';
+    echo "Email : " . $rdetils['0']['email'];
+    echo '</br>';
+    echo "Mobile :" . $rdetils['0']['mobile'];
+    ?></h5>
 <div class="search-form" style="display:none">
     <?php
     $this->renderPartial('_search', array(
-        'model' => $model,
+        'model_grid' => $model_grid,
     ));
     ?>
 </div><!-- search-form -->
 <?php if (Yii::app()->user->hasFlash('success')): ?><div class="flash-error label label-success" style="margin-left: 15px;"><?php echo Yii::app()->user->getFlash('success'); ?></div><?php endif; ?>
 <?php if (Yii::app()->user->hasFlash('error')): ?><div class="flash-error label label-important" style="margin-left: 15px;"  ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
-<?php $model_admin_data = new RetailerProductQuotation();
-        $data1 = $model_admin_data->admin_retailer_id($_REQUEST['id']);
-   //  echo '<pre>';print_r($data1);die;
-        ?>
 <?php
+$model_admin_data = new RetailerProductQuotation();
+// $data1 = $model_admin_data->admin_retailer_id($_REQUEST['id']);
+//  echo '<pre>';print_r($data1);die;
+?>
+<?php
+$form = $this->beginWidget('CActiveForm', array(
+    'enableAjaxValidation' => true,
+        ));
+?>
+   <?php
+//$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
+    $pageSize = 10;
+    $pageSizeDropDown = CHtml::dropDownList(
+                    'pageSize', $pageSize, array(10 => 10, 25 => 25, 50 => 50, 100 => 100,500 => 500), array(
+                'class' => 'change-pagesize',
+                'onchange' => "$.fn.yiiGridView.update('order-header-grid',{data:{pageSize:$(this).val()}});",
+                    )
+    );
+    ?>
+<input name="savedata" class="activebutton" value="save" type="submit">
+ 
+    <?php
 $this->widget('zii.widgets.grid.CGridView', array(
     'itemsCssClass' => 'table table-striped table-bordered table-hover',
     'id' => 'ympdm-store-grid',
-    'dataProvider' => $model->search(),
-    'filter' => $model,
+    'dataProvider' => $model_grid->search('created_date DESC'),
+    'filter' => $model_grid,
     'columns' => array(
-        //'subscribed_product_id',
-        
         array(
-            'header'=>'Title',
-             'name' => 'subscribed_product_id',
-                 'type' => 'raw',
-               'value' => '$data->BaseProduct->title',
-           ),
-       // 'store_id',
-        // 'diameter',
+            'header' => 'check',
+            'name' => 'selectedIds[]',
+            'id' => 'selectedIds',
+            'value' => '$data->subscribed_product_id',
+            'class' => 'CCheckBoxColumn',
+            'selectableRows' => '100',
+        ),
+        'title',
         'store_price',
         'store_offer_price',
-       
-      
-        'link' => array(
-            'header' => 'Action',
+        array(
+            //'header' => 'check',
+            'name' => 'effective_price',
             'type' => 'raw',
-            'value' => 'CHtml::button("Map",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("subscribedProduct/mappedProduct",array("id"=>$data->subscribed_product_id,"retailer_id" => $_REQUEST["id"]))."\'"))',
+            'value' => 'CHtml::textField("effective_price[$data->subscribed_product_id]",$data->effective_price,array("style"=>"width:50px;"))',
+            'htmlOptions' => array("width" => "50px"),
         ),
+        array(
+            //'header' => 'check',
+            'name' => 'discount_price',
+            'type' => 'raw',
+            'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("style"=>"width:50px;"))',
+            'htmlOptions' => array("width" => "50px"),
+        ),
+       
     ),
 ));
 ?>
+<?php $this->endWidget(); ?>

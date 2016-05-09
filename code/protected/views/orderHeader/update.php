@@ -459,8 +459,7 @@ if (isset($_GET['id'])) {
                     <h3><b>Discounted Total:</b><span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
                     <input type="hidden" id="grand_total" class="button_new" name="grand_total" value="<?php echo $grandtotal; ?>"/>
                     <input type="hidden" class="button_new" value="<?php echo $isize; ?>" id="isize" name="isize" /> 
-
-                    <?php if ($updationclose) { ?> <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> <?php } ?>
+                    <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> 
                     <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
                 </div> 
             </div>

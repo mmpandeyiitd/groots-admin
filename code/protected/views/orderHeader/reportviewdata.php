@@ -12,7 +12,7 @@ try {
     $html2pdf->pdf->SetDisplayMode('fullpage');
     $html2pdf->setDefaultFont('Arial');
     $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-    $html2pdf->Output('feeds/order_csv/order_' . $modelOrder->attributes['order_id'] . '.pdf', 'F');
+    $html2pdf->Output('feeds/order_csv/' . $modelOrder->attributes['order_id'] . '_' . md5('Order'.$modelOrder->attributes['order_id']) . '.pdf', 'F');
 
 } catch (HTML2PDF_exception $e) {
     echo $e;

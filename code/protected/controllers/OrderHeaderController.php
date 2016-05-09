@@ -116,7 +116,7 @@ class OrderHeaderController extends Controller {
                 //echo $reportdata;die;
             }
             if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Out for Delivery') {
-                $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
@@ -148,11 +148,10 @@ class OrderHeaderController extends Controller {
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
-                $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
+                $urldata = Yii::app()->params['email_app_url'];
                 $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
-                                            <br/><br/>';
+                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> dowanload pdf file </a><br/>';
                 $body_text = '';
-
                 $mailArray = array(
                     'to' => array(
                         '0' => array(
@@ -164,23 +163,11 @@ class OrderHeaderController extends Controller {
                     'subject' => $subject,
                     'html' => $body_html,
                     'text' => $body_text,
-                    'files' => array(
-                        '0' => array(
-                            'name' => $csv_name,
-                            'path' => $csv_filename,
-                        )
-                    ),
                     'replyto' => $from_email,
                 );
                 $mailsend = new OrderLine();
                 $resp = $mailsend->sgSendMail($mailArray);
-                $myfile = fopen($urldata, 'a') or die("Unable to open file!");
-                $txt = date('Y-m-d h:i:s') . " : " . $resp . "\n";
-                fwrite($myfile, $txt);
-                fclose($myfile);
             }
-
-
             if (isset($_POST['unit_price_discount']) && isset($_POST['unit_price_discount_old']) && !empty($_POST['orderline_ids_discount'])) {
                 $no_records = count($_POST['unit_price_discount']);
                 for ($p = 0; $p < $no_records; $p++) {
@@ -460,7 +447,7 @@ class OrderHeaderController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-     
+
         $model = new OrderHeader('search');
 
         if (isset($_GET['pageSize'])) {
@@ -489,25 +476,26 @@ class OrderHeaderController extends Controller {
         }
         if (isset($_GET['OrderHeader']))
             $model->attributes = $_GET['OrderHeader'];
-     // echo '<pre>'; print_r ($_POST);die;
+        // echo '<pre>'; print_r ($_POST);die;
         if (isset($_POST['status'])) {
             if (isset($_POST['selectedIds'])) {
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 for ($i = 0; $i < $no_of_selectedIds; $i++) {
                     $connection = Yii::app()->secondaryDb;
-                    $sql = "SELECT billing_email FROM order_header WHERE order_id ='".$_POST['selectedIds'][$i]."'";
+                    $sql = "SELECT billing_email FROM order_header WHERE order_id ='" . $_POST['selectedIds'][$i] . "'";
                     $command = $connection->createCommand($sql);
                     $command->execute();
-                   $emai_id = $command->queryAll();
-                   $email = $emai_id['0']['billing_email'];
-                   //$email= "kuldeep@canbrand.in";
-                    if ($_POST['status'] == 'Confirmed' || $_POST['status'] == 'Cancelled' || $_POST['status'] == 'Out for Delivery') {
-                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status'], $email);
+                    $emai_id = $command->queryAll();
+                    $email = $emai_id['0']['billing_email'];
+
+                    //$email= "kuldeep@canbrand.in";
+                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
+                        //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $from_email = 'grootsadmin@groots.in';
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status'] . ',
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
                                             <br/><br/>';
                         $body_text = '';
 
@@ -527,18 +515,18 @@ class OrderHeaderController extends Controller {
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-                    if ($_POST['status'] == 'Delivered') {
-                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status'], $email);
+                    if ($_POST['status1'] == 'Delivered') {
+                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+
                         $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
                         $csv_filename = "feeds/order_csv/" . $csv_name;
                         $from_email = 'grootsadmin@groots.in';
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
-                        $urldata = Yii::app()->params['LOG_FILE_NAME_ORDER_CSV'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status'] . ',
-                                            <br/><br/>';
+                        $urldata = Yii::app()->params['email_app_url'];
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i]  . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
+                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i]  . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> dowanload pdf file </a><br/>';
                         $body_text = '';
-
                         $mailArray = array(
                             'to' => array(
                                 '0' => array(
@@ -550,20 +538,10 @@ class OrderHeaderController extends Controller {
                             'subject' => $subject,
                             'html' => $body_html,
                             'text' => $body_text,
-                            'files' => array(
-                                '0' => array(
-                                    'name' => $csv_name,
-                                    'path' => $csv_filename,
-                                )
-                            ),
                             'replyto' => $from_email,
                         );
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
-                        $myfile = fopen($urldata, 'a') or die("Unable to open file!");
-                        $txt = date('Y-m-d h:i:s') . " : " . $resp . "\n";
-                        fwrite($myfile, $txt);
-                        fclose($myfile);
                     }
                 }
                 if ($no_of_selectedIds > 0) {
