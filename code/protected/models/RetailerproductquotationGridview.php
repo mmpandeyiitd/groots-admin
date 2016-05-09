@@ -34,6 +34,7 @@ class RetailerproductquotationGridview extends CActiveRecord {
             array('title, store', 'length', 'max' => 255),
             array('store_price, store_offer_price', 'length', 'max' => 12),
             array('retailer_id, effective_price, discount_price', 'length', 'max' => 11),
+            array('discount_price','compare','compareValue'=>'100','operator'=>'<','message'=>'Percentage must be less than 100'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('title, store_price, store_offer_price, quantity, store, retailer_id, effective_price, discount_price', 'safe', 'on' => 'search'),

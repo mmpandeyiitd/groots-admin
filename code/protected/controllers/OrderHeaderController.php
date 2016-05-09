@@ -150,7 +150,7 @@ class OrderHeaderController extends Controller {
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['email_app_url'];
                 $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
-                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> dowanload pdf file </a><br/>';
+                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> click here download invoice </a><br/>';
                 $body_text = '';
                 $mailArray = array(
                     'to' => array(
@@ -525,7 +525,7 @@ class OrderHeaderController extends Controller {
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['email_app_url'];
                         $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i]  . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
-                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i]  . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> dowanload pdf file </a><br/>';
+                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i]  . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
                         $body_text = '';
                         $mailArray = array(
                             'to' => array(
