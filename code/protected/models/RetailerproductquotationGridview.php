@@ -90,14 +90,14 @@ class RetailerproductquotationGridview extends CActiveRecord {
 IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
             $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on  rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
         }
-        $criteria->compare('title', $this->title, true);
-        $criteria->compare('store_price', $this->store_price, true);
-        $criteria->compare('store_offer_price', $this->store_offer_price, true);
-        $criteria->compare('quantity', $this->quantity);
-        $criteria->compare('store', $this->store, true);
+        $criteria->compare('t.title', $this->title, true);
+        $criteria->compare('t.store_price', $this->store_price, true);
+        $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
+        $criteria->compare('t.quantity', $this->quantity);
+        $criteria->compare('t.store', $this->store, true);
         $criteria->compare('retailer_id', $this->retailer_id, true);
-        $criteria->compare('effective_price', $this->effective_price, true);
-        $criteria->compare('discount_price', $this->discount_price, true);
+        $criteria->compare('rp2.effective_price', $this->effective_price, true);
+        $criteria->compare('rp2.discount_price', $this->discount_price, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
