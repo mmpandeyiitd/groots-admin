@@ -88,15 +88,6 @@ onclick='return confirm("Do you want to cancel");'/>
             <option value="Cancelled">Cancelled</option>
             <option value="Paid">Paid</option>
         </select>
-<!--        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Change status</a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel" value>
-            <li><input  type="submit" name="status" class="activebutton"  id="pending" value="pending" /></li>
-            <li><input  type="submit" name="status" class="activebutton"  id="Confirmed" value="Confirmed" /></li>
-            <li><input  type="submit" name="status" class="activebutton"  id="Out for Delivery" value="Out for Delivery" /></li>
-            <li><input  type="submit" name="status" class="activebutton"  id="Delivered" value="Delivered" /></li>
-            <li><input  type="submit" name="status" class="activebutton"  id="Cancelled" value="Cancelled" /></li>
-             <li><input  type="submit" name="status" class="activebutton"  id="Paid" value="Paid" /></li>
-        </ul>-->
     </div>
     <style>
         
@@ -187,7 +178,6 @@ onclick='return confirm("Do you want to cancel");'/>
         ),
     ));
     ?>
- <input type="hidden" name="hidden1" id="hidden1"  />
 </form>
 <script type="text/javascript">
     function changestatus (ve)

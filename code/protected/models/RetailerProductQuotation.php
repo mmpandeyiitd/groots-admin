@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 /**
  * This is the model class for table "retailer_product_quotation".
