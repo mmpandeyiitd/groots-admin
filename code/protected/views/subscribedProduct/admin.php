@@ -107,6 +107,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $model_grid->search('created_date DESC'),
     'filter' => $model_grid,
     'columns' => array(
+       
         array(
             'header' => 'check',
             'name' => 'selectedIds[]',
@@ -115,10 +116,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'class' => 'CCheckBoxColumn',
             'selectableRows' => '100',
         ),
+        
         'title',
         'store_price',
         'store_offer_price',
-        array(
+        
+   array(
             //'header' => 'check',
             'name' => 'effective_price',
             'type' => 'raw',

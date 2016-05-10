@@ -89,8 +89,12 @@ class RetailerproductquotationGridview extends CActiveRecord {
             // $criteria->alias = 'rp2';
              $criteria->select = "t.subscribed_product_id,t.title,t.store_price,t.store_offer_price,IF(rp2.`effective_price` IS NULL,0,rp2.`effective_price`) AS effective_price,
 IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
-            $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on  rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id group by t.subscribed_product_id";
+            $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
+            $criteria->group = "t.subscribed_product_id";
+            
         }
+       
+        
         $criteria->compare('t.title', $this->title, true);
         $criteria->compare('t.store_price', $this->store_price, true);
         $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
