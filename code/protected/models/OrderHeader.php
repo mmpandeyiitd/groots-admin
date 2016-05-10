@@ -416,7 +416,20 @@ class OrderHeader extends CActiveRecord {
         }
         return $succ;
     }
+    public function StatusOrderByID($order_ids,$status_order) {
+        $succ = false;
 
+        if (!empty($order_ids)) {
+            $sql = "update `order_header` set status='" . $status_order . "' where order_id in($order_ids)";
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $succ1 = $command->execute();
+        }
+        if ($succ1) {
+            return true;
+        }
+        return $succ;
+    }
     public static function downloadCSVByIDs($store_front_ids) {
         // $succ = false;
         if (!empty($store_front_ids)) {

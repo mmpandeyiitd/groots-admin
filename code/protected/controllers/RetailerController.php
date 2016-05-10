@@ -157,7 +157,10 @@ class RetailerController extends Controller {
           </span>
           <br>
 
-        <a href="'.$urldata.'" style="background:url('.$emailurldata .'emailimage/android.png) no-repeat; text-indent:-2000px; display:block;width:225px; height:60px; background-size: contain;"></a>
+        <a href="'.$urldata.'">
+            
+        <img src="'.$emailurldata .'emailimage/android.png" alt="call" style= text-indent:-2000px; display:block;width:225px; height:60px;"> 
+            </a>
         <br> <br> 
       </p>
      </td>          

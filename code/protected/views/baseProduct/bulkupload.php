@@ -51,9 +51,8 @@ if ($issuperadmin == 1) {
     </div>
 <?php endif; ?>
 <div class="bulkupload_btn">
-    <?php echo CHtml::button('Download Templete For Create', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/CreateFileDownload"')); ?>
-    <?php echo CHtml::button('Download Templete For Update', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/UpdateFileDownload"',)); ?>
-   
+    <?php echo CHtml::button('Download Template For Create', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/CreateFileDownload"')); ?>
+    <?php echo CHtml::button('Download Template For Update', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/UpdateFileDownload"',)); ?>
     <br>
 </div>
 <div>

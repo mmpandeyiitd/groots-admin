@@ -78,17 +78,12 @@ Yii::app()->clientScript->registerScript('search', "
 //            'type' => 'raw',
 //        ),
             array(
-            'header'=>'Title',
-             'name' => 'subscribed_product_id',
+           // 'header'=>'Title',
+             'name' => 'title',
                  'type' => 'raw',
                'value' => '$data->BaseProduct->title',
            ),
-       // 'stor
             
-           array(
-                'name' => 'quantity',
-                'type' => 'raw',
-            ),
             array(
                 'header' => 'store price',
                 'name' => 'store_price',
@@ -105,10 +100,12 @@ Yii::app()->clientScript->registerScript('search', "
                 'name' => 'status',
                 'type' => 'raw',
                  ),
-//             array(
-//                'name' => 'store',
-//                'type' => 'raw',
-//            ),
+            /*  array(
+		    'name'=>'status',
+		    'type'=>'raw',
+		    'value' => '($data->status == "1")?"Enable":"Disable"',
+	    ),*/
+           
            'link' => array(
                 'header' => 'Edit',
                 'type' => 'raw',

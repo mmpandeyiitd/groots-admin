@@ -97,6 +97,7 @@ class BaseProductController extends Controller {
      */
     public function actionCreate() {
 
+
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -111,11 +112,15 @@ class BaseProductController extends Controller {
         $qunt = '';
         $a = '';
         $new_data = '';
+        $Weight = '';
+        $WeightUnit = '';
+        $Length = '';
+        $LengthUnit = '';
+
 
         $images = array();
         $specific_keyfield = '';
         if (isset($_POST['BaseProduct'])) {
-
             $model->attributes = $_POST['BaseProduct'];
             $specific_key = array();
             $specific_value = array();
@@ -157,20 +162,57 @@ class BaseProductController extends Controller {
             if (isset($_POST['WSP'])) {
                 $wsp = $_POST['WSP'];
             }
-            if (isset($_POST['a'])) {
-                $a = $_POST['a'];
+            if (isset($_POST['grade'])) {
+                $grade = $_POST['grade'];
             }
             //  echo $_POST['new_data'];die;
-            if (isset($_POST['new_data'])) {
-                $new_data = $_POST['new_data'];
+            if (isset($_POST['diameter'])) {
+                $diameter = $_POST['diameter'];
+            }
+            if (isset($_POST['Weight'])) {
+                $Weight = $_POST['Weight'];
+            }
+            if (isset($_POST['WeightUnit'])) {
+                $WeightUnit = $_POST['WeightUnit'];
+            }
+            if (isset($_POST['Length'])) {
+                $Length = $_POST['Length'];
+            }
+            if (isset($_POST['LengthUnit'])) {
+                $LengthUnit = $_POST['LengthUnit'];
             }
             if (isset($_POST['qunt'])) {
                 $qunt = $_POST['qunt'];
+            } else {
+                $qunt = 1;
             }
             if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
                 $model->status = 0;
+            }
+            //echo '<pre>'; print_r($_POST);die;
+            if ($_POST['diameter'] == '') {
+                // echo "hello";die;
+                $diameter = '0';
+            }
+
+            if (!is_numeric($diameter)) {
+                Yii::app()->user->setFlash('WSP', ' Diameter must be a number.');
+                $this->render('create', array(
+                    'model' => $model,
+                    'mrp' => $mrp,
+                    'wsp' => $wsp,
+                    'diameter' => $diameter,
+                    'grade' => $grade,
+                    'qunt' => $qunt,
+                    'Weight' => $Weight,
+                    'WeightUnit' => $WeightUnit,
+                    'Length' => $Length,
+                    'LengthUnit' => $LengthUnit,
+                    'specific_keyfield' => $specific_keyfield,
+                ));
+                exit();
             }
 
 
@@ -186,6 +228,10 @@ class BaseProductController extends Controller {
                         'diameter' => $diameter,
                         'grade' => $grade,
                         'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
                     ));
                     exit();
                 }
@@ -198,6 +244,10 @@ class BaseProductController extends Controller {
                         'diameter' => $diameter,
                         'grade' => $grade,
                         'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
                     ));
                     exit();
@@ -211,12 +261,16 @@ class BaseProductController extends Controller {
                         'diameter' => $diameter,
                         'grade' => $grade,
                         'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
                     ));
                     exit();
                 }
                 // echo $diameter;die;
-                if (!is_numeric($_POST['qunt'])) {
+                if (!is_numeric($_POST['BaseProduct']['quantity'])) {
                     Yii::app()->user->setFlash('WSP', ' Quantity must be a number.');
                     $this->render('create', array(
                         'model' => $model,
@@ -225,12 +279,19 @@ class BaseProductController extends Controller {
                         'diameter' => $diameter,
                         'grade' => $grade,
                         'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
                     ));
                     exit();
                 }
-                if (!is_numeric($_POST['new_data'])) {
-                    Yii::app()->user->setFlash('WSP', ' Diameter must be a number.');
+                if ($_POST['Weight'] == '') {
+                    $Weight = '0';
+                }
+                if (!is_numeric($Weight)) {
+                    Yii::app()->user->setFlash('WSP', 'Weight must be a number.');
                     $this->render('create', array(
                         'model' => $model,
                         'mrp' => $mrp,
@@ -238,6 +299,30 @@ class BaseProductController extends Controller {
                         'diameter' => $diameter,
                         'grade' => $grade,
                         'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
+                        'specific_keyfield' => $specific_keyfield,
+                    ));
+                    exit();
+                }
+                if ($_POST['Length'] == '') {
+                    $Length = '0';
+                }
+                if (!is_numeric($Length)) {
+                    Yii::app()->user->setFlash('WSP', 'Length must be a number.');
+                    $this->render('create', array(
+                        'model' => $model,
+                        'mrp' => $mrp,
+                        'wsp' => $wsp,
+                        'diameter' => $diameter,
+                        'grade' => $grade,
+                        'qunt' => $qunt,
+                        'Weight' => $Weight,
+                        'WeightUnit' => $WeightUnit,
+                        'Length' => $Length,
+                        'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
                     ));
                     exit();
@@ -276,22 +361,27 @@ class BaseProductController extends Controller {
                     //  echo $diameter;die;
                     #................subscription...............#
 
+
                     $model_subscribe = new SubscribedProduct();
                     $model_subscribe->base_product_id = $model->base_product_id;
                     $model_subscribe->store_id = $model->store_id;
                     $model_subscribe->store_price = $_POST['MRP'];
-                    $model_subscribe->diameter = $new_data;
-                    $model_subscribe->grade = $a;
+                    $model_subscribe->diameter = $diameter;
+                    $model_subscribe->grade = $grade;
                     $model_subscribe->quantity = $qunt;
                     $model_subscribe->store_offer_price = $_POST['WSP'];
-                    $model_subscribe->data_sub($model->base_product_id, $model->store_id, $_POST['MRP'], $new_data, $a, $qunt, $_POST['WSP']);
+                    $model_subscribe->weight = $Weight;
+                    $model_subscribe->weight_unit = $WeightUnit;
+                    $model_subscribe->length = $Length;
+                    $model_subscribe->length_unit = $LengthUnit;
+                    $model_subscribe->data_sub($model->base_product_id, $model->store_id, $_POST['MRP'], $diameter, $grade, $qunt, $_POST['WSP'], $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
 
                     #...................end...................#
                     $cat_object = new Category();
                     $base_product_id = $model->base_product_id;
                     foreach ($_POST['aiotree']['category_id'] as $key => $value) {
                         $val = explode("-", $value);
-                        $cat_object->createBaseproductMappings($base_product_id, $val[3]);
+                        $cat_object->createBaseproductMappings1($base_product_id, $val[3]);
                     }
                     if (isset($images) && count($images) > 0) {
                         foreach ($images as $image => $pic) {
@@ -384,6 +474,10 @@ class BaseProductController extends Controller {
             'diameter' => $diameter,
             'grade' => $grade,
             'qunt' => $qunt,
+            'Weight' => $Weight,
+            'WeightUnit' => $WeightUnit,
+            'Length' => $Length,
+            'LengthUnit' => $LengthUnit,
             'specific_keyfield' => $specific_keyfield,
         ));
     }
@@ -404,9 +498,13 @@ class BaseProductController extends Controller {
         $getrecord = new ProductCategoryMapping();
         $record = $getrecord->getRecordById($id);
         $imageinfo = $getrecord->getImageById($id);
-        
+
         $mrp = '';
         $wsp = '';
+        $Weight = '';
+        $WeightUnit = '';
+        $Length = '';
+        $LengthUnit = '';
         $specific_keyfield = '';
         $model_subscribe = new SubscribedProduct();
         $a = $model_subscribe->getdatarecords($id);
@@ -477,12 +575,12 @@ class BaseProductController extends Controller {
             } else {
                 $diameter = $new_data['0']['diameter'];
             }
-            if ($_POST['qunt'] == '') {
+            //  echo '<pre>';  print_r($_POST);die;
+            if ($_POST['BaseProduct']['quantity'] == '') {
                 $quantity = $qunt['0']['quantity'];
                 //  $quantity=
             } else {
-
-                $quantity = $_POST['qunt'];
+                $quantity = $_POST['BaseProduct']['quantity'];
             }
             if (isset($_POST['color'])) {
                 $model->color = $_POST['color'];
@@ -503,25 +601,36 @@ class BaseProductController extends Controller {
             if (isset($_POST['WSP'])) {
                 $wsp = $_POST['WSP'];
             }
-             if ($a == Array()) {
-                    $grade = $_POST['a'];
-                } else {
-                    $grade = $a['0']['grade'];
-                }
-                if ($new_data == Array()) {
-                    $diameter = $_POST['new_data'];
-                } else {
-                   $diameter = $new_data['0']['diameter'];
-                }
-                if ($_POST['qunt'] == '') {
-                    $quantity = $qunt['0']['quantity'];
-                    //  $quantity=
-                } else {
+            if ($a == Array()) {
+                $grade = $_POST['a'];
+            } else {
+                $grade = $a['0']['grade'];
+            }
+            if ($new_data == Array()) {
+                $diameter = $_POST['new_data'];
+            } else {
+                $diameter = $new_data['0']['diameter'];
+            }
+            if ($_POST['BaseProduct']['quantity'] == '') {
+                $quantity = $qunt['0']['quantity'];
+                //  $quantity=
+            } else {
 
-                    $quantity = $_POST['qunt'];
-                    // $quantity=$qunt['0']['quantity'];
-                }
-
+                $quantity = $_POST['BaseProduct']['quantity'];
+                // $quantity=$qunt['0']['quantity'];
+            }
+            if (isset($_POST['Weight'])) {
+                $Weight = $_POST['Weight'];
+            }
+            if (isset($_POST['WeightUnit'])) {
+                $WeightUnit = $_POST['WeightUnit'];
+            }
+            if (isset($_POST['Length'])) {
+                $Length = $_POST['Length'];
+            }
+            if (isset($_POST['LengthUnit'])) {
+                $LengthUnit = $_POST['LengthUnit'];
+            }
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
                 $this->render('update', array(
@@ -533,6 +642,10 @@ class BaseProductController extends Controller {
                     'wsp' => $wsp,
                     'record' => $record,
                     'imageinfo' => $imageinfo,
+                    'Weight' => $Weight,
+                    'WeightUnit' => $WeightUnit,
+                    'Length' => $Length,
+                    'LengthUnit' => $LengthUnit,
                     'specific_keyfield' => $specific_keyfield,
                 ));
                 exit();
@@ -546,6 +659,7 @@ class BaseProductController extends Controller {
               //'diameter' => $diameter,
               //'grade' => $grade,
               'specific_keyfield' => $specific_keyfield,
+             * $Weight,$WeightUnit,$Length,$LengthUnit
               ));
               exit();
               } */
@@ -568,16 +682,27 @@ class BaseProductController extends Controller {
                 } else {
                     $diameter = $new_data['0']['diameter'];
                 }
-                if ($_POST['qunt'] == '') {
+                if ($_POST['BaseProduct']['quantity'] == '') {
                     $quantity = $qunt['0']['quantity'];
                     //  $quantity=
                 } else {
 
-                   $quantity = $_POST['qunt'];
-                     //$quantity=$qunt['0']['quantity'];
+                    $quantity = $_POST['BaseProduct']['quantity'];
+                    //$quantity=$qunt['0']['quantity'];
                 }
+                $Weight = $model_subscribe->getdatarecords_data($id);
+              //  echo '<pre>';print_r($Weight);die;
+                $base_product_id = $model->base_product_id;
+                $store_id = $model->store_id;
+                if ($Weight['0']['weight'] != '') {
+                    $Weight = $_POST['Weight'];
+                } else {
+                    // $grade = $_POST['a'];
+                     $Weight = $Weight['0']['weight'];;
+                }
+               
 
-                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity);
+                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity,$Weight,$WeightUnit,$Length,$LengthUnit);
                 #...................end...................#
 
 
@@ -713,7 +838,6 @@ class BaseProductController extends Controller {
         }
         if ($a == Array() && $new_data != Array() && $qunt != Array()) {
             $this->render('update', array(
-               
                 'a' => '',
                 'new_data' => $new_data['0']['diameter'],
                 'qunt' => $qunt['0']['quantity'],
@@ -722,6 +846,10 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
+                'Weight' => $Weight,
+                'WeightUnit' => $WeightUnit,
+                'Length' => $Length,
+                'LengthUnit' => $LengthUnit,
                 'specific_keyfield' => $specific_keyfield,
             ));
         } else if ($new_data == Array() && $a != Array() && $qunt != Array()) {
@@ -734,6 +862,10 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
+                'Weight' => $Weight,
+                'WeightUnit' => $WeightUnit,
+                'Length' => $Length,
+                'LengthUnit' => $LengthUnit,
                 'specific_keyfield' => $specific_keyfield,
             ));
         } else if ($qunt == Array() && $new_data != Array() && $a != Array()) {
@@ -746,10 +878,14 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
+                'Weight' => $Weight,
+                'WeightUnit' => $WeightUnit,
+                'Length' => $Length,
+                'LengthUnit' => $LengthUnit,
                 'specific_keyfield' => $specific_keyfield,
             ));
         } else if ($qunt != Array() && $new_data != Array() && $a != Array()) {
-          // echo '<pre>'; print_r($new_data);die;
+            // echo '<pre>'; print_r($new_data);die;
             $this->render('update', array(
                 'a' => $a['0']['grade'],
                 'new_data' => $new_data['0']['diameter'],
@@ -759,10 +895,13 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
+                'Weight' => $Weight,
+                'WeightUnit' => $WeightUnit,
+                'Length' => $Length,
+                'LengthUnit' => $LengthUnit,
                 'specific_keyfield' => $specific_keyfield,
             ));
-        }
-        else {
+        } else {
             $this->render('update', array(
                 'a' => '',
                 'new_data' => '',
@@ -772,6 +911,10 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
+                'Weight' => $Weight,
+                'WeightUnit' => $WeightUnit,
+                'Length' => $Length,
+                'LengthUnit' => $LengthUnit,
                 'specific_keyfield' => $specific_keyfield,
             ));
         }
@@ -799,12 +942,13 @@ class BaseProductController extends Controller {
             'dataProvider' => $dataProvider,
         ));
     }
+
     /**
      * Manages all models.
      */
     public function actionAdmin() {
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') == 0) {
-             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
+            Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
 
@@ -931,6 +1075,7 @@ class BaseProductController extends Controller {
         $keycsv++;
 
         if (isset($_POST['Bulk'])) {
+
             $model->action = $_POST['Bulk']['action'];
             $model->attributes = $_POST['Bulk'];
             if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
@@ -955,12 +1100,12 @@ class BaseProductController extends Controller {
                     $this->render('bulkupload', array('model' => $model));
                 }
                 $i = 0;
-                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price','Pack Size');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity');
+                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit');
 
                 if ($model->action == 'update') {
-                    $requiredFields = array('Base product id');
-                    $defaultFields[] = 'Base product id';
+                    $requiredFields = array('Subscribed Product ID');
+                    $defaultFields[] = 'Subscribed Product ID';
                 }
                 if (($handle = fopen("$fileName", "r")) !== FALSE) {
                     $logDir = "log/";
@@ -969,9 +1114,6 @@ class BaseProductController extends Controller {
 
                     while (($data = fgetcsv($handle, 0, ",")) !== FALSE) {
                         $fp = file($fileName);
-//                  echo '<pre>';
-//                print_r($fp);
-//                print_r($_POST);die;
                         if (count($fp) == 1) {
                             Yii::app()->user->setFlash('error', 'Your CSV file is : ' . 'Blank');
                             break;
@@ -985,7 +1127,6 @@ class BaseProductController extends Controller {
                                     Yii::app()->user->setFlash('error', 'Required columns missing : ' . implode(' , ', $colDiff));
                                     break;
                                 }
-
                                 foreach ($data as $key => $value) {
                                     $data[$key] = trim($value);
                                     if (in_array($value, $defaultFields)) {
@@ -999,17 +1140,16 @@ class BaseProductController extends Controller {
                             } else {
 
                                 $row = array();
-
-                                if (isset($cols['Base product id'])) {
+                                if (isset($cols['Subscribed Product ID'])) {
                                     try {
-                                        if (trim($data[$cols['Base product id']]) == null) {
+                                        if (trim($data[$cols['Subscribed Product ID']]) == null) {
                                             fwrite($handle1, "\nRow : " . $i . " Base product id is empty.");
                                             continue;
                                         }
-                                        $model1 = $this->loadModel(trim($data[$cols['Base product id']]));
+                                        $model1 = $this->loadModel(trim($data[$cols['Subscribed Product ID']]));
                                         // echo'<pre>';  print_r($model1);die;
                                     } catch (Exception $e) {
-                                        fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Base product id']]} does not exist.");
+                                        fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Subscribed Product ID']]} does not exist.");
 
                                         continue;
                                     }
@@ -1018,15 +1158,11 @@ class BaseProductController extends Controller {
                                 }
 
                                 $model1->action = $model->action;
-                                $store_id=1;
+                                $store_id = 1;
                                 if ($store_id != 1) {
-                                   Yii::app()->user->setFlash('error', 'Store ID does not match');
+                                    Yii::app()->user->setFlash('error', 'Store ID does not match');
                                     break;
                                 }
-                           // echo '<pre>';
-//                             print_r($cols);
-                           // echo  $row['description'] = str_replace("’", "'", trim($data[$cols['description']]));die;
-                              // print_r($cols);die;
                                 if (isset($cols['Base product id']))
                                     $baseid = str_replace("’", "'", trim($data[$cols['Base product id']]));
                                 if (isset($cols['title']))
@@ -1044,165 +1180,232 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['color']))
                                     $row['color'] = trim($data[$cols['color']]);
-                                /*if (isset($cols['quantity']))
-                                    $row['quantity'] = trim($data[$cols['quantity']]);
-                               if (isset($cols['store id']))
-                                    $row['store_id'] = str_replace("’", "'", trim($data[$cols['store id']]));
-                                if (isset($cols['status']))
-                                    $row['status'] = 1;*/
-                                 $row['store_id']=1;
-                                $row['status']=1;
-                                $row['quantity']=1;
+
+                                $row['store_id'] = 1;
+                                $row['status'] = 1;
+                                $row['quantity'] = 1;
                                 if (isset($cols['Store Price']))
                                     $mrp = trim($data[$cols['Store Price']]);
                                 if (isset($cols['Store Offer Price']))
                                     $wsp = trim($data[$cols['Store Offer Price']]);
-                             //echo '<pre>';  print_r($cols);die;
-                                $categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                $cat_flag = 0;
-                                foreach ($categories as $category) {
 
-                                    if (!is_numeric($category)) {
-                                        $cat_flag++;
+                                //echo '<pre>';  print_r($cols);die;
+                                if (isset($cols['Weight'])) {
+                                    $Weight = trim($data[$cols['Weight']]);
+                                } else {
+                                    $Weight = 0;
+                                }
+                                if (isset($cols['Weight Unit'])) {
+                                    $Weight_Unit = trim($data[$cols['Weight Unit']]);
+                                } else {
+                                    $Weight_Unit = '';
+                                }
+                                if (isset($cols['Length'])) {
+                                    $Length = trim($data[$cols['Length']]);
+                                } else {
+                                    $Length = 0;
+                                }
+                                if (isset($cols['Length Unit'])) {
+                                    $Length_Unit = trim($data[$cols['Length Unit']]);
+                                } else {
+                                    $Length_Unit = '';
+                                }
+                                if (isset($cols['categoryId'])) {
+                                    $cat_flag = 0;
+                                    $categories = explode(';', trim($data[$cols['categoryId']], ';'));
+
+                                    foreach ($categories as $category) {
+                                        $cat_flag = 0;
+                                        $connection = Yii::app()->db;
+                                        $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
+                                        $command = $connection->createCommand($sql);
+                                        $pdf = $command->queryAll();
+
+                                        if (!is_numeric($category) || $pdf == Array()) {
+                                            $cat_flag++;
+                                        }
+                                    }
+                                    if ($cat_flag == 1) {
+                                        Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $categories));
+                                        break;
                                     }
                                 }
-                                if ($cat_flag == 1) {
-                                    Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $categories));
-                                    break;
-                                }
-
-
                                 $errorFlag = 0;
                                 $model1->attributes = $row;
-
                                 $error = array();
                                 $action = $model->action == 'update' ? 'updated' : 'created';
                                 $model_subscribe = new SubscribedProduct();
-                                if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp) && $mrp > $wsp)) {
-                                    // echo $row['pack_unit'];die;
-                                    $model_subscribe->store_offer_price = $wsp;
-                                    $model_subscribe->diameter = $data[$cols['Diameter']];
-                                    $model_subscribe->store_price = $mrp;
-                                    $model_subscribe->quantity = 1;
-                                    //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
-                                    if (!$model1->save(true)) {
+                                if (isset($cols['Pack Size'])) {
+                                    $pack_saze = $data[$cols['Pack Size']];
+                                } else {
+                                    $pack_saze = 0;
+                                }
+                                if (isset($cols['Diameter'])) {
+                                    $Diameter = $data[$cols['Diameter']];
+                                } else {
+                                    $Diameter = 0;
+                                }
+                                if ($model1->action == 'create') {
+                                    if ((is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($Weight) && is_numeric($Length) && is_numeric($Diameter) && (is_numeric($mrp) && $mrp > $wsp)) {
+                                        // echo $row['pack_unit'];die;
 
-                                        foreach ($model1->getErrors() as $errors) {
-                                            // echo "hello";die;
-                                            $error[] = implode(' AND ', $errors);
-                                        }
-                                        fwrite($handle1, "\nRow : " . $i . " Product not $action. " . implode(' AND ', $error));
-                                    } else {
+                                        $model_subscribe->store_offer_price = $wsp;
+                                        $model_subscribe->diameter = $Diameter;
+                                        $model_subscribe->weight = $Weight;
+                                        $model_subscribe->weight_unit = $Weight_Unit;
+                                        $model_subscribe->length = $Length;
+                                        $model_subscribe->length_unit = $Length_Unit;
+                                        $model_subscribe->store_price = $mrp;
+                                        $model_subscribe->quantity = 1;
 
-                                        // print_r($cols]);die;
-                                        //echo $data[$cols['Diameter']];die;
-                                        if ($model1->action == 'create') { #................subscription...............#
-                                             $model_subscribe = new SubscribedProduct();
-                                            $model_subscribe->base_product_id = $model1->base_product_id;
-                                            //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                            $model_subscribe->store_id = 1;
-                                           $model_subscribe->quantity=1;
-                                            if ($wsp != '') {
-                                                $model_subscribe->store_offer_price = $wsp;
-                                            } else {
-                                                $model_subscribe->store_offer_price = 0;
-                                            }
-                                            if ($mrp != '') {
-                                                $model_subscribe->store_price = $mrp;
-                                            } else {
-                                                //$model_subscribe->store_price = 0;
-                                            }
+                                        //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                        if (!$model1->save(true)) {
 
-                                            if ($data[$cols['Diameter']] != '') {
-                                                $model_subscribe->diameter = $data[$cols['Diameter']];
-                                            } else {
-                                                $model_subscribe->diameter = 0;
-                                            }
-                                            if ($data[$cols['Grade']] != '') {
-                                                $model_subscribe->grade = $data[$cols['Grade']];
-                                            } else {
-                                                $model_subscribe->grade = 0;
-                                            }
-                                           /* if ($data[$cols['quantity']] != '') {
-                                                $model_subscribe->quantity = $data[$cols['quantity']];
-                                            } else {
-                                                $model_subscribe->quantity = 1;
-                                            }*/
-
-                                            //$model_subscribe->quantity = $data[$cols['quantity']];
-                                            $model_subscribe->save();
-                                            $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
-                                        }#...................end...................#
-                                        if ($model1->action == 'update') {
-                                            $model_subscribe = new SubscribedProduct();
-                                            $model_subscribe->base_product_id = $model1->base_product_id;
-                                            //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                            $model_subscribe->store_id = $model1->store_id;
-                                            // $model_subscribe->store_price = $mrp;
-
-
-                                          //  if ((is_numeric($wsp)) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp))) {
+                                            foreach ($model1->getErrors() as $errors) {
                                                 // echo "hello";die;
-                                            if ((is_numeric($wsp)) && is_numeric($data[$cols['Pack Size']]) && is_numeric($data[$cols['Diameter']]) && (is_numeric($mrp) && $mrp > $wsp)) {
-                                                $model_subscribe->store_offer_price = $wsp;
-                                                $model_subscribe->diameter = $data[$cols['Diameter']];
-                                                $model_subscribe->grade = $data[$cols['Grade']];
-                                                $model_subscribe->store_price = $mrp;
+                                                $error[] = implode(' AND ', $errors);
+                                            }
+                                            fwrite($handle1, "\nRow : " . $i . " Product not $action. " . implode(' AND ', $error));
+                                        } else {
+
+                                            // print_r($cols]);die;
+                                            //echo $data[$cols['Diameter']];die;
+                                            if ($model1->action == 'create') { #................subscription...............#
+                                                $model_subscribe = new SubscribedProduct();
+                                                $model_subscribe->base_product_id = $model1->base_product_id;
+                                                //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                                $model_subscribe->store_id = 1;
                                                 $model_subscribe->quantity = 1;
-                                                $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                                if ($wsp != '') {
+                                                    $model_subscribe->store_offer_price = $wsp;
+                                                } else {
+                                                    $model_subscribe->store_offer_price = 0;
+                                                }
+                                                if ($mrp != '') {
+                                                    $model_subscribe->store_price = $mrp;
+                                                } else {
+                                                    //$model_subscribe->store_price = 0;
+                                                }
+                                                if (isset($cols['Diameter'])) {
+                                                    $model_subscribe->diameter = $data[$cols['Diameter']];
+                                                } else {
+                                                    $model_subscribe->diameter = 0;
+                                                }
+                                                if (isset($cols['Grade'])) {
+                                                    $model_subscribe->grade = $data[$cols['Grade']];
+                                                } else {
+                                                    $model_subscribe->grade = 0;
+                                                }
+                                                $model_subscribe->weight = $Weight;
+                                                $model_subscribe->weight_unit = $Weight_Unit;
+                                                $model_subscribe->length = $Length;
+                                                $model_subscribe->length_unit = $Length_Unit;
+                                                $category_obj = new Category();
+
+                                                foreach ($categories as $category) {
+                                                    $base_product_id = $model1->base_product_id;
+
+                                                    $category_obj->createBaseproductMappings1($base_product_id, $category);
+                                                }
+                                                $model_subscribe->save();
+                                                $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
+                                            }#...................end...................#
+                                            if (isset($row['media']) && !empty($row['media'])) {
+                                                $images = $row['media'];
+                                                $insertImages = array();
+                                                if (isset($images) && $model1->base_product_id > 0) {
+                                                    if (!$model1->isNewRecord) {
+                                                        $sql = "DELETE FROM media WHERE base_product_id = $model1->base_product_id";
+                                                        $connection = Yii::app()->db;
+                                                        $command = $connection->createCommand($sql);
+                                                        $command->execute();
+                                                    }
+
+                                                    $images = explode(";", $images);
+                                                    $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
+                                                    if (!empty($insertImages['error'])) {
+                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                    }
+                                                }
+                                                /* save each uploaded media into database */
+                                                if (!empty($insertImages['images'])) {
+                                                    $insertRows = array();
+                                                    foreach ($insertImages['images'] as $key => $value) {
+                                                        $error = array();
+                                                        $media_model = new Media;
+                                                        if ($key !== 'error') {
+                                                            $media_model->attributes = $value;
+                                                            $media_model->save(true);
+                                                        } else {
+                                                            $error[] = $value;
+                                                        }
+                                                        foreach ($media_model->getErrors() as $errors) {
+                                                            $error[] = implode(' AND ', $errors);
+                                                        }
+                                                        if (!empty($error)) {
+                                                            $model1->addError('csv_file', implode(' AND ', $error));
+                                                        }
+                                                    }
+                                                }
                                             }
+                                            fwrite($handle1, "\nRow : " . $i . " Product $model1->base_product_id $action. " . implode(' AND ', $error));
+                                            //...............................................//
+                                        }
+                                    }
+                                } else if ($model1->action == 'update') {
+                                    if (isset($cols['Subscribed Product ID']))
+                                        $bp = trim($data[$cols['Subscribed Product ID']]);
+                                    $connection = Yii::app()->db;
+                                    $sql = "SELECT * from subscribed_product where base_product_id='" . $bp . "'";
+                                    $command = $connection->createCommand($sql);
+                                    $command->execute();
+                                    $category_id_del = $command->queryAll();
+
+                                    if ($category_id_del != array()) {
+
+                                        if (isset($cols['Store Price'])) {
+                                            $mrp = trim($data[$cols['Store Price']]);
+                                        } else if ($category_id_del != array()) {
+                                            $mrp = $category_id_del[0]['store_price'];
                                         }
 
-                                        if (isset($row['media']) && !empty($row['media'])) {
-
-                                            $images = $row['media'];
-                                            $insertImages = array();
-                                            if (isset($images) && $model1->base_product_id > 0) {
-                                                if (!$model1->isNewRecord) {
-                                                    $sql = "DELETE FROM media WHERE base_product_id = $model1->base_product_id";
-                                                    $connection = Yii::app()->db;
-                                                    $command = $connection->createCommand($sql);
-                                                    $command->execute();
-                                                }
-
-                                                $images = explode(";", $images);
-                                                $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
-                                                if (!empty($insertImages['error'])) {
-                                                    $model1->addError('csv_file', $insertImages['error']);
-                                                }
-                                            }
-                                            /* save each uploaded media into database */
-                                            if (!empty($insertImages['images'])) {
-                                                $insertRows = array();
-                                                foreach ($insertImages['images'] as $key => $value) {
-                                                    $error = array();
-                                                    $media_model = new Media;
-                                                    if ($key !== 'error') {
-                                                        $media_model->attributes = $value;
-                                                        $media_model->save(true);
-                                                    } else {
-                                                        $error[] = $value;
-                                                    }
-                                                    foreach ($media_model->getErrors() as $errors) {
-                                                        $error[] = implode(' AND ', $errors);
-                                                    }
-                                                    if (!empty($error)) {
-                                                        $model1->addError('csv_file', implode(' AND ', $error));
-                                                    }
-                                                }
-                                            }
+                                        if (isset($cols['Price(Store Offer Price)'])) {
+                                            $wsp = trim($data[$cols['Price(Store Offer Price)']]);
+                                        } else if ($category_id_del != array()) {
+                                            $wsp = $category_id_del[0]['store_offer_price'];
                                         }
-                                        fwrite($handle1, "\nRow : " . $i . " Product $model1->base_product_id $action. " . implode(' AND ', $error));
-                                        //...............................................//
+                                        if (isset($cols['Name'])) {
+                                            $row['title'] = str_replace("’", "'", trim($data[$cols['Name']]));
+                                            $model1->Update_product_title($row['title'], $bp);
+                                        }
+                                        if ((is_numeric($wsp)) && $mrp > $wsp) {
+                                            $model_subscribe = new SubscribedProduct();
+                                            $model_subscribe->base_product_id = $bp;
+                                            $model_subscribe->store_id = $model1->store_id;
+                                            $model_subscribe->store_offer_price = $wsp;
+                                            $model_subscribe->store_price = $mrp;
+                                            $model_subscribe->quantity = 1;
+                                            $solrBackLog = new SolrBackLog();
+                                            //$is_deleted =  ($model->status == 1) ? 0 : 1;
+                                            $is_deleted = '0';
+                                            $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
+                                            $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity);
+                                            fwrite($handle1, "\nRow : " . $i . " Product $bp $action. " . implode(' AND ', $error));
+                                            //...............................................//
+                                        } else {
+                                            fwrite($handle1, "\nRow : " . $i . " Product $bp Not $action. Store Offer Price always numeric and less then Store price  " . implode(' AND ', $error));
+                                        }
+                                    } else {
+                                        fwrite($handle1, "\nRow : " . $i . " Product  $bp not $action. " . implode(' AND ', $error));
                                     }
                                 } else {
-                                    //$j=0
+
                                     foreach ($model1->getErrors() as $errors) {
                                         // echo "hello";die;
                                         $error[] = implode(' AND ', $errors);
                                     }
                                     // $J=1;
-                                    fwrite($handle1, "\nRow : " . $i . " format not match id $model1->base_product_id . " . implode(' AND ', $error));
+                                    fwrite($handle1, "\nRow : " . $i . "Diameter, Pack Size, Store Price, Store Offer Price, And Store Price always greater than Store Offer Price $model1->base_product_id . " . implode(' AND ', $error));
                                 }
 
                                 /* $error = array();
@@ -1258,52 +1461,17 @@ class BaseProductController extends Controller {
                                         }
                                     }
                                 }
-
-                                if ($model->action == 'update') {
-                                    if (isset($cols['categoryIds'])) {
-                                        $categories = '';
-                                        $categories = explode(';', trim($data[$cols['categoryIds']], ';'));
-                                        if (isset($categories) && !empty($categories)) {
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT DISTINCT category_id
-                                        FROM `category`
-                                        WHERE category_id IN ( " . implode(',', $categories) . " )
-                                        AND is_deleted = 0";
-
-                                            $catinfo = '';
-                                            $command = $connection->createCommand($sql);
-                                            $catinfo = $command->queryAll();
-                                            $catIds = array();
-
-                                            $category_obj = new Category();
-                                            if (isset($catinfo) && !empty($catinfo)) {
-                                                foreach ($catinfo as $cat) {
-                                                    $catIds[] = $cat['category_id'];
-                                                }
-
-                                                $category_obj->insertCategoryMappings($baseid, $catIds);
-
-                                                $catDiff = array_diff($categories, $catIds);
-                                                if (!empty($catDiff)) {
-
-                                                    Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
-
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                              /*  if ($model->action == 'create' && !empty($baseid)) {
-                                    //.......................solor backloag.................//
-                                    $solrBackLog = new SolrBackLog();
-                                    //$is_deleted =  ($model->status == 1) ? 0 : 1;
-                                    $is_deleted = '0';
-                                    $solrBackLog->insertByBaseProductId($baseid, $is_deleted);
-                                    //.........................end.....................................//
-                                }*/
+                                /*  if ($model->action == 'create' && !empty($baseid)) {
+                                  //.......................solor backloag.................//
+                                  $solrBackLog = new SolrBackLog();
+                                  //$is_deleted =  ($model->status == 1) ? 0 : 1;
+                                  $is_deleted = '0';
+                                  $solrBackLog->insertByBaseProductId($baseid, $is_deleted);
+                                  //.........................end.....................................//
+                                  } */
 
                                 if ($model->action == 'update' && !empty($baseid)) {
+
                                     //.......................solor backloag.................//
                                     $solrBackLog = new SolrBackLog();
                                     //$is_deleted =  ($model->status == 1) ? 0 : 1;
@@ -1524,7 +1692,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
+        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Weight,Weight Unit,Length,Length Unit';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -1534,14 +1702,25 @@ class BaseProductController extends Controller {
     }
 
     public function actionUpdateFileDownload() {
-        $file_name = 'Bulk_Upload_product_Update.csv';
-        $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
-        $size_of_file = strlen($file_data);
-        $this->renderPartial('fileDownload', array(
-            'file_name' => $file_name,
-            'file_data' => $file_data,
-            'size_of_file' => $size_of_file
-        ));
+
+        $model = new BaseProduct();
+        $model_grid = new ProductGridview('search');
+        $model_grid->unsetAttributes();
+        if ($_POST == Array()) {
+            ob_clean();
+            $response = $model->downloadproductCSV();
+            ob_flush();
+            exit();
+        }
+
+        /* $file_name = 'Bulk_Upload_product_Update.csv';
+          $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
+          $size_of_file = strlen($file_data);
+          $this->renderPartial('fileDownload', array(
+          'file_name' => $file_name,
+          'file_data' => $file_data,
+          'size_of_file' => $size_of_file
+          )); */
     }
 
     public function actionExport($id) {

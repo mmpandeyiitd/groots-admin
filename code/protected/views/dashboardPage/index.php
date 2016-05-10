@@ -196,7 +196,7 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
     <h4>Download Orders Summary</h4>
     <div class="right_date">
         <?php
-    $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+   /* $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
             'model' => $model, 
             'name' => 'order_start_date', 
             'value'=>$model->order_start_date,   
@@ -208,34 +208,28 @@ $totalretailers = $retailer_obj->gettotal_retailersForindex($start_date, $end_da
  
             ), //DateTimePicker options 
             'htmlOptions' => array('readonly'=>'true'),
-            )); 
+            )); */
+        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'model' => $model,
+           'name' => 'order_start_date',
+           'attribute' => 'order_start_date',
+            'flat' => false, //remove to hide the datepicker
+            'options' => array(
+                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
+               // 'minDate' => 0,
+               'dateFormat' => 'dd-mm-yy',
+               
+           ),
+            'value'=>$model->order_start_date,
+            'htmlOptions' => array(
+             'style' => '','readonly'=>'true'
+         ),
+      ));
            echo $form->error($model,'order_start_date'); 
     
         ?>
         <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
-
-        <label>To</label>
-        <!--<input name="end_date" class=""  type="text" value="" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
-        <?php
-         $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
-            'model' => $model, 
-            'name' => 'order_end_date', 
-            'value'=>$model->order_end_date,   
-            'options' => array( 
-                'dateFormat' => 'yy-mm-dd',
-               'showAnim' => 'fold',
-               'debug' => true,
-               //'minDate' => 0,
  
-            ), //DateTimePicker options 
-            'htmlOptions' => array('readonly'=>'true'),
-            )); 
-           echo $form->error($model,'order_end_date'); 
-        
-        
-        
-        
-        ?>        
         <!--<input name="Download" class="button_new" type="submit" value="Download" />-->
         <input  type="submit" name="downloadbutton" class="button_new" value="Download" />
     </div>

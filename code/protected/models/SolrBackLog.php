@@ -124,7 +124,6 @@ class SolrBackLog extends CActiveRecord
         $connection = Yii::app() -> db;
         //$command = $connection -> createCommand($sql);
       //  $command -> execute();
-
         $sql = "INSERT INTO {$this->tableName()} (subscribed_product_id, is_deleted)
         SELECT subscribed_product_id, {$is_deleted} FROM subscribed_product WHERE base_product_id = {$baseProductId} AND is_deleted = 0 AND status = 1";
 

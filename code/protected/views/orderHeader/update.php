@@ -227,31 +227,33 @@ if (isset($_GET['id'])) {
 
                 <?php } ?>
             </div>
-            <?php 
+            <?php
             $updationclose = TRUE;
-            $orderline_ids =$_REQUEST['id'];
+            $orderline_ids = $_REQUEST['id'];
             //echo $orderline_ids;die;
-           $status_array[0]=$modelOrder->attributes['status'];
-          if ($status_array[0] == 'Confirmed' || $status_array[0] == 'Shipped' || $status_array[0] == 'Delivered' || $status_array[0] == 'Cancelled' || $status_array[0] == 'ReturnedRequested' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'Out for Delivery') {
-                    $updationclose = FALSE;
-                }
+            $status_array[0] = $modelOrder->attributes['status'];
+            if ($status_array[0] == 'Confirmed' || $status_array[0] == 'Paid' || $status_array[0] == 'Shipped' || $status_array[0] == 'Delivered' || $status_array[0] == 'Cancelled' || $status_array[0] == 'ReturnedRequested' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'Out for Delivery') {
+
+                $updationclose = FALSE;
+            }
             ?>
             <div class="clearfix"></div> 
-         <div class="status_top">
-                                <span>status</span>
-                                <span>                                       
+            <div class="status_top">
+                <span>status</span>
+                <span>                                       
 
-                                    <select name="Status[]" class="selectNew" style="width:120px;">
-                                        <option value="Pending" <?php if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
-                                       <option value="Confirmed" <?php if ($status_array[0] == 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
-                                        <option value="Out for Delivery" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
-                                        <option value="Delivered" <?php if ($status_array[0] == 'Delivered') echo 'selected="selected"'; ?> >Delivered</option>
-                                        <option value="Cancelled" <?php if ($status_array[0] == 'Cancelled') echo 'selected="selected"'; ?> >Cancelled</option>
-                                       </select> 
-                                </span>
-                            </div>
+                    <select name="Status[]" class="selectNew" style="width:120px;">
+                        <option value="Pending" <?php if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
+                        <option value="Confirmed" <?php if ($status_array[0] == 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
+                        <option value="Out for Delivery" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
+                        <option value="Delivered" <?php if ($status_array[0] == 'Delivered') echo 'selected="selected"'; ?> >Delivered</option>
+                        <option value="Cancelled" <?php if ($status_array[0] == 'Cancelled') echo 'selected="selected"'; ?> >Cancelled</option>
+                        <option value="Paid" <?php if ($status_array[0] == 'Paid') echo 'selected="selected"'; ?> >Paid</option>
+                    </select> 
+                </span>
+            </div>
             <?php
-          //  $updationclose = TRUE;
+            //  $updationclose = TRUE;
             for ($i = 0; $i < $maxorder; $i++) {
                 //  $updationclose =FALSE;
                 $base_product_ids_array = array();
@@ -298,14 +300,14 @@ if (isset($_GET['id'])) {
                 if (!empty($shipping_charges)) {
                     $shipping_charges_array = explode(',', $shipping_charges);
                 }
-                /*$total_price_discounts = $orderline_detail[$i]['total_price_discount'];
-                if (!empty($total_price_discounts)) {
-                    $total_price_discounts_array = explode(',', $total_price_discounts);
-                }
-                $unit_price_discounts = $orderline_detail[$i]['unit_price_discount'];
-                if (!empty($unit_price_discounts)) {
-                    $unit_price_discounts_array = explode(',', $unit_price_discounts);
-                }*/
+                /* $total_price_discounts = $orderline_detail[$i]['total_price_discount'];
+                  if (!empty($total_price_discounts)) {
+                  $total_price_discounts_array = explode(',', $total_price_discounts);
+                  }
+                  $unit_price_discounts = $orderline_detail[$i]['unit_price_discount'];
+                  if (!empty($unit_price_discounts)) {
+                  $unit_price_discounts_array = explode(',', $unit_price_discounts);
+                  } */
                 $seller_names = $orderline_detail[$i]['seller_name'];
                 if (!empty($seller_names)) {
                     $seller_names_array = explode(',', $seller_names);
@@ -318,12 +320,12 @@ if (isset($_GET['id'])) {
 
                 $total_price = $unit_prices_array[0] * array_sum($qtys_array);
                 $grandtotal+=$total_price;
-               // $total_discount = $unit_price_discounts_array[0] * array_sum($qtys_array);
-               // $grand_discount+=$total_discount;
+                // $total_discount = $unit_price_discounts_array[0] * array_sum($qtys_array);
+                // $grand_discount+=$total_discount;
                 $wsptotal = '';
                 //echo $status_array[0];die;
                 // echo $orderline_ids;die;
-                if ($status_array[0] == 'Confirmed' || $status_array[0] == 'Shipped' || $status_array[0] == 'Delivered' || $status_array[0] == 'Cancelled' || $status_array[0] == 'ReturnedRequested' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'ReturnedComplete') {
+                if ($status_array[0] == 'Confirmed' || $status_array[0] == 'Shipped' || $status_array[0] == 'Delivered' || $status_array[0] == 'Cancelled' || $status_array[0] == 'ReturnedRequested' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'Paid') {
                     $updationclose = FALSE;
                 }
                 ?>
@@ -374,23 +376,23 @@ if (isset($_GET['id'])) {
                                 </tbody>
 
                             </table>
-                          <!--  <div class="status_top">
-                                <span>status</span>
-                                <span>                                       
+                            <!--  <div class="status_top">
+                                  <span>status</span>
+                                  <span>                                       
 
-                                    <select name="Status[]" class="selectNew" style="width:120px;">
-                                        <option value="Pending<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
-                                        <option value="Processing<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'Processing') echo 'selected="selected"'; ?> >Processing </option>
-                                        <option value="Confirmed<><?php// echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
-                                        <option value="Out for Delivery<><?php //echo $orderline_ids; ?>" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
-                                        <option value="Shipped<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'shipped') echo 'selected="selected"'; ?>>Shipped</option>
-                                        <option value="Delivered<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'Delivered') echo 'selected="selected"'; ?> >Delivered</option>
-                                        <option value="Cancelled<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'Cancelled') echo 'selected="selected"'; ?> >Cancelled</option>
-                                        <option value="ReturnedRequested<><?php// echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'ReturnedRequested') echo 'selected="selected"'; ?> >Return Requested</option>
-                                        <option value="ReturnedComplete<><?php //echo $orderline_ids; ?>" <?php //if ($status_array[0] == 'ReturnedComplete') echo 'selected="selected"'; ?>>Return Complete</option>
-                                    </select> 
-                                </span>
-                            </div> -->
+                                      <select name="Status[]" class="selectNew" style="width:120px;">
+                                          <option value="Pending<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Pending') echo 'selected="selected"';  ?> >Pending </option>
+                                          <option value="Processing<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Processing') echo 'selected="selected"';  ?> >Processing </option>
+                                          <option value="Confirmed<><?php // echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Confirmed') echo 'selected="selected"';  ?> > Confirmed </option>
+                                          <option value="Out for Delivery<><?php //echo $orderline_ids;  ?>" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
+                                          <option value="Shipped<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'shipped') echo 'selected="selected"';  ?>>Shipped</option>
+                                          <option value="Delivered<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Delivered') echo 'selected="selected"';  ?> >Delivered</option>
+                                          <option value="Cancelled<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Cancelled') echo 'selected="selected"';  ?> >Cancelled</option>
+                                          <option value="ReturnedRequested<><?php // echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'ReturnedRequested') echo 'selected="selected"';  ?> >Return Requested</option>
+                                          <option value="ReturnedComplete<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'ReturnedComplete') echo 'selected="selected"';  ?>>Return Complete</option>
+                                      </select> 
+                                  </span>
+                              </div> -->
                             <div class="order_sizecontain">
                                 <?php
                                 $no_baseproducts = count($base_product_ids_array);
@@ -436,7 +438,7 @@ if (isset($_GET['id'])) {
 
                     </div>
                 </div>  
-                <input type="hidden" id="id" name="id[]" value="<?php //echo $model[$key]->attributes['id'];           ?>"/>
+                <input type="hidden" id="id" name="id[]" value="<?php //echo $model[$key]->attributes['id'];            ?>"/>
                 <input type="hidden" id="order_id" name="order_id" value="<?php echo $modelOrder->attributes['order_id']; ?>"/> 
 
                 <?php
@@ -447,19 +449,17 @@ if (isset($_GET['id'])) {
             ?> 
             <div class="order_bottomdetails">
                 <div class="span5 pull-right">
-                    <h3><b>Grand Total:</b> <span id="grandt"><?php echo $grandtotal; ?>
+                    <h3><b>Total:</b> <span id="grandt"><?php echo $grandtotal; ?>
                             <input type="hidden" id="gtotal_price" name="gtotal_price" placeholder="0" value="<?php echo $grand_discount; ?>" >
                         </span></h3>
-                    <h3><b>Discount Grand Total:</b>-<?php echo $grand_discount; ?>
+                    <h3><b>Discount:</b>-<?php echo $grand_discount; ?>
                         <!--onblur="granddiscount(this.id)"-->
                         <input type="hidden" name="gtotal_price_discount" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $grand_discount; ?>" >
                     </h3>
-                    <h3><b>Discounted Grand Total:</b><span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
+                    <h3><b>Discounted Total:</b><span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
                     <input type="hidden" id="grand_total" class="button_new" name="grand_total" value="<?php echo $grandtotal; ?>"/>
                     <input type="hidden" class="button_new" value="<?php echo $isize; ?>" id="isize" name="isize" /> 
-                  
-                        <?php if ($updationclose) { ?> <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> <?php } ?>
-                        <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
+ <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" />          <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
                 </div> 
             </div>
         </div>

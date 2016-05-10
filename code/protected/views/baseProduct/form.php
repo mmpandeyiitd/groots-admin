@@ -132,7 +132,7 @@ if ($issuperadmin == 1) {
             </div>
                 <?php } ?>
              <div class="row">
-                <?php echo $form->labelEx($model, 'title Name '); ?>
+                <?php echo $form->labelEx($model, 'title'); ?>
                 <?php echo $form->textField($model, 'title', array('size' => 60, 'maxlength' => 255)); ?>
                 <?php echo $form->error($model, 'title'); ?>
             </div>
@@ -202,11 +202,11 @@ if ($issuperadmin == 1) {
                 });
             </script>
            <div class="row">
-                <label for="grade"><?php echo 'grade *' ?></label>
+                <label for="grade"><?php echo 'grade ' ?></label>
                 <input type="text" name="a" value="<?php echo $a; ?>"/>
             </div>
             <div class="row">
-                <label for="diameter"><?php echo 'diameter *' ?></label>
+                <label for="diameter"><?php echo 'diameter ' ?></label>
                 <input type="text" name="new_data" value="<?php echo $new_data; ?>"/>
             </div>
            
@@ -251,12 +251,31 @@ if ($issuperadmin == 1) {
                 <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
                 <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
             </div>
+            <div class="row">
+                <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
+                <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Weight ' ?></label>
+                <input type="text" name="Weight" value="<?php echo $Weight; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Weight Unit' ?></label>
+                <input type="text" name="WeightUnit" value="<?php echo $WeightUnit; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Length' ?></label>
+                <input type="text" name="Length" value="<?php echo $Length; ?>"/>
+            </div>
+             <div class="row">
+                <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
+                <input type="text" name="LengthUnit" value="<?php echo $LengthUnit; ?>"/>
+            </div>
         </div>
         <div class="">
-        <div class="row">
-                <label for="quantity"><?php echo 'quantity ' ?></label>
-                <input type="text" name="qunt" value="<?php echo $qunt; ?>"/>
-            </div>
+        <?php
+            echo $form->hiddenField($model, 'quantity', array('value' => '1'));
+            ?>
             
           
         <div style="clear:both;"></div>
