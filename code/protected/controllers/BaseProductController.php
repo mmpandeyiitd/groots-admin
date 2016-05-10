@@ -197,7 +197,7 @@ class BaseProductController extends Controller {
                 $diameter = '0';
             }
 
-            if (!is_numeric($diameter)) {
+            /*if (!is_numeric($diameter)) {
                 Yii::app()->user->setFlash('WSP', ' Diameter must be a number.');
                 $this->render('create', array(
                     'model' => $model,
@@ -213,7 +213,7 @@ class BaseProductController extends Controller {
                     'specific_keyfield' => $specific_keyfield,
                 ));
                 exit();
-            }
+            }*/
 
 
             if (isset($_POST['aiotree']['category_id'])) {
@@ -1211,7 +1211,7 @@ class BaseProductController extends Controller {
                                     $Diameter = 0;
                                 }
                                 if ($model1->action == 'create') {
-                                    if ((is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($Weight) && is_numeric($Length) && is_numeric($Diameter) && (is_numeric($mrp) && $mrp > $wsp)) {
+                                    if ((is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp > $wsp)) {
                                         // echo $row['pack_unit'];die;
 
                                         $model_subscribe->store_offer_price = $wsp;
