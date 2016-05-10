@@ -113,7 +113,7 @@ class RetailerController extends Controller {
             if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
-                $model->status = 0;
+                $model->status = 1;
             }
             $from_email = 'grootsadmin@groots.in';
             $from_name = 'Groots Dashboard Admin';

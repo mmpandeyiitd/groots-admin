@@ -75,11 +75,11 @@ class SubscribedProduct extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-            //'RetailerProductQuotation' => array(self::MANY_MANY, 'RetailerProductQuotation', ' retailer_product_quotation(subscribed_product_id,effective_price)'),
+            // 'RetailerProductQuotation' => array(self::MANY_MANY, 'RetailerProductQuotation', ' retailer_product_quotation(subscribed_product_id,effective_price)'),
             // 'store' => array(self::BELONGS_TO, 'Store', 'store_id'),
             'BaseProduct' => array(self::BELONGS_TO, 'BaseProduct', 'base_product_id'),
                 //'RetailerProductQuotation' => array(self::BELONGS_TO, 'RetailerProductQuotation', 'subscribed_product_id','joinType'=>'FULL JOIN'),
-                //'RetailerProductQuotation' => array(self::BELONGS_TO, 'RetailerProductQuotation', 'subscribed_product_id'),
+                // 'RetailerProductQuotation' => array(self::BELONGS_TO, 'RetailerProductQuotation', 'subscribed_product_id'),
         );
     }
 
@@ -168,10 +168,10 @@ class SubscribedProduct extends CActiveRecord {
             }
         }
 
-
         // $criteria->order = 'subscribed_product_id DESC';
         $criteria->join = "left join base_product bp on bp.base_product_id=t.base_product_id";
-        // $criteria->compare('effective_price', $this->effective_price, true);
+        // $criteria->join = "left join retailer_product_quotation rp on rp.subscribed_product_id=t.subscribed_product_id";
+        //$criteria->compare('effective_price', $this->effective_price, true);
         //$criteria->with = array('BaseProduct' => array("select" => "title"));
         $criteria->compare('bp.title', $this->title, true);
         // $criteria->compare('discout_per', $this->discout_per, true);
@@ -263,6 +263,33 @@ class SubscribedProduct extends CActiveRecord {
     public function getdatarecords_data($id) {
 
         $connection = Yii::app()->db;
+        $sql = "SELECT `weight` FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del2 = $command->queryAll();
+    }
+
+    public function getdatarecords_data1($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `weight`,weight_unit,length,length_unit FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del2 = $command->queryAll();
+    }
+
+    public function getdatarecords_data2($id) {
+
+        $connection = Yii::app()->db;
+        $sql = "SELECT `weight`,weight_unit,length,length_unit FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del2 = $command->queryAll();
+    }
+
+    public function getdatarecords_data3($id) {
+
+        $connection = Yii::app()->db;
         $sql = "SELECT `weight`,weight_unit,length,length_unit FROM `subscribed_product` where base_product_id='" . $_REQUEST['id'] . "' and store_id='" . $_REQUEST['store_id'] . "' ";
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -326,6 +353,35 @@ class SubscribedProduct extends CActiveRecord {
           $command->execute();
           } */
         //return $category_id_del= $command->queryAll();
+    }
+
+    public function savedatagridview($id, $pro, $ef, $pf) {
+        $connection = Yii::app()->db;
+        $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $category_id_del3 = $command->queryAll();
+        if ($category_id_del3 != Array()) {
+            if ($ef == '0'  && $pf == '0') {
+                $connection = Yii::app()->db;
+                $sql = "DELETE FROM `retailer_product_quotation` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
+                $command = $connection->createCommand($sql);
+                $command->execute();
+            } else {
+                $connection = Yii::app()->db;
+                $sql = "update retailer_product_quotation set effective_price='" . $ef . "',discount_per ='" . $pf . "' where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
+                $command = $connection->createCommand($sql);
+                $command->execute();
+                //return $category_id_del= $command->queryAll();
+            }
+        } else {
+
+            $connection = Yii::app()->db;
+            $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id) VALUES('$ef', '$pf', '$pro', '$id')";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            //return $category_id_del= $command->queryAll();
+        }
     }
 
     public function allcheckproductlcsv() {

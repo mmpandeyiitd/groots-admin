@@ -251,10 +251,7 @@ if ($issuperadmin == 1) {
                 <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
                 <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
             </div>
-            <div class="row">
-                <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
-                <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
-            </div>
+           
              <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Weight ' ?></label>
                 <input type="text" name="Weight" value="<?php echo $Weight; ?>"/>

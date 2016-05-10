@@ -570,6 +570,38 @@ class BaseProductController extends Controller {
                 // $grade = $_POST['a'];
                 $grade = $a['0']['grade'];
             }
+
+            $Weight1 = $model_subscribe->getdatarecords_data($id);
+            $WeightUnit1 = $model_subscribe->getdatarecords_data1($id);
+            $Length1 = $model_subscribe->getdatarecords_data2($id);
+            $LengthUnit1 = $model_subscribe->getdatarecords_data3($id);
+       //  echo '<pre>';print_r($LengthUnit1);die;
+            if ($Weight1 != Array()) {
+                
+                $Weight = $Weight1['0']['weight'];
+            } else {
+                // $grade = $_POST['a'];
+                $Weight = $_POST['Weight'];
+            }
+            
+            if ($WeightUnit1 != Array()) {
+                $WeightUnit = $WeightUnit1['0']['weight_unit'];
+            } else {
+                // $grade = $_POST['a'];
+                $WeightUnit = $_POST['WeightUnit'];
+            }
+             if ($Length1 != Array()) {
+                $Length = $Length1['0']['length'];
+            } else {
+                // $grade = $_POST['a'];
+                $Length = $_POST['Length'];
+            }
+             if ($LengthUnit1 != Array()) {
+                $LengthUnit = $LengthUnit1['0']['length_unit'];
+            } else {
+                // $grade = $_POST['a'];
+                $LengthUnit = $_POST['LengthUnit'];
+            }
             if ($new_data == Array()) {
                 $diameter = $_POST['new_data'];
             } else {
@@ -631,7 +663,9 @@ class BaseProductController extends Controller {
             if (isset($_POST['LengthUnit'])) {
                 $LengthUnit = $_POST['LengthUnit'];
             }
+            
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
+               
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
                 $this->render('update', array(
                     'a' => $a['0']['grade'],
@@ -690,19 +724,10 @@ class BaseProductController extends Controller {
                     $quantity = $_POST['BaseProduct']['quantity'];
                     //$quantity=$qunt['0']['quantity'];
                 }
-                $Weight = $model_subscribe->getdatarecords_data($id);
-              //  echo '<pre>';print_r($Weight);die;
-                $base_product_id = $model->base_product_id;
-                $store_id = $model->store_id;
-                if ($Weight['0']['weight'] != '') {
-                    $Weight = $_POST['Weight'];
-                } else {
-                    // $grade = $_POST['a'];
-                     $Weight = $Weight['0']['weight'];;
-                }
-               
 
-                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity,$Weight,$WeightUnit,$Length,$LengthUnit);
+
+
+                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit);
                 #...................end...................#
 
 
@@ -836,40 +861,13 @@ class BaseProductController extends Controller {
                 $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
             }
         }
-        if ($a == Array() && $new_data != Array() && $qunt != Array()) {
-            $this->render('update', array(
-                'a' => '',
-                'new_data' => $new_data['0']['diameter'],
-                'qunt' => $qunt['0']['quantity'],
-                'model' => $model,
-                'record' => $record,
-                'imageinfo' => $imageinfo,
-                'mrp' => $mrp,
-                'wsp' => $wsp,
-                'Weight' => $Weight,
-                'WeightUnit' => $WeightUnit,
-                'Length' => $Length,
-                'LengthUnit' => $LengthUnit,
-                'specific_keyfield' => $specific_keyfield,
-            ));
-        } else if ($new_data == Array() && $a != Array() && $qunt != Array()) {
-            $this->render('update', array(
-                'a' => $a['0']['grade'],
-                'new_data' => '',
-                'qunt' => $qunt['0']['quantity'],
-                'model' => $model,
-                'record' => $record,
-                'imageinfo' => $imageinfo,
-                'mrp' => $mrp,
-                'wsp' => $wsp,
-                'Weight' => $Weight,
-                'WeightUnit' => $WeightUnit,
-                'Length' => $Length,
-                'LengthUnit' => $LengthUnit,
-                'specific_keyfield' => $specific_keyfield,
-            ));
-        } else if ($qunt == Array() && $new_data != Array() && $a != Array()) {
-            $this->render('update', array(
+           $Weight1 = $model_subscribe->getdatarecords_data($id);
+            $WeightUnit1 = $model_subscribe->getdatarecords_data1($id);
+            $Length1 = $model_subscribe->getdatarecords_data2($id);
+            $LengthUnit1 = $model_subscribe->getdatarecords_data3($id);
+            
+       //   echo '<pre>';  print_r($Weight1);die;
+                 $this->render('update', array(
                 'a' => $a['0']['grade'],
                 'new_data' => $new_data['0']['diameter'],
                 'qunt' => '',
@@ -878,47 +876,14 @@ class BaseProductController extends Controller {
                 'imageinfo' => $imageinfo,
                 'mrp' => $mrp,
                 'wsp' => $wsp,
-                'Weight' => $Weight,
-                'WeightUnit' => $WeightUnit,
-                'Length' => $Length,
-                'LengthUnit' => $LengthUnit,
-                'specific_keyfield' => $specific_keyfield,
-            ));
-        } else if ($qunt != Array() && $new_data != Array() && $a != Array()) {
-            // echo '<pre>'; print_r($new_data);die;
-            $this->render('update', array(
-                'a' => $a['0']['grade'],
-                'new_data' => $new_data['0']['diameter'],
-                'qunt' => $qunt['0']['quantity'],
-                'model' => $model,
-                'record' => $record,
-                'imageinfo' => $imageinfo,
-                'mrp' => $mrp,
-                'wsp' => $wsp,
-                'Weight' => $Weight,
-                'WeightUnit' => $WeightUnit,
-                'Length' => $Length,
-                'LengthUnit' => $LengthUnit,
-                'specific_keyfield' => $specific_keyfield,
-            ));
-        } else {
-            $this->render('update', array(
-                'a' => '',
-                'new_data' => '',
-                'qunt' => '',
-                'model' => $model,
-                'record' => $record,
-                'imageinfo' => $imageinfo,
-                'mrp' => $mrp,
-                'wsp' => $wsp,
-                'Weight' => $Weight,
-                'WeightUnit' => $WeightUnit,
-                'Length' => $Length,
-                'LengthUnit' => $LengthUnit,
+                'Weight' =>  $Weight1[0]['weight'],
+                'WeightUnit' => $WeightUnit1[0]['weight_unit'],
+                'Length' => $Length1[0]['length'],
+                'LengthUnit' => $LengthUnit1[0]['length_unit'],
                 'specific_keyfield' => $specific_keyfield,
             ));
         }
-    }
+    
 
     /**
      * Deletes a particular model.

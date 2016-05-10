@@ -96,52 +96,52 @@
             <?php echo $form->textField($model, 'demand_centre'); ?>
             <?php echo $form->error($model, 'demand_centre'); ?>
         </div>
-       
         <div class="row">
             <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
-            <?php
-            /* $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
-              'model' => $model,
-              'attribute' => 'date_of_onboarding',
-              'value'=>$model->date_of_onboarding,
-              'options' => array(
-              'dateFormat' => 'yy-mm-dd',
-              'showAnim' => 'fold',
-              'debug' => true,
-              //'minDate' => 0,
-
-              ), //DateTimePicker options
-              'htmlOptions' => array('readonly'=>'true'),
-              )); */
-
-            /* $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-              'model' => $model,
-              'name' => 'date_of_onboarding',
-              'attribute' => 'date_of_onboarding',
-              'flat' => false, //remove to hide the datepicker
-              'options' => array(
-              'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-              // 'minDate' => 0,
-              'dateFormat' => 'dd-mm-yy',
-
-              ),
-              'value'=>$model->date_of_onboarding,
-              'htmlOptions' => array(
-              'style' => '','readonly'=>'true'
-              ),
-              )); */
+            <?php  /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
+            'model' => $model, 
+            'attribute' => 'date_of_onboarding', 
+            'value'=>$model->date_of_onboarding,   
+            'options' => array( 
+                'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+ 
+            ), //DateTimePicker options 
+            'htmlOptions' => array('readonly'=>'true'),
+            ));  */
+            
+           /* $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+            'model' => $model,
+           'name' => 'date_of_onboarding',
+           'attribute' => 'date_of_onboarding',
+            'flat' => false, //remove to hide the datepicker
+            'options' => array(
+                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
+               // 'minDate' => 0,
+               'dateFormat' => 'dd-mm-yy',
+               
+           ),
+            'value'=>$model->date_of_onboarding,
+            'htmlOptions' => array(
+             'style' => '','readonly'=>'true'
+         ),
+      ));*/
             $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
-                'model' => $model,
-                'attribute' => 'date_of_onboarding',
-                'value' => $model->date_of_onboarding,
-                'options' => array(
-                    //  'dateFormat' => 'yy-mm-dd',
-                    'showAnim' => 'fold',
-                    'debug' => true,
-                //'minDate' => 0,
-                ), //DateTimePicker options 
-                'htmlOptions' => array('readonly' => 'true'),
+            'model' => $model,
+            'attribute' => 'date_of_onboarding',
+            'value'=>$model->date_of_onboarding,
+            'options' => array(
+              //  'dateFormat' => 'yy-mm-dd',
+               'showAnim' => 'fold',
+               'debug' => true,
+               //'minDate' => 0,
+
+            ), //DateTimePicker options 
+            'htmlOptions' => array('readonly'=>'true'),
             ));
+            
             ?>
             <?php echo $form->error($model, 'date_of_onboarding'); ?>
         </div>
@@ -169,7 +169,11 @@
             <?php echo $form->textField($model, 'website', array('size' => 60, 'maxlength' => 150)); ?>
             <?php echo $form->error($model, 'website'); ?>
         </div>
-        
+        <div class="row">
+            <?php echo $form->labelEx($model, 'status'); ?>
+            <?php echo $form->dropDownList($model, 'status', array('0' => 'Deactive','1' => 'Active',)); ?>
+            <?php echo $form->error($model, 'status'); ?>
+        </div>
         <div class=" buttons">
             <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
             <?php //echo  CHtml::button("See Request", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerRequest/admin", array('retailer_id' => $retailer_id)) . "'")); ?>

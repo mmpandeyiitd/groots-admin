@@ -52,50 +52,42 @@ $('.search-form form').submit(function(){
 
 
 <div class="search-form" style="display:none">
-   
+
 </div><!-- search-form -->
 <?php if (Yii::app()->user->hasFlash('permissio_error')): ?><div class="flash-error" style="color: red;"><?php echo Yii::app()->user->getFlash('permissio_error'); ?></div><?php endif; ?>
 <?php
-
 $this->widget('zii.widgets.grid.CGridView', array(
     'itemsCssClass' => 'table table-striped table-bordered table-hover',
     'id' => 'retailer1-grid',
     'dataProvider' => $model->search(),
     'filter' => $model,
-    'columns'=>array(
-	'name',
-		'email',
-                'city',
-//                  array(
-//            'name' => 'status',
-//            'type' => 'raw',
-//             'filter' => array('' => 'All', '1' => 'Enable', '0' => 'Disable'),
-//             'value' => '($data->status == "1")?"Enable":"Disable"',
-           // 'htmlOptions' => array('width' => 90),
-     //   ),
-                //'status',
+    'columns' => array(
+        'name',
+        'email',
+        'city',
+        //'status',
         'link' => array(
             'header' => 'Action',
             'type' => 'raw',
             'value' => 'CHtml::button("Edit",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailer/update",array("id"=>$data->id))."\'"))',
             'visible' => $visible_action_edit
         ),
-    /*   
-    'link1' => array(
-         'header' => '',
-           'type' => 'raw',
-           'value' => 'CHtml::button("Delete",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailer/delete",array("id"=>$data->id))."\'"))',
-        ),*/
+        /*
+          'link1' => array(
+          'header' => '',
+          'type' => 'raw',
+          'value' => 'CHtml::button("Delete",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailer/delete",array("id"=>$data->id))."\'"))',
+          ), */
         'link1' => array(
-         'header' => '',
-           'type' => 'raw',
-           'value' => 'CHtml::button("Map",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'"))',
+            'header' => 'Configurable Products',
+            'type' => 'raw',
+            'value' => 'CHtml::button("Configurable Product",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'"))',
         ),
-        'link2' => array(
-         'header' => '',
-           'type' => 'raw',
-           'value' => 'CHtml::button("Mapped",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailerProductQuotation/admin",array("id"=>$data->id))."\'"))',
-        ),
-        ),
-  ));
-                ?>
+    /* 'link2' => array(
+      'header' => '',
+      'type' => 'raw',
+      'value' => 'CHtml::button("Mapped",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailerProductQuotation/admin",array("id"=>$data->id))."\'"))',
+      ), */
+    ),
+));
+?>

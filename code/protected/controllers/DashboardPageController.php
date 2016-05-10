@@ -134,16 +134,22 @@ class DashboardPageController extends Controller {
             }
         }
         if (isset($_POST['downloadbutton'])) {
+          
+           if ($_POST['DashboardPage']['order_start_date'] !='') {
             $order_start_date = $_POST['DashboardPage']['order_start_date'];
             $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
-            // $odate1 = date("Y-m-d H:i:s", strtotime($order_end_date));
-           
-            if (!isset($oDate)) {
+            //echo $oDate;die;
+            $odate1 = date("Y-m-d H:i:s");
+            if (isset($oDate) && $oDate < $odate1 ) {
                 ob_clean();
-                $model->downloadCSVByIDs($oDate);
+                $data= $model->downloadCSVByIDs($oDate);
                 ob_flush();
                 exit();
-            } else {
+            }else {
+                Yii::app()->user->setFlash('error', 'Date Not Greater then Current Date');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }
+           }else {
                 Yii::app()->user->setFlash('error', 'Date Not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
