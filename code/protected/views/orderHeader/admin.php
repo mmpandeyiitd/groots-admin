@@ -144,7 +144,7 @@ onclick='return confirm("Do you want to cancel");'/>
        }
        ), 
              array(
-                'header' => 'Demand Centre',
+               // 'header' => 'Demand Centre',
                 'name' => 'shipping_state',
                 'type' => 'raw',
             ),
@@ -153,12 +153,12 @@ onclick='return confirm("Do you want to cancel");'/>
                 'name' => 'status',
                 'type' => 'raw',
             ),
-            array(
-                'header' => 'Amount',
-                'name' => 'total',
-                'type' => 'raw',
-            // 'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
-            ),
+//            array(
+//                'header' => 'Amount',
+//                'name' => 'total',
+//                'type' => 'raw',
+//             'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
+//            ),
             'created_date',
             'link' => array(
                 'header' => 'Action',
@@ -168,8 +168,11 @@ onclick='return confirm("Do you want to cancel");'/>
             'link1' => array(
                 'header' => 'Action',
                 'type' => 'raw',
-                'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"))',
-            ),
+               // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',
+             'value'=> 'CHtml::link("INVOICE", array("OrderHeader/report", "id"=>$data->order_id),array("target"=>"_blank"))',
+                
+                
+                ),
         /* 'link1' => array(
           'header' => 'Dispatch',
           'type' => 'raw',

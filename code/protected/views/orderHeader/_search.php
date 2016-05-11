@@ -10,8 +10,7 @@
 	'action'=>Yii::app()->createUrl($this->route),
 	'method'=>'get',
 )); ?>
-
-	<div class="row">
+<div class="row">
 		<?php echo $form->label($model,'order_id'); ?>
 		<?php echo $form->textField($model,'order_id'); ?>
 	</div>
@@ -185,10 +184,9 @@
 		<?php echo $form->label($model,'bankname'); ?>
 		<?php echo $form->textField($model,'bankname',array('size'=>50,'maxlength'=>50)); ?>
 	</div>
-
 	<div class="row">
 		<?php echo $form->label($model,'status'); ?>
-		<?php echo $form->textField($model,'status',array('size'=>9,'maxlength'=>9)); ?>
+		<?php echo $form->textField($model,'status',array('size'=>50,'maxlength'=>50)); ?>
 	</div>
         <div class="row">
 		<?php echo $form->label($model,'order_type'); ?>
