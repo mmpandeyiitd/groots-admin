@@ -32,8 +32,12 @@ if (is_numeric($store_id)) {
             $brand_mobile = $brand_info[$i]['mobile_numbers'];
         }
     }
-   
-}?>  
+}
+//else{
+//    Yii::app()->user->setFlash('premission_info', 'Store id not found.');
+//      Yii::app()->controller->redirect("index.php?r=OrderHeader/admin");
+//}
+?>  
 <!-- Custom Fonts -->
 <style >
     body {
@@ -90,12 +94,12 @@ if (is_numeric($store_id)) {
                 <p><strong>Registered Office:</strong> <?php echo $brand_address . '<br>' . $brand_city . '<br>' . $brand_state . '<br>' . $brand_pincode . '<br>' . $brand_country; ?></p>
             </td>
         </tr>
-       <tr>
+        <tr>
             <td colspan="5">&nbsp;</td>
         </tr>
         <tr>
             <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
-            <td colspan="3">Website : <?php echo "www.canbrand.in";?></td>
+            <td colspan="3">Website : <?php echo "www.canbrand.in"; ?></td>
         </tr>
         <tr>
             <td colspan="3">
@@ -111,11 +115,10 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td colspan="3">
-                <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country;  ?></p>
+                <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
             </td>
             <td colspan="2">
-                VAT/TIN 33696318777<br>
-                OD305351980752670003<br>
+               
                 Invoice No.<br>
                 chn_puzhal_0120160200384478<br>
                 DT:29-02-2016
@@ -124,11 +127,11 @@ if (is_numeric($store_id)) {
         </tr>
 
         <tr>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Tax</th>
-            <th>Total</th>
+            <th> Product </th>
+            <th> Qty </th>
+            <th> Price </th>
+            <th> Tax </th>
+            <th> Total </th>
         </tr>
 
         <?php
@@ -136,7 +139,9 @@ if (is_numeric($store_id)) {
         $grandtotal = 0;
         $grand_producttotal = 0;
         $qtytotal = 0;
-        $i=0;
+        $qtytotal1 = 0;
+        $wsptotal1 = 0;
+        $i = 0;
 //        echo '<pre>';
 //        //echo $model;
 //        print_r($model);die;
@@ -146,28 +151,29 @@ if (is_numeric($store_id)) {
             $linedescinfo = new OrderLine;
             $lineinfo = $linedescinfo->getlinedescById($value->id);
             $lineinfodeltail = $linedescinfo->getlinedetailcById($value->id);
-           if (!empty($linedescinfo)) {
-             
-                $qtytotal = $qtytotal +$model[$key]->attributes['product_qty'];
+            if (!empty($linedescinfo)) {
+
+                $qtytotal1 = $model[$key]->attributes['product_qty'];
+                $qtytotal = $qtytotal + $model[$key]->attributes['product_qty'];
             }
-           
+
             $wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price']);
-           // $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
+            $wsptotal1 = $qtytotal1 * ($lineinfodeltail[0]['unit_price']);
+            // $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;
-            
             ?>  
-             <?php }?>
+
             <tr>
                 <td>
-                    <?php echo $model[$key]->attributes['product_name']; ?>
+    <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
-                <td> <?php echo $qtytotal; ?></td>
+                <td> <?php echo $model[$key]->attributes['product_qty']; ?></td>
                 <td><?php echo $model[$key]->attributes['unit_price']; ?></td>
                 <td><?php echo '0.0'; ?></td>
-                <td><?php echo $wsptotal; ?></td>
+                <td><?php echo $wsptotal1; ?></td>
             </tr>
-   
+<?php } ?>
         <tr>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -179,7 +185,7 @@ if (is_numeric($store_id)) {
         <tr>
             <td><strong>Total</strong></td>
             <td><?php echo $qtytotal; ?></td>
-            <td><?php echo $wsptotal; ?></td>
+            <td><?php echo $model[$key]->attributes['unit_price']; ?></td>
             <td><?php echo '0.0'; ?></td>
             <td><?php echo $wsptotal; ?></td>
         </tr>

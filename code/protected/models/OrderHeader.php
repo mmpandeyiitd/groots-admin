@@ -59,6 +59,7 @@ class OrderHeader extends CActiveRecord {
     private $oldAttrs = array();
     public $secondaryDb = null;
     public $store_id;
+    public $created_date;
 
     // public $status_array;
 
@@ -92,7 +93,7 @@ class OrderHeader extends CActiveRecord {
 //            array('cron_processed_flag', 'length', 'max' => 1),
 //            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
-            array('created_date, billing_address, shipping_address, timestamp, transaction_time', 'safe'),
+            array('created_date, billing_address, shipping_address, timestamp,status,transaction_time', 'safe'),
             // The following rule is used by search().
             array('store_id', 'safe', 'on' => 'search'),
             // @todo Please remove those attributes that should not be searched.
@@ -107,7 +108,7 @@ class OrderHeader extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-                // 'OrderLine' => array(self::BELONGS_TO, 'OrderLine', 'order_id'),
+                //'OrderLine' => array(self::BELONGS_TO, 'OrderLine', 'order_id'),
                 // 'Store' => array(self::BELONGS_TO, 'Store', 'store_id'),
         );
     }
@@ -121,6 +122,7 @@ class OrderHeader extends CActiveRecord {
             'order_number' => 'Order Number',
             'user_id' => 'User Id',
             'created_date' => 'Order Date',
+            'timestamp' => 'Order Date',
             'payment_method' => 'Payment Method',
             'payment_status' => 'Payment Status',
             'billing_name' => 'User Name',
@@ -134,7 +136,7 @@ class OrderHeader extends CActiveRecord {
             'shipping_phone' => 'Mobile',
             'shipping_email' => 'Shipping Email',
             'shipping_address' => 'Shipping Address',
-            'shipping_state' => 'Shipping State',
+            'shipping_state' => 'Demand Centre',
             'shipping_city' => 'Shipping City',
             'shipping_pincode' => 'Shipping Pincode',
             'shipping_charges' => 'Shipping Charges',
@@ -147,7 +149,7 @@ class OrderHeader extends CActiveRecord {
             'payment_gateway_name' => 'Payment Gateway Name',
             'payment_source' => 'Payment Source',
             // 'order_source' => 'Order Source',
-            'timestamp' => 'Timestamp',
+            //'timestamp' => 'Timestamp',
             'transaction_id' => 'Transaction',
             'bank_transaction_id' => 'Bank Transaction',
             'transaction_time' => 'Transaction Time',
@@ -188,6 +190,7 @@ class OrderHeader extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $criteria = new CDbCriteria;
+          $criteria->compare('t.created_date', $this->created_date, true);
         if (isset($_GET['retailer_id'])) {
             if (!empty($criteria->condition)) {
                 $criteria->condition .= ' AND ';
@@ -215,7 +218,7 @@ class OrderHeader extends CActiveRecord {
         }
         $criteria->order = 'created_date DESC';
 
-        $criteria->join = 'left JOIN order_line ON order_line.order_id = t.order_id';
+        //$criteria->join = 'left JOIN order_line ON order_line.order_id = t.order_id';
         $criteria->distinct = true;
 
 
@@ -227,13 +230,13 @@ class OrderHeader extends CActiveRecord {
                     "DATE_FORMAT(created_date, '%d/%m/%Y') = '$this->created_date'"
             );
         }
-
-
+      
+         $criteria->compare('t.status', $this->status, true);
         $criteria->compare('order_id', $this->order_id);
         $criteria->compare('store_id', $this->store_id);
         $criteria->compare('order_number', $this->order_number, true);
         $criteria->compare('user_id', $this->user_id);
-        $criteria->compare('created_date', $this->created_date, true);
+        
         $criteria->compare('payment_method', $this->payment_method, true);
         $criteria->compare('payment_status', $this->payment_status, true);
         $criteria->compare('billing_name', $this->billing_name, true);
@@ -266,7 +269,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('transaction_time', $this->transaction_time, true);
         $criteria->compare('payment_mod', $this->payment_mod, true);
         $criteria->compare('bankname', $this->bankname, true);
-        $criteria->compare('status', $this->status, true);
+       
         //$criteria->compare('cron_processed_flag', $this->cron_processed_flag, true);
 //        $criteria->compare('source_url', $this->source_url, true);
 //        $criteria->compare('source_type', $this->source_type, true);
