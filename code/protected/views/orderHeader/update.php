@@ -46,7 +46,7 @@ if (isset($_GET['id'])) {
 //print_r($orderline_detail);
 ?>
 <div class="form">
-
+ <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
     <?php
     $form = $this->beginWidget('CActiveForm', array(
         'id' => 'order-header-form',
@@ -271,10 +271,11 @@ if (isset($_GET['id'])) {
                 if (!empty($base_product_ids)) {
                     $base_product_ids_array = explode(',', $base_product_ids);
                 }
-
+               
                 $product_names = $orderline_detail[$i]['product_name'];
                 if (!empty($product_names)) {
                     $product_names_array = explode(',', $product_names);
+                  
                 }
                 $sizes = $orderline_detail[$i]['size'];
                 if (!empty($sizes)) {
@@ -353,7 +354,7 @@ if (isset($_GET['id'])) {
                         </div>
                         <div class="span9 finalDetail">
                             <h2>
-                                <?php //echo $infodetail[0]['seller_name'];   ?> <span>Unit Price <i class="fa fa-inr"></i> <?php if (isset($unit_prices_array[0])) echo $unit_prices_array[0]; ?></span>
+                                <?php echo $orderline_detail[$i]['product_name']; ?> <span>Unit Price <i class="fa fa-inr"></i> <?php if (isset($unit_prices_array[0])) echo $unit_prices_array[0]; ?></span>
                             </h2>
 
                             <table class = "table">

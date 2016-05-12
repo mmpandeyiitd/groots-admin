@@ -356,7 +356,8 @@ class SubscribedProduct extends CActiveRecord {
     }
 
     public function savedatagridview($id, $pro, $ef, $pf) {
-        $connection = Yii::app()->db;
+
+       $connection = Yii::app()->db;
         $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
         $command = $connection->createCommand($sql);
         $command->execute();
