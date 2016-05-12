@@ -50,6 +50,32 @@ bo {
         margin-left: 0px;
     }
 }
+.redview a {
+      background: rgb(70, 81, 128);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #2B2E3A;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+    background-color: #F1F1F1;
+    background-image: -moz-linear-gradient(top, #F1F1F1, #DBDBDB);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#DBDBDB), to(#DBDBDB));
+    background-image: -webkit-linear-gradient(top, #F1F1F1, #DBDBDB);
+    background-image: -o-linear-gradient(top, #F1F1F1, #DBDBDB);
+    background-image: linear-gradient(to bottom, #F1F1F1, #DBDBDB);
+    background-repeat: repeat-x;
+    filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffF1F1F1', endColorstr='#ffDBDBDB', GradientType=0);
+    -webkit-box-shadow: #F9F9F9 0 1px 0 inset;
+    border: 1px solid #DDDDDD;
+    border-radius: 3px;
+    box-shadow: #F9F9F9 0 1px 0 inset;
+    text-decoration: none;
+    height: 22px;
+    display: block;
+    padding: 0px 10px;
+  
+}
 /* Large screens ----------- */
 
 @media only screen and (min-width: 1824px) {

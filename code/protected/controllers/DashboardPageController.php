@@ -123,13 +123,14 @@ class DashboardPageController extends Controller {
         if (isset($_POST['filter'])) {
             $start_date = $_POST['DashboardPage']['start_date'];
             $end_date = $_POST['DashboardPage']['end_date'];
+            
             $cDate = date("Y-m-d H:i:s", strtotime($start_date));
             $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
             if ($cDate > $cdate1) {
                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             } elseif ($cDate == $cdate1) {
-                Yii::app()->user->setFlash('error', 'Start date and End date not selected');
+                Yii::app()->user->setFlash('error', 'Start date and end date not same !!');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }

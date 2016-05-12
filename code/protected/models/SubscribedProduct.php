@@ -188,7 +188,7 @@ class SubscribedProduct extends CActiveRecord {
         //$criteria->compare('warranty', $this->warranty, true);
 //        $criteria->compare('prompt', $this->prompt);
 //        $criteria->compare('prompt_key', $this->prompt_key, true);
-        $criteria->compare('status', $this->status);
+        $criteria->compare('t.status', $this->status);
         $criteria->compare('checkout_url', $this->checkout_url, true);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);
@@ -358,12 +358,12 @@ class SubscribedProduct extends CActiveRecord {
     public function savedatagridview($id, $pro, $ef, $pf) {
 
        $connection = Yii::app()->db;
-        $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
+       $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
         $command = $connection->createCommand($sql);
         $command->execute();
         $category_id_del3 = $command->queryAll();
         if ($category_id_del3 != Array()) {
-            if ($ef == '0'  && $pf == '0') {
+            if ($ef == '0' && $pf == '0') {
                 $connection = Yii::app()->db;
                 $sql = "DELETE FROM `retailer_product_quotation` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
                 $command = $connection->createCommand($sql);
@@ -376,7 +376,7 @@ class SubscribedProduct extends CActiveRecord {
                 //return $category_id_del= $command->queryAll();
             }
         } else {
-
+           
             $connection = Yii::app()->db;
             $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id) VALUES('$ef', '$pf', '$pro', '$id')";
             $command = $connection->createCommand($sql);

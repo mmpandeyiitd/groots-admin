@@ -108,6 +108,7 @@ class RetailerController extends Controller {
         if (isset($_POST['Retailer'])) {
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
+            $model->date_of_onboarding = date('Y-m-d H:i:s');
             $images = CUploadedFile::getInstancesByName('images');
             // echo count($images);die;
             if (isset($_POST['status'])) {
