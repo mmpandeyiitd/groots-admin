@@ -73,7 +73,7 @@ class BaseProduct extends CActiveRecord {
 // NOTE: you should only define rules for those attributes that
 // will receive user inputs.
         return array(
-            array('title,store_id', 'required'),
+            array('title,store_id,pack_size,pack_unit', 'required'),
             array('store_id,status,,featured', 'numerical', 'integerOnly' => true),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),

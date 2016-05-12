@@ -46,7 +46,7 @@ if (isset($_GET['id'])) {
 //print_r($orderline_detail);
 ?>
 <div class="form">
- <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+    <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
     <?php
     $form = $this->beginWidget('CActiveForm', array(
         'id' => 'order-header-form',
@@ -271,11 +271,10 @@ if (isset($_GET['id'])) {
                 if (!empty($base_product_ids)) {
                     $base_product_ids_array = explode(',', $base_product_ids);
                 }
-               
+
                 $product_names = $orderline_detail[$i]['product_name'];
                 if (!empty($product_names)) {
                     $product_names_array = explode(',', $product_names);
-                  
                 }
                 $sizes = $orderline_detail[$i]['size'];
                 if (!empty($sizes)) {
@@ -346,19 +345,24 @@ if (isset($_GET['id'])) {
                                     if (!empty($image_product)) {
                                         echo '<img src="' . $image_product . '">';
                                     } else {
-                                        echo '<img src="http://yorder.canbrand.in/images/product_04.jpg">';
+                                        echo '<img src="http://admin.groots.dev.canbrand.in/noimage.jpg">';
                                     }
                                     ?>
                                 </a>
                             </div>
                         </div>
                         <div class="span9 finalDetail">
-                            <h2>
-                                <?php echo $orderline_detail[$i]['product_name']; ?> <span>Unit Price <i class="fa fa-inr"></i> <?php if (isset($unit_prices_array[0])) echo $unit_prices_array[0]; ?></span>
-                            </h2>
 
+                            <h2>
+                                <span>Unit Price <i class="fa fa-inr"></i> <?php if (isset($unit_prices_array[0])) echo $unit_prices_array[0]; ?></span>
+                            </h2>
                             <table class = "table">
                                 <tbody>
+                                    <tr>
+                                        <td>Product Name:</td>
+                                        <td><?php echo $orderline_detail[$i]['product_name'];
+                                ; ?></td>
+                                    </tr>
                                     <tr>
                                         <td>Order Sub id:</td>
                                         <td><?php echo $orderline_ids; ?></td>
@@ -369,7 +373,7 @@ if (isset($_GET['id'])) {
                                         <td id="tqy_<?php echo array_sum($qtys_array); ?>"><?php echo array_sum($qtys_array); ?></td>
                                     </tr>
                                     <tr>
-                                        <td>Total Amount:</td>
+                                        <td>Total Amount: </td>
                                         <td id="tamount_<?php echo $isize; ?>"><?php echo $total_price; ?></td>
                                     </tr>
 
@@ -382,15 +386,15 @@ if (isset($_GET['id'])) {
                                   <span>                                       
 
                                       <select name="Status[]" class="selectNew" style="width:120px;">
-                                          <option value="Pending<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Pending') echo 'selected="selected"';  ?> >Pending </option>
-                                          <option value="Processing<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Processing') echo 'selected="selected"';  ?> >Processing </option>
-                                          <option value="Confirmed<><?php // echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Confirmed') echo 'selected="selected"';  ?> > Confirmed </option>
-                                          <option value="Out for Delivery<><?php //echo $orderline_ids;  ?>" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
-                                          <option value="Shipped<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'shipped') echo 'selected="selected"';  ?>>Shipped</option>
-                                          <option value="Delivered<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Delivered') echo 'selected="selected"';  ?> >Delivered</option>
-                                          <option value="Cancelled<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'Cancelled') echo 'selected="selected"';  ?> >Cancelled</option>
-                                          <option value="ReturnedRequested<><?php // echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'ReturnedRequested') echo 'selected="selected"';  ?> >Return Requested</option>
-                                          <option value="ReturnedComplete<><?php //echo $orderline_ids;  ?>" <?php //if ($status_array[0] == 'ReturnedComplete') echo 'selected="selected"';  ?>>Return Complete</option>
+                                          <option value="Pending<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'Pending') echo 'selected="selected"';   ?> >Pending </option>
+                                          <option value="Processing<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'Processing') echo 'selected="selected"';   ?> >Processing </option>
+                                          <option value="Confirmed<><?php // echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'Confirmed') echo 'selected="selected"';   ?> > Confirmed </option>
+                                          <option value="Out for Delivery<><?php //echo $orderline_ids;   ?>" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
+                                          <option value="Shipped<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'shipped') echo 'selected="selected"';   ?>>Shipped</option>
+                                          <option value="Delivered<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'Delivered') echo 'selected="selected"';   ?> >Delivered</option>
+                                          <option value="Cancelled<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'Cancelled') echo 'selected="selected"';   ?> >Cancelled</option>
+                                          <option value="ReturnedRequested<><?php // echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'ReturnedRequested') echo 'selected="selected"';   ?> >Return Requested</option>
+                                          <option value="ReturnedComplete<><?php //echo $orderline_ids;   ?>" <?php //if ($status_array[0] == 'ReturnedComplete') echo 'selected="selected"';   ?>>Return Complete</option>
                                       </select> 
                                   </span>
                               </div> -->
@@ -439,7 +443,7 @@ if (isset($_GET['id'])) {
 
                     </div>
                 </div>  
-                <input type="hidden" id="id" name="id[]" value="<?php //echo $model[$key]->attributes['id'];            ?>"/>
+                <input type="hidden" id="id" name="id[]" value="<?php //echo $model[$key]->attributes['id'];             ?>"/>
                 <input type="hidden" id="order_id" name="order_id" value="<?php echo $modelOrder->attributes['order_id']; ?>"/> 
 
                 <?php

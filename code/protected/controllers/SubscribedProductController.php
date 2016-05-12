@@ -242,14 +242,17 @@ class SubscribedProductController extends Controller {
                             $df = 100;
                         } else {
                             $df = $_POST['discount_price'][$val];
+                             $ef = 0;
                         }
                         if ($no_of_discount_price > $no_of_effective_price) {
                             $ef = 0;
                         } else {
                             $ef = $_POST['effective_price'][$val];
                         }
-
-                        $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);
+                         if ($no_of_discount_price == $no_of_effective_price) {
+                            $ef = 0;
+                        }
+                          $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);
                     }
                     if ($active_record == '') {
                         Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
