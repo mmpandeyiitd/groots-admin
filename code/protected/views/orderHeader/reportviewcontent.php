@@ -95,9 +95,6 @@ if (is_numeric($store_id)) {
             </td>
         </tr>
         <tr>
-            <td colspan="5">&nbsp;</td>
-        </tr>
-        <tr>
             <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
             <td colspan="3">Website : <?php echo "www.canbrand.in"; ?></td>
         </tr>
@@ -129,8 +126,7 @@ if (is_numeric($store_id)) {
         <tr>
             <th> Product </th>
             <th> Qty </th>
-            <th> Price </th>
-            <th> Tax </th>
+            <th colspan="1">Unit price </th>
             <th> Total </th>
         </tr>
 
@@ -141,6 +137,7 @@ if (is_numeric($store_id)) {
         $qtytotal = 0;
         $qtytotal1 = 0;
         $wsptotal1 = 0;
+        $wsptotal=0;
         $i = 0;
 //        echo '<pre>';
 //        //echo $model;
@@ -157,9 +154,10 @@ if (is_numeric($store_id)) {
                 $qtytotal = $qtytotal + $model[$key]->attributes['product_qty'];
             }
 
-            $wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price']);
+            //$wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price']);
             $wsptotal1 = $qtytotal1 * ($lineinfodeltail[0]['unit_price']);
             // $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
+            $wsptotal =$wsptotal + $wsptotal1;
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;
             ?>  
@@ -168,26 +166,15 @@ if (is_numeric($store_id)) {
                 <td>
     <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
-                <td> <?php echo $model[$key]->attributes['product_qty']; ?></td>
-                <td><?php echo $model[$key]->attributes['unit_price']; ?></td>
-                <td><?php echo '0.0'; ?></td>
-                <td><?php echo $wsptotal1; ?></td>
+                <td> <?php echo $model[$key]->attributes['product_qty'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
+                <td><?php echo " Rs ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
+                <td><?php echo " Rs ";?><?php echo $wsptotal1; ?></td>
             </tr>
 <?php } ?>
+        
         <tr>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-        </tr>
-
-        <tr>
-            <td><strong>Total</strong></td>
-            <td><?php echo $qtytotal; ?></td>
-            <td><?php echo $model[$key]->attributes['unit_price']; ?></td>
-            <td><?php echo '0.0'; ?></td>
-            <td><?php echo $wsptotal; ?></td>
+            <td colspan="3"><strong>Total Amount </strong></td>
+            <td><?php echo " Rs ";?> <?php echo $wsptotal; ?></td>
         </tr>
 
 

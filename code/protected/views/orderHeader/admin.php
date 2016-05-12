@@ -168,6 +168,7 @@ onclick='return confirm("Do you want to cancel");'/>
             'link1' => array(
                 'header' => 'Action',
                 'type' => 'raw',
+                'htmlOptions' => array('class' => 'redview'),
                // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',
              'value'=> 'CHtml::link("INVOICE", array("OrderHeader/report", "id"=>$data->order_id),array("target"=>"_blank"))',
                 

@@ -99,8 +99,13 @@ Yii::app()->clientScript->registerScript('search', "
             ),
             
             array(
+                'header' => 'Status',
                 'name' => 'status',
-                'type' => 'raw',
+                 'filter'=>array('1'=>'Enable','0'=>'Disable'), 
+               // 'filter' => CHtml::activeTextField($model, 'status'),
+                //'type' => 'raw',
+                'value' => '($data->status == "1")?"Enable":"Disable"',
+               
                  ),
             /*  array(
 		    'name'=>'status',
