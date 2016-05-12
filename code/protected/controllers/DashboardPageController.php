@@ -130,7 +130,7 @@ class DashboardPageController extends Controller {
                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             } elseif ($cDate == $cdate1) {
-                Yii::app()->user->setFlash('error', 'Start date and end date not same !!');
+                Yii::app()->user->setFlash('error', 'Start date and end date should not be same !!');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
@@ -151,7 +151,7 @@ class DashboardPageController extends Controller {
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
            }else {
-                Yii::app()->user->setFlash('error', 'Date Not nelected');
+                Yii::app()->user->setFlash('error', 'Date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
