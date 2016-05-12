@@ -174,7 +174,7 @@ if (is_numeric($store_id)) {
         
         <tr>
             <td colspan="3"><strong>Total Amount </strong></td>
-            <td><?php echo " Rs ";?> <?php echo $wsptotal; ?></td>
+            <td><?php echo " Rs. ";?> <?php echo $wsptotal; ?></td>
         </tr>
 
 
