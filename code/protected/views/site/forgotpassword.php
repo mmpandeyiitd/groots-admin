@@ -56,7 +56,7 @@
 </div>
 <style type="text/css">
 .login_formnew form { border: 0 !important; width: 340px !important;     margin: 0 auto; margin-top: 120px !important; }
-.login_formnew form h4 {text-align: center; color: #521042; font-size: 24px; text-transform: uppercase; margin: 10px 0 0; padding: 0; line-height: 28px;}
+.login_formnew form h4 {text-align: center; color: #333; font-size: 18px; text-transform: uppercase;font-weight:500;letter-spacing: 1px;font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; margin: 10px 0 0; padding: 0; line-height: 28px;}
 .portlet-decoration  { display: none;}
 .portlet-content { bottom: 0;}
 .portlet { border: 0; box-shadow: none;}

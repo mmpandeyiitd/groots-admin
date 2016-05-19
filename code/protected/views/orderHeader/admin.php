@@ -81,7 +81,7 @@ onclick='return confirm("Do you want to cancel");'/>
 <!--        <select onchange="changestatus(this);">-->
         <select name="status1" value="changestatus">
             <option>Change status</option>
-            <option value="pending">pending</option>
+            <option value="pending">Pending</option>
             <option value="Confirmed">Confirmed</option>
             <option value="Out for Delivery">Out for Delivery</option>
             <option value="Delivered">Delivered</option>
@@ -148,11 +148,18 @@ onclick='return confirm("Do you want to cancel");'/>
                 'name' => 'shipping_state',
                 'type' => 'raw',
             ),
-            array(
+           /* array(
                 'header' => 'Order status',
                 'name' => 'status',
                 'type' => 'raw',
-            ),
+            ),*/
+               
+                array(
+                'header' => 'Order status',
+                'name' => 'status',
+                 'filter'=>array('pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancelled','Paid'=>'Paid'), 
+               
+                 ),
 //            array(
 //                'header' => 'Amount',
 //                'name' => 'total',

@@ -56,7 +56,7 @@ if (Yii::app()->session['brand_admin_id']) {
 <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
             <h4>Orders</h4>
             <div class="right_date">
-                <?php
+    <?php
                 /* $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                   'model' => $model,
                   'name' => 'start_date',
@@ -125,7 +125,7 @@ if (Yii::app()->session['brand_admin_id']) {
                 echo $form->error($model, 'end_date');
                 ?>        
                 <input name="filter" class="button_new" type="submit" value="Filter" />
-            </div>
+               </div>
             <table class="table">
                 <tr>
                     <td class="gray">
@@ -171,7 +171,7 @@ if (Yii::app()->session['brand_admin_id']) {
                     </div>
                     <div class="conten_boxright">
                         <span>Total Category</span>
-                        <span><?php if ($Total_linesheet != 0) {
+                        <span><?php if ($Total_linesheet != 0 && $Total_linesheet != 1) {
                     echo $Total_linesheet - 2;
                 } else {
                     echo "0";
@@ -186,7 +186,7 @@ if (Yii::app()->session['brand_admin_id']) {
                         <i class="fa fa-line-chart"></i>
                     </div>
                     <div class="conten_boxright">
-                        <span>Total Retailers</span>
+                        <span>Total Buyers </span>
                         <span><?php echo $totalretailers; ?></span>
                     </div>
                 </div>

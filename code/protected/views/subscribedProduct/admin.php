@@ -98,6 +98,7 @@ $pageSizeDropDown = CHtml::dropDownList(
                 )
 );
 ?>
+ <a href="index.php?r=retailer/admin" class="backBtn_new1">Back</a>
 <input name="savedata" class="activebutton" value="save" type="submit">
 
 <?php
@@ -125,14 +126,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
             //'header' => 'check',
             'name' => 'effective_price',
             'type' => 'raw',
-            'value' => 'CHtml::textField("effective_price[$data->subscribed_product_id]",$data->effective_price,array("style"=>"width:50px;"))',
-            'htmlOptions' => array("width" => "50px", "class" => "eft_price"),
+            'value' => 'CHtml::textField("effective_price[$data->subscribed_product_id]",$data->effective_price,array("maxlength" =>5,"style"=>"width:50px;"))',
+            'htmlOptions' => array("width" => "50px","class" => "eft_price"),
         ),
         array(
-            //'header' => 'check',
+            'header' => 'Discount %',
             'name' => 'discount_price',
             'type' => 'raw',
-            'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("style"=>"width:50px;"))',
+            'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("maxlength" =>2,"style"=>"width:50px;"))',
             'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
         ),
     ),
@@ -162,7 +163,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         }
         if ($(this).val() > 100)
         {
-            alert("Discount price maximum limit 100 %");
+            alert("Discount maximum limit is 100 percentage");
             $(this).val(100);
         }
         //console.log($(this).val() , "Hello", this, ele );
