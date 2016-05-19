@@ -170,8 +170,7 @@ class RetailerController extends Controller {
           <br>
 
         <a href="'.$urldata.'">
-            
-        <img src="'.$emailurldata .'emailimage/android.png" alt="call" style= text-indent:-2000px; display:block;width:225px; height:60px;"> 
+             <img src="'.$emailurldata .'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
         <br> <br> 
       </p>

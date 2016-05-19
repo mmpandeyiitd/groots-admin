@@ -244,7 +244,9 @@ class SubscribedProductController extends Controller {
                             $df = $_POST['discount_price'][$val];
                         }
                           $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);
+                            $model->solrbacklogRetailerProductQuotation($val,$_REQUEST['id']);
                     }
+                   
                     if ($active_record == '') {
                         Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
                     } else {
