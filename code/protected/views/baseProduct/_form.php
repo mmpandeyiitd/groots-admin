@@ -116,7 +116,7 @@ $count = 0;
                     <?php } ?>
                     <div class="colorPop">
                         <h3>Colors</h3>
-                        <input type="hidden" id="color_mainids" name="color" value="#ff0000~~Red"/>
+                        <input type="hidden" id="color_mainids" name="color" value="#ff0000"/>
 
                         <ul class="colorRow">
                             <li><a id="Bluea" href="javascript:void(0);" style="background-color:#080e62;" onclick="change_color(this.id)">&nbsp;</a></li>
@@ -337,8 +337,8 @@ $count = 0;
             var get_color_code = document.getElementById(colorid).style.backgroundColor;
             var color_name = colorid.slice(0, -1);
             document.getElementById('color_code').style.backgroundColor = get_color_code;
-            document.getElementById('color_name').innerHTML = color_name;
-            document.getElementById('color_mainids').value = get_color_code + '~~' + color_name;
+            //document.getElementById('color_name').innerHTML = color_name;
+            document.getElementById('color_mainids').value = get_color_code;
         }
         //........End Color picker...........||
     </SCRIPT>

@@ -52,11 +52,13 @@ class Retailer extends CActiveRecord {
             array('name, image, website, contact_person1, contact_person2,categories_of_interest,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
             array('state,retailer_code,VAT_number,contact_person1,contact_person2', 'length', 'max' => 150),
+            array('VAT_number', 'length', 'min' => 11,'max' => 11),
             array('mobile,telephone', 'length', 'min' => 10),
+             array('telephone', 'length', 'min' => 11,'max' => 13),
             array('name', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in name.'),
             array('city', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in city.'),
-            array('email', 'unique', 'on' => 'insert', 'message' => 'email:(value) already exists!'),
-            array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile:(value) already exists!'),
+            array('email', 'unique', 'on' => 'insert', 'message' => 'email already exists!'),
+            array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
             array('modified_date,date_of_onboarding', 'safe'),
@@ -339,12 +341,12 @@ class Retailer extends CActiveRecord {
         }
     }
 
-  /*  public function beforeSave() {
-       // echo $this->password;die;
-        $pass = md5($this->password);
-        $this->password = $pass;
-        return true;
-    }*/
+    /*  public function beforeSave() {
+      // echo $this->password;die;
+      $pass = md5($this->password);
+      $this->password = $pass;
+      return true;
+      } */
 
     protected function afterDelete() {
         parent::beforeDelete();

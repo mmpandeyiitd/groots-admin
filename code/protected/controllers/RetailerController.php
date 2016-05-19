@@ -96,6 +96,7 @@ class RetailerController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+       // echo '<pre>';print_r($_POST);die;
         $model = new Retailer;
         // echo Yii::app()->session['premission_info']['module_info']['retialers'];die;
         // Uncomment the following line if AJAX validation is needed
@@ -108,7 +109,7 @@ class RetailerController extends Controller {
         if (isset($_POST['Retailer'])) {
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
-            $model->date_of_onboarding = date('Y-m-d H:i:s');
+            
             $images = CUploadedFile::getInstancesByName('images');
             // echo count($images);die;
             if (isset($_POST['status'])) {
@@ -116,11 +117,21 @@ class RetailerController extends Controller {
             } else {
                 $model->status = 1;
             }
-            $from_email = 'grootsadmin@groots.in';
+             if ($_POST['Retailer']['date_of_onboarding']!='') {
+                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
+            } else {
+                $model->date_of_onboarding = date('Y-m-d H:i:s');
+            }
+            $data_pass= $_POST['Retailer']['password'];
+             $pass = md5($model->password);
+            $model->password = $pass;
+            if ($model->save()) {
+               
+                $from_email = 'grootsadmin@groots.in';
             $from_name = 'Groots Dashboard Admin';
             $subject = 'Groots Buyer Account';
             $urldata = Yii::app()->params['target_app_url'];
-            $emailurldata = Yii::app()->params['email_app_url'];
+            $emailurldata = Yii::app()->params['email_app_url1'];
             $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -154,7 +165,7 @@ class RetailerController extends Controller {
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
             Your account created successfully.<br>
             <strong >Email:</strong>   ' . $model->email . '<br>
-            <strong >Password:</strong> ' . $model->password . '
+            <strong >Password:</strong> ' . $data_pass . '
           </span>
           <br>
 
@@ -203,10 +214,7 @@ class RetailerController extends Controller {
                 'replyto' => $from_email,
             );
             $mailsend = new Store();
-            $pass = md5($model->password);
-            $model->password = $pass;
             $resp = $model->sgSendMail($mailArray);
-            if ($model->save()) {
                 if (isset($images) && count($images) > 0) {
                     foreach ($images as $image => $pic) {
                         $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);

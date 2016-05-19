@@ -75,13 +75,13 @@ class OrderHeader extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('order_number, user_id,shipping_phone', 'required'),
-            array('user_id, source_id,shipping_phone,shipping_pincode, campaign_id, buyer_shipping_cost', 'numerical', 'integerOnly' => true),
-            array('order_number, billing_name, utm_source', 'length', 'max' => 255),
+            array('user_id,shipping_phone,shipping_pincode', 'numerical', 'integerOnly' => true),
+            array('order_number, billing_name', 'length', 'max' => 255),
             array('payment_method', 'length', 'max' => 16),
             array('payment_status', 'length', 'max' => 12),
             array('billing_phone, shipping_phone, payment_source', 'length', 'max' => 15),
             array('billing_email, shipping_name, shipping_email', 'length', 'max' => 256),
-            array('billing_state, billing_city, shipping_state, shipping_city, payment_gateway_name, source_type', 'length', 'max' => 100),
+            array('billing_state, billing_city, shipping_state, shipping_city, payment_gateway_name', 'length', 'max' => 100),
             array('billing_pincode, shipping_pincode', 'length', 'max' => 11),
             array('shipping_charges, total, total_payable_amount, total_paid_amount, discount_amt', 'length', 'max' => 10),
             array('coupon_code', 'length', 'max' => 20),
@@ -191,7 +191,7 @@ class OrderHeader extends CActiveRecord {
         }
         $criteria = new CDbCriteria;
           $criteria->compare('t.created_date', $this->created_date, true);
-        if (isset($_GET['retailer_id'])) {
+        /*if (isset($_GET['retailer_id'])) {
             if (!empty($criteria->condition)) {
                 $criteria->condition .= ' AND ';
             }
@@ -229,7 +229,7 @@ class OrderHeader extends CActiveRecord {
             $criteria->addCondition(
                     "DATE_FORMAT(created_date, '%d/%m/%Y') = '$this->created_date'"
             );
-        }
+        }*/
       
          $criteria->compare('t.status', $this->status, true);
         $criteria->compare('order_id', $this->order_id);

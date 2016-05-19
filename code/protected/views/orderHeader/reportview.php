@@ -15,7 +15,7 @@
 //      $html2pdf->setModeDebug();
       //  $html2pdf->setDefaultFont('Arial');
         $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-        $html2pdf->Output("name.pdf");
+        $html2pdf->Output("abc.pdf");
     }
     catch(HTML2PDF_exception $e) {
         echo $e;
