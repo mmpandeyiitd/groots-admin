@@ -354,6 +354,14 @@ class SubscribedProduct extends CActiveRecord {
           } */
         //return $category_id_del= $command->queryAll();
     }
+     public function solrbacklogRetailerProductQuotation($sid,$rid)
+    {
+        $connection = Yii::app()->db;
+        $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
+         FROM retailer_product_quotation WHERE retailer_id =$rid AND subscribed_product_id =$sid";
+         $command = $connection->createCommand($sql);
+         $command->execute();
+    }
 
     public function savedatagridview($id, $pro, $ef, $pf) {
 

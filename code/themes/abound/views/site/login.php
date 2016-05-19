@@ -44,18 +44,18 @@
         <div class="row">
            <!--  <?php echo $form->labelEx($model,'username'); ?> -->
            <label> <i class="fa fa-user"></i> </label>
-            <?php echo $form->textField($model,'username'); ?>
+            <?php echo $form->textField($model,'username',array('placeholder'=>'user@example.com')); ?>
             <?php echo $form->error($model,'username'); ?>
         </div>
     
         <div class="row">
             <label> <i class="fa fa-key"></i> </label>
-            <?php echo $form->passwordField($model,'password'); ?>
+            <?php echo $form->passwordField($model,'password',array('placeholder'=>'*******')); ?>
             <?php echo $form->error($model,'password'); ?>
             
         </div>
      <p class="hint">
-                 <?php echo CHtml::link('Forgot Password',array('site/forgotpassword')); ?>
+                 <?php //echo CHtml::link('Forgot Password',array('site/forgotpassword')); ?>
             </p>
       
     
