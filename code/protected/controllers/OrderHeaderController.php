@@ -213,7 +213,7 @@ class OrderHeaderController extends Controller {
             //  $this->redirect(array('OrderLine/update', 'id' => $_POST['id'], 'order_id' => $_POST['order_id'], 'status' => $_POST['Status'], 'unit_price_discount' => $_POST['unit_price_discount'], 'total_price_discount' => $_POST['total_price_discount']));
             // }
         }
-
+//echo '<pre>';print_r($_POST);die;
         #............update Shipping Address............
         if (isset($_POST['update_shipping_address'])) {
             if (isset($_POST['shipping_name'])) {
@@ -663,7 +663,7 @@ class OrderHeaderController extends Controller {
             'model' => $model,
             'modelOrder' => $modelOrder,
         ));
-        //$this->renderPartial("reportview");
+       
     }
 
     public function actionReportnew($id, $status, $email) {

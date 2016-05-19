@@ -235,22 +235,13 @@ class SubscribedProductController extends Controller {
                 if ($no_of_selectedIds > 0) {
                     for ($i = 0; $i < $no_of_selectedIds; $i++) {
                         $val = $_POST['selectedIds'][$i];
-
-                        if ($no_of_discount_price < $no_of_effective_price) {
-                            $df = 0;
-                        } else if ($_POST['discount_price'][$val] > 100) {
-                            $df = 100;
+//                       echo $no_of_discount_price.$no_of_effective_price;die;
+                       if(isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0){
+                          $df=0;
+                          $ef = $_POST['effective_price'][$val];
                         } else {
+                            $ef = 0;
                             $df = $_POST['discount_price'][$val];
-                             $ef = 0;
-                        }
-                        if ($no_of_discount_price > $no_of_effective_price) {
-                            $ef = 0;
-                        } else {
-                            $ef = $_POST['effective_price'][$val];
-                        }
-                         if ($no_of_discount_price == $no_of_effective_price) {
-                            $ef = 0;
                         }
                           $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);
                     }
@@ -262,7 +253,7 @@ class SubscribedProductController extends Controller {
                 }
             } else {
                 //echo "heoo";die;
-                Yii::app()->user->setFlash('premission_info', 'Please select at least one product.');
+                Yii::app()->user->setFlash('premission_info', 'Product list not selected');
             }
         }
         $this->render('admin', array(

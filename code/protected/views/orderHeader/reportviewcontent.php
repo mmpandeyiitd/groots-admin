@@ -82,7 +82,6 @@ if (is_numeric($store_id)) {
         vertical-align: top;
     }
 </style>
-
 <div class="container">
     <table border="1">
         <tr>
@@ -91,7 +90,7 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td colspan="5">
-                <p><strong>Registered Office:</strong> <?php echo $brand_address . '<br>' . $brand_city . '<br>' . $brand_state . '<br>' . $brand_pincode . '<br>' . $brand_country; ?></p>
+                <p><strong>Registered Office:</strong> <?php echo '<br> Address - '. $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
             </td>
         </tr>
         <tr>
@@ -124,10 +123,10 @@ if (is_numeric($store_id)) {
         </tr>
 
         <tr>
-            <th> Product </th>
-            <th> Qty </th>
-            <th colspan="1">Unit price </th>
-            <th> Total </th>
+            <th style="text-align:center;"> Product </th>
+            <th style="text-align:center;"> Qty </th>
+            <th style="text-align:center;" colspan="1"> Unit price </th>
+            <th style="text-align:center;"> Total </th>
         </tr>
 
         <?php
@@ -163,18 +162,18 @@ if (is_numeric($store_id)) {
             ?>  
 
             <tr>
-                <td>
+                <td style="text-align:center;">
     <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
-                <td> <?php echo $model[$key]->attributes['product_qty'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
-                <td><?php echo " Rs . ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
-                <td><?php echo " Rs . ";?><?php echo $wsptotal1; ?></td>
+                <td style="text-align:center;"> <?php echo $model[$key]->attributes['product_qty'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
+                <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
+                <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $wsptotal1; ?></td>
             </tr>
 <?php } ?>
         
         <tr>
             <td colspan="3"><strong>Total Amount </strong></td>
-            <td><?php echo " Rs. ";?> <?php echo $wsptotal; ?></td>
+            <td style="text-align:right;"><?php echo " Rs. ";?> <?php echo $wsptotal; ?></td>
         </tr>
 
 

@@ -126,7 +126,8 @@ i		'db'=>array(
             'defaultPageSize' => 10,
             'target_app_url'=> 'www.google.com',
             'LOG_FILE_NAME_ORDER_CSV'  =>'LOG_FILE_NAME_ORDER_CSV','../../../feeds/order_csv.log',
-'email_app_url'=> 'http://admin.groots.dev.canbrand.in/feeds/order_csv/',
+            'email_app_url1'=> 'http://admin.groots.dev.canbrand.in/',            
+            'email_app_url'=> 'http://admin.groots.dev.canbrand.in/feeds/order_csv/',
 	),
 );
 

@@ -63,7 +63,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Telephone'); ?>
-            <?php echo $form->textField($model, 'telephone', array('size' => 6, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'telephone',array('maxlength' => 13)); ?>
             <?php echo $form->error($model, 'telephone'); ?>
         </div>
         <div class="row">
@@ -161,7 +161,7 @@
 
         <div class="row">
             <?php echo $form->labelEx($model, 'VAT_number'); ?>
-            <?php echo $form->textField($model, 'VAT_number', array('size' => 60, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'VAT_number', array('maxlength' => 11)); ?>
             <?php echo $form->error($model, 'VAT_number'); ?>
         </div>
         <div class="row">
