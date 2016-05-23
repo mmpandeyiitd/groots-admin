@@ -109,8 +109,7 @@ $count = 0;
                 <div class="colorPicker_dd" id="PickClr">
                     <?php if ($model->isNewRecord) { ?>
                         <span id="color_code" class="colorView" style="background-color:#ff0000;" >&nbsp;</span>
-                        <h6 id="color_name">Red</h6>
-                    <?php } else { ?>
+                      <?php } else { ?>
                         <span id="color_code" class="colorView" style="background-color:<?php echo $model->color; ?>;" >&nbsp;</span>
 
                     <?php } ?>

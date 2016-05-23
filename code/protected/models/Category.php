@@ -336,6 +336,11 @@ class Category extends CActiveRecord {
             $sqlsolr = "INSERT INTO `cat_solr_back_log`(`category_id`, `is_deleted`) VALUES ('" . $category_id . "','1')";
             $commandsolr = $connectionsolr->createCommand($sqlsolr);
             $commandsolr->execute();
+            
+            $connectionsolr = Yii::app()->db;
+            $sqlsolr = "DELETE FROM `category` WHERE category_id ='" . $category_id . "'";
+            $commandsolr = $connectionsolr->createCommand($sqlsolr);
+            $commandsolr->execute();
         }
         $category_id_del = $this->getDefaultCategoryId();
         return $category_id_del;
