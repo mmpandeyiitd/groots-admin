@@ -85,14 +85,14 @@ class Retailer extends CActiveRecord {
     public function attributeLabels() {
         return array(
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Business Name',
             'retailer_code' => 'Retailer Code',
             'VAT_number' => 'Vat Number',
-            'email' => 'Email',
+            'email' => 'Primary Email',
             'password' => 'Password',
-            'mobile' => 'Mobile',
+            'mobile' => 'Primary Mobile',
             'telephone' => 'Telephone',
-            'address' => 'Address',
+            'address' => 'Delivery Address',
             'city' => 'City',
             'state' => 'State',
             'image' => 'Image',

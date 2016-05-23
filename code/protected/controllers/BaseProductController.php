@@ -96,7 +96,7 @@ class BaseProductController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
-         // echo '<pre>';print_r($_POST);die;
+        // echo '<pre>';print_r($_POST);die;
 
 
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
@@ -489,8 +489,7 @@ class BaseProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-      
-        //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
+          //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -547,16 +546,41 @@ class BaseProductController extends Controller {
             } else {
                 $model->store_id = Yii::app()->session['brand_id'];
             }
-
+             $media_object = new Media();
+             $insert_id = Yii::app()->db->getLastInsertID();
             if (isset($_POST['media_remove'])) {
+                //echo '<pre>';print_r($_POST);die;
+              
+             //  echo '<pre>';print_r($_POST);die;
                 foreach ($_POST['media_remove'] as $keyrm => $valuerm) {
                     $mediaremove = Media::model()->deleteMediaByMediaId($valuerm);
+                   // $media_object->updateDefaultMediaByBaseProductId($insert_id, $id);
                 }
+//                if (isset($_POST['media_is_default'])) {
+//
+//                    $media_object->getOneMediaremovedefalut($id);
+//                }
+                
+              
+                //echo $id;die;
+                
+                
             }
+            
+            
             $media_object = new Media();
-            if (isset($_POST['media_is_default'])) {
-                $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $id);
+            
+             $insert_id = Yii::app()->db->getLastInsertID();
+            if (!isset($_POST['media_is_default'])) {
+                // echo $_POST['media_is_default'];die;
+                $media_object->updateDefaultMediaByBaseProductId($insert_id, $id);
             }
+             else if (isset($_POST['media_is_default']) && isset($_POST['media_remove'])) {
+                   $media_object->getOneMediaremovedefalut($id);
+               }else{
+                // $media_object->getOneMediaremovedefalut($id);
+                 $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $id);
+              }
 
             $baseProductId = $model->base_product_id;
             $category_obj = new Category();
@@ -705,7 +729,7 @@ class BaseProductController extends Controller {
                 ));
                 exit();
             }
-             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
+            if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
                 $this->render('update', array(
@@ -738,6 +762,7 @@ class BaseProductController extends Controller {
               ));
               exit();
               } */
+            
             $model->size_chart = CUploadedFile::getInstance($model, 'size_chart');
             if ($model->save()) {
                 #................subscription...............#
@@ -767,7 +792,7 @@ class BaseProductController extends Controller {
                 }
 
 
-                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit,$model->status);
+                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                 #...................end...................#
 
 
@@ -796,7 +821,6 @@ class BaseProductController extends Controller {
                         $width = BASEPRODUCT_BIGIMAGE_WIDTH;
                         $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
                         $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
-
 
                         $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
                         if ($file1[0]) {
@@ -832,6 +856,18 @@ class BaseProductController extends Controller {
                         $midia_type = 'image';
                         $is_default = 0;
                         $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
+                       //echo count($images);die;
+                        if(isset($_POST['media_is_default']))
+                        {
+                        
+                        $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
+                        }
+                        else{
+                             $insert_id = Yii::app()->db->getLastInsertID();
+                        $insert =$insert_id;
+                        $media_object = new Media();
+                        $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
+                        }
                         @mkdir($thumb_url_dir, 0777, true);
                         $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
                         $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
@@ -906,7 +942,7 @@ class BaseProductController extends Controller {
         $Length1 = $model_subscribe->getdatarecords_data2($id);
         $LengthUnit1 = $model_subscribe->getdatarecords_data3($id);
 
-        //   echo '<pre>';  print_r($Weight1);die;
+        //\   echo '<pre>';  print_r($Weight1);die;
         $this->render('update', array(
             'a' => $a['0']['grade'],
             'new_data' => $new_data['0']['diameter'],
@@ -1077,7 +1113,7 @@ class BaseProductController extends Controller {
         $insert_base_csv_info[$keycsv]['model_name'] = 'model_name';
         $insert_base_csv_info[$keycsv]['model_number'] = 'model_number';
         $keycsv++;
-         $cateogryarray =array();
+        $cateogryarray = array();
 
         if (isset($_POST['Bulk'])) {
 
@@ -1200,6 +1236,9 @@ class BaseProductController extends Controller {
                                 } else {
                                     $Weight = 0;
                                 }
+                                if ($Weight == '') {
+                                    $Weight = 0;
+                                }
                                 if (isset($cols['Weight Unit'])) {
                                     $Weight_Unit = trim($data[$cols['Weight Unit']]);
                                 } else {
@@ -1210,6 +1249,9 @@ class BaseProductController extends Controller {
                                 } else {
                                     $Length = 0;
                                 }
+                                if ($Length == '') {
+                                    $Length = 0;
+                                }
                                 if (isset($cols['Length Unit'])) {
                                     $Length_Unit = trim($data[$cols['Length Unit']]);
                                 } else {
@@ -1218,32 +1260,31 @@ class BaseProductController extends Controller {
                                 if (isset($cols['categoryId'])) {
                                     $cat_flag = 0;
                                     $categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                   // echo '<pre>';print_r($categories['0']);die;
-                                   if($categories['0']!=''){
-                                      
-                                    foreach ($categories as $category) {
-                                        $cat_flag = 0;
-                                        $connection = Yii::app()->db;
-                                        $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
-                                        $command = $connection->createCommand($sql);
-                                        $pdf = $command->queryAll();
-                                    }
+                                    // echo '<pre>';print_r($categories['0']);die;
+                                    if ($categories['0'] != '') {
+
+                                        foreach ($categories as $category) {
+                                            $cat_flag = 0;
+                                            $connection = Yii::app()->db;
+                                            $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
+                                            $command = $connection->createCommand($sql);
+                                            $pdf = $command->queryAll();
+                                        }
                                         if (!is_numeric($category) || $pdf == Array()) {
                                             $cat_flag++;
                                         }
                                     }
-                                  //  }
+                                    //  }
                                     if ($cat_flag == 1) {
-                                       $cateogryarray[] = $categories['0'];
-                                       Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
+                                        $cateogryarray[] = $categories['0'];
+                                        Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
                                     }
-                                    if($categories['0']==''){
-                                       Yii::app()->user->setFlash('error', 'Category Id is not blank : ');  
+                                    if ($categories['0'] == '') {
+                                        Yii::app()->user->setFlash('error', 'Category Id is not blank : ');
                                     }
-                                    
                                 }
-                               
-                                
+
+
                                 $errorFlag = 0;
                                 $model1->attributes = $row;
                                 $error = array();
@@ -1260,9 +1301,9 @@ class BaseProductController extends Controller {
                                     $Diameter = 0;
                                 }
                                 if ($model1->action == 'create') {
-                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($pack_saze)  && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp > $wsp)) {
+                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp > $wsp)) {
                                         // echo $row['pack_unit'];die;
-                                       
+
 
                                         $model_subscribe->store_offer_price = $wsp;
                                         $model_subscribe->diameter = $Diameter;
@@ -1366,6 +1407,8 @@ class BaseProductController extends Controller {
                                             fwrite($handle1, "\nRow : " . $i . " Product $model1->base_product_id $action. " . implode(' AND ', $error));
                                             //...............................................//
                                         }
+                                    } else {
+                                        fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . implode(' AND ', $error));
                                     }
                                 } else if ($model1->action == 'update') {
                                     if (isset($cols['Subscribed Product ID']))
@@ -1414,13 +1457,12 @@ class BaseProductController extends Controller {
                                         fwrite($handle1, "\nRow : " . $i . " Product  $bp not $action. " . implode(' AND ', $error));
                                     }
                                 } else {
-
                                     foreach ($model1->getErrors() as $errors) {
                                         // echo "hello";die;
                                         $error[] = implode(' AND ', $errors);
                                     }
                                     // $J=1;
-                                    fwrite($handle1, "\nRow : " . $i . "Diameter, Pack Size, Store Price, Store Offer Price, And Store Price always greater than Store Offer Price $model1->base_product_id . " . implode(' AND ', $error));
+                                    fwrite($handle1, "\nRow : " . $i . " Pack Size, Store Price, Store Offer Price, And Store Price always greater than Store Offer Price $model1->base_product_id . " . implode(' AND ', $error));
                                 }
 
                                 /* $error = array();
@@ -1450,33 +1492,34 @@ class BaseProductController extends Controller {
                                     $categories = explode(';', trim($data[$cols['categoryId']], ';'));
 
                                     $category_obj = new Category();
-                                    if($categories['0']!=''){
-                                    if (isset($categories) && !empty($categories)) {
-                                        $connection = Yii::app()->db;
-                                        $sql = "SELECT DISTINCT category_id
+                                    if ($categories['0'] != '') {
+                                        if (isset($categories) && !empty($categories)) {
+                                            $connection = Yii::app()->db;
+                                            $sql = "SELECT DISTINCT category_id
                                         FROM `category`
                                         WHERE category_id IN ( " . implode(',', $categories) . " )
                                         AND is_deleted = 0";
-                                        $catinfo = '';
-                                        $command = $connection->createCommand($sql);
-                                        $catinfo = $command->queryAll();
-                                        $catIds = array();
-                                        if (isset($catinfo) && !empty($catinfo)) {
-                                            foreach ($catinfo as $cat) {
-                                                $catIds[] = $cat['category_id'];
-                                            }
+                                            $catinfo = '';
+                                            $command = $connection->createCommand($sql);
+                                            $catinfo = $command->queryAll();
+                                            $catIds = array();
+                                            if (isset($catinfo) && !empty($catinfo)) {
+                                                foreach ($catinfo as $cat) {
+                                                    $catIds[] = $cat['category_id'];
+                                                }
 
-                                            $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
-                                            $catDiff = array_diff($categories, $catIds);
-                                            if (!empty($catDiff)) {
+                                                $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
+                                                $catDiff = array_diff($categories, $catIds);
+                                                if (!empty($catDiff)) {
 
-                                                Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
+                                                    Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
 
-                                                break;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
-                                }}
+                                }
                                 /*  if ($model->action == 'create' && !empty($baseid)) {
                                   //.......................solor backloag.................//
                                   $solrBackLog = new SolrBackLog();

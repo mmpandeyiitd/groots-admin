@@ -447,6 +447,7 @@ class OrderHeaderController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+        // print_r($_POST);die;
 
         $model = new OrderHeader('search');
 
@@ -524,8 +525,8 @@ class OrderHeaderController extends Controller {
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['email_app_url'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i]  . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
-                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i]  . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
+                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
                         $body_text = '';
                         $mailArray = array(
                             'to' => array(
@@ -547,12 +548,17 @@ class OrderHeaderController extends Controller {
                 if ($no_of_selectedIds > 0) {
                     $status_order = $_POST['status1'];
                     $order_ids = implode(',', $_POST['selectedIds']);
-                    $active_record = $model->StatusOrderByID($order_ids, $status_order);
-                    //$active_record = $model->CancelOrderByID($order_ids);
-                    if ($active_record) {
-                        Yii::app()->user->setFlash('success', 'Selected order id status updated Successfully.');
+                    if ($status_order != 'Change status') {
+                        $active_record = $model->StatusOrderByID($order_ids, $status_order);
+
+                        //$active_record = $model->CancelOrderByID($order_ids);
+                        if ($active_record) {
+                            Yii::app()->user->setFlash('success', 'Selected order id status updated Successfully.');
+                        } else {
+                            Yii::app()->user->setFlash('premission_info', 'Selected order id status already ' . $status_order . '');
+                        }
                     } else {
-                        Yii::app()->user->setFlash('premission_info', 'Please Try again.');
+                        Yii::app()->user->setFlash('premission_info', 'Selected order id status not selected');
                     }
                 }
             } else {
@@ -663,7 +669,6 @@ class OrderHeaderController extends Controller {
             'model' => $model,
             'modelOrder' => $modelOrder,
         ));
-       
     }
 
     public function actionReportnew($id, $status, $email) {
