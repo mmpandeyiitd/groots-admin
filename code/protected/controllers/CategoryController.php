@@ -265,9 +265,9 @@ class CategoryController extends Controller {
                 #....solar backlog.........#
                 $solrBackLog = new SolrBackLog();
                 $is_deleted = '0';
-                
-
-                $solrBackLog->insertByCategoryId($_REQUEST['category_id'], $is_deleted);
+                $data = array();
+                $data = (explode("---", $_REQUEST['aiotree']['category_id']['0']));
+                $solrBackLog->insertByCategoryId($data['1'], $is_deleted);
                 //.........................end.....................................//
                 Yii::app()->user->setFlash('success', 'Category Deleted successfully.');
                 $this->redirect(array('index', 'category_id' => $chkchildinfo));

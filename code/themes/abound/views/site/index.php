@@ -4,6 +4,7 @@ if(isset(Yii::app()->session['checkAccess']))
   $this->redirect(array('DashboardPage/index'));
   else
    $this->redirect(array('site/login'));
+  
 
 ?>    
 	

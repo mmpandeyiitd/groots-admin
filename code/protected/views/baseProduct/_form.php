@@ -82,8 +82,6 @@ $count = 0;
         <?php if (Yii::app()->user->hasFlash('title')): ?><div class="errorSummary" style="color:"><?php echo Yii::app()->user->getFlash('title'); ?></div><?php endif; ?>
         <?php if (Yii::app()->user->hasFlash('success')): ?><div class="flash-error" style="color: green;"><?php echo Yii::app()->user->getFlash('success'); ?></div><?php endif; ?>
 
-
-
         <div class="">
             <?php
             if (isset($imageinfo[0]['thumb_url'], $imageinfo[0]['thumb_url']))
@@ -109,7 +107,7 @@ $count = 0;
                 <div class="colorPicker_dd" id="PickClr">
                     <?php if ($model->isNewRecord) { ?>
                         <span id="color_code" class="colorView" style="background-color:#ff0000;" >&nbsp;</span>
-                      <?php } else { ?>
+                    <?php } else { ?>
                         <span id="color_code" class="colorView" style="background-color:<?php echo $model->color; ?>;" >&nbsp;</span>
 
                     <?php } ?>
@@ -154,6 +152,7 @@ $count = 0;
                         </ul>
                     </div>
                 </div>
+
                 <div class="clearfix"></div>        
             </div>
             <script type="text/javascript">
@@ -205,26 +204,26 @@ $count = 0;
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'store price *' ?></label>
 
-                <input type="text" name="MRP"  value="<?php echo $mrp; ?>" />
+                <input type="text" name="MRP" id="MRP"  value="<?php echo $mrp; ?>" />
             </div>
 
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
-                <input type="text" name="WSP" value="<?php echo $wsp; ?>"/>
+                <input type="text" name="WSP" id="WSP" value="<?php echo $wsp; ?>"/>
             </div>
-             <div class="row">
+            <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Weight ' ?></label>
-                <input type="text" name="Weight" value="<?php echo $Weight; ?>"/>
+                <input type="text" name="Weight" id="Weight" value="<?php echo $Weight; ?>"/>
             </div>
-             <div class="row">
+            <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Weight Unit' ?></label>
                 <input type="text" name="WeightUnit" value="<?php echo $WeightUnit; ?>"/>
             </div>
-             <div class="row">
+            <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Length' ?></label>
-                <input type="text" name="Length" value="<?php echo $Length; ?>"/>
+                <input type="text" name="Length" id="Length" value="<?php echo $Length; ?>"/>
             </div>
-             <div class="row">
+            <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
                 <input type="text" name="LengthUnit" value="<?php echo $LengthUnit; ?>"/>
             </div>
@@ -289,60 +288,160 @@ $count = 0;
                 </tbody>
             </table>
             <div style="clear:both;"></div>
+            <div class="errorSummary price1" style="color: red"  id="errchk"></div>
+            <div style="clear:both;"></div>
 
-           <div style="clear:both;"></div>
-
-                <div class="buttons">
-                    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('id' => 'buttonid')); ?>
-
-                </div>
+            <div class="buttons">
+                <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('id' => 'buttonid')); ?>
 
             </div>
 
         </div>
 
-        <?php $this->endWidget(); ?>
-    </div><!-- form -->
-
-    <SCRIPT lang="javascript">
-
-        function addMore() {
-            $("#product").append("<div style='clear:both;'></div><div class='product' >\n\
-                                <input type='text' name='kye_field[]'  />\n\
-                                <input type='text' name='kye_value[]'  />\n\
-                                <span class='cross_btn' onClick='deleteRow(this);'><i class='fa fa-times'></i></span>\n\
-                        </div>")
-        }
-
-        function deleteRow(variable_click) {
-            $(variable_click).parent('div').remove();
-        }
+    </div>
 
 
+    <?php $this->endWidget(); ?>
+</div><!-- form -->
+
+<SCRIPT lang="javascript">
+
+    function addMore() {
+        $("#product").append("<div style='clear:both;'></div><div class='product' >\n\
+                            <input type='text' name='kye_field[]'  />\n\
+                            <input type='text' name='kye_value[]'  />\n\
+                            <span class='cross_btn' onClick='deleteRow(this);'><i class='fa fa-times'></i></span>\n\
+                    </div>")
+    }
+
+    function deleteRow(variable_click) {
+        $(variable_click).parent('div').remove();
+    }
 
 
-        $(document).ready(function () {
 
-            $('a[href=#top]').click(function () {
-                $('html, body').animate({scrollTop: 0}, 'slow');
-                return false;
+
+    $(document).ready(function () {
+
+        $('a[href=#top]').click(function () {
+            $('html, body').animate({scrollTop: 0}, 'slow');
+            return false;
+        });
+
+        $('#buttonid').click(function () {
+
+            var favorite = [];
+            var flage = true;
+            var BASE_PRICE_ERROR = [];
+
+            var title = $('#BaseProduct_title').val();
+            var pack_size = $('#BaseProduct_pack_size').val();
+            var pack_unit = $('#BaseProduct_pack_unit').val();
+            var mrp = $('#MRP').val();
+            var wsp = $('#WSP').val();
+            var weight = $('#Weight').val();
+            var length = $('#Length').val();
+            if(weight==''){
+                var weight='0';
+            }
+             if(length==''){
+                var length='0';
+            }
+
+            $.each($("input[name='aiotree[category_id][]']:checked"), function () {
+                favorite.push($(this).val());
             });
+
+            if (favorite.length < 1) {
+                BASE_PRICE_ERROR.push("<li>Please select at least one category.</li>");
+                flage = false;
+            }
+
+            if (title == '') {
+                BASE_PRICE_ERROR.push("<li>Title cannot be blank.</li>");
+                flage = false;
+            }
+            if (pack_size == '') {
+                BASE_PRICE_ERROR.push("<li>Pack Size cannot be blank.</li>");
+                flage = false;
+            }
+            else if (!$.isNumeric(pack_size))
+            {
+                BASE_PRICE_ERROR.push("<li>Pack Size always numeric</li>");
+                flage = false;
+            }
+            if (pack_unit == '') {
+                BASE_PRICE_ERROR.push("<li>Pack Unit cannot be blank.</li>");
+                flage = false;
+            }
+            if (mrp == '') {
+                BASE_PRICE_ERROR.push("<li>Store Price cannot be blank.</li>");
+                flage = false;
+            }
+            else if (!$.isNumeric(mrp))
+            {
+                BASE_PRICE_ERROR.push("<li>Store Price always numeric</li>");
+                flage = false;
+            }
+            if (wsp == '') {
+                BASE_PRICE_ERROR.push("<li>Store Offer Price cannot be blank.</li>");
+                flage = false;
+            }
+            else if (!$.isNumeric(wsp))
+            {
+                BASE_PRICE_ERROR.push("<li>Store Offer Price always numeric</li>");
+                flage = false;
+            }
+           if (parseInt(mrp) < parseInt(wsp)) {
+                    BASE_PRICE_ERROR.push("<li>Store price must be greater than Store offer price</li>");
+                    flage = false;
+                }
+           if (!$.isNumeric(weight))
+            {
+                BASE_PRICE_ERROR.push("<li>Indicated Weight always numeric</li>");
+                flage = false;
+            }
+            if (!$.isNumeric(length))
+            {
+                BASE_PRICE_ERROR.push("<li>Indicated Length always numeric</li>");
+                flage = false;
+            }
+            if (flage == false) {
+                $("#errchk").empty();
+                $("#errchk").removeClass('price1');
+                $("#errchk").addClass('currentTab');
+                $("#errchk").append(BASE_PRICE_ERROR);
+                return false;
+            }
 
         });
 
+    });
 
-        //........Start Color picker...........||
-        function change_color(colorid) {
-            var get_color_code = document.getElementById(colorid).style.backgroundColor;
-            var color_name = colorid.slice(0, -1);
-            document.getElementById('color_code').style.backgroundColor = get_color_code;
-            //document.getElementById('color_name').innerHTML = color_name;
-            document.getElementById('color_mainids').value = get_color_code;
-        }
-        //........End Color picker...........||
-    </SCRIPT>
-    <style type="text/css">
-        .miniColors-trigger { display: none;} 
-        .portlet-content .form form input[type="radio"] { width: 30px !important;}
-        .portlet-content .form form input[type="checkbox"] { width: 30px !important;}
-    </style>
+
+    //........Start Color picker...........||
+    function change_color(colorid) {
+        var get_color_code = document.getElementById(colorid).style.backgroundColor;
+        var color_name = colorid.slice(0, -1);
+        document.getElementById('color_code').style.backgroundColor = get_color_code;
+        //document.getElementById('color_name').innerHTML = color_name;
+        document.getElementById('color_mainids').value = get_color_code;
+    }
+    //........End Color picker...........||
+</SCRIPT>
+<style type="text/css">
+    .miniColors-trigger { display: none;} 
+    .portlet-content .form form input[type="radio"] { width: 30px !important;}
+    .portlet-content .form form input[type="checkbox"] { width: 30px !important;}
+</style>
+<style type="text/css">
+
+    .price1 {
+        display: none;
+    }
+    .currentTab {
+        display: block !important;
+    }
+
+
+</style>
