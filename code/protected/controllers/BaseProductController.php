@@ -428,6 +428,7 @@ class BaseProductController extends Controller {
                             $success = file_put_contents($media_original, $content_medai_img);
 
                             $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
+                            echo $baseThumbPath;die;
                             @mkdir($baseThumbPath, 0777, true);
 
 
@@ -1142,7 +1143,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit','image');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1221,6 +1222,8 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['color']))
                                     $row['color'] = trim($data[$cols['color']]);
+                                 if (isset($cols['image']))
+                                    $row['media'] = str_replace("’", "'", trim($data[$cols['image']]));
 
                                 $row['store_id'] = 1;
                                 $row['status'] = 1;
@@ -1366,6 +1369,7 @@ class BaseProductController extends Controller {
                                                 $model_subscribe->save();
                                                 $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
                                             }#...................end...................#
+                                           
                                             if (isset($row['media']) && !empty($row['media'])) {
                                                 $images = $row['media'];
                                                 $insertImages = array();
@@ -1378,6 +1382,7 @@ class BaseProductController extends Controller {
                                                     }
 
                                                     $images = explode(";", $images);
+                                                
                                                     $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
                                                     if (!empty($insertImages['error'])) {
                                                         $model1->addError('csv_file', $insertImages['error']);
@@ -1588,7 +1593,6 @@ class BaseProductController extends Controller {
             $type = $_FILES["media_zip_file"]["type"];
 
             $target_path = 'zips/' . $filename;  // change this to the correct site path
-
             if (move_uploaded_file($source, $target_path)) {
 
                 $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
@@ -1596,7 +1600,7 @@ class BaseProductController extends Controller {
 
                 $file_info = new finfo(FILEINFO_MIME);  // object oriented approach!
                 $file_mime_type = $file_info->buffer(@file_get_contents($target_path));  // e.g. gives "image/jpeg"
-
+             
                 foreach ($accepted_types as $mime_type) {
                     if (strpos($file_mime_type, $mime_type) !== FALSE) {
                         $okay = true;
@@ -1751,7 +1755,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Weight,Weight Unit,Length,Length Unit';
+        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Weight,Weight Unit,Length,Length Unit,image';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -1830,6 +1834,7 @@ class BaseProductController extends Controller {
                 }
                 $media_url_dir = $baseDir;
                 $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $image);
+                //echo $image;die;
                 $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
                 @mkdir($media_url_dir, 0777, true);
                 $success = file_put_contents($media_main, $content_medai_img);

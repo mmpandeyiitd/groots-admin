@@ -38,7 +38,6 @@ if (Yii::app()->session['brand_admin_id']) {
     $total_shippedOrder = $dasboard_obj->GetShippedOrder($start_date, $end_date);
     $total_cancelledOrder = $dasboard_obj->GetCancelledorder($start_date, $end_date);
     $total_returnOrder = $dasboard_obj->GetReturnorder($start_date, $end_date);
-
     $Total_linesheet = $dasboard_obj->getTotalLinesheet($start_date, $end_date);
 
 
