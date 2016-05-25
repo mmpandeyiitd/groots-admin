@@ -79,14 +79,14 @@ if (is_numeric($store_id)) {
     }
     table tr td {
         padding: 5px;
-        vertical-align: top;
+        vertical-align: middle;
     }
 </style>
 <div class="container">
     <table border="1">
         <tr>
-            <td colspan="2">Order Id: <?php echo $modelOrder->attributes['order_number']; ?></td>
-            <td colspan="3"><h3>Retail/ Tax Invoice/ Bill</h3></td>
+            <td colspan="2" style="vertical-align:middle;">Order Id: <?php echo $modelOrder->attributes['order_number']; ?></td>
+            <td colspan="3" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;">Retail/ Tax Invoice/ Bill</h3></td>
         </tr>
         <tr>
             <td colspan="5">
@@ -94,23 +94,23 @@ if (is_numeric($store_id)) {
             </td>
         </tr>
         <tr>
-            <td colspan="2">Contact no: <?php echo $brand_mobile; ?></td>
-            <td colspan="3">Website : <?php echo "www.canbrand.in"; ?></td>
+            <td colspan="2"><b>Contact no:</b> <?php echo $brand_mobile; ?></td>
+            <td colspan="3"><b>Website:</b> <?php echo "www.canbrand.in"; ?></td>
         </tr>
         <tr>
             <td colspan="3">
-                <h3>Shipping Address</h3>
-                <h5 style="margin: 0;"><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
+                <h3 style="font-size:16px;">Shipping Address</h3>
+                <h5><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
                 <p><?php echo $modelOrder->attributes['shipping_address'] . ', ' . $modelOrder->attributes['shipping_city'] . ', ' . $modelOrder->attributes['shipping_state'] . ', ' . $modelOrder->attributes['shipping_pincode']; ?></p>
             </td>
             <td colspan="2">
-                <h3>Billing Address</h3>
-                <h5 style="margin: 0;"><?php echo $modelOrder->attributes['billing_name']; ?></h5>
+                <h3 style="font-size:16px;">Billing Address</h3>
+                <h5><?php echo $modelOrder->attributes['billing_name']; ?></h5>
                 <p><?php echo $modelOrder->attributes['billing_address'] . ', ' . $modelOrder->attributes['billing_city'] . ', ' . $modelOrder->attributes['billing_state'] . ', ' . $modelOrder->attributes['billing_pincode']; ?></p>
             </td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="3" style="vertical-align:middle;">
                 <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
             </td>
             <td colspan="2">
@@ -166,7 +166,7 @@ if (is_numeric($store_id)) {
     <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
                 <td style="text-align:center;"> <?php echo $model[$key]->attributes['product_qty'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
-                <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
+                <td style="text-align:center;"><?php echo " Rs. ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
                 <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $wsptotal1; ?></td>
             </tr>
 <?php } ?>
