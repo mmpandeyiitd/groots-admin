@@ -6,7 +6,17 @@ bo {
     padding-top: 20px;
 }
 /*Nav bar*/
-
+.grid-view .table td, .grid-view .table th {
+    vertical-align: middle;
+} 
+.grid-view .table input[type="checkbox"], .grid-view .table input[type="radio"] {
+    margin-top: 0px;
+}
+.customDatepicker input[type="text"] {
+    background: #fff url(../img/clock.png) no-repeat right;
+    cursor: pointer;
+    background-position-x: 285px;
+}
 .aiotree_header {
     font-size: 14px;
     font-weight: 600;

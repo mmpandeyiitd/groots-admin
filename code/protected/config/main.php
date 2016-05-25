@@ -70,28 +70,28 @@ i		'db'=>array(
 		// uncomment the following to use a MySQL database
 		
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots',
+			'connectionString' => 'mysql:host=localhost;dbname=dev_groots',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'root',
+			'password' => '',
 			'charset' => 'utf8',
 		),
 
 
         'secondaryDb'=>array(
-            'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_order',
+            'connectionString' => 'mysql:host=localhost;dbname=dev_goots_order',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'root',
+            'password' => '',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),  
 
         'db_log'=>array(
-            'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_log',
+            'connectionString' => 'mysql:host=localhost;dbname=dev_goots_log',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'root',
+            'password' => '',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),
