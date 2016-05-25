@@ -18,6 +18,12 @@ if ($model->base_product_id) {
 } else {
     $pdtCategories = $cat_all;
 }
+ /*  if(count($pdtCategories)==0){
+   $category_obl=new Category();
+   $category_id = $category_obl->getDefaultCategoryId();
+   if(!empty($category_id))
+   array_push($pdtCategories, $category_id);
+}*/
 
 foreach ($allCategoryData as $_categoryData) {
     if ($_categoryData->level == 2) {
@@ -27,12 +33,13 @@ foreach ($allCategoryData as $_categoryData) {
             'checked' => in_array($_categoryData->category_id, $pdtCategories),
         );
     } else {
-        $data[($_categoryData->level - 1) . "---$_categoryData->category_id"] = array(
+      $data[($_categoryData->level - 1) . "---$_categoryData->category_id"] = array(
             'parentid' => ($_categoryData->level - 2) . "---$_categoryData->parent_category_id",
             'text' => $_categoryData->category_name,
             'checked' => in_array($_categoryData->category_id, $pdtCategories),
         );
     }
+
 }
 
 Yii::import("application.extensions.AIOTree.*");
