@@ -12,6 +12,7 @@
     try
     {
         $html2pdf = new HTML2PDF('P', 'A4', 'en');
+        $html2pdf->pdf->SetTitle('Invoice Order Groots Admin Panel'); 
 //      $html2pdf->setModeDebug();
       //  $html2pdf->setDefaultFont('Arial');
     
