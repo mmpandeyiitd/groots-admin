@@ -44,13 +44,13 @@
         <div class="row">
            <!--  <?php echo $form->labelEx($model,'username'); ?> -->
            <label> <i class="fa fa-user"></i> </label>
-            <?php echo $form->textField($model,'username',array('placeholder'=>'user@example.com')); ?>
+            <?php echo $form->textField($model,'username',array('placeholder'=>'Enter Email ID')); ?>
             <?php echo $form->error($model,'username'); ?>
         </div>
     
         <div class="row">
             <label> <i class="fa fa-key"></i> </label>
-            <?php echo $form->passwordField($model,'password',array('placeholder'=>'*******')); ?>
+            <?php echo $form->passwordField($model,'password',array('placeholder'=>'Enter Password')); ?>
             <?php echo $form->error($model,'password'); ?>
             
         </div>
