@@ -1,4 +1,4 @@
-<?php
+i<?php
 // get the HTML
 ob_start();
 $pdfdata = $this->renderPartial('reportviewcontent', array('model' => $model,
