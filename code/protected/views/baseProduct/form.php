@@ -384,6 +384,10 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Store Price cannot be blank.</li>");
                     flage = false;
                 }
+                else if(mrp==0){
+                BASE_PRICE_ERROR.push("<li>Store Price always greater than zero</li>");
+                flage = false;
+            }
                 else if (!$.isNumeric(mrp))
                 {
                     BASE_PRICE_ERROR.push("<li>Store Price always numeric</li>");
@@ -393,6 +397,10 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Store Offer Price cannot be blank.</li>");
                     flage = false;
                 }
+                else if(wsp==0){
+                BASE_PRICE_ERROR.push("<li>Store Offer Price always greater than zero</li>");
+                flage = false;
+            }
                 else if (!$.isNumeric(wsp))
                 {
                     BASE_PRICE_ERROR.push("<li>Store Offer Price always numeric</li>");

@@ -190,7 +190,7 @@ if (isset($_GET['id'])) {
                                 echo 'display: none';
                             }
                             ?>;"> <?php echo $modelOrder->attributes['shipping_pincode']; ?></div>
-                            <input type="text" id="shipping_pincode" name="shipping_pincode" style="<?php
+                            <input type="text" id="shipping_pincode" name="shipping_pincode" maxlength="6" style="<?php
                             if (!empty($form->errorSummary($modelOrder))) {
                                 echo 'display: inline';
                             } else {
@@ -375,7 +375,7 @@ if (isset($_GET['id'])) {
                                     </tr>
                                     <tr>
                                         <td>Total Amount: </td>
-                                        <td id="tamount_<?php echo $isize; ?>"><?php echo $total_price; ?></td>
+                                        <td id="tamount_<?php echo $isize; ?>"><i class="fa fa-inr"></i> <?php echo $total_price; ?></td>
                                     </tr>
 
                                     <tr>
@@ -455,14 +455,14 @@ if (isset($_GET['id'])) {
             ?> 
             <div class="order_bottomdetails">
                 <div class="span5 pull-right">
-                    <h3><b>Total:</b> <span id="grandt"><?php echo $grandtotal; ?>
+                    <h3><b>Total:</b> <i class="fa fa-inr"></i> <span id="grandt"><?php echo $grandtotal; ?>
                             <input type="hidden" id="gtotal_price" name="gtotal_price" placeholder="0" value="<?php echo $grand_discount; ?>" >
                         </span></h3>
-                    <h3><b>Discount:</b>-<?php echo $grand_discount; ?>
+                    <h3><b>Discount:</b><i class="fa fa-inr"></i> <?php echo $grand_discount; ?>
                         <!--onblur="granddiscount(this.id)"-->
                         <input type="hidden" name="gtotal_price_discount" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $grand_discount; ?>" >
                     </h3>
-                    <h3><b>Discounted Total:</b><span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
+                    <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
                     <input type="hidden" id="grand_total" class="button_new" name="grand_total" value="<?php echo $grandtotal; ?>"/>
                     <input type="hidden" class="button_new" value="<?php echo $isize; ?>" id="isize" name="isize" /> 
                     <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> 
@@ -628,4 +628,3 @@ if (isset($_GET['id'])) {
         }
 
     </script>   
-

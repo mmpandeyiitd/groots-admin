@@ -144,13 +144,13 @@ class DashboardPageController extends Controller {
             $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
             //echo $oDate;die;
             $odate1 = date("Y-m-d H:i:s");
-            if (isset($oDate) && $oDate < $odate1 ) {
+            if (isset($oDate)) {
                 ob_clean();
                 $data= $model->downloadCSVByIDs($oDate);
                 ob_flush();
                 exit();
             }else {
-                Yii::app()->user->setFlash('error', 'Date not greater then current date');
+               // Yii::app()->user->setFlash('error', 'Date not greater then current date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
            }else {
