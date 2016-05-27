@@ -360,7 +360,13 @@ class SubscribedProduct extends CActiveRecord {
          $command = $connection->createCommand($sql);
          $command->execute();
     }
-
+    public function removeselectdata($id)
+    {
+       $connection = Yii::app()->db;
+        $sql = "DELETE FROM `retailer_product_quotation` WHERE `retailer_id` =$id";
+         $command = $connection->createCommand($sql);
+        $command->execute();
+    }
     public function savedatagridview($id, $pro, $ef, $pf) {
 
         $connection = Yii::app()->db;

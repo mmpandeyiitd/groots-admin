@@ -11,7 +11,8 @@ if ($issuperadmin == 0) {
     if (empty($store_id)) {
         $store_id = Yii::app()->session['brand_id'];
     }
-    //$store_id = $_GET['store_id'];
+    
+//$store_id = $_GET['store_id'];
     $store_name = Store::model()->getstore_nameByid($store_id);
 
     if ((Yii::app()->session['brand_admin_id'] != $store_id) && (Yii::app()->session['brand_id'] != $store_id)) {
