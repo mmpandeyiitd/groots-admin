@@ -38,7 +38,7 @@
 
         <div class="row">
             <?php echo $form->labelEx($model, 'Primary Email *'); ?>
-            <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255)); ?>
+            <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255,'readonly'=>true)); ?>
             <?php echo $form->error($model, 'email'); ?>
         </div>
         <div class="row">
@@ -48,7 +48,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Password *'); ?>
-            <?php echo $form->textField($model, 'password', array('size' => 6, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'password', array('size' => 6, 'maxlength' => 150,'readonly'=>true)); ?>
             <?php echo $form->error($model, 'password'); ?>
         </div>
         <div class="row">

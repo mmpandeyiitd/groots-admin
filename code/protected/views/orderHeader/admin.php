@@ -143,11 +143,19 @@ onclick='return confirm("Do you want to cancel");'/>
            return $data->shipping_address.' ( '.$data->shipping_city.' )';
        }
        ), 
-             array(
-               // 'header' => 'Demand Centre',
+//             array(
+//               // 'header' => 'Demand Centre',
+//                'name' => 'shipping_state',
+//                'type' => 'raw',
+//            ),
+                  array(
+              
                 'name' => 'shipping_state',
                 'type' => 'raw',
-            ),
+                'value'=> function($data){
+           return ucfirst($data->shipping_state);
+       }
+       ),
            /* array(
                 'header' => 'Order status',
                 'name' => 'status',
