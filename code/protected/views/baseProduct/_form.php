@@ -174,7 +174,9 @@ $count = 0;
             </div>
         </div>
         <div class="">
-
+           <?php
+            echo $form->hiddenField($model, 'quantity', array('value' => '0'));
+            ?>
            <div class="row">
                 <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
                 <?php
