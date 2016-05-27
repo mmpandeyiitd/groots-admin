@@ -11,7 +11,8 @@ if ($issuperadmin == 0) {
     if (empty($store_id)) {
         $store_id = Yii::app()->session['brand_id'];
     }
-    //$store_id = $_GET['store_id'];
+    
+//$store_id = $_GET['store_id'];
     $store_name = Store::model()->getstore_nameByid($store_id);
 
     if ((Yii::app()->session['brand_admin_id'] != $store_id) && (Yii::app()->session['brand_id'] != $store_id)) {
@@ -100,7 +101,7 @@ if (isset($_GET['id'])) {
                         <div class="clearfix"></div> 
                         <label>State:</label> <span class="detail"><?php echo $modelOrder->attributes['billing_state']; ?></span>
                         <div class="clearfix"></div> 
-                        <label>Pincode</label> <span class="detail"><?php echo $modelOrder->attributes['billing_pincode']; ?></span>
+                        <label>Pincode:</label> <span class="detail"><?php echo $modelOrder->attributes['billing_pincode']; ?></span>
                         <div class="clearfix"></div> 
                         <label>Country:</label> <span class="detail">India</span>
                         <div class="clearfix"></div>
@@ -239,10 +240,10 @@ if (isset($_GET['id'])) {
             ?>
             <div class="clearfix"></div> 
             <div class="status_top">
-                <span>status</span>
+                <span style="float: left;width: 150px;line-height: 28px;">Status:</span>
                 <span>                                       
 
-                    <select name="Status[]" class="selectNew" style="width:120px;">
+                    <select name="Status[]" class="selectNew">
                         <option value="Pending" <?php if ($status_array[0] == 'Pending') echo 'selected="selected"'; ?> >Pending </option>
                         <option value="Confirmed" <?php if ($status_array[0] == 'Confirmed') echo 'selected="selected"'; ?> > Confirmed </option>
                         <option value="Out for Delivery" <?php if ($status_array[0] == 'Out for Delivery') echo 'selected="selected"'; ?>>Out for Delivery</option>
