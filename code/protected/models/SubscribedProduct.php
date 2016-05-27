@@ -53,18 +53,18 @@ class SubscribedProduct extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('base_product_id, store_id,subscribed_product_id', 'required'),
-            array('diameter, status, is_deleted, quantity, is_cod, subscribe_shipping_charge', 'numerical', 'integerOnly' => true),
-            array('base_product_id, store_id, weight, length, width, height', 'length', 'max' => 10),
+            array('diameter, status, is_deleted, quantity, subscribe_shipping_charge', 'numerical', 'integerOnly' => true),
+            array('base_product_id, store_id, weight, length', 'length', 'max' => 10),
             array('store_price, store_offer_price', 'length', 'max' => 12),
             array('grade', 'length', 'max' => 100),
-            array('checkout_url', 'length', 'max' => 2083),
+          //  array('checkout_url', 'length', 'max' => 2083),
             array('sku', 'length', 'max' => 128),
             array('created_date, modified_date', 'safe'),
             array('title,effective_price,discout_per', 'safe', 'on' => 'search'),
             //array('', 'safe', 'on'=>'search'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('subscribed_product_id, base_product_id, store_id, store_price, store_offer_price, weight, length, width, height, grade, status, checkout_url, created_date, modified_date, is_deleted, sku, diameter,quantity, is_cod, subscribe_shipping_charge', 'safe', 'on' => 'search'),
+            array('subscribed_product_id, base_product_id, store_id, store_price, store_offer_price, weight, length,grade, status, created_date, modified_date, is_deleted, sku, diameter,quantity, is_cod, subscribe_shipping_charge', 'safe', 'on' => 'search'),
         );
     }
 
@@ -95,18 +95,16 @@ class SubscribedProduct extends CActiveRecord {
             'store_offer_price' => 'Store Offer Price',
             'weight' => 'Weight',
             'length' => 'Length',
-            'width' => 'Width',
-            'height' => 'Height',
             'diameter' => 'diameter',
             'grade' => 'grade',
             'status' => 'Status',
-            'checkout_url' => 'Checkout Url',
+//            'checkout_url' => 'Checkout Url',
             'created_date' => 'Created Date',
             'modified_date' => 'Modified Date',
-            'is_deleted' => 'Is Deleted',
+//            'is_deleted' => 'Is Deleted',
             'sku' => 'Sku',
             'quantity' => 'Quantity',
-            'is_cod' => 'Is Cod',
+//            'is_cod' => 'Is Cod',
             'subscribe_shipping_charge' => 'Subscribe Shipping Charge',
             'title' => 'Title',
             'effective_price' => 'effective_price',
@@ -182,20 +180,20 @@ class SubscribedProduct extends CActiveRecord {
         $criteria->compare('store_offer_price', $this->store_offer_price, true);
         $criteria->compare('weight', $this->weight, true);
         $criteria->compare('length', $this->length, true);
-        $criteria->compare('width', $this->width, true);
-        $criteria->compare('height', $this->height, true);
+//        $criteria->compare('width', $this->width, true);
+//        $criteria->compare('height', $this->height, true);
         // $criteria->compare('title', $this->title, true);
         //$criteria->compare('warranty', $this->warranty, true);
 //        $criteria->compare('prompt', $this->prompt);
 //        $criteria->compare('prompt_key', $this->prompt_key, true);
         $criteria->compare('t.status', $this->status);
-        $criteria->compare('checkout_url', $this->checkout_url, true);
+      //  $criteria->compare('checkout_url', $this->checkout_url, true);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);
-        $criteria->compare('is_deleted', $this->is_deleted);
+       // $criteria->compare('is_deleted', $this->is_deleted);
         $criteria->compare('sku', $this->sku, true);
         $criteria->compare('quantity', $this->quantity);
-        $criteria->compare('is_cod', $this->is_cod);
+       // $criteria->compare('is_cod', $this->is_cod);
         $criteria->compare('subscribe_shipping_charge', $this->subscribe_shipping_charge);
 
 

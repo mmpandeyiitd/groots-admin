@@ -74,23 +74,23 @@ class BaseProduct extends CActiveRecord {
 // will receive user inputs.
         return array(
             array('title,store_id,pack_size,pack_unit', 'required'),
-            array('store_id,status,,featured', 'numerical', 'integerOnly' => true),
+            array('store_id,status', 'numerical', 'integerOnly' => true),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
             //array('grade', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in fabric.'),
             // array('style_no', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in style no.'),
             array('pack_size', 'numerical', 'integerOnly' => true, 'min' => 1,),
-            array('title,size,pack_unit', 'length', 'max' => 255),
-            array('color', 'length', 'max' => 100),
+            array('title,pack_unit', 'length', 'max' => 255),
+            array('color', 'length', 'max' => 15),
             array('color', 'length', 'min' => 2),
-            array('description,tags', 'length', 'max' => 2000),
-            array('specofic_keys', 'length', 'max' => 1500),
+            array('description', 'length', 'max' => 2000),
+            //array('specofic_keys', 'length', 'max' => 1500),
             //array('order_placement_cut_off_date,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
-            array('admin_type', 'length', 'max' => 250),
+           // array('admin_type', 'length', 'max' => 250),
             array('created_date, modified_date', 'safe'),
             // The following rule is used by search().
 // @todo Please remove those attributes that should not be searched.
-            array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
+         //   array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('store_price,store_offer_price', 'safe', 'on' => 'search'),
             array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
@@ -215,15 +215,15 @@ class BaseProduct extends CActiveRecord {
         $criteria->compare('title', $this->title, true);
         $criteria->compare('description', $this->description, true);
         $criteria->compare('color', $this->color, true);
-        $criteria->compare('size', $this->size, true);
-        $criteria->compare('image', $this->image, true);
+        //$criteria->compare('size', $this->size, true);
+       // $criteria->compare('image', $this->image, true);
         $criteria->compare('store_id', $this->store_id, true);
         $criteria->compare('is_configurable', $this->is_configurable);
         $criteria->compare('configurable_with', $this->configurable_with, true);
         $criteria->compare('status', $this->status);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);
-        $criteria->compare('featured', $this->featured, true);
+        //$criteria->compare('featured', $this->featured, true);
         $criteria->compare('store_price', $this->store_price, true);
         $criteria->compare('store_offer_price', $this->store_offer_price, true);
 

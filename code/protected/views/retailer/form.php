@@ -36,9 +36,9 @@
             <?php echo $form->error($model, 'contact_person1'); ?>
         </div>
 
-        <div class="row">
+        <div class="row customDatepicker1">
             <?php echo $form->labelEx($model, 'Primary Email *'); ?>
-            <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255)); ?>
+            <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255,'readonly'=>true)); ?>
             <?php echo $form->error($model, 'email'); ?>
         </div>
         <div class="row">
@@ -46,9 +46,9 @@
             <?php echo $form->textField($model, 'mobile', array('maxlength' => 10)); ?>
             <?php echo $form->error($model, 'mobile'); ?>
         </div>
-        <div class="row">
+        <div class="row customDatepicker1">
             <?php echo $form->labelEx($model, 'Password *'); ?>
-            <?php echo $form->textField($model, 'password', array('size' => 6, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'password', array('size' => 6, 'maxlength' => 150,'readonly'=>true)); ?>
             <?php echo $form->error($model, 'password'); ?>
         </div>
         <div class="row">
@@ -96,7 +96,7 @@
             <?php echo $form->textField($model, 'demand_centre'); ?>
             <?php echo $form->error($model, 'demand_centre'); ?>
         </div>
-        <div class="row">
+        <div class="row customDatepicker">
             <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
             <?php  /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
             'model' => $model, 

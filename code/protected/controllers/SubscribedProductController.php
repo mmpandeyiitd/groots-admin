@@ -236,7 +236,7 @@ class SubscribedProductController extends Controller {
                     for ($i = 0; $i < $no_of_selectedIds; $i++) {
                         $val = $_POST['selectedIds'][$i];
 //                       echo $no_of_discount_price.$no_of_effective_price;die;
-                       if(isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0){
+                       if(isset($_POST['effective_price'][$val])){
                           $df=0;
                           $ef = $_POST['effective_price'][$val];
                         } else {

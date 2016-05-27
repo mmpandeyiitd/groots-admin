@@ -120,6 +120,9 @@ class DashboardPageController extends Controller {
         $order_end_date = '';
         //if (isset($_POST['DashboardPage'])) {
         //$model->attributes = $_POST['DashboardPage'];
+         if(isset($_POST['Reset'])){
+              Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
         if (isset($_POST['filter'])) {
             $start_date = $_POST['DashboardPage']['start_date'];
             $end_date = $_POST['DashboardPage']['end_date'];
@@ -155,6 +158,7 @@ class DashboardPageController extends Controller {
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
+       
         //}
         $this->render('index', array(
             'model' => $model,

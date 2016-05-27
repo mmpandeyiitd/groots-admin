@@ -98,6 +98,7 @@ class RetailerController extends Controller {
     public function actionCreate() {
        // echo '<pre>';print_r($_POST);die;
         $model = new Retailer;
+         
         // echo Yii::app()->session['premission_info']['module_info']['retialers'];die;
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
@@ -107,6 +108,7 @@ class RetailerController extends Controller {
             return;
         }
         if (isset($_POST['Retailer'])) {
+            $data_pass= $_POST['Retailer']['password'];
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
             
@@ -122,12 +124,15 @@ class RetailerController extends Controller {
             } else {
                 $model->date_of_onboarding = date('Y-m-d H:i:s');
             }
-            $data_pass= $_POST['Retailer']['password'];
-             $pass = md5($model->password);
-            $model->password = $pass;
+         
+//            if($_POST['Retailer']['password'] !='' && strlen($_POST['Retailer']['password'])<12){
+//                  
+//                $pass = md5($model->password);
+//                $model->password = $pass;
+//                }
+//               
             if ($model->save()) {
-               
-                $from_email = 'grootsadmin@groots.in';
+              $from_email = 'grootsadmin@groots.in';
             $from_name = 'Groots Dashboard Admin';
             $subject = 'Groots Buyer Account';
             $urldata = Yii::app()->params['target_app_url'];
@@ -281,6 +286,7 @@ class RetailerController extends Controller {
                         $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
                     }
                 }
+                  $model->mdpassword($model->email,$data_pass);
                 @unlink(UPLOAD_MEDIA_PATH . $pic->name);
                 Yii::app()->user->setFlash('success', 'Created Successfully');
                 $this->redirect(array('update', 'id' => $model->id));
@@ -387,6 +393,7 @@ class RetailerController extends Controller {
                         $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
                     }
                 }
+              
                 @unlink(UPLOAD_MEDIA_PATH . $pic->name);
                 Yii::app()->user->setFlash('success', 'Updated Successfully');
                 $this->redirect(array('update', 'id' => $model->id));
