@@ -239,7 +239,13 @@ class SubscribedProductController extends Controller {
                        if(isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0){
                           $df=0;
                           $ef = $_POST['effective_price'][$val];
-                        } else {
+                        }
+                         else  if(isset($_POST['effective_price'][$val])){
+                          $df=0;
+                          $ef =0;
+                        }
+
+                        else {
                             $ef = 0;
                             $df = $_POST['discount_price'][$val];
                         }

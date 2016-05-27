@@ -185,12 +185,12 @@ class BaseProductController extends Controller {
             if (isset($_POST['qunt'])) {
                 $qunt = $_POST['qunt'];
             } else {
-                $qunt = 1;
+                $qunt = 0;
             }
             if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
-                $model->status = 0;
+                $model->status = 1;
             }
             //echo '<pre>'; print_r($_POST);die;
             if ($_POST['diameter'] == '') {
@@ -1142,7 +1142,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit','image');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1162,7 +1162,7 @@ class BaseProductController extends Controller {
                         if ($i >= 0 && count($data) > 0) {
                             $i++;
                             /* header */
-                            if ($i == 1) {
+                             if ($i == 1) {
                                 $colDiff = array_diff($requiredFields, $data);
                                 if (!empty($colDiff)) {
                                     Yii::app()->user->setFlash('error', 'Required columns missing : ' . implode(' , ', $colDiff));
@@ -1221,10 +1221,12 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['color']))
                                     $row['color'] = trim($data[$cols['color']]);
+                                 if (isset($cols['image']))
+                                    $row['media'] = str_replace("’", "'", trim($data[$cols['image']]));
 
                                 $row['store_id'] = 1;
                                 $row['status'] = 1;
-                                $row['quantity'] = 1;
+                                $row['quantity'] = 0;
                                 if (isset($cols['Store Price']))
                                     $mrp = trim($data[$cols['Store Price']]);
                                 if (isset($cols['Store Offer Price']))
@@ -1259,6 +1261,7 @@ class BaseProductController extends Controller {
                                 }
                                 if (isset($cols['categoryId'])) {
                                     $cat_flag = 0;
+                                    $pdf = Array();
                                     $categories = explode(';', trim($data[$cols['categoryId']], ';'));
                                     // echo '<pre>';print_r($categories['0']);die;
                                     if ($categories['0'] != '') {
@@ -1270,6 +1273,7 @@ class BaseProductController extends Controller {
                                             $command = $connection->createCommand($sql);
                                             $pdf = $command->queryAll();
                                         }
+                                       
                                         if (!is_numeric($category) || $pdf == Array()) {
                                             $cat_flag++;
                                         }
@@ -1280,7 +1284,7 @@ class BaseProductController extends Controller {
                                         Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
                                     }
                                     if ($categories['0'] == '') {
-                                        Yii::app()->user->setFlash('error', 'Category Id is not blank : ');
+                                        Yii::app()->user->setFlash('error', 'title,Category Id,Pack Size	,Pack Unit,Store Price,Store Offer Price is not blank : ');
                                     }
                                 }
 
@@ -1301,7 +1305,7 @@ class BaseProductController extends Controller {
                                     $Diameter = 0;
                                 }
                                 if ($model1->action == 'create') {
-                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp > $wsp)) {
+                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp >= $wsp)) {
                                         // echo $row['pack_unit'];die;
 
 
@@ -1312,7 +1316,7 @@ class BaseProductController extends Controller {
                                         $model_subscribe->length = $Length;
                                         $model_subscribe->length_unit = $Length_Unit;
                                         $model_subscribe->store_price = $mrp;
-                                        $model_subscribe->quantity = 1;
+                                        $model_subscribe->quantity = 0;
 
                                         //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
                                         if (!$model1->save(true)) {
@@ -1331,7 +1335,7 @@ class BaseProductController extends Controller {
                                                 $model_subscribe->base_product_id = $model1->base_product_id;
                                                 //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
                                                 $model_subscribe->store_id = 1;
-                                                $model_subscribe->quantity = 1;
+                                                $model_subscribe->quantity = 0;
                                                 if ($wsp != '') {
                                                     $model_subscribe->store_offer_price = $wsp;
                                                 } else {
@@ -1366,6 +1370,7 @@ class BaseProductController extends Controller {
                                                 $model_subscribe->save();
                                                 $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
                                             }#...................end...................#
+                                           
                                             if (isset($row['media']) && !empty($row['media'])) {
                                                 $images = $row['media'];
                                                 $insertImages = array();
@@ -1378,6 +1383,7 @@ class BaseProductController extends Controller {
                                                     }
 
                                                     $images = explode(";", $images);
+                                                
                                                     $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
                                                     if (!empty($insertImages['error'])) {
                                                         $model1->addError('csv_file', $insertImages['error']);
@@ -1436,13 +1442,13 @@ class BaseProductController extends Controller {
                                             $row['title'] = str_replace("’", "'", trim($data[$cols['Name']]));
                                             $model1->Update_product_title($row['title'], $bp);
                                         }
-                                        if ((is_numeric($wsp)) && $mrp > $wsp) {
+                                        if ((is_numeric($wsp)) && $mrp >= $wsp) {
                                             $model_subscribe = new SubscribedProduct();
                                             $model_subscribe->base_product_id = $bp;
                                             $model_subscribe->store_id = $model1->store_id;
                                             $model_subscribe->store_offer_price = $wsp;
                                             $model_subscribe->store_price = $mrp;
-                                            $model_subscribe->quantity = 1;
+                                            $model_subscribe->quantity = 0;
                                             $solrBackLog = new SolrBackLog();
                                             //$is_deleted =  ($model->status == 1) ? 0 : 1;
                                             $is_deleted = '0';
@@ -1588,7 +1594,6 @@ class BaseProductController extends Controller {
             $type = $_FILES["media_zip_file"]["type"];
 
             $target_path = 'zips/' . $filename;  // change this to the correct site path
-
             if (move_uploaded_file($source, $target_path)) {
 
                 $accepted_types = array('application/zip', 'application/x-zip-compressed', 'multipart/x-zip', 'application/x-compressed');
@@ -1596,7 +1601,7 @@ class BaseProductController extends Controller {
 
                 $file_info = new finfo(FILEINFO_MIME);  // object oriented approach!
                 $file_mime_type = $file_info->buffer(@file_get_contents($target_path));  // e.g. gives "image/jpeg"
-
+             
                 foreach ($accepted_types as $mime_type) {
                     if (strpos($file_mime_type, $mime_type) !== FALSE) {
                         $okay = true;
@@ -1751,7 +1756,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Weight,Weight Unit,Length,Length Unit';
+        $file_data = 'title,categoryId,Pack Size,Pack Unit,Store Price,Store Offer Price,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -1763,8 +1768,8 @@ class BaseProductController extends Controller {
     public function actionUpdateFileDownload() {
 
         $model = new BaseProduct();
-        $model_grid = new ProductGridview('search');
-        $model_grid->unsetAttributes();
+//        $model_grid = new ProductGridview('search');
+        //$model_grid->unsetAttributes();
         if ($_POST == Array()) {
             ob_clean();
             $response = $model->downloadproductCSV();
@@ -1830,6 +1835,7 @@ class BaseProductController extends Controller {
                 }
                 $media_url_dir = $baseDir;
                 $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $image);
+                //echo $image;die;
                 $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
                 @mkdir($media_url_dir, 0777, true);
                 $success = file_put_contents($media_main, $content_medai_img);

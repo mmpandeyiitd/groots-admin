@@ -5,7 +5,7 @@ $form = $this->beginWidget('CActiveForm', array(
     'htmlOptions' => array('enctype' => 'multipart/form-data'),
         ));
 
-$issuperadmin = Yii::app()->session['is_super_admin'];
+/*$issuperadmin = Yii::app()->session['is_super_admin'];
 if ($issuperadmin == 1) {
     if (!(isset($_GET['store_id'])) || (empty($_GET['store_id']))) {
         $this->redirect(array('site/logout'));
@@ -27,7 +27,7 @@ if ($issuperadmin == 1) {
         'Styles' => array('admin'),
         'Bulk Upload Media',
     );
-}
+}*/
 
 
 $this->menu = array(

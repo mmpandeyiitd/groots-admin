@@ -48,10 +48,10 @@ class Retailer extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('name,email,password,mobile,address,city,state', 'required'),
-            array('id, store_size, status', 'numerical', 'integerOnly' => true),
-            array('name, image, website, contact_person1, contact_person2,categories_of_interest,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
+            array('id, status', 'numerical', 'integerOnly' => true),
+            array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
-            array('state,retailer_code,VAT_number,contact_person1,contact_person2', 'length', 'max' => 150),
+            array('state,retailer_code,VAT_number,contact_person1', 'length', 'max' => 150),
             array('VAT_number', 'length', 'min' => 11,'max' => 11),
             array('mobile,telephone', 'length', 'min' => 10),
              array('telephone', 'length', 'min' => 11,'max' => 13),
@@ -59,10 +59,10 @@ class Retailer extends CActiveRecord {
             array('city', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in city.'),
             array('email', 'unique', 'on' => 'insert', 'message' => 'email already exists!'),
             array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
-            array('product_categories,categories_of_interest', 'length', 'max' => 500),
+           // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
             array('modified_date,date_of_onboarding', 'safe'),
-            array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
+            //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('id, name, retailer_code, VAT_number, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date', 'safe', 'on' => 'search'),
@@ -95,15 +95,15 @@ class Retailer extends CActiveRecord {
             'address' => 'Delivery Address',
             'city' => 'City',
             'state' => 'State',
-            'image' => 'Image',
-            'image_url' => 'Image Url',
+//            'image' => 'Image',
+//            'image_url' => 'Image Url',
             'website' => 'Website',
             'contact_person1' => 'Contact Person1',
-            'contact_person2' => 'Contact Person2',
+//            'contact_person2' => 'Contact Person2',
             //'key_brand_stocked' => 'Key Brand Stocked',
-            'product_categories' => 'Product Categories',
-            'categories_of_interest' => 'Categories Of Interest',
-            'store_size' => 'Store Size',
+//            'product_categories' => 'Product Categories',
+//            'categories_of_interest' => 'Categories Of Interest',
+//            'store_size' => 'Store Size',
             'status' => 'Status',
             'request_status' => 'Request Status',
             'created_date' => 'Created Date',
@@ -144,15 +144,15 @@ class Retailer extends CActiveRecord {
         $criteria->compare('address', $this->address, true);
         $criteria->compare('city', $this->city, true);
         $criteria->compare('state', $this->state, true);
-        $criteria->compare('image', $this->image, true);
-        $criteria->compare('image_url', $this->image_url, true);
+//        $criteria->compare('image', $this->image, true);
+//        $criteria->compare('image_url', $this->image_url, true);
         $criteria->compare('website', $this->website, true);
         $criteria->compare('contact_person1', $this->contact_person1, true);
-        $criteria->compare('contact_person2', $this->contact_person2, true);
+//        $criteria->compare('contact_person2', $this->contact_person2, true);
         //$criteria->compare('key_brand_stocked',$this->key_brand_stocked,true);
-        $criteria->compare('product_categories', $this->product_categories, true);
-        $criteria->compare('categories_of_interest', $this->categories_of_interest, true);
-        $criteria->compare('store_size', $this->store_size);
+//        $criteria->compare('product_categories', $this->product_categories, true);
+//        $criteria->compare('categories_of_interest', $this->categories_of_interest, true);
+//        $criteria->compare('store_size', $this->store_size);
         $criteria->compare('status', $this->status);
         //$criteria->compare('request_status',$this->request_status);
         $criteria->compare('created_date', $this->created_date, true);
@@ -291,6 +291,13 @@ class Retailer extends CActiveRecord {
             $row = count($row);
         }
         return $row;
+    }
+    public function mdpassword($eid,$pass){
+        $pass1 = md5($pass);
+       $sql ='update retailer set password="'.$pass1.'" where email="'. $eid.'" AND password="'.$pass.'"';
+       $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $command->execute();
     }
 
     public function data_retailers($rid) {

@@ -38,7 +38,6 @@ if (Yii::app()->session['brand_admin_id']) {
     $total_shippedOrder = $dasboard_obj->GetShippedOrder($start_date, $end_date);
     $total_cancelledOrder = $dasboard_obj->GetCancelledorder($start_date, $end_date);
     $total_returnOrder = $dasboard_obj->GetReturnorder($start_date, $end_date);
-
     $Total_linesheet = $dasboard_obj->getTotalLinesheet($start_date, $end_date);
 
 
@@ -52,7 +51,9 @@ if (Yii::app()->session['brand_admin_id']) {
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
 <?php if (Yii::app()->user->hasFlash('permission_error')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('permission_error'); ?></div><?php endif; ?>
     <form method="post">
+         <input name="Reset" class="pull-right" type="submit" value="Reset" />
         <div class="dashboard-table">
+            
 <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
             <h4>Orders</h4>
             <div class="right_date">
@@ -123,9 +124,11 @@ if (Yii::app()->session['brand_admin_id']) {
                     'htmlOptions' => array('readonly' => 'true'),
                 ));
                 echo $form->error($model, 'end_date');
-                ?>        
+                ?>    
                 <input name="filter" class="button_new" type="submit" value="Filter" />
+               
                </div>
+            
             <table class="table">
                 <tr>
                     <td class="gray">

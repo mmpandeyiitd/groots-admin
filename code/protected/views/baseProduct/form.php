@@ -269,10 +269,8 @@ $count = 0;
         </div>
         <div class="">
             <?php
-            echo $form->hiddenField($model, 'quantity', array('value' => '1'));
+            echo $form->hiddenField($model, 'quantity', array('value' => '0'));
             ?>
-
-
             <div style="clear:both;"></div>
             <div class="row">
                 <?php echo $form->labelEx($model, 'status'); ?>
@@ -454,7 +452,7 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Store Offer Price always numeric</li>");
                     flage = false;
                 }
-               if (parseInt(mrp) < parseInt(wsp)) {
+                if (parseInt(mrp) < parseInt(wsp)) {
                     BASE_PRICE_ERROR.push("<li>Store price must be greater than Store offer price</li>");
                     flage = false;
                 }

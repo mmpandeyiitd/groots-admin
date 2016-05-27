@@ -91,7 +91,7 @@ class RetailerproductquotationGridview extends CActiveRecord {
 IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
             $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
             $criteria->group = "t.subscribed_product_id";
-            $criteria->order = "rp2.effective_price DESC,rp2.discount_price DESC";
+          //  $criteria->order = "rp2.effective_price DESC,rp2.discount_price DESC";
           //  echo '<pre>';print_r($criteria);die;
             
         }

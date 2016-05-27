@@ -102,67 +102,12 @@ $count = 0;
                 echo $form->error($model, 'description');
                 ?>
             </div>
-            <div class="row">
-                <label for="">Color:</label>
-                <div class="colorPicker_dd" id="PickClr">
-                    <?php if ($model->isNewRecord) { ?>
-                        <span id="color_code" class="colorView" style="background-color:#ff0000;" >&nbsp;</span>
-                    <?php } else { ?>
-                        <span id="color_code" class="colorView" style="background-color:<?php echo $model->color; ?>;" >&nbsp;</span>
-
-                    <?php } ?>
-                    <div class="colorPop">
-                        <h3>Colors</h3>
-                        <input type="hidden" id="color_mainids" name="color" value="#ff0000"/>
-
-                        <ul class="colorRow">
-                            <li><a id="Bluea" href="javascript:void(0);" style="background-color:#080e62;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Blueb" href="javascript:void(0);" style="background-color:#1023ad;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Bluec" href="javascript:void(0);" style="background-color:#2732ee;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Blued" href="javascript:void(0);" style="background-color:#725af6;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Bluee" href="javascript:void(0);" style="background-color:#c0b6fd;" onclick="change_color(this.id)">&nbsp;</a></li>
-                        </ul>
-                        <ul class="colorRow">
-                            <li><a id="Violeta"  href="javascript:void(0);" style="background-color:#510a36;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Violetb" href="javascript:void(0);" style="background-color:#8f1761;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Violetc"href="javascript:void(0);" style="background-color:#c22f8a;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Violetd" href="javascript:void(0);" style="background-color:#d27bb0;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Violete" href="javascript:void(0);" style="background-color:#e9c3dc;" onclick="change_color(this.id)">&nbsp;</a></li>
-                        </ul>
-                        <ul class="colorRow">
-                            <li><a id="Browna" href="javascript:void(0);" style="background-color:#681503;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Brownb" href="javascript:void(0);" style="background-color:#af2a01;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Brownc" href="javascript:void(0);" style="background-color:#db5120;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a id="Brownd" href="javascript:void(0);" style="background-color:#e39179;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Browne" href="javascript:void(0);" style="background-color:#f4d3ca;" onclick="change_color(this.id)">&nbsp;</a></li>
-                        </ul>
-                        <ul class="colorRow">
-                            <li><a  id="Reda" href="javascript:void(0);" style="background-color:#B40404;"onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Redd" href="javascript:void(0);" style="background-color:#FF0000;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a   id="Redc"href="javascript:void(0);" style="background-color:#DF0101;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Redb"href="javascript:void(0);" style="background-color:#FA5858;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Rede"href="javascript:void(0);" style="background-color:#F78181;" onclick="change_color(this.id)">&nbsp;</a></li>
-                        </ul>
-                        <ul class="colorRow">
-                            <li><a   id="Yellowa" href="javascript:void(0);" style="background-color:#736c01;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Yellowb" href="javascript:void(0);" style="background-color:#bdb401;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Yellowc" href="javascript:void(0);" style="background-color:#e4db00;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Yellowd" href="javascript:void(0);" style="background-color:#eae67a;" onclick="change_color(this.id)">&nbsp;</a></li>
-                            <li><a  id="Yellowe" href="javascript:void(0);" style="background-color:#ffffcc;" onclick="change_color(this.id)">&nbsp;</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="clearfix"></div>        
+          <div class="row">
+                <?php echo $form->labelEx($model, 'color'); ?>
+                <?php echo $form->textField($model, 'color', array('maxlength' => 10)); ?>
+                <?php echo $form->error($model, 'color'); ?>
             </div>
-            <script type="text/javascript">
-                $("#PickClr").click(function () {
-                    $(".colorPop").toggle();
-                });
-            </script>
-
-
-            <div class="row">
+               <div class="row">
                 <label for="grade"><?php echo 'grade ' ?></label>
                 <input type="text" name="grade" value="<?php echo $grade; ?>"/>
             </div>
@@ -230,10 +175,7 @@ $count = 0;
         </div>
         <div class="">
 
-            <?php
-            echo $form->hiddenField($model, 'quantity', array('value' => '1'));
-            ?>
-            <div class="row">
+           <div class="row">
                 <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
                 <?php
                 // print_R($images);
