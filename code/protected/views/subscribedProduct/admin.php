@@ -107,14 +107,16 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'id' => 'ympdm-store-grid',
     'dataProvider' => $model_grid->search('created_date DESC'),
     'filter' => $model_grid,
+    
     'columns' => array(
        
         array(
-            'header' => 'check',
+            'header' => 'Status',
             'name' => 'selectedIds[]',
             'id' => 'selectedIds',
             'value' => '$data->subscribed_product_id',
             'class' => 'CCheckBoxColumn',
+            'checked'=>'($data->effective_price!=" "? true : false);',
             'selectableRows' => '100',
         ),
         
@@ -136,6 +138,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("maxlength" =>2,"style"=>"width:50px;"))',
             'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
         ),
+//         array(
+//            'header' => 'Discount %',
+//            'name' => 'status',
+//            'type' => 'raw',
+//            'value' => 'CHtml::textField("status[$data->subscribed_product_id]",$data->status,array("maxlength" =>2,"style"=>"width:50px;"))',
+//            'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
+//        ),
     ),
 ));
 ?>
@@ -152,6 +161,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
         }
         //console.log($(this).val() , "Hello", this, ele );
     })
+    
+    
     $(document).on('keyup', '.dis_price input', function () {
         var ele = $(this).closest('tr').find('.eft_price input')[0];
         if ($(this).val() != 0 || $(this).val() != '') {
@@ -168,6 +179,26 @@ $this->widget('zii.widgets.grid.CGridView', array(
         }
         //console.log($(this).val() , "Hello", this, ele );
     })
+    $(document).on('click', '.checkbox-column input', function () {
+        var ele=this;
+        var eft = $(this).closest('tr').find('.eft_price input')[0];
+        var dis = $(this).closest('tr').find('.dis_price input')[0];
+        
+        if($(ele).attr('checked')=='checked'){
+            $(eft).val($(ele).attr('eft'));
+            $(dis).val($(ele).attr('dis'));
+        }else{
+            $(ele).attr('eft',$(eft).val());
+            $(ele).attr('dis',$(dis).val());
+            $(eft).val('');
+            $(dis).val('');
+        }
+        
+        
+        
+//        console.log($(this).val() , "Hello", this, ele );
+    })
+    
 </script>
 <script type="text/javascript">
     var specialKeys = new Array();

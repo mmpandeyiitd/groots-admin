@@ -98,7 +98,7 @@
         </div>
        
         <div class="row customDatepicker">
-            <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
+            <?php echo $form->labelEx($model, 'Date of onboarding');?>
             <?php
             $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
                 'model' => $model,
