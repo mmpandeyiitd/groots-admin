@@ -318,8 +318,13 @@ $count = 0;
                 BASE_PRICE_ERROR.push("<li>Pack Unit cannot be blank.</li>");
                 flage = false;
             }
+           
             if (mrp == '') {
-                BASE_PRICE_ERROR.push("<li>Store Price cannot be blank.</li>");
+                BASE_PRICE_ERROR.push("<li>Store Price cannot be blank</li>");
+                flage = false;
+            }
+            else if(mrp==0){
+                BASE_PRICE_ERROR.push("<li>Store Price always greater than zero</li>");
                 flage = false;
             }
             else if (!$.isNumeric(mrp))
@@ -331,11 +336,16 @@ $count = 0;
                 BASE_PRICE_ERROR.push("<li>Store Offer Price cannot be blank.</li>");
                 flage = false;
             }
-            else if (!$.isNumeric(wsp))
+             else if (!$.isNumeric(wsp))
             {
                 BASE_PRICE_ERROR.push("<li>Store Offer Price always numeric</li>");
                 flage = false;
             }
+             else if(wsp==0){
+                BASE_PRICE_ERROR.push("<li>Store Offer Price always greater than zero</li>");
+                flage = false;
+            }
+           
            if (parseInt(mrp) < parseInt(wsp)) {
                     BASE_PRICE_ERROR.push("<li>Store price must be greater than Store offer price</li>");
                     flage = false;

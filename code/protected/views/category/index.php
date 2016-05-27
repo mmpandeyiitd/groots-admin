@@ -90,7 +90,7 @@ if (array_key_exists('category', Yii::app()->session['premission_info']['module_
 
             <div class="span12 caregory_btn">
                 <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Update'); ?>
-                <?php if($visible_action_delete){ echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Delete');} ?>
+              
             </div>
 
         </div>
