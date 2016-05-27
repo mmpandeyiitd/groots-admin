@@ -17,6 +17,11 @@ bo {
     cursor: pointer;
     background-position-x: 285px;
 }
+.customDatepicker1 input[type="text"] {
+    background: #fff;
+    cursor: pointer;
+    background-position-x: 285px;
+}
 .aiotree_header {
     font-size: 14px;
     font-weight: 600;
