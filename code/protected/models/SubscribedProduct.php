@@ -360,6 +360,14 @@ class SubscribedProduct extends CActiveRecord {
          $command = $connection->createCommand($sql);
          $command->execute();
     }
+     public function solrbacklogRetailerProductQuotationdel($rid)
+    {
+        $connection = Yii::app()->db;
+        $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
+         FROM retailer_product_quotation WHERE retailer_id =$rid";
+         $command = $connection->createCommand($sql);
+         $command->execute();
+    }
     public function removeselectdata($id)
     {
        $connection = Yii::app()->db;
