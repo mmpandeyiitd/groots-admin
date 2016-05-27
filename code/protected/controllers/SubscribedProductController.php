@@ -229,21 +229,25 @@ class SubscribedProductController extends Controller {
         if (isset($_POST['savedata'])) {
             if (isset($_POST['selectedIds'])) {
                 // echo '<pre>';print_r($_POST);die;
+                $error = array();
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $no_of_effective_price = count($_POST['effective_price']);
                 $no_of_discount_price = count($_POST['discount_price']);
+                $model->solrbacklogRetailerProductQuotationdel($_REQUEST['id']);
                 $active_record = $model->removeselectdata($_REQUEST['id']);
+              
                 if ($no_of_selectedIds > 0) {
                     for ($i = 0; $i < $no_of_selectedIds; $i++) {
                         $val = $_POST['selectedIds'][$i];
                         if (isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0) {
-                            $df = 0;
+                              $df = 0;
                             $ef = $_POST['effective_price'][$val];
                         } else if (isset($_POST['effective_price'][$val])) {
-                            $df = 0;
+                           $error = $val;
+                             $df = 0;
                             $ef = 0;
                         } else {
-                            $ef = 0;
+                           $ef = 0;
                             $df = $_POST['discount_price'][$val];
                         }
                         $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);

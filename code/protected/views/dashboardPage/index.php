@@ -222,7 +222,7 @@ if (Yii::app()->session['brand_admin_id']) {
                             // 'minDate' => 0,
                             'dateFormat' => 'dd-mm-yy',
                             //'minDate'=>-5,
-                            'maxDate' => "+0D",
+                            'maxDate' => "+3M",
                         ),
                         'value' => $model->order_start_date,
                         'htmlOptions' => array(
