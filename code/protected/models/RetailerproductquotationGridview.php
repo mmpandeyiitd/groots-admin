@@ -92,7 +92,7 @@ IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
             $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
             $criteria->group = "t.subscribed_product_id";
 
-          //  $criteria->order = "rp2.effective_price DESC,rp2.discount_price DESC";
+          // $criteria->order = "rp2.effective_price DESC,rp2.discount_price DESC";
          //  echo '<pre>';print_r($criteria);die;
             
         }
@@ -103,6 +103,7 @@ IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
         $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
         $criteria->compare('t.quantity', $this->quantity);
         $criteria->compare('t.store', $this->store, true);
+        $criteria->compare('t.status', $this->status, FALSE);
         $criteria->compare('retailer_id', $this->retailer_id, true);
         $criteria->compare('rp2.effective_price', $this->effective_price, true);
         $criteria->compare('rp2.discount_price', $this->discount_price, true);

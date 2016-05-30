@@ -139,13 +139,39 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
         ),
          array(
-            'header' => 'status',
+            'header' => 'Status',
             'name' => 'status',
-              
-            'type' => 'raw',
-            'value' => 'CHtml::dropDownList("status[$data->subscribed_product_id]",$data->status,array("1" =>"Enable","0" => "Disable", ))',
-            'htmlOptions' => array("width" => "50px"),
+            // 'class'=>'abc',
+              'type' => 'raw',
+             'value' => 'CHtml::textField("status[$data->subscribed_product_id]",$data->status,array("maxlength" =>2,"style"=>"width:50px;"))',
+           // 'value' => 'CHtml::dropDownList("status[$data->subscribed_product_id]",$data->status,array("1" =>"Enable","0" => "Disable", ))',
+            'htmlOptions' => array("width" => "50px","class" => "status",'style' => 'display:none'),
+             'headerHtmlOptions' => array('style' => 'display:none'),
+             'filterHtmlOptions' => array('style' => 'display:none'),
+    
         ),
+           array(
+            'header' => 'data',
+            'name' => 'status[]',
+            'id' => 'Deletedataarray',
+            'value' => '$data->subscribed_product_id',
+            'class' => 'CCheckBoxColumn',
+           // 'class' => 'CCheckBoxColumn hiddenField',
+            'checked'=>'($data->effective_price!=" "? true : false);',
+            'selectableRows' => '100',
+               'htmlOptions' => array("width" => "50px","class" => "status",'style' => 'display:none'),
+             'headerHtmlOptions' => array('style' => 'display:none'),
+             'filterHtmlOptions' => array('style' => 'display:none'),
+        ),
+        
+        
+        
+        
+        
+        
+        
+        
+        
 //         array(
 //            'header' => 'Discount %',
 //            'name' => 'status',
@@ -164,7 +190,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
        if(isNaN($(this).val()))
        {
            alert('Only numeric value insert');
-           $(this).val(0)
+           $(this).val('')
            $(ele).prop('disabled', false);
        }
         else if ($(this).val() != 0 || $(this).val() != '') {
@@ -196,17 +222,27 @@ $this->widget('zii.widgets.grid.CGridView', array(
     })
     $(document).on('click', '.checkbox-column input', function () {
         var ele=this;
+       // alert(ele);
         var eft = $(this).closest('tr').find('.eft_price input')[0];
         var dis = $(this).closest('tr').find('.dis_price input')[0];
+        var status = $(this).closest('tr').find('.status input')[0];
+            var ck = $(this).closest('tr').find('td:last input')[0];
         
         if($(ele).attr('checked')=='checked'){
             $(eft).val($(ele).attr('eft'));
             $(dis).val($(ele).attr('dis'));
+            $(ele).attr('status',$(dis).val());
+           $(ck).attr('checked','checked');
         }else{
             $(ele).attr('eft',$(eft).val());
             $(ele).attr('dis',$(dis).val());
-            $(eft).val('');
-           $(dis).val('');
+             $(ele).attr('status',$(dis).val());
+              $(ele).attr('ck',$(dis).val());
+            $(status).val('0');
+            
+            //$(eft).val('0');
+           //$(dis).val('0');
+           
         }
         
         
@@ -245,4 +281,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         });
     });
 </script>
+<style>
+  
+</style>
 

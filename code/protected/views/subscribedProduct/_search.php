@@ -34,7 +34,15 @@
 		<?php echo $form->label($model_grid,'discount_price'); ?>
 		<?php echo $form->textField($model_grid,'discount_price'); ?>
 	</div>
+    <div class="row status">
+		<?php echo $form->label($model_grid,'status'); ?>
+		<?php echo $form->textField($model_grid,'status'); ?>
+	</div>
+
 
 <?php $this->endWidget(); ?>
 
 </div><!-- search-form -->
+<style>
+ 
+</style>

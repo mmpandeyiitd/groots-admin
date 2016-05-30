@@ -230,17 +230,25 @@ class SubscribedProductController extends Controller {
             if (isset($_POST['selectedIds'])) {
                 // echo '<pre>';print_r($_POST);die;
                 $colnum = array();
+                //echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
+                 $no_of_Deletedataarray= count($_POST['Deletedataarray']);
+                
                 $no_of_effective_price = count($_POST['effective_price']);
                 $no_of_discount_price = count($_POST['discount_price']);
-                if ($no_of_selectedIds > 0) {
-                    for ($i = 0; $i < $no_of_selectedIds; $i++) {
-                        $val = $_POST['selectedIds'][$i];
+              
+                if ($no_of_Deletedataarray > 0) {
+                    
+                    for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
+                        $val = $_POST['Deletedataarray'][$i];
+                        
                         if (isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0) {
+                           // echo "hello";die;
                             $df = 0;
                             $ef = $_POST['effective_price'][$val];
                             $status = $_POST['status'][$val];
                         } else {
+                              //echo "hello1";die;
                             $ef = 0;
                             $df = $_POST['discount_price'][$val];
                             $status = $_POST['status'][$val];

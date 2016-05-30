@@ -166,7 +166,7 @@ if (is_numeric($store_id)) {
                 <td style="text-align:center;">
     <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
-                <td style="text-align:center;"> <?php echo $model[$key]->attributes['product_qty'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
+                <td style="text-align:center;"> <?php echo $model[$key]->attributes['product_qty'] *  $model[$key]->attributes['pack_size'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
                 <td style="text-align:center;"><?php echo " Rs. ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
                 <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $wsptotal1; ?></td>
             </tr>
