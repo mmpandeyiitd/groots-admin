@@ -160,7 +160,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
 <script>
     $(document).on('keyup', '.eft_price input', function () {
         var ele = $(this).closest('tr').find('.dis_price input')[0];
-        if ($(this).val() != 0 || $(this).val() != '') {
+       // alert($(this).val());
+       if(isNaN($(this).val()))
+       {
+           alert('Only numeric value insert');
+           $(this).val(0)
+           $(ele).prop('disabled', false);
+       }
+        else if ($(this).val() != 0 || $(this).val() != '') {
             $(ele).val(0);
             $(ele).prop('disabled', true);
         } else {
@@ -214,7 +221,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
     $(function () {
         $(".eft_price").bind("keypress", function (e) {
             var keyCode = e.which ? e.which : e.keyCode
-            var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+            var ret = ((keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
             return ret;
         });
         $(".eft_price").bind("paste", function (e) {
