@@ -58,12 +58,12 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'GeoLocation'); ?>
-            <?php echo $form->textField($model, 'geolocation'); ?>
+            <?php echo $form->textField($model, 'geolocation',array('maxlength' => 15));?>
             <?php echo $form->error($model, 'geolocation'); ?>
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Telephone'); ?>
-            <?php echo $form->textField($model, 'telephone', array('size' => 6, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'telephone', array('maxlength' => 15)); ?>
             <?php echo $form->error($model, 'telephone'); ?>
         </div>
         <div class="row">
@@ -76,26 +76,22 @@
             <?php echo $form->textField($model, 'owner_email'); ?>
             <?php echo $form->error($model, 'owner_email'); ?>
         </div>
-        <div class="row">
-            <?php echo $form->labelEx($model, 'Billing Email'); ?>
-            <?php echo $form->textField($model, 'billing_email'); ?>
-            <?php echo $form->error($model, 'billing_email'); ?>
-        </div>
-        <div class="row">
+       <div class="row">
             <?php echo $form->labelEx($model, 'Settlement Days'); ?>
-            <?php echo $form->textField($model, 'settlement_days'); ?>
+            <?php echo $form->textField($model, 'settlement_days',array('maxlength' =>12)); ?>
             <?php echo $form->error($model, 'settlement_days'); ?>
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Time of Delivery'); ?>
-            <?php echo $form->textField($model, 'time_of_delivery'); ?>
+            <?php echo $form->textField($model, 'time_of_delivery',array('maxlength' =>12)); ?>
             <?php echo $form->error($model, 'time_of_delivery'); ?>
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Demand Centre'); ?>
-            <?php echo $form->textField($model, 'demand_centre'); ?>
+            <?php echo $form->textField($model, 'demand_centre',array('maxlength' =>15)); ?>
             <?php echo $form->error($model, 'demand_centre'); ?>
         </div>
+       
         <div class="row customDatepicker">
             <?php echo $form->labelEx($model, 'Date of onboarding'); ?>
             <?php  /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
@@ -149,13 +145,13 @@
     <div class="">
         <div class="row">
             <?php echo $form->labelEx($model, 'city'); ?>
-            <?php echo $form->textField($model, 'city'); ?>
+            <?php echo $form->textField($model, 'city',array('maxlength' => 18)); ?>
             <?php echo $form->error($model, 'city'); ?>
         </div>
 
         <div class="row">
             <?php echo $form->labelEx($model, 'state'); ?>
-            <?php echo $form->textField($model, 'state', array('size' => 60, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'state', array('maxlength' => 18)); ?>
             <?php echo $form->error($model, 'state'); ?>
         </div>
 
