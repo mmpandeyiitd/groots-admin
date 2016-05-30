@@ -58,7 +58,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'GeoLocation'); ?>
-            <?php echo $form->textField($model, 'geolocation'); ?>
+            <?php echo $form->textField($model, 'geolocation',array('maxlength' => 15)); ?>
             <?php echo $form->error($model, 'geolocation'); ?>
         </div>
         <div class="row">
@@ -119,13 +119,13 @@
     <div class="">
         <div class="row">
             <?php echo $form->labelEx($model, 'city'); ?>
-            <?php echo $form->textField($model, 'city'); ?>
+            <?php echo $form->textField($model, 'city',array('maxlength' => 18)); ?>
             <?php echo $form->error($model, 'city'); ?>
         </div>
 
         <div class="row">
             <?php echo $form->labelEx($model, 'state'); ?>
-            <?php echo $form->textField($model, 'state', array('size' => 60, 'maxlength' => 150)); ?>
+            <?php echo $form->textField($model, 'state',array('maxlength' => 18)); ?>
             <?php echo $form->error($model, 'state'); ?>
         </div>
 

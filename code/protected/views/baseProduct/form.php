@@ -142,29 +142,29 @@ $count = 0;
             </div>
             <div class="row">
                 <?php echo $form->labelEx($model, 'color'); ?>
-                <?php echo $form->textField($model, 'color', array('maxlength' => 10)); ?>
+                <?php echo $form->textField($model, 'color', array('maxlength' => 15)); ?>
                 <?php echo $form->error($model, 'color'); ?>
             </div>
             <div class="row">
                 <label for="grade"><?php echo 'grade ' ?></label>
-                <input type="text" name="a" value="<?php echo $a; ?>"/>
+                <input type="text" name="a"  maxlength="4" value="<?php echo $a; ?>"/>
             </div>
             <div class="row">
                 <label for="diameter"><?php echo 'diameter ' ?></label>
-                <input type="text" name="new_data" value="<?php echo $new_data; ?>"/>
+                <input type="text" name="new_data"  maxlength="10" value="<?php echo $new_data; ?>"/>
             </div>
 
             <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_size');
-                echo $form->textField($model, 'pack_size', array('size' => 60, 'maxlength' => 255));
+                echo $form->textField($model, 'pack_size', array('maxlength' => 4));
                 echo $form->error($model, 'pack_size');
                 ?>
             </div>
             <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_unit');
-                echo $form->textField($model, 'pack_unit', array('size' => 60, 'maxlength' => 255));
+                echo $form->textField($model, 'pack_unit', array('maxlength' => 4));
                 echo $form->error($model, 'pack_unit');
                 ?>
             </div>
@@ -188,29 +188,29 @@ $count = 0;
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'store price *' ?></label>
 
-                <input type="text" name="MRP" id="MRP" value="<?php echo $mrp; ?>" />
+                <input type="text" name="MRP"  maxlength="10" id="MRP" value="<?php echo $mrp; ?>" />
             </div>
 
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'store offer price *' ?></label>
-                <input type="text" name="WSP" id="WSP" value="<?php echo $wsp; ?>"/>
+                <input type="text" name="WSP" maxlength="10" id="WSP" value="<?php echo $wsp; ?>"/>
             </div>
 
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Weight ' ?></label>
-                <input type="text" name="Weight" id ="Weight"  value="<?php echo $Weight; ?>"/>
+                <input type="text" name="Weight" id ="Weight"  maxlength="10" value="<?php echo $Weight; ?>"/>
             </div>
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Weight Unit' ?></label>
-                <input type="text" name="WeightUnit" value="<?php echo $WeightUnit; ?>"/>
+                <input type="text" name="WeightUnit"  maxlength="10" value="<?php echo $WeightUnit; ?>"/>
             </div>
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Length' ?></label>
-                <input type="text" name="Length" id="Length" value="<?php echo $Length; ?>"/>
+                <input type="text" name="Length"  maxlength="10" id="Length" value="<?php echo $Length; ?>"/>
             </div>
             <div class="row">
                 <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
-                <input type="text" name="LengthUnit" value="<?php echo $LengthUnit; ?>"/>
+                <input type="text" name="LengthUnit"  maxlength="10" value="<?php echo $LengthUnit; ?>"/>
             </div>
         </div>
         <div class="">
@@ -384,10 +384,15 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Store Price cannot be blank.</li>");
                     flage = false;
                 }
-                else if(mrp==0){
-                BASE_PRICE_ERROR.push("<li>Store Price always greater than zero</li>");
-                flage = false;
-            }
+                else if (mrp == 0 && mrp > 0) {
+                    BASE_PRICE_ERROR.push("<li>Store Price always greater than zero</li>");
+                    flage = false;
+                }
+                else if (parseInt(mrp) < 0) {
+                    //  alert(wsp);
+                    BASE_PRICE_ERROR.push("<li>Store Price always greater than zero </li>");
+                    flage = false;
+                }
                 else if (!$.isNumeric(mrp))
                 {
                     BASE_PRICE_ERROR.push("<li>Store Price always numeric</li>");
@@ -397,10 +402,16 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Store Offer Price cannot be blank.</li>");
                     flage = false;
                 }
-                else if(wsp==0){
-                BASE_PRICE_ERROR.push("<li>Store Offer Price always greater than zero</li>");
-                flage = false;
-            }
+                else if (wsp == 0) {
+                    BASE_PRICE_ERROR.push("<li>Store Offer Price always greater than zero</li>");
+                    flage = false;
+                }
+                else if (parseInt(wsp) < 0) {
+                    //  alert(wsp);
+                    BASE_PRICE_ERROR.push("<li>Store Offer Price always greater than zero </li>");
+                    flage = false;
+                }
+
                 else if (!$.isNumeric(wsp))
                 {
                     BASE_PRICE_ERROR.push("<li>Store Offer Price always numeric</li>");
@@ -415,9 +426,19 @@ $count = 0;
                     BASE_PRICE_ERROR.push("<li>Indicated Weight always numeric</li>");
                     flage = false;
                 }
+                else if (parseInt(weight) < 0) {
+                    //  alert(wsp);
+                    BASE_PRICE_ERROR.push("<li>Indicated Weight always greater than zero </li>");
+                    flage = false;
+                }
                 if (!$.isNumeric(length))
                 {
                     BASE_PRICE_ERROR.push("<li>Indicated Length always numeric</li>");
+                    flage = false;
+                }
+                else if (parseInt(length) < 0) {
+                    //  alert(wsp);
+                    BASE_PRICE_ERROR.push("<li>Indicated Length always greater than zero </li>");
                     flage = false;
                 }
                 if (flage == false) {

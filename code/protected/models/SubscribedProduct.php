@@ -375,37 +375,59 @@ class SubscribedProduct extends CActiveRecord {
          $command = $connection->createCommand($sql);
         $command->execute();
     }
-    public function savedatagridview($id, $pro, $ef, $pf) {
+    public function productnamelist($val)
+    {
+        $connection = Yii::app()->db;
+        $sql = "SELECT bp.title FROM `subscribed_product` as sp left join base_product as bp on bp. `base_product_id`=sp.`base_product_id`
+WHERE `subscribed_product_id`=$val";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $category_id_del3 = $command->queryAll();
+    }
 
-        
-        if($ef > 0 || $pf > 0)
-        { $connection = Yii::app()->db;
+    public function savedatagridview($id, $pro, $ef, $pf, $status) {
+
+
+        $connection = Yii::app()->db;
         $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
-
         $command = $connection->createCommand($sql);
         $command->execute();
         $category_id_del3 = $command->queryAll();
-        if ($category_id_del3 != Array()) {
-            if ($ef == '0' && $pf == '0') {
-                $connection = Yii::app()->db;
-                $sql = "DELETE FROM `retailer_product_quotation` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
-                $command = $connection->createCommand($sql);
-                $command->execute();
-            } else {
-                $connection = Yii::app()->db;
-                $sql = "update retailer_product_quotation set effective_price='" . $ef . "',discount_per ='" . $pf . "' where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
-                $command = $connection->createCommand($sql);
-                $command->execute();
-                //return $category_id_del= $command->queryAll();
-            }
-        } else {
-           
+        if ($status == '0') {
+              $connection = Yii::app()->db;
+            $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
+         FROM retailer_product_quotation WHERE retailer_id =$id AND subscribed_product_id =$pro";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+              $connection = Yii::app()->db;
+            $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('DELETE','$ef', '$pf', '$pro', '$id','$status')";
+            $command = $connection->createCommand($sql);
+            $command->execute();
             $connection = Yii::app()->db;
-            $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id) VALUES('$ef', '$pf', '$pro', '$id')";
+            $sql = "DELETE FROM `retailer_product_quotation` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+          
+        } else if ($category_id_del3 != Array()) {
+            $connection = Yii::app()->db;
+            $sql = "update retailer_product_quotation set effective_price='" . $ef . "',discount_per ='" . $pf . "' where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $connection = Yii::app()->db;
+            $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('UPDATE','$ef', '$pf', '$pro', '$id','$status')";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            
+        } else {
+            $connection = Yii::app()->db;
+            $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('$ef', '$pf', '$pro', '$id','$status')";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+             $connection = Yii::app()->db;
+            $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('INSERT','$ef', '$pf', '$pro', '$id','$status')";
             $command = $connection->createCommand($sql);
             $command->execute();
             //return $category_id_del= $command->queryAll();
-        }
         }
     }
 

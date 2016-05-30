@@ -229,29 +229,41 @@ class SubscribedProductController extends Controller {
         if (isset($_POST['savedata'])) {
             if (isset($_POST['selectedIds'])) {
                 // echo '<pre>';print_r($_POST);die;
+                $colnum = array();
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $no_of_effective_price = count($_POST['effective_price']);
                 $no_of_discount_price = count($_POST['discount_price']);
-                $active_record = $model->removeselectdata($_REQUEST['id']);
-                $model->solrbacklogRetailerProductQuotationdel($_REQUEST['id']);
-                $active_record = $model->removeselectdata($_REQUEST['id']);
                 if ($no_of_selectedIds > 0) {
                     for ($i = 0; $i < $no_of_selectedIds; $i++) {
                         $val = $_POST['selectedIds'][$i];
                         if (isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0) {
                             $df = 0;
                             $ef = $_POST['effective_price'][$val];
-                        }  else {
+                            $status = $_POST['status'][$val];
+                        } else {
                             $ef = 0;
                             $df = $_POST['discount_price'][$val];
+                            $status = $_POST['status'][$val];
                         }
-                        $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df);
-                        $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
-                    }
-                    if ($active_record == '') {
-                        Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
-                    } else {
-                        Yii::app()->user->setFlash('premission_info', 'Please try again');
+                        if ($ef > 0 || $df > 0) {
+                            $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df, $status);
+                            $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
+                            if ($active_record == '') {
+                                Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
+                            } else {
+                                Yii::app()->user->setFlash('premission_info', 'Please try again');
+                            }
+                        } else {
+                            //echo $val;die;
+                            $cat_flag = 0;
+                            $datatitle= $model->productnamelist($val);
+                          
+                           
+                                $colnum[] = $datatitle['0']['title'];
+                               // Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price not Blank or Zero: ' . implode(' , ', $colnum));
+                                 Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price should not blank or zero: ');
+                            
+                        }
                     }
                 }
             } else {
@@ -378,4 +390,3 @@ class SubscribedProductController extends Controller {
     }
 
 }
-

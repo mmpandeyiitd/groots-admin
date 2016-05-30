@@ -138,6 +138,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("maxlength" =>2,"style"=>"width:50px;"))',
             'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
         ),
+         array(
+            'header' => 'status',
+            'name' => 'status',
+              
+            'type' => 'raw',
+            'value' => 'CHtml::dropDownList("status[$data->subscribed_product_id]",$data->status,array("1" =>"Enable","0" => "Disable", ))',
+            'htmlOptions' => array("width" => "50px"),
+        ),
 //         array(
 //            'header' => 'Discount %',
 //            'name' => 'status',
@@ -191,7 +199,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             $(ele).attr('eft',$(eft).val());
             $(ele).attr('dis',$(dis).val());
             $(eft).val('');
-            $(dis).val('');
+           $(dis).val('');
         }
         
         
