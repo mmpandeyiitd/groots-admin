@@ -143,6 +143,7 @@ onclick='return confirm("Do you want to cancel");'/>
            return $data->shipping_address.' ( '.$data->shipping_city.' )';
        }
        ), 
+               
 //             array(
 //               // 'header' => 'Demand Centre',
 //                'name' => 'shipping_state',
@@ -175,11 +176,13 @@ onclick='return confirm("Do you want to cancel");'/>
 //             'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
 //            ),
             'created_date',
+            'delivery_date',
             'link' => array(
                 'header' => 'Action',
                 'type' => 'raw',
                 'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
             ),
+               
             'link1' => array(
                 'header' => 'Action',
                 'type' => 'raw',

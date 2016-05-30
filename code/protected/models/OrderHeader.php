@@ -93,7 +93,7 @@ class OrderHeader extends CActiveRecord {
 //            array('cron_processed_flag', 'length', 'max' => 1),
 //            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
-            array('created_date, billing_address, shipping_address, timestamp,status,transaction_time', 'safe'),
+            array('created_date,delivery_date,billing_address, shipping_address, timestamp,status,transaction_time', 'safe'),
             // The following rule is used by search().
             array('store_id', 'safe', 'on' => 'search'),
             // @todo Please remove those attributes that should not be searched.
@@ -121,6 +121,7 @@ class OrderHeader extends CActiveRecord {
             'order_id' => 'Order Id',
             'order_number' => 'Order Number',
             'user_id' => 'User Id',
+             'delivery_date'=>'Delivery Date',
             'created_date' => 'Order Date',
             'timestamp' => 'Order Date',
             'payment_method' => 'Payment Method',
@@ -156,6 +157,7 @@ class OrderHeader extends CActiveRecord {
             'payment_mod' => 'Payment Mod',
             'bankname' => 'Bankname',
             'status' => 'Status',
+           
 //            'cron_processed_flag' => 'Cron Processed Flag',
 //            'source_url' => 'Source Url',
 //            'source_type' => 'Source Type',
@@ -190,6 +192,7 @@ class OrderHeader extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $criteria = new CDbCriteria;
+          $criteria->compare('t.delivery_date', $this->delivery_date, true);
           $criteria->compare('t.created_date', $this->created_date, true);
         /*if (isset($_GET['retailer_id'])) {
             if (!empty($criteria->condition)) {
@@ -236,6 +239,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('store_id', $this->store_id);
         $criteria->compare('order_number', $this->order_number, true);
         $criteria->compare('user_id', $this->user_id);
+      
         
         $criteria->compare('payment_method', $this->payment_method, true);
         $criteria->compare('payment_status', $this->payment_status, true);
@@ -278,6 +282,7 @@ class OrderHeader extends CActiveRecord {
 //        $criteria->compare('campaign_id', $this->campaign_id);
 //        $criteria->compare('buyer_shipping_cost', $this->buyer_shipping_cost);
         $criteria->compare('order_type', $this->order_type, true);
+        
         
 
         return new CActiveDataProvider($this, array(

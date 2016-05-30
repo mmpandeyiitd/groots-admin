@@ -24,7 +24,10 @@
 		<?php echo $form->label($model,'user_id'); ?>
 		<?php echo $form->textField($model,'user_id'); ?>
 	</div>
-
+        <div class="row">
+		<?php echo $form->label($model,'delivery_date'); ?>
+		<?php echo $form->textField($model,'delivery_date',array('size'=>60,'maxlength'=>150)); ?>
+	</div>
 	<div class="row">
 		<?php echo $form->label($model,'created_date'); ?>
 		<?php echo $form->textField($model,'created_date'); ?>
@@ -192,6 +195,7 @@
 		<?php echo $form->label($model,'order_type'); ?>
 		<?php echo $form->textField($model,'order_type',array('size'=>60,'maxlength'=>150)); ?>
 	</div>
+    
 	<div class="row buttons">
 		<?php echo CHtml::submitButton('Search'); ?>
 	</div>
