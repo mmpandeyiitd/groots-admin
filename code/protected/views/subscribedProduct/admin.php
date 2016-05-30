@@ -164,7 +164,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
        if(isNaN($(this).val()))
        {
            alert('Only numeric value insert');
-           $(this).val(0)
+           $(this).val('')
            $(ele).prop('disabled', false);
        }
         else if ($(this).val() != 0 || $(this).val() != '') {
