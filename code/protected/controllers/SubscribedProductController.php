@@ -213,7 +213,7 @@ class SubscribedProductController extends Controller {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
-
+        $no_of_Deletedataarray=1;
         $model = new SubscribedProduct;
         $model_grid = new RetailerproductquotationGridview('search');
         if (isset($_GET['pageSize'])) {
@@ -275,8 +275,25 @@ class SubscribedProductController extends Controller {
                     }
                 }
             } else {
+                 if (isset($_POST['Deletedataarray'])) {
+                $no_of_Deletedataarray= count($_POST['Deletedataarray']);
+                  for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
+                        $val = $_POST['Deletedataarray'][$i];
+                            $df = $_POST['discount_price'][$val];
+                              $status = $_POST['status'][$val];
+                $ef = $_POST['effective_price'][$val];
+                $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df, $status);
+                $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
+                
+                  }
+                  
+            
                 //echo "heoo";die;
-                Yii::app()->user->setFlash('premission_info', 'Product list not selected');
+               // Yii::app()->user->setFlash('premission_info', 'Product list not selected');
+            }
+             else{
+                 Yii::app()->user->setFlash('premission_info', 'Product list not selected');
+            }
             }
         }
         $this->render('admin', array(
