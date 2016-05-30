@@ -176,7 +176,14 @@ onclick='return confirm("Do you want to cancel");'/>
 //             'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
 //            ),
             'created_date',
-            'delivery_date',
+            //'delivery_date',
+                 array(
+                   'name' => 'delivery_date',
+                'type' => 'raw',
+                'value'=> function($data){
+           return trim($data->delivery_date,"00:00:00");
+       }
+       ),
             'link' => array(
                 'header' => 'Action',
                 'type' => 'raw',
