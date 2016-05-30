@@ -844,6 +844,7 @@ class BaseProduct extends CActiveRecord {
 //            $command->execute();
 //          }
     }
+   
 
     public static function Update_sizechart($base_product_id, $mage, $image_url) {
 

@@ -231,6 +231,17 @@ class OrderLine extends CActiveRecord
             $command->execute();
         }
     } 
+    public static function productname($id) {
+        $title = '';
+        if (is_numeric($id)) {
+            $connection = Yii::app()->secondaryDb;
+            $sql = "SELECT `product_name` FROM `order_line` WHERE `order_id`=$id";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $title = $command->queryScalar();
+        }
+        return $title;
+    }
     
      public function UpdatedStatus($status,$order_id){
         $lineidinfo =FALSE;
