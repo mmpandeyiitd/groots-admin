@@ -19,6 +19,7 @@ if (is_numeric($store_id)) {
     $brand_pincode = '';
     $brand_email = '';
     $brand_mobile = '';
+    
     if ($maxrecord > 0) {
         for ($i = 0; $i < $maxrecord; $i++) {
             $brand_name = $brand_info[$i]['store_name'];
@@ -30,6 +31,7 @@ if (is_numeric($store_id)) {
             $brand_pincode = $brand_info[$i]['business_address_pincode'];
             $brand_email = $brand_info[$i]['email'];
             $brand_mobile = $brand_info[$i]['mobile_numbers'];
+         
         }
     }
 }
@@ -38,6 +40,8 @@ if (is_numeric($store_id)) {
 //      Yii::app()->controller->redirect("index.php?r=OrderHeader/admin");
 //}
 ?>  
+
+                
 
 <!-- Custom Fonts -->
 <style >
@@ -115,12 +119,21 @@ if (is_numeric($store_id)) {
                 <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
             </td>
             <td colspan="2">
+                 <br>
+                Invoice No. 
+                <?php $modelOrderline = new OrderLine;
+                $productname =$modelOrderline->productname( $modelOrder->attributes['order_id']);
                
-                Invoice No.<br>
-                chn_puzhal_0120160200384478<br>
-                DT:29-02-2016
-
-            </td>
+              $delivery_date=  $modelOrder->attributes['delivery_date'];
+              //echo $delivery_date;
+              // echo $productname;die;
+               $name = substr($productname, 0, 3);
+              $mont = date('m',  strtotime($delivery_date));
+                $year = date('Y',  strtotime($delivery_date));
+                 $date = date('d',  strtotime($delivery_date));
+               echo $name.$mont.$year.$date;
+                ?>
+               </td>
         </tr>
 
         <tr>
