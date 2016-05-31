@@ -193,7 +193,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
            $(this).val('')
            $(ele).prop('disabled', false);
        }
-        else if ($(this).val() != 0 || $(this).val() != '') {
+        else if ($(this).val() != 0 || $(this).val() != '' && $(this).val()< 0) {
             $(ele).val(0);
             $(ele).prop('disabled', true);
         } else {
@@ -226,7 +226,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         var eft = $(this).closest('tr').find('.eft_price input')[0];
         var dis = $(this).closest('tr').find('.dis_price input')[0];
         var status = $(this).closest('tr').find('.status input')[0];
-            var ck = $(this).closest('tr').find('td:last input')[0];
+        var ck = $(this).closest('tr').find('td:last input')[0];
         
         if($(ele).attr('checked')=='checked'){
             $(eft).val($(ele).attr('eft'));
