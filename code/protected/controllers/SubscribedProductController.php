@@ -242,7 +242,7 @@ class SubscribedProductController extends Controller {
                     for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
                         $val = $_POST['Deletedataarray'][$i];
                         
-                        if (isset($_POST['effective_price'][$val]) && $_POST['effective_price'][$val] > 0) {
+                        if (isset($_POST['effective_price'][$val])) {
                            // echo "hello";die;
                             $df = 0;
                             $ef = $_POST['effective_price'][$val];
@@ -269,7 +269,7 @@ class SubscribedProductController extends Controller {
                            
                                 $colnum[] = $datatitle['0']['title'];
                                // Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price not Blank or Zero: ' . implode(' , ', $colnum));
-                                 Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price should not blank or zero: ');
+                                 Yii::app()->user->setFlash('premission_info', 'Product effective price or discount price should not blank,zero or negative');
                             
                         }
                     }

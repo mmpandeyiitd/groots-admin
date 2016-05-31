@@ -1410,7 +1410,7 @@ class BaseProductController extends Controller {
                                                     }
                                                 }
                                             }
-                                            fwrite($handle1, "\nRow : " . $i . " Product $model1->base_product_id $action. " . implode(' AND ', $error));
+                                            fwrite($handle1, "\nRow : " . $i . " Product id $model1->base_product_id $action successfully." . implode(' AND ', $error));
                                             //...............................................//
                                         }
                                     } else {

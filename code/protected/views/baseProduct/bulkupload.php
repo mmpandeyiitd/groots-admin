@@ -44,11 +44,7 @@ if ($issuperadmin == 1) {
         To view logs of recently uploaded product click : <a id='loglink' target='_blank' href='log/<?php echo $logfile; ?>'>Bulk Upload product Log File
 
         </a>
-        To download csv click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'> product.
-
-        </a>
-
-    </div>
+        </div>
 <?php endif; ?>
 <div class="bulkupload_btn">
     <?php echo CHtml::button('Download Template For Create', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/CreateFileDownload"')); ?>
@@ -62,7 +58,6 @@ if ($issuperadmin == 1) {
 </div>
 <div style="clear:both;"></div>
 <div>
-    <?php echo $form->labelEx($model, 'csv_file'); ?>
     <?php echo $form->dropDownList($model, 'action', array('create' => 'Create', 'update' => 'Update')); ?>
     <?php echo $form->error($model, 'csv_file'); ?>
 </div>
@@ -71,19 +66,20 @@ if ($issuperadmin == 1) {
 <?php echo $form->errorSummary($model); ?><div class="Csv">
 <?php echo '<br />'; ?>
 </div>
-<?php if (Yii::app()->user->hasFlash('success')): ?>
+</div>
+</div>
+    <?php if (Yii::app()->user->hasFlash('success')): ?>
         <div class="Csv" style="color:green">
             <?php echo Yii::app()->user->getFlash('success'); ?>
         </div>
     <?php endif; ?>
-    <?php if (Yii::app()->user->hasFlash('error')): ?>
-        <div class="Csv" style="color:red">
+      <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <span class="Csv" style="color:red">
             <?php echo Yii::app()->user->getFlash('error'); ?>
-        </div>
+        </span>
     <?php endif; ?>
-    </div>
 </div>
-</div>
+   
 </div>
 
 <?php

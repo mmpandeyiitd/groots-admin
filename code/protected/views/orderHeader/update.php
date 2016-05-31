@@ -408,7 +408,14 @@ if (isset($_GET['id'])) {
                                         <table class = "table">
                                             <tbody>
                                                 <tr>
-                                                    <td style="width: 212px;display: block;">size:</td>
+                                                
+                                                    <?php  
+                                                    if($modelOrder->attributes['status']=="Pending"){?>
+                                                         <td style="width: 186px;display: block;">size:</td>
+                                                 <?php   }else{?>
+                                                     <td style="width: 196px;">size:</td>
+                                                <?php  }?>
+                                                   
                                                     <td><?php
                                                         if ($sizes_array != Array()) {
                                                             echo $sizes_array[$j];
