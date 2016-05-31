@@ -32,7 +32,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && (isset(Yii::app()->session['brand_admin_id'])) && ($_REQUEST['r'] != 'retailer/update')) {
@@ -53,7 +53,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailer/update')) {
@@ -74,7 +74,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'SubscribedProduct/admin')) {
@@ -95,7 +95,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'subscribedProduct/mappedProduct')) {
@@ -116,7 +116,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                      ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailerProductQuotation/admin') && ($_REQUEST['id'] != '')) {
@@ -137,7 +137,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                      ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailerProductQuotation/admin') && ($_REQUEST['id'] == '')) {
@@ -158,8 +158,8 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
-                      ),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                      ), 
                 ));
             } else {
 
@@ -180,7 +180,7 @@
                         //  array('label' => '<i class="fa fa-list"></i> Product ', 'url' => array('/baseProduct/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)),
                        // array('label' => '<i class="fa fa-user"></i>Admin Users', 'url' => array('/users/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['users_menu_info'] == "S" ? true : false)),
                         array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout')),
+                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
                      ),
                 ));
             }
