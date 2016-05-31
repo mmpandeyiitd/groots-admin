@@ -181,7 +181,7 @@ if (isset($_GET['id'])) {
                             }
                             ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_state']; ?>"/></span>
                         <div class="clearfix"></div> 
-                        <label>Pincode</label> 
+                        <label>Pincode :</label> 
                         <span class="detail">
                             <div id="old_shipping_pincode" style="<?php
                             if (empty($form->errorSummary($modelOrder))) {
@@ -361,7 +361,7 @@ if (isset($_GET['id'])) {
                                 <tbody>
                                     <tr>
                                         <td>Product Name:</td>
-                                        <td><?php echo $orderline_detail[$i]['product_name'];
+                                        <td style="width: 77px;"><?php echo $orderline_detail[$i]['product_name'];
                                 ; ?></td>
                                     </tr>
                                     <tr>
@@ -411,7 +411,7 @@ if (isset($_GET['id'])) {
                                                 
                                                     <?php  
                                                     if($modelOrder->attributes['status']=="Pending"){?>
-                                                         <td style="width: 186px;display: block;">size:</td>
+                                                         <td style="width: 196px;display: block;">size:</td>
                                                  <?php   }else{?>
                                                      <td style="width: 196px;">size:</td>
                                                 <?php  }?>

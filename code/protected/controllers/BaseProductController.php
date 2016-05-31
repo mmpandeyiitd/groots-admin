@@ -1284,7 +1284,7 @@ class BaseProductController extends Controller {
                                         Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
                                     }
                                     if ($categories['0'] == '') {
-                                        Yii::app()->user->setFlash('error', 'title,Category Id,Pack Size	,Pack Unit,Store Price,Store Offer Price is not blank : ');
+                                        Yii::app()->user->setFlash('error', 'Title,Category Id,Pack Size ,Pack Unit,Store Price,Store Offer Price can not be blank.');
                                     }
                                 }
 
