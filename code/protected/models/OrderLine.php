@@ -216,7 +216,7 @@ class OrderLine extends CActiveRecord
         
         if(is_numeric($order_line_id)&&is_numeric($baseproduct_id)&&is_numeric($size_quantity)){
             $connection = Yii::app()->secondaryDb;
-            $sql="update order_line set product_qty=$size_quantity where id = $order_line_id and base_product_id=$baseproduct_id";
+           $sql="update order_line set product_qty=$size_quantity where id = $order_line_id and base_product_id=$baseproduct_id";
             $command = $connection->createCommand($sql);
             $command->execute();
         }
@@ -247,6 +247,17 @@ class OrderLine extends CActiveRecord
         if (is_numeric($id)) {
             $connection = Yii::app()->db;
             $sql = "SELECT `website` FROM `retailer` WHERE `id`=$id";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $title = $command->queryScalar();
+        }
+        return $title;
+    }
+     public static function mobile($id) {
+        $title = '';
+        if (is_numeric($id)) {
+            $connection = Yii::app()->db;
+            $sql = "SELECT `mobile` FROM `retailer` WHERE `id`=$id";
             $command = $connection->createCommand($sql);
             $command->execute();
             $title = $command->queryScalar();

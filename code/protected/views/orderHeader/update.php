@@ -71,7 +71,7 @@ if (isset($_GET['id'])) {
 
     <form name="update" method="post">         
         <div class="orderDetail">
-            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_id']; ?>) <a href="index.php?r=OrderHeader/admin" class="backBtn_new">Back</a></h1> 
+            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_number']; ?>) <a href="index.php?r=OrderHeader/admin" class="backBtn_new">Back</a></h1> 
             <div class="prod_orderDetail_row"> 
 
                 <?php

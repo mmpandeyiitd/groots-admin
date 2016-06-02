@@ -12,9 +12,9 @@ if(isset(Yii::app()->session['brand_admin_id'])) {
    Yii::app()->session['store_name']= $store_name;
 }
 $this->breadcrumbs = array(
-    'Store' => array('admin'),
-    $model->store_name => array('update', 'id' => $model->store_id),
-    'Update',
+   // 'Store' => array('admin'),
+//    $model->store_name => array('update', 'id' => $model->store_id),
+//    'Update',
 );
 ?>
 <div class="" id="yw0">
