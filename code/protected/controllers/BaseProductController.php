@@ -768,7 +768,7 @@ class BaseProductController extends Controller {
             
             $model->size_chart = CUploadedFile::getInstance($model, 'size_chart');
             $imagecount= count($imageinfo) +count($images);
-            if($imagecount<2 || $imagecount==2){
+            if($imagecount<3){
             if ($model->save()) {
                 #................subscription...............#
                 $model_subscribe = new SubscribedProduct();
@@ -801,9 +801,9 @@ class BaseProductController extends Controller {
                 #...................end...................#
                // echo count($images);die;
                 if(count($imageinfo)!=0){
-
+            $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                 if (isset($images) && count($images) > 0  && count($images)<= count($imageinfo) && count($imageinfo)<2) {
-                     $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+                    // $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                     foreach ($images as $image => $pic) {
                         $flag_set_default = 0;
                         $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
@@ -883,14 +883,15 @@ class BaseProductController extends Controller {
                         $flag_set_default++;
                     }
                 }
-                elseif(count($imageinfo)!=0 && count($images)> 0){
+                elseif(count($imageinfo)==0){
                     //echo "hello";die;
                      Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
                 $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
                     
                 }
                 }else{
-                    if (isset($images) && count($images) > 0) {
+                    if (count($images)>0) {
+                      //  echo "hello";die;
                      $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                     foreach ($images as $image => $pic) {
                         $flag_set_default = 0;
