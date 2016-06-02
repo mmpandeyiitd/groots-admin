@@ -228,7 +228,11 @@ class SubscribedProductController extends Controller {
 
         if (isset($_POST['savedata'])) {
             if (isset($_POST['selectedIds'])) {
-                // echo '<pre>';print_r($_POST);die;
+                
+                
+                
+               
+//                 echo '<pre>';print_r($_POST);die;
                 $colnum = array();
                 // echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
@@ -268,7 +272,8 @@ class SubscribedProductController extends Controller {
                               if (isset($_POST['effective_price'][$val]) && $ef<0) {
                                 
                                 $df = 0;
-                                $ef = $_POST['store_offer_price'][$val];
+                               // $ef = $_POST['store_offer_price'][$val];
+                                 $ef = 0;
                                 $status = $_POST['status'][$val];
                             } 
                             //echo $val;die;
@@ -276,7 +281,7 @@ class SubscribedProductController extends Controller {
                            else if (isset($_POST['effective_price'][$val]) && $_POST['discount_price'][$val] == '0') {
                                 
                                 $df = 0;
-                                $ef = $_POST['store_offer_price'][$val];
+                                $ef =0;
                                 $status = $_POST['status'][$val];
                             } else {
                                 $ef = 0;

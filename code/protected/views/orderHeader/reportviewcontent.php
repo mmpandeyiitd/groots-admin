@@ -97,13 +97,30 @@ if (is_numeric($store_id)) {
                 <p><strong>Registered Office:</strong> <?php echo '<br> Address - ' . $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
             </td>
         </tr>
+        <?php 
+             $modelOrderline = new OrderLine;
+                $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
+                //echo $website; 
+        if($website=='') {?>
+         <tr>
+            <td colspan="4"><b>Contact no:</b> <?php 
+            $modelOrderline = new OrderLine;
+                $mobile= $modelOrderline->mobile($modelOrder->attributes['user_id']);
+            echo $mobile; ?></td>
+         </tr>
+        <?php } else { ?>
         <tr>
-            <td colspan="2"><b>Contact no:</b> <?php echo $brand_mobile; ?></td>
+            <td colspan="2"><b>Contact no:</b> <?php 
+            $modelOrderline = new OrderLine;
+                $mobile= $modelOrderline->mobile($modelOrder->attributes['user_id']);
+            echo $mobile;
+            ?></td>
             <td colspan="3"><b>Website:</b> <?php 
              $modelOrderline = new OrderLine;
                 $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
                 echo $website; ?></td>
         </tr>
+        <?php } ?>
         <tr>
             <td colspan="3">
                 <h3 style="font-size:16px;">Shipping Address</h3>
@@ -125,17 +142,18 @@ if (is_numeric($store_id)) {
                    <strong>Invoice No : </strong>
                 
                 <?php
-                $modelOrderline = new OrderLine;
-                $productname = $modelOrderline->productname($modelOrder->attributes['user_id']);
-
-                $delivery_date = $modelOrder->attributes['delivery_date'];
-                //echo $delivery_date;
-                // echo $productname;die;
-                $name = substr($productname, 0, 3);
-                $mont = date('m', strtotime($delivery_date));
-                $year = date('Y', strtotime($delivery_date));
-                $date = date('d', strtotime($delivery_date));
-                echo $name . $mont . $year . $date;
+                echo $modelOrder->attributes['invoice_number']; 
+//                $modelOrderline = new OrderLine;
+//                $productname = $modelOrderline->productname($modelOrder->attributes['user_id']);
+//
+//                $delivery_date = $modelOrder->attributes['delivery_date'];
+//                //echo $delivery_date;
+//                // echo $productname;die;
+//                $name = substr($productname, 0, 3);
+//                $mont = date('m', strtotime($delivery_date));
+//                $year = date('Y', strtotime($delivery_date));
+//                $date = date('d', strtotime($delivery_date));
+//                echo $name . $mont . $year . $date;
                 ?>
             </td>
         </tr>
@@ -181,7 +199,10 @@ if (is_numeric($store_id)) {
 
             <tr>
                 <td style="text-align:center;">
-                    <?php echo $model[$key]->attributes['product_name']; ?>
+                    <?php
+                        echo wordwrap($model[$key]->attributes['product_name'], 90, "<br/>\n");
+                        ?>
+                  
                 </td>
                 <td style="text-align:center;"> <?php
                     echo $model[$key]->attributes['product_qty'] * $model[$key]->attributes['pack_size'];
@@ -215,10 +236,11 @@ if (is_numeric($store_id)) {
         <tr>
             <td colspan="4">
               
-                <p style="text-align: center;">Thank you for your business! We look forward to serving you again</p>
-                <p style="text-align: center;"> Contact number: +91-997-111-4020</p>
-                <p style="text-align: center;">Contact email id: sales@gogroots.com</p>
-                
+                <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
+                    Thank you for your business! We look forward to serving you again<br>
+                    Contact number: +91-997-111-4020<br>
+                    Contact email id: sales@gogroots.com
+                </p>
             </td>
 
         </tr>
