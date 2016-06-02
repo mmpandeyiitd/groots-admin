@@ -91,7 +91,7 @@ if (isset($_GET['id'])) {
                 <?php if ($maxorder > 0) { ?>
 
                     <div class="span4">
-                        <h3 class="subTitle">Billing Address:</h3>
+                        <h3 class="subTitle">Address:</h3>
 
                         <label>Name:</label> <span class="detail"><?php echo $modelOrder->attributes['billing_name']; ?></span>
                         <div class="clearfix"></div>
@@ -108,122 +108,7 @@ if (isset($_GET['id'])) {
                         <label>Mobile:</label> <span class="detail"><?php echo $modelOrder->attributes['billing_phone']; ?></span>
                         <div class="clearfix"></div>  
                     </div>
-                    <div class="span4 pull-right">
-                        <h3 class="subTitle">Shipping Address: 
-                            <a id="contentEdit" style=" cursor: pointer;" onclick="display_editfields();">Edit</a></h3>
-                        <label>Name:</label>
-                        <span class="detail">
-                            <div id="old_shipping_name" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"><?php echo $modelOrder->attributes['shipping_name']; ?></div>
-                            <input type="text" id="shipping_name" name="shipping_name" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_name']; ?>"/>
-                        </span>
-                        <div class="clearfix"></div>
-                        <label>Address:</label> <span class="detail">
-                            <div id="old_shipping_address" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"><?php echo $modelOrder->attributes['shipping_address']; ?></div>
-                            <input type="text" id="shipping_address" name="shipping_address" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_address']; ?>"/>
-                        </span>
-                        <div class="clearfix"></div>
-                        <label>City:</label> 
-                        <span class="detail">
-                            <div id="old_shipping_city" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"><?php echo $modelOrder->attributes['shipping_city']; ?></div>
-                            <input type="text" id="shipping_city" name="shipping_city" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_city']; ?>"/>
-                        </span>
-                        <div class="clearfix"></div> 
-                        <label>State:</label>
-                        <span class="detail">
-                            <div id="old_shipping_state" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"><?php echo $modelOrder->attributes['shipping_state']; ?></div>
-                            <input type="text" id="shipping_state" name="shipping_state" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_state']; ?>"/></span>
-                        <div class="clearfix"></div> 
-                        <label>Pincode :</label> 
-                        <span class="detail">
-                            <div id="old_shipping_pincode" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"> <?php echo $modelOrder->attributes['shipping_pincode']; ?></div>
-                            <input type="text" id="shipping_pincode" name="shipping_pincode" maxlength="6" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_pincode']; ?>"/></span>
-                        <div class="clearfix"></div> 
-                        <label>Country:</label> <span class="detail">India</span>
-                        <div class="clearfix"></div>
-                        <label>Mobile:</label> <span class="detail">
-                            <div id="old_shipping_phone" style="<?php
-                            if (empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;"><?php echo $modelOrder->attributes['shipping_phone']; ?></div>
-                            <input type="text" id="shipping_phone" name="shipping_phone" style="<?php
-                            if (!empty($form->errorSummary($modelOrder))) {
-                                echo 'display: inline';
-                            } else {
-                                echo 'display: none';
-                            }
-                            ?>;margin-top:7px;" value="<?php echo $modelOrder->attributes['shipping_phone']; ?>"/></span>
-                        <input type="submit" class="activebutton" id="update_shipping_address" name="update_shipping_address" style="<?php
-                        if (!empty($form->errorSummary($modelOrder))) {
-                            echo 'display: inline';
-                        } else {
-                            echo 'display: none';
-                        }
-                        ?>;margin-right: 200px; margin-top: 5px;" value="Update"/>
-                        <div class="clearfix"></div>  
-                    </div>
+                    
                     <div class="clearfix spacerNew"></div>
 
                 <?php } ?>
@@ -476,6 +361,13 @@ if (isset($_GET['id'])) {
                     <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
                 </div> 
             </div>
+                <div>
+                    <h3><b>Comment</b></h3>
+                    <?php 
+                    echo $modelOrder->attributes['user_comment'];
+                    	
+                    ?>
+                </div>
         </div>
     </form>   
     <?php $this->endWidget(); ?>
