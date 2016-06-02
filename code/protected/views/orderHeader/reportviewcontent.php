@@ -145,13 +145,12 @@ if (is_numeric($store_id)) {
                 <h5><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
                 <p><?php echo $modelOrder->attributes['shipping_address'] . ', ' . $modelOrder->attributes['shipping_city'] . ', ' . $modelOrder->attributes['shipping_state'] . ', ' . $modelOrder->attributes['shipping_pincode']; ?></p>
             </td>
-
         </tr>
         <tr>
             <td colspan="3" style="vertical-align:middle;">
                 <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
             </td>
-            <td colspan="2" >
+            <td colspan="1" >
                 <br>
                    <strong>Invoice No : </strong>
                 
