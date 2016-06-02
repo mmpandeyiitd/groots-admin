@@ -237,6 +237,7 @@ $count = 0;
                     </label>
                 </div>
                 <div style="clear:both;"></div>
+              
                 <div class="row">
                     <label for="BaseProduct_status" class="required">Images <span class="required"></span></label>
                     <?php
@@ -257,7 +258,8 @@ $count = 0;
 			            return true;
 	                }',
                         ),
-                        'max' => 5, //max 5 files allowed
+                     
+                        'max' => 2, //max 2 files allowed
                     ));
                     ?>
                     <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>

@@ -499,6 +499,8 @@ class BaseProductController extends Controller {
         $getrecord = new ProductCategoryMapping();
         $record = $getrecord->getRecordById($id);
         $imageinfo = $getrecord->getImageById($id);
+        //echo count($imageinfo);die;
+      
 
         $mrp = '';
         $wsp = '';
@@ -546,6 +548,7 @@ class BaseProductController extends Controller {
             } else {
                 $model->store_id = Yii::app()->session['brand_id'];
             }
+         
              $media_object = new Media();
              $insert_id = Yii::app()->db->getLastInsertID();
             if (isset($_POST['media_remove'])) {
@@ -764,6 +767,7 @@ class BaseProductController extends Controller {
               } */
             
             $model->size_chart = CUploadedFile::getInstance($model, 'size_chart');
+            
             if ($model->save()) {
                 #................subscription...............#
                 $model_subscribe = new SubscribedProduct();
@@ -792,11 +796,13 @@ class BaseProductController extends Controller {
                 }
 
 
-                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+              //  $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                 #...................end...................#
+               // echo count($images);die;
+                if(count($imageinfo)!=0){
 
-
-                if (isset($images) && count($images) > 0) {
+                if (isset($images) && count($images) > 0  && count($images)<= count($imageinfo) && count($imageinfo)<2) {
+                     $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                     foreach ($images as $image => $pic) {
                         $flag_set_default = 0;
                         $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
@@ -863,7 +869,7 @@ class BaseProductController extends Controller {
                         $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
                         }
                         else{
-                             $insert_id = Yii::app()->db->getLastInsertID();
+                        $insert_id = Yii::app()->db->getLastInsertID();
                         $insert =$insert_id;
                         $media_object = new Media();
                         $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
@@ -875,6 +881,94 @@ class BaseProductController extends Controller {
                         @unlink(UPLOAD_MEDIA_PATH . $pic->name);
                         $flag_set_default++;
                     }
+                }
+                elseif(count($imageinfo)!=0){
+                     Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
+                $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
+                    
+                }
+                }else{
+                    if (isset($images) && count($images) > 0) {
+                     $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+                    foreach ($images as $image => $pic) {
+                        $flag_set_default = 0;
+                        $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
+                        $base_img_name = uniqid();
+                        //$path  = pathinfo($media);
+                        $file1 = $base_img_name;
+                        $baseDir = MAIN_BASE_MEDAI_DIRPATH;
+                        if ($file1[0]) {
+                            $baseDir .= $file1[0] . '/';
+                        }
+
+                        if ($file1[1]) {
+                            $baseDir .= $file1[1] . '/';
+                        } else {
+                            $baseDir .= '_/';
+                        }
+                        $media_url_dir = $baseDir;
+                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                        $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
+                        @mkdir($media_url_dir, 0777, true);
+//                        $success = file_put_contents($media_main, $content_medai_img);
+                        $width = BASEPRODUCT_BIGIMAGE_WIDTH;
+                        $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
+                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
+
+                        $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
+                        if ($file1[0]) {
+                            $baseDir .= $file1[0] . '/';
+                        }
+
+                        if ($file1[1]) {
+                            $baseDir .= $file1[1] . '/';
+                        } else {
+                            $baseDir .= '_/';
+                        }
+                        $media_url_dir = $baseDir;
+                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                        $media_original = $media_url_dir . $base_img_name . '.jpg'; //name
+                        @mkdir($media_url_dir, 0777, true);
+                        $success = file_put_contents($media_original, $content_medai_img);
+
+                        $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
+                        @mkdir($baseThumbPath, 0777, true);
+
+                        $baseDir = $baseThumbPath;
+                        if ($file1[0]) {
+                            $baseDir .= $file1[0] . '/';
+                        }
+
+                        if ($file1[1]) {
+                            $baseDir .= $file1[1] . '/';
+                        } else {
+                            $baseDir .= '_/';
+                        }
+                        $thumb_url_dir = $baseDir;
+                        $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
+                        $midia_type = 'image';
+                        $is_default = 0;
+                        $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
+                       //echo count($images);die;
+                        if(isset($_POST['media_is_default']))
+                        {
+                        
+                        $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
+                        }
+                        else{
+                        $insert_id = Yii::app()->db->getLastInsertID();
+                        $insert =$insert_id;
+                        $media_object = new Media();
+                        $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
+                        }
+                        @mkdir($thumb_url_dir, 0777, true);
+                        $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
+                        $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
+                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
+                        @unlink(UPLOAD_MEDIA_PATH . $pic->name);
+                        $flag_set_default++;
+                    }
+                }
                 }
                 //.......................solor backloag.................//
                 $solrBackLog = new SolrBackLog();

@@ -20,6 +20,7 @@ class SiteController extends Controller
 			),
 		);
 	}
+       
         
        
 
@@ -79,6 +80,7 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
+             Yii::app()->user->logout();
 		$model=new LoginForm;
 
 		// if it is ajax validation request
@@ -91,6 +93,7 @@ class SiteController extends Controller
 		// collect user input data
 		if(isset($_POST['LoginForm']))
 		{
+                   
 //echo "eere";die;
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
@@ -100,7 +103,7 @@ class SiteController extends Controller
 			    $log->insertLoginLog();
 
 				$this->redirect(Yii::app()->user->returnUrl);
-			}	
+			}	$session = Yii::$app->session;
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));

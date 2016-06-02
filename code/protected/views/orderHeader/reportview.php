@@ -2,7 +2,7 @@
     // get the HTML
     ob_start();
     echo $this->renderPartial('reportviewcontent' ,array('model' => $model,
-              'modelOrder' =>$modelOrder,), true);
+              'modelOrder' =>$modelOrder,), true);//die;
     $content = ob_get_clean();
  
     // convert in PDF

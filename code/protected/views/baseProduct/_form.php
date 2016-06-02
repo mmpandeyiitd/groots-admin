@@ -197,7 +197,7 @@ $count = 0;
 			            return true;
 	                }',
                     ),
-                    'max' => 5, //max 5 files allowed
+                    'max' => 2, //max 5 files allowed
                 ));
                 ?>
                 <p class="fileupload_note" >Allow image types : jpeg, jpg, png</p>

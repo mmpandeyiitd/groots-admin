@@ -81,14 +81,7 @@ if (array_key_exists('category', Yii::app()->session['premission_info']['module_
 
             <div style="clear:both;"></div>
 
-            <div class="">
-                <?php echo $form->labelEx($model, 'status'); ?>
-                <?php echo $form->dropDownList($model, 'status', array('0' => 'Disable', '1' => 'Enable')); ?>       
-                <?php echo $form->error($model, 'status'); ?>
-            </div>
-            <div style="clear:both;"></div>
-
-            <div class="span12 caregory_btn">
+          <div class="span12 caregory_btn">
                 <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Update'); ?>
               
             </div>

@@ -71,7 +71,7 @@ if (isset($_GET['id'])) {
 
     <form name="update" method="post">         
         <div class="orderDetail">
-            <h1 class="titleNew">Order Info(OrderId:<?php echo $modelOrder->attributes['order_id']; ?>) <a href="index.php?r=OrderHeader/admin" class="backBtn_new">Back</a></h1> 
+            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_id']; ?>) <a href="index.php?r=OrderHeader/admin" class="backBtn_new">Back</a></h1> 
             <div class="prod_orderDetail_row"> 
 
                 <?php
@@ -411,7 +411,7 @@ if (isset($_GET['id'])) {
                                                 
                                                     <?php  
                                                     if($modelOrder->attributes['status']=="Pending"){?>
-                                                         <td style="width: 196px;display: block;">size:</td>
+                                                         <td style="width: 196px;display: block;">Size:</td>
                                                  <?php   }else{?>
                                                      <td style="width: 196px;">size:</td>
                                                 <?php  }?>
@@ -423,7 +423,7 @@ if (isset($_GET['id'])) {
                                                         ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Oder Quanty Update:</td>
+                                                    <td>Oder Quantity Update:</td>
 
                                                     <td> <?php if ($updationclose) { ?>
                                                             <?php
@@ -635,3 +635,21 @@ if (isset($_GET['id'])) {
         }
 
     </script>   
+    <script type="text/javascript">
+    var specialKeys = new Array();
+    specialKeys.push(8); //Backspace
+    
+    $(function () {
+        $(".dis_price").bind("keypress", function (e) {
+            var keyCode = e.which ? e.which : e.keyCode
+            var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+            return ret;
+        });
+        $(".dis_price").bind("paste", function (e) {
+            return false;
+        });
+        $(".dis_price").bind("drop", function (e) {
+            return false;
+        });
+    });
+</script>

@@ -52,14 +52,14 @@ class Retailer extends CActiveRecord {
             array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
             array('state,retailer_code,VAT_number,contact_person1', 'length', 'max' => 150),
-            array('VAT_number', 'length', 'min' => 11,'max' => 11),
+            array('VAT_number', 'length', 'min' => 11, 'max' => 11),
             array('mobile,telephone', 'length', 'min' => 10),
-             array('telephone', 'length', 'min' => 11,'max' => 13),
+            array('telephone', 'length', 'min' => 11, 'max' => 13),
             //array('name', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in name.'),
             array('city', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in city.'),
             array('email', 'unique', 'on' => 'insert', 'message' => 'email already exists!'),
-           // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
-           // array('product_categories,categories_of_interest', 'length', 'max' => 500),
+            // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
+            // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
             array('modified_date,date_of_onboarding', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
@@ -134,6 +134,7 @@ class Retailer extends CActiveRecord {
         $criteria = new CDbCriteria;
 
         $criteria->compare('id', $this->id);
+        $criteria->order = "id DESC";
         $criteria->compare('name', $this->name, true);
         $criteria->compare('retailer_code', $this->retailer_code, true);
         $criteria->compare('VAT_number', $this->VAT_number, true);
@@ -292,10 +293,11 @@ class Retailer extends CActiveRecord {
         }
         return $row;
     }
-    public function mdpassword($eid,$pass){
+
+    public function mdpassword($eid, $pass) {
         $pass1 = md5($pass);
-       $sql ='update retailer set password="'.$pass1.'" where email="'. $eid.'" AND password="'.$pass.'"';
-       $connection = Yii::app()->db;
+        $sql = 'update retailer set password="' . $pass1 . '" where email="' . $eid . '" AND password="' . $pass . '"';
+        $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
     }
