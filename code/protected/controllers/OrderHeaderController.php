@@ -116,7 +116,7 @@ class OrderHeaderController extends Controller {
                 //echo $reportdata;die;
             }
            
-            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_array[0] == 'Paid' || $status_data[0] == 'Out for Delivery') {
+            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Paid' || $status_data[0] == 'Out for Delivery') {
                 //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';

@@ -1759,6 +1759,7 @@ class BaseProductController extends Controller {
 
                 Yii::app()->user->setFlash('error', 'There was a problem with the upload. Please try again.');
                 $this->render('media');
+                die;
             }
         }
 
