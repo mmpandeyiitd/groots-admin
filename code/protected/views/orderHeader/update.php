@@ -361,13 +361,16 @@ if (isset($_GET['id'])) {
                     <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
                 </div> 
             </div>
+                <?php if($modelOrder->attributes['user_comment']!='')
+                {?>   
                 <div>
-                    <h3><b>Comment</b></h3>
+                    <h3><b>Comment :-</b></h3>
                     <?php 
                     echo $modelOrder->attributes['user_comment'];
                     	
                     ?>
                 </div>
+               <?php  } ?>
         </div>
     </form>   
     <?php $this->endWidget(); ?>
