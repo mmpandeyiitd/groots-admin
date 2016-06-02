@@ -423,7 +423,7 @@ if (isset($_GET['id'])) {
                                                         ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Oder Quantity Update:</td>
+                                                    <td>Order Quantity Update:</td>
 
                                                     <td> <?php if ($updationclose) { ?>
                                                             <?php
