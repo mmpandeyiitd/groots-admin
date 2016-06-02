@@ -85,6 +85,9 @@ if (is_numeric($store_id)) {
         padding: 5px;
         vertical-align: middle;
     }
+    .logoInvoice {float:left; width:150px;}
+    
+    .logoRight {float:right; width:300px;}
 </style>
 <div class="container">
     <table border="1">
@@ -93,9 +96,24 @@ if (is_numeric($store_id)) {
             <td colspan="3" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> Invoice </h3></td>
         </tr>
         <tr>
-            <td colspan="5">
-                <p><strong>Registered Office:</strong> <?php echo '<br> Address - ' . $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
-            </td>
+            <td width="100%" style="width:100%" colspan="5">
+                   <table width="100%" border="0" style="width:100%">
+                       <tr>
+                        <td align="left">
+                            
+                            <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
+                            
+                        </td>
+                        <td width="450">&nbsp;</td>
+                        <td align="right">
+                            <p style="logoRight">
+                    <strong>Registered Office:</strong> 
+                    <?php echo '<br> Address - ' . $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
+                
+                        </td>
+                    </tr>
+                   </table>
+               </td>
         </tr>
         <?php 
              $modelOrderline = new OrderLine;
@@ -122,16 +140,12 @@ if (is_numeric($store_id)) {
         </tr>
         <?php } ?>
         <tr>
-            <td colspan="3">
+            <td colspan="4">
                 <h3 style="font-size:16px;">Shipping Address</h3>
                 <h5><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
                 <p><?php echo $modelOrder->attributes['shipping_address'] . ', ' . $modelOrder->attributes['shipping_city'] . ', ' . $modelOrder->attributes['shipping_state'] . ', ' . $modelOrder->attributes['shipping_pincode']; ?></p>
             </td>
-            <td colspan="2">
-                <h3 style="font-size:16px;">Billing Address</h3>
-                <h5><?php echo $modelOrder->attributes['billing_name']; ?></h5>
-                <p><?php echo $modelOrder->attributes['billing_address'] . ', ' . $modelOrder->attributes['billing_city'] . ', ' . $modelOrder->attributes['billing_state'] . ', ' . $modelOrder->attributes['billing_pincode']; ?></p>
-            </td>
+
         </tr>
         <tr>
             <td colspan="3" style="vertical-align:middle;">

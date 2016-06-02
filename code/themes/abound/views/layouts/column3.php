@@ -7,14 +7,14 @@ if(Yii::app()->controller->id=="store"){
         echo "create Store";
     }elseif(Yii::app()->controller->action->id=="update"){
         if(Yii::app()->session['is_super_admin']==1){
-        echo "Edit Store";
+        echo "REGISTERED OFFICE";
         }else{
-             echo "Edit Profile";
+            // echo "Edit Profile";
         }
     }
     elseif(Yii::app()->controller->action->id=="admin"){
         
-        echo "Store List";
+        echo "REGISTERED OFFICE";
     } elseif(Yii::app()->controller->action->id=="brandprofile"){
         
         echo "My Profle";

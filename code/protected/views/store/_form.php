@@ -2,11 +2,11 @@
 /* @var $this StoreController */
 /* @var $model Store */
 
-$this->breadcrumbs = array(
-    'Store' => array('admin'),
-    $model->store_name => array('update', 'id' => $model->store_id),
-    'Update',
-);
+//$this->breadcrumbs = array(
+//    'Store' => array('admin'),
+//    $model->store_name => array('update', 'id' => $model->store_id),
+//    'Update',
+//);
 
 
 $issuperadmin = Yii::app()->session['is_super_admin'];
@@ -47,33 +47,10 @@ if ($issuperadmin == 1) {
     <?php if (Yii::app()->user->hasFlash('error')): ?><div class="errorSummary " style=""><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
 
 
-    <fieldset>Store Person Information</fieldset>
-    <!--    <div class="row">
-    <?php echo $form->labelEx($model, 'store_id'); ?>
-    <?php echo $form->textField($model, 'store_id', array('size' => 40, 'maxlength' => 255, 'readonly' => true)); ?>
-    <?php echo $form->error($model, 'store_id'); ?>
-        </div>-->
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'seller_name'); ?>
-        <?php echo $form->textField($model, 'seller_name', array('size' => 40, 'maxlength' => 255)); ?>
-        <?php echo $form->error($model, 'seller_name'); ?>
-    </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'mobile_numbers'); ?>
-        <?php echo $form->textField($model, 'mobile_numbers', array('size' => 40, 'maxlength' => 10)); ?>
-        <?php echo $form->error($model, 'mobile_numbers'); ?>
-    </div>
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'email'); ?>
-        <?php echo $form->textField($model, 'email', array('size' => 40, 'maxlength' => 255)); ?>
-        <?php echo $form->error($model, 'email'); ?>
-    </div>
+    
 
 
-    <fieldset>Business Address Information</fieldset>
+    <fieldset>Registered Office</fieldset>
     <div class="row">
         <?php echo $form->labelEx($model, 'business_address_country'); ?>
         <?php echo $form->textField($model, 'business_address_country', array('size' => 40, 'maxlength' => 100)); ?>
@@ -102,71 +79,6 @@ if ($issuperadmin == 1) {
         <?php echo $form->error($model, 'business_address_pincode'); ?>
     </div>
 
-    <div class="row">
-        <?php //echo $form->labelEx($model, 'telephone_numbers'); ?>
-        <?php //echo $form->textField($model, 'telephone_numbers', array('size' => 40, 'maxlength' => 15));  ?>
-        <?php //echo $form->error($model, 'telephone_numbers');   ?>
-    </div>
-
-    <fieldset>Store Information</fieldset>
-
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'Store'); ?>
-        <?php echo $form->textField($model, 'store_name', array('size' => 40, 'maxlength' => 200)); ?>
-        <?php echo $form->error($model, 'store_name'); ?>
-    </div>
-    <div class="row">
-        <?php echo $form->labelEx($model, 'Store details'); ?>
-        <?php echo $form->textarea($model, 'store_details', array('rows' => 3, 'cols' => 80)); ?>
-        <?php echo $form->error($model, 'store_details'); ?>
-    </div>
-    <div class="row">
-                <?php echo $form->labelEx($model, 'tags'); ?>
-                <?php echo $form->textField($model, 'tags', array('data-role'=>"tagsinput")); ?>
-                <?php echo $form->error($model, 'tags'); ?>
-            </div>
-    <?php //$logoPath = CHtml::resolveValue($model, 'store_logo');   ?>
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'store logo'); ?>
-
-        <?php echo $form->fileField($model, 'store_logo'); ?>
-        <?php echo $form->error($model, 'store_logo'); ?>
-        <?php echo CHtml::image("$model->store_logo_url", "$model->store_logo", array('width' => 80, 'height' => 100)); ?>
-    </div>
-    <br/>
-   
-    <div class="row">
-        <!--        <label for="Store[auto_generate_store_logo]">Auto generate Brand Logo</label>
-                <input id="auto_generate_store_logo" type="checkbox" name="Store[auto_generate_store_logo]">-->
-    </div>
-
-
-    <!--    <div class="row">
-    <?php echo $form->labelEx($model, 'visible'); ?>
-    <?php echo $form->dropdownlist($model, 'visible', array('1' => 'Enable', '0' => 'Disable')); ?>
-    <?php echo $form->error($model, 'visible'); ?>
-        </div>-->
-
-    <div class="row">
-        <?php echo $form->labelEx($model, 'status'); ?>
-        <div class="check-awesome" style="float: left;">  
-
-            <input  name="status" type="checkbox" id="check-one" value="1" <?php
-            if ($model->status == 1) {
-                echo 'checked';
-            }
-            ?>>;
-
-            <label for="check-one">
-                <span class="check"></span>
-                <span class="box"></span>
-                Publish
-            </label>
-        </div>
-        <?php echo $form->error($model, 'status'); ?>
-    </div>
     <div class="row buttons">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     </div>
