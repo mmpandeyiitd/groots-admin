@@ -797,11 +797,11 @@ class BaseProductController extends Controller {
                 }
 
 
-              //  $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+               $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                 #...................end...................#
                // echo count($images);die;
                 if(count($imageinfo)!=0){
-            $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+                   
                 if (isset($images) && count($images) > 0  && count($images)<= count($imageinfo) && count($imageinfo)<2) {
                     // $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                     foreach ($images as $image => $pic) {
@@ -891,7 +891,6 @@ class BaseProductController extends Controller {
                 }
                 }else{
                     if (count($images)>0) {
-                      //  echo "hello";die;
                      $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
                     foreach ($images as $image => $pic) {
                         $flag_set_default = 0;
@@ -1485,8 +1484,16 @@ class BaseProductController extends Controller {
                                                     }
 
                                                     $images = explode(";", $images);
+                                                    //echo count($images);die;
+                                                    if(count($images)<3)
+                                                    {
                                                 
                                                     $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
+                                                    }
+                                                    else if (!empty($insertImages['error'])) {
+                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                    }
+                                                    
                                                     if (!empty($insertImages['error'])) {
                                                         $model1->addError('csv_file', $insertImages['error']);
                                                     }
@@ -1511,7 +1518,7 @@ class BaseProductController extends Controller {
                                                         }
                                                     }
                                                 }
-                                            }
+                                            }   
                                             fwrite($handle1, "\nRow : " . $i . " Product id $model1->base_product_id $action successfully." . implode(' AND ', $error));
                                             //...............................................//
                                         }

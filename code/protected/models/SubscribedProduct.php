@@ -57,7 +57,7 @@ class SubscribedProduct extends CActiveRecord {
             array('base_product_id, store_id, weight, length', 'length', 'max' => 10),
             array('store_price, store_offer_price', 'length', 'max' => 12),
             array('grade', 'length', 'max' => 100),
-          //  array('checkout_url', 'length', 'max' => 2083),
+            //  array('checkout_url', 'length', 'max' => 2083),
             array('sku', 'length', 'max' => 128),
             array('created_date, modified_date', 'safe'),
             array('title,effective_price,discout_per', 'safe', 'on' => 'search'),
@@ -188,13 +188,13 @@ class SubscribedProduct extends CActiveRecord {
 //        $criteria->compare('prompt', $this->prompt);
 //        $criteria->compare('prompt_key', $this->prompt_key, true);
         $criteria->compare('t.status', $this->status);
-      //  $criteria->compare('checkout_url', $this->checkout_url, true);
+        //  $criteria->compare('checkout_url', $this->checkout_url, true);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);
-       // $criteria->compare('is_deleted', $this->is_deleted);
+        // $criteria->compare('is_deleted', $this->is_deleted);
         $criteria->compare('sku', $this->sku, true);
         $criteria->compare('quantity', $this->quantity);
-       // $criteria->compare('is_cod', $this->is_cod);
+        // $criteria->compare('is_cod', $this->is_cod);
         $criteria->compare('subscribe_shipping_charge', $this->subscribe_shipping_charge);
 
 
@@ -338,7 +338,7 @@ class SubscribedProduct extends CActiveRecord {
         $command->execute();
     }
 
-     public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit,$status) {
+    public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $status) {
         $connection = Yii::app()->db;
         $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "', weight='" . $Weight . "',weight_unit='" . $WeightUnit . " ',length='" . $Length . " ',status='" . $status . " ',length_unit='" . $LengthUnit . " ' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
         $command = $connection->createCommand($sql);
@@ -353,32 +353,32 @@ class SubscribedProduct extends CActiveRecord {
           } */
         //return $category_id_del= $command->queryAll();
     }
-     public function solrbacklogRetailerProductQuotation($sid,$rid)
-    {
+
+    public function solrbacklogRetailerProductQuotation($sid, $rid) {
         $connection = Yii::app()->db;
         $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
          FROM retailer_product_quotation WHERE retailer_id =$rid AND subscribed_product_id =$sid";
-         $command = $connection->createCommand($sql);
-         $command->execute();
+        $command = $connection->createCommand($sql);
+        $command->execute();
     }
-     public function solrbacklogRetailerProductQuotationdel($rid)
-    {
+
+    public function solrbacklogRetailerProductQuotationdel($rid) {
         $connection = Yii::app()->db;
         $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
          FROM retailer_product_quotation WHERE retailer_id =$rid";
-         $command = $connection->createCommand($sql);
-         $command->execute();
-    }
-    public function removeselectdata($id)
-    {
-       $connection = Yii::app()->db;
-        $sql = "DELETE FROM `retailer_product_quotation` WHERE `retailer_id` =$id";
-         $command = $connection->createCommand($sql);
+        $command = $connection->createCommand($sql);
         $command->execute();
     }
-    public function productnamelist($val)
-    {
-       // echo $val;die;
+
+    public function removeselectdata($id) {
+        $connection = Yii::app()->db;
+        $sql = "DELETE FROM `retailer_product_quotation` WHERE `retailer_id` =$id";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+    }
+
+    public function productnamelist($val) {
+        // echo $val;die;
         $connection = Yii::app()->db;
         $sql = "SELECT bp.title FROM `subscribed_product` as sp left join base_product as bp on bp. `base_product_id`=sp.`base_product_id`
 WHERE `subscribed_product_id`=$val";
@@ -388,20 +388,25 @@ WHERE `subscribed_product_id`=$val";
     }
 
     public function savedatagridview($id, $pro, $ef, $pf, $status) {
+        $ef = trim($ef);
+        $pf = trim($pf);
 
-
+        if (empty($ef))
+            $ef = 0;
+        if (empty($pf))
+            $pf = 0;
         $connection = Yii::app()->db;
         $sql = "SELECT `retailer_id` FROM `retailerproductquotation_gridview` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "' ";
         $command = $connection->createCommand($sql);
         $command->execute();
         $category_id_del3 = $command->queryAll();
         if ($status == '0') {
-              $connection = Yii::app()->db;
+            $connection = Yii::app()->db;
             $sql = "INSERT INTO special_price_solr_back_log(id,is_deleted)SELECT id,0
          FROM retailer_product_quotation WHERE retailer_id =$id AND subscribed_product_id =$pro";
             $command = $connection->createCommand($sql);
             $command->execute();
-              $connection = Yii::app()->db;
+            $connection = Yii::app()->db;
             $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('DELETE','$ef', '$pf', '$pro', '$id','$status')";
             $command = $connection->createCommand($sql);
             $command->execute();
@@ -409,7 +414,6 @@ WHERE `subscribed_product_id`=$val";
             $sql = "DELETE FROM `retailer_product_quotation` where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
             $command = $connection->createCommand($sql);
             $command->execute();
-          
         } else if ($category_id_del3 != Array()) {
             $connection = Yii::app()->db;
             $sql = "update retailer_product_quotation set effective_price='" . $ef . "',discount_per ='" . $pf . "' where subscribed_product_id='" . $pro . "' and retailer_id='" . $id . "'";
@@ -419,13 +423,12 @@ WHERE `subscribed_product_id`=$val";
             $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('UPDATE','$ef', '$pf', '$pro', '$id','$status')";
             $command = $connection->createCommand($sql);
             $command->execute();
-            
         } else {
             $connection = Yii::app()->db;
-            $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('$ef', '$pf', '$pro', '$id','$status')";
+            $sql = "INSERT INTO retailer_product_quotation(effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('$ef', $pf, '$pro', '$id','$status')";
             $command = $connection->createCommand($sql);
             $command->execute();
-             $connection = Yii::app()->db;
+            $connection = Yii::app()->db;
             $sql = "INSERT INTO retailer_product_quotation_log(action,effective_price,discount_per,subscribed_product_id,retailer_id,status) VALUES('INSERT','$ef', '$pf', '$pro', '$id','$status')";
             $command = $connection->createCommand($sql);
             $command->execute();

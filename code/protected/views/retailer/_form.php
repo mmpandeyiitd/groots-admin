@@ -97,24 +97,7 @@
             <?php echo $form->error($model, 'demand_centre'); ?>
         </div>
        
-        <div class="row customDatepicker">
-            <?php echo $form->labelEx($model, 'Date of onboarding');?>
-            <?php
-            $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
-                'model' => $model,
-                'attribute' => 'date_of_onboarding',
-                'value' => $model->date_of_onboarding,
-                'options' => array(
-                    //  'dateFormat' => 'yy-mm-dd',
-                    'showAnim' => 'fold',
-                    'debug' => true,
-                //'minDate' => 0,
-                ), //DateTimePicker options 
-                'htmlOptions' => array('readonly' => 'true'),
-            ));
-            ?>
-            <?php echo $form->error($model, 'date_of_onboarding'); ?>
-        </div>
+     
     </div>
     <div class="">
         <div class="row">

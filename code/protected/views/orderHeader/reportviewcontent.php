@@ -194,7 +194,7 @@ if (is_numeric($store_id)) {
         <?php } ?>
 
         <tr>
-            <td colspan="3"><strong>Total Amount </strong></td>
+            <td colspan="3" style="text-align:right;"><strong>Total Amount </strong></td>
             <td style="text-align:right;"><?php echo " Rs. "; ?> <?php echo $wsptotal; ?></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
@@ -214,21 +214,15 @@ if (is_numeric($store_id)) {
         <?php } ?>
         <tr>
             <td colspan="4">
-                <strong>Line 1 : </strong>
-                Thank you for your business! We look forward to serving you again
+              
+                <p style="text-align: center;">Thank you for your business! We look forward to serving you again</p>
+                <p style="text-align: center;"> Contact number: +91-997-111-4020</p>
+                <p style="text-align: center;">Contact email id: sales@gogroots.com</p>
+                
             </td>
 
         </tr>
-        <tr>
-            <td colspan="4">
-                <strong>Line 2 : </strong> Contact number: +91-997-111-4020
-           </td>
-        </tr>
-        <tr>
-            <td colspan="4">
-                <strong>Line 3 : </strong> Contact email id: sales@gogroots.com
-            </td>
-        </tr>
+        
 
     </table>
 </div>
