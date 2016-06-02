@@ -882,7 +882,8 @@ class BaseProductController extends Controller {
                         $flag_set_default++;
                     }
                 }
-                elseif(count($imageinfo)!=0){
+                elseif(count($imageinfo)!=0 && count($images)> 0){
+                    //echo "hello";die;
                      Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
                 $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
                     
