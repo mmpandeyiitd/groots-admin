@@ -119,11 +119,12 @@ class RetailerController extends Controller {
             } else {
                 $model->status = 1;
             }
-             if ($_POST['Retailer']['date_of_onboarding']!='') {
-                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
-            } else {
-                $model->date_of_onboarding = date('Y-m-d H:i:s');
-            }
+              $model->date_of_onboarding = date('Y-m-d H:i:s');
+//             if ($_POST['Retailer']['date_of_onboarding']!='') {
+//                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
+//            } else {
+//                $model->date_of_onboarding = date('Y-m-d H:i:s');
+//            }
          
 //            if($_POST['Retailer']['password'] !='' && strlen($_POST['Retailer']['password'])<12){
 //                  
