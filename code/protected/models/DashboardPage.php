@@ -288,7 +288,7 @@ class DashboardPage extends CActiveRecord {
 
     public static function downloadCSVByIDs($oDate) {
 
-        $sqlchksubsid = "SELECT ol.product_name AS 'Product name',ol.grade AS 'Grade',ol.diameter AS Diameter,colour,CONCAT(ol.pack_size,' ', ol.pack_unit) AS pack_size,CONCAT(sum(ol.product_qty*ol.pack_size),' ', ol.pack_unit) AS quantity,c.category_name,s.weight AS 'Indicated Weight',s.weight_unit AS 'Indicated Weight unit',s.length AS 'Indicated Length',s.length_unit AS 'Indicated Length unit',oh.`delivery_date` AS 'Delivery date' FROM `order_header` `oh` LEFT JOIN order_line ol ON ol.`order_id`=oh .`order_id` LEFT JOIN `cb_dev_groots`.product_category_mapping pcm ON pcm.base_product_id = ol.base_product_id LEFT JOIN `cb_dev_groots`.category c ON c.category_id = pcm.category_id LEFT JOIN `cb_dev_groots`.subscribed_product s ON s.subscribed_product_id = ol.subscribed_product_id WHERE oh.`delivery_date`='" . $oDate . "' group by `product_name`";
+        $sqlchksubsid = "SELECT ol.product_name AS 'Product name',ol.grade AS 'Grade',ol.diameter AS Diameter,colour,(SUM(ol.product_qty)* ol.pack_size) as Quantity,ol.pack_unit as Unit,ol.weight AS 'Indicated Weight',ol.weight_unit AS 'Indicated Weight Unit',ol.length AS 'Indicated Length',ol.length_unit AS 'Indicated Length unit', oh.`delivery_date` AS 'Delivery date' FROM `order_header` `oh` LEFT JOIN order_line ol ON ol.`order_id`=oh .`order_id` WHERE oh.`delivery_date`='" . $oDate . "' group by ol.subscribed_product_id";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
         $command->execute();

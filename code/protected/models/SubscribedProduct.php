@@ -168,6 +168,7 @@ class SubscribedProduct extends CActiveRecord {
 
         // $criteria->order = 'subscribed_product_id DESC';
         $criteria->join = "left join base_product bp on bp.base_product_id=t.base_product_id";
+        $criteria->order = "subscribed_product_id DESC";
         // $criteria->join = "left join retailer_product_quotation rp on rp.subscribed_product_id=t.subscribed_product_id";
         //$criteria->compare('effective_price', $this->effective_price, true);
         //$criteria->with = array('BaseProduct' => array("select" => "title"));
@@ -377,6 +378,7 @@ class SubscribedProduct extends CActiveRecord {
     }
     public function productnamelist($val)
     {
+       // echo $val;die;
         $connection = Yii::app()->db;
         $sql = "SELECT bp.title FROM `subscribed_product` as sp left join base_product as bp on bp. `base_product_id`=sp.`base_product_id`
 WHERE `subscribed_product_id`=$val";

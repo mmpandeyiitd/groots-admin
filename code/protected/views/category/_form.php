@@ -17,8 +17,7 @@
             <?php $this->renderPartial('category_tree', array('category_id' => "")); ?>
         </div>
     </div>
-
-    <div class="bulk_center">
+     <div class="bulk_center">
         <p class="note">Fields with <span class="required">*</span> are required.</p>
        
          <?php if (Yii::app()->user->hasFlash('errorSummary')): ?><div class="errorSummary" style="color: "><?php echo Yii::app()->user->getFlash('errorSummary'); ?></div><?php endif; ?>

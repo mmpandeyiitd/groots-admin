@@ -115,14 +115,15 @@ class OrderHeaderController extends Controller {
 
                 //echo $reportdata;die;
             }
-            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Out for Delivery') {
+           
+            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_array[0] == 'Paid' || $status_data[0] == 'Out for Delivery') {
                 //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
-                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
-                                            <br/><br/>';
+                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+                                            <br/>' . $status_data[0] . ' <br/>';
                 $body_text = '';
 
                 $mailArray = array(
@@ -184,7 +185,7 @@ class OrderHeaderController extends Controller {
                     }
                 }
             }
-            if (isset($_POST['uniq_order_size']) && isset($_POST['sizeqty']) && isset($_POST['sizeqty_old'])) {
+            if (isset($_POST['uniq_order_size']) && isset($_POST['sizeqty'])  && isset($_POST['sizeqty_old'])) {
                 $no_records = count($_POST['uniq_order_size']);
 
 
@@ -193,8 +194,17 @@ class OrderHeaderController extends Controller {
                     $size_detail = explode('>', $uniq_order_size);
                     $order_line_id = $size_detail[0];
                     $baseproduct_id = $size_detail[1];
-                    $size_quantity = $_POST['sizeqty'][$i];
-                    $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    if($_POST['sizeqty'][$i]>0)
+                    {
+                         $size_quantity = $_POST['sizeqty'][$i];
+                            $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    }
+                    else{
+                        $size_quantity =$_POST['sizeqty_old'][$i];
+                         $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    }
+//                    $size_quantity = $_POST['sizeqty'][$i];
+//                    $sizeqty_old = $_POST['sizeqty_old'][$i];
                     //  $unit_price_discount_qnt=$_POST['unit_price_discount'][$i];
 
                     if ($sizeqty_old != $size_quantity) {
@@ -488,16 +498,15 @@ class OrderHeaderController extends Controller {
                     $command->execute();
                     $emai_id = $command->queryAll();
                     $email = $emai_id['0']['billing_email'];
-
                     //$email= "kuldeep@canbrand.in";
-                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
+                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] =='Paid' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $from_email = 'grootsadmin@groots.in';
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
-                                            <br/><br/>';
+                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+                                            <br/>: ' . $_POST['status1'] . '<br/>,';
                         $body_text = '';
 
                         $mailArray = array(
