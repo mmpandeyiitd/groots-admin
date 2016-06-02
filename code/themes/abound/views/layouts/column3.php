@@ -150,7 +150,7 @@ else if(Yii::app()->controller->id=="storeFront"){
   if(Yii::app()->controller->action->id=="admin"){
         echo "Buyers List";
     }elseif(Yii::app()->controller->action->id=="create"){
-        echo "create Buyers";
+        echo "create Buyer";
     }
     elseif(Yii::app()->controller->action->id=="update"){
         echo "Edit Buyers";

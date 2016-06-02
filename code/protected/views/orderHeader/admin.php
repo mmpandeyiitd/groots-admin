@@ -176,6 +176,7 @@ onclick='return confirm("Do you want to cancel");'/>
 //             'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
 //            ),
             'created_date',
+           
             //'delivery_date',
                  array(
                    'name' => 'delivery_date',

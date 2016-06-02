@@ -168,7 +168,7 @@ class RetailerController extends Controller {
           <strong>Hi ' . $model->name . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your account created successfully.<br>
+            Your account has been created successfully. Your account will be activated in the next 4 hours. We look forward to receiving your order.<br>
             <strong >Email:</strong>   ' . $model->email . '<br>
             <strong >Password:</strong> ' . $data_pass . '
           </span>

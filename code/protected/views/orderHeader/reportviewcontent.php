@@ -19,7 +19,7 @@ if (is_numeric($store_id)) {
     $brand_pincode = '';
     $brand_email = '';
     $brand_mobile = '';
-    
+
     if ($maxrecord > 0) {
         for ($i = 0; $i < $maxrecord; $i++) {
             $brand_name = $brand_info[$i]['store_name'];
@@ -31,7 +31,6 @@ if (is_numeric($store_id)) {
             $brand_pincode = $brand_info[$i]['business_address_pincode'];
             $brand_email = $brand_info[$i]['email'];
             $brand_mobile = $brand_info[$i]['mobile_numbers'];
-         
         }
     }
 }
@@ -41,7 +40,7 @@ if (is_numeric($store_id)) {
 //}
 ?>  
 
-                
+
 
 <!-- Custom Fonts -->
 <style >
@@ -91,16 +90,19 @@ if (is_numeric($store_id)) {
     <table border="1">
         <tr>
             <td colspan="2" style="vertical-align:middle;">Order Id: <?php echo $modelOrder->attributes['order_number']; ?></td>
-            <td colspan="3" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;">Retail/ Tax Invoice/ Bill</h3></td>
+            <td colspan="3" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> Invoice </h3></td>
         </tr>
         <tr>
             <td colspan="5">
-                <p><strong>Registered Office:</strong> <?php echo '<br> Address - '. $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
+                <p><strong>Registered Office:</strong> <?php echo '<br> Address - ' . $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
             </td>
         </tr>
         <tr>
             <td colspan="2"><b>Contact no:</b> <?php echo $brand_mobile; ?></td>
-            <td colspan="3"><b>Website:</b> <?php echo "www.canbrand.in"; ?></td>
+            <td colspan="3"><b>Website:</b> <?php 
+             $modelOrderline = new OrderLine;
+                $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
+                echo $website; ?></td>
         </tr>
         <tr>
             <td colspan="3">
@@ -118,22 +120,24 @@ if (is_numeric($store_id)) {
             <td colspan="3" style="vertical-align:middle;">
                 <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
             </td>
-            <td colspan="2">
-                 <br>
-                Invoice No. 
-                <?php $modelOrderline = new OrderLine;
-                $productname =$modelOrderline->productname( $modelOrder->attributes['order_id']);
-               
-              $delivery_date=  $modelOrder->attributes['delivery_date'];
-              //echo $delivery_date;
-              // echo $productname;die;
-               $name = substr($productname, 0, 3);
-              $mont = date('m',  strtotime($delivery_date));
-                $year = date('Y',  strtotime($delivery_date));
-                 $date = date('d',  strtotime($delivery_date));
-               echo $name.$mont.$year.$date;
+            <td colspan="2" >
+                <br>
+                   <strong>Invoice No : </strong>
+                
+                <?php
+                $modelOrderline = new OrderLine;
+                $productname = $modelOrderline->productname($modelOrder->attributes['user_id']);
+
+                $delivery_date = $modelOrder->attributes['delivery_date'];
+                //echo $delivery_date;
+                // echo $productname;die;
+                $name = substr($productname, 0, 3);
+                $mont = date('m', strtotime($delivery_date));
+                $year = date('Y', strtotime($delivery_date));
+                $date = date('d', strtotime($delivery_date));
+                echo $name . $mont . $year . $date;
                 ?>
-               </td>
+            </td>
         </tr>
 
         <tr>
@@ -150,7 +154,7 @@ if (is_numeric($store_id)) {
         $qtytotal = 0;
         $qtytotal1 = 0;
         $wsptotal1 = 0;
-        $wsptotal=0;
+        $wsptotal = 0;
         $i = 0;
 //        echo '<pre>';
 //        //echo $model;
@@ -170,26 +174,61 @@ if (is_numeric($store_id)) {
             //$wsptotal = $qtytotal * ($lineinfodeltail[0]['unit_price']);
             $wsptotal1 = $qtytotal1 * ($lineinfodeltail[0]['unit_price']);
             // $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
-            $wsptotal =$wsptotal + $wsptotal1;
+            $wsptotal = $wsptotal + $wsptotal1;
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;
             ?>  
 
             <tr>
                 <td style="text-align:center;">
-    <?php echo $model[$key]->attributes['product_name']; ?>
+                    <?php echo $model[$key]->attributes['product_name']; ?>
                 </td>
-                <td style="text-align:center;"> <?php echo $model[$key]->attributes['product_qty'] *  $model[$key]->attributes['pack_size'];echo ' '; echo $model[$key]->attributes['pack_unit']; ?></td>
-                <td style="text-align:center;"><?php echo " Rs. ";?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
-                <td style="text-align:right;"><?php echo " Rs. ";?><?php echo $wsptotal1; ?></td>
+                <td style="text-align:center;"> <?php
+                    echo $model[$key]->attributes['product_qty'] * $model[$key]->attributes['pack_size'];
+                    echo ' ';
+                    echo $model[$key]->attributes['pack_unit'];
+                    ?></td>
+                <td style="text-align:center;"><?php echo " Rs. "; ?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
+                <td style="text-align:right;"><?php echo " Rs. "; ?><?php echo $wsptotal1; ?></td>
             </tr>
-<?php } ?>
-        
+        <?php } ?>
+
         <tr>
             <td colspan="3"><strong>Total Amount </strong></td>
-            <td style="text-align:right;"><?php echo " Rs. ";?> <?php echo $wsptotal; ?></td>
+            <td style="text-align:right;"><?php echo " Rs. "; ?> <?php echo $wsptotal; ?></td>
         </tr>
+        <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
+            <tr>
+                <td colspan="4">
+                    <strong>Comment : </strong>
+                    <span style="word-wrap: break-word">
+                        <?php
+                        echo wordwrap($modelOrder->attributes['user_comment'], 90, "<br/>\n");
+                        ?>
+                    </span>
+                </td>
+
+            </tr>
+
+        <?php } ?>
+        <tr>
+            <td colspan="4">
+                <strong>Line 1 : </strong>
+                Thank you for your business! We look forward to serving you again
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="4">
+                <strong>Line 2 : </strong> Contact number: +91-997-111-4020
+           </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <strong>Line 3 : </strong> Contact email id: sales@gogroots.com
+            </td>
+        </tr>
 
     </table>
 </div>

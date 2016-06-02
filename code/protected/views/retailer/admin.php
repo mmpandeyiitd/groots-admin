@@ -70,7 +70,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'header' => 'Action',
             'type' => 'raw',
             'value' => 'CHtml::button("Edit",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailer/update",array("id"=>$data->id))."\'"))',
-            'visible' => $visible_action_edit
+            'visible' => $visible_action_edit,
+            'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
+            'htmlOptions' => array('style' => 'text-align: center;'),
         ),
         /*
           'link1' => array(
@@ -79,9 +81,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
           'value' => 'CHtml::button("Delete",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("retailer/delete",array("id"=>$data->id))."\'"))',
           ), */
         'link1' => array(
-            'header' => 'Configurable Products',
+            'header' => 'Special Price',
             'type' => 'raw',
-            'value' => 'CHtml::button("Configurable Product",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'"))',
+            'value' => 'CHtml::button("special price mapping",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("SubscribedProduct/admin",array("id"=>$data->id))."\'",))',
+            'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
+            'htmlOptions' => array('style' => 'text-align: center;'),
         ),
     /* 'link2' => array(
       'header' => '',

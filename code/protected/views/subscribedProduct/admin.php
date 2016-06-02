@@ -137,6 +137,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'type' => 'raw',
             'value' => 'CHtml::textField("discount_price[$data->subscribed_product_id]",$data->discount_price,array("maxlength" =>2,"style"=>"width:50px;"))',
             'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
+            
         ),
          array(
             'header' => 'Status',
@@ -145,10 +146,19 @@ $this->widget('zii.widgets.grid.CGridView', array(
               'type' => 'raw',
              'value' => 'CHtml::textField("status[$data->subscribed_product_id]",$data->status,array("maxlength" =>2,"style"=>"width:50px;"))',
            // 'value' => 'CHtml::dropDownList("status[$data->subscribed_product_id]",$data->status,array("1" =>"Enable","0" => "Disable", ))',
-            'htmlOptions' => array("width" => "50px","class" => "status",'style' => 'display:none'),
+             'htmlOptions' => array("width" => "50px","class" => "status",'style' => 'display:none'),
              'headerHtmlOptions' => array('style' => 'display:none'),
              'filterHtmlOptions' => array('style' => 'display:none'),
     
+        ),
+         array(
+            //'header' => 'check',
+            'name' => 'store_offer_price',
+            'type' => 'raw',
+            'value' => 'CHtml::textField("store_offer_price[$data->subscribed_product_id]",$data->store_offer_price,array("maxlength" =>5,"style"=>"width:50px;"))',
+            'htmlOptions' => array("width" => "50px","class" => "eft_price",'style' => 'display:none'),
+             'headerHtmlOptions' => array('style' => 'display:none'),
+             'filterHtmlOptions' => array('style' => 'display:none'),
         ),
            array(
             'header' => 'data',
@@ -159,26 +169,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
            // 'class' => 'CCheckBoxColumn hiddenField',
             'checked'=>'($data->effective_price!=" "? true : false);',
             'selectableRows' => '100',
-               'htmlOptions' => array("width" => "50px","class" => "status",'style' => 'display:none'),
+               'htmlOptions' => array("width" => "50px", "class" => "status", 'style' => 'display:none'),
              'headerHtmlOptions' => array('style' => 'display:none'),
              'filterHtmlOptions' => array('style' => 'display:none'),
         ),
         
-        
-        
-        
-        
-        
-        
-        
-        
-//         array(
-//            'header' => 'Discount %',
-//            'name' => 'status',
-//            'type' => 'raw',
-//            'value' => 'CHtml::textField("status[$data->subscribed_product_id]",$data->status,array("maxlength" =>2,"style"=>"width:50px;"))',
-//            'htmlOptions' => array("width" => "50px", "class" => "dis_price"),
-//        ),
     ),
 ));
 ?>
@@ -229,13 +224,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
         var ck = $(this).closest('tr').find('td:last input')[0];
         
         if($(ele).attr('checked')=='checked'){
-            $(eft).val($(ele).attr('eft'));
-            $(dis).val($(ele).attr('dis'));
+           // $(eft).val($(ele).attr('eft'));
+            //$(dis).val($(ele).attr('dis'));
             $(ele).attr('status',$(dis).val());
            $(ck).attr('checked','checked');
+             $(status).val('1');
         }else{
-            $(ele).attr('eft',$(eft).val());
-            $(ele).attr('dis',$(dis).val());
+           // $(ele).attr('eft',$(eft).val());
+           // $(ele).attr('dis',$(dis).val());
              $(ele).attr('status',$(dis).val());
               $(ele).attr('ck',$(dis).val());
             $(status).val('0');
@@ -249,6 +245,51 @@ $this->widget('zii.widgets.grid.CGridView', array(
         
 //        console.log($(this).val() , "Hello", this, ele );
     })
+    
+    jQuery(document).on('click','#selectedIds_all',function() {
+        var ele = this;
+        var ck = $(this).closest('tr').find('th:last input')[0];
+        console.log(ck);
+//        $(ck).trigger('click');
+           
+           
+           
+//
+        if($(ele).attr('checked')=='checked'){
+          $(ck).attr('checked','checked');
+          
+        }else{
+            $(ck).attr('checked','');
+          
+        }
+        setTimeout(function(){
+            $(ele).closest('table').find('tbody  > tr').each(function(key,obj) {
+                    
+                    var eft = $(obj).find('.eft_price input')[0];
+                    var dis = $(obj).find('.dis_price input')[0];
+                    var status = $(obj).find('.status input')[0];
+                    var ck = $(obj).find('td:last input')[0];
+        
+                    console.log($(obj).find('td:first input').attr('checked'));
+                    if($(obj).find('td:first input').attr('checked')=='checked'){
+                        $(obj).find('td:last input').attr('checked','checked');
+                        $(obj).find('td:first input').attr('status',$(dis).val());
+                        $(ck).attr('checked','checked');
+                        $(status).val('1');
+
+                    }else{
+                        $(obj).find('td:last input').attr('checked','');
+                        $(obj).find('td:first input').attr('status',$(dis).val());
+                        $(obj).find('td:first input').attr('ck',$(dis).val());
+                        $(status).val('0');
+
+                    }
+             });
+        },500);
+        
+//	var checked=this.checked;
+//	jQuery("input[name='selectedIds\[\]']:enabled").each(function() {this.checked=checked;});
+    });
     
 </script>
 <script type="text/javascript">

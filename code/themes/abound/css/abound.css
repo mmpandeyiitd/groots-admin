@@ -6,8 +6,12 @@ bo {
     padding-top: 20px;
 }
 /*Nav bar*/
-.grid-view .table td, .grid-view .table th {
+.grid-view .table td {
     vertical-align: middle;
+} 
+.grid-view .table th {
+    vertical-align: middle;
+    text-align: center;
 } 
 .grid-view .table input[type="checkbox"], .grid-view .table input[type="radio"] {
     margin-top: 0px;
@@ -18,6 +22,11 @@ bo {
     background-position-x: 285px;
 }
 .customDatepicker1 input[type="text"] {
+    background: #fff;
+    cursor: pointer;
+    background-position-x: 285px;
+}
+.customDatepicker2 input[type="password"] {
     background: #fff;
     cursor: pointer;
     background-position-x: 285px;
@@ -2077,7 +2086,7 @@ hr {
     height: 100%;
     width: 100%;
 }
-.order_sizecontain {padding-top: 10px;overflow: hidden;}
+.order_sizecontain {overflow: hidden;}
 .order_sizecontain input[type="text"] {
     width: 70px !important;
     height: 20px !important;

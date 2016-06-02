@@ -43,15 +43,18 @@ $this->menu = array(
 
 
             <div >
-                <b>*Make folder "zips" and put images</b><br/>
-                <b>*then compress folder</b><br/>
-                <b>*Upload zip File only</b><br/>
-                <b>*Upload zip File must be less than 30 MB </b><br/>
-                <input id="media_zip_file" name="media_zip_file" type="file"/>
+                <b>*compress images directly to zip and upload.</b><br/>
+                <div >
+                    <span style="float: left;line-height: 60px;font-size: 18px;margin-right: 10px;">Upload CSV File</span>
+              <input id="media_zip_file" name="media_zip_file" type="file"/>
+              </div>
             </div>
+            <div style="clear:both;"></div>
+              <p>*Upload zip File must be less than 30 MB </p><br/>
             <div class="buttons">
                 <?php echo CHtml::submitButton('Upload', array("class" => "Bulk btn")); ?>
             </div>
+             <div style="clear:both;"></div>
             <div class="Csv">
                 <?php echo '<br />'; ?>
                 <?php if (Yii::app()->user->hasFlash('success')): ?>

@@ -46,11 +46,6 @@
             <?php echo $form->textField($model, 'mobile', array('maxlength' => 10)); ?>
             <?php echo $form->error($model, 'mobile'); ?>
         </div>
-        <div class="row customDatepicker1">
-            <?php echo $form->labelEx($model, 'Password *'); ?>
-            <?php echo $form->textField($model, 'password', array('size' => 6, 'maxlength' => 150,'readonly'=>true)); ?>
-            <?php echo $form->error($model, 'password'); ?>
-        </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Delivery address *'); ?>
             <?php echo $form->textField($model, 'address'); ?>

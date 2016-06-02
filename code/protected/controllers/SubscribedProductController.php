@@ -213,7 +213,7 @@ class SubscribedProductController extends Controller {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
-        $no_of_Deletedataarray=1;
+        $no_of_Deletedataarray = 1;
         $model = new SubscribedProduct;
         $model_grid = new RetailerproductquotationGridview('search');
         if (isset($_GET['pageSize'])) {
@@ -230,25 +230,26 @@ class SubscribedProductController extends Controller {
             if (isset($_POST['selectedIds'])) {
                 // echo '<pre>';print_r($_POST);die;
                 $colnum = array();
-                //echo '<pre>';print_r($_POST);die;
+                // echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
-                 $no_of_Deletedataarray= count($_POST['Deletedataarray']);
-                
+                $no_of_Deletedataarray = count($_POST['Deletedataarray']);
+
                 $no_of_effective_price = count($_POST['effective_price']);
                 $no_of_discount_price = count($_POST['discount_price']);
-              
+
                 if ($no_of_Deletedataarray > 0) {
                     
+
                     for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
                         $val = $_POST['Deletedataarray'][$i];
-                        
-                        if (isset($_POST['effective_price'][$val])) {
-                           // echo "hello";die;
+
+                        if (isset($_POST['effective_price'][$val]) ) {
+                            // echo "hello";die;
                             $df = 0;
                             $ef = $_POST['effective_price'][$val];
                             $status = $_POST['status'][$val];
                         } else {
-                              //echo "hello1";die;
+                           
                             $ef = 0;
                             $df = $_POST['discount_price'][$val];
                             $status = $_POST['status'][$val];
@@ -262,38 +263,61 @@ class SubscribedProductController extends Controller {
                                 Yii::app()->user->setFlash('premission_info', 'Please try again');
                             }
                         } else {
+                             $cat_flag = 0;
+                            $datatitle = $model->productnamelist($val);
+                              if (isset($_POST['effective_price'][$val]) && $ef<0) {
+                                
+                                $df = 0;
+                                $ef = $_POST['store_offer_price'][$val];
+                                $status = $_POST['status'][$val];
+                            } 
                             //echo $val;die;
-                            $cat_flag = 0;
-                            $datatitle= $model->productnamelist($val);
-                          
                            
-                                $colnum[] = $datatitle['0']['title'];
-                               // Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price not Blank or Zero: ' . implode(' , ', $colnum));
-                                 Yii::app()->user->setFlash('premission_info', 'Product effective price or discount price should not blank,zero or negative');
-                            
+                           else if (isset($_POST['effective_price'][$val]) && $_POST['discount_price'][$val] == '0') {
+                                
+                                $df = 0;
+                                $ef = $_POST['store_offer_price'][$val];
+                                $status = $_POST['status'][$val];
+                            } else {
+                                $ef = 0;
+                                $df = $_POST['discount_price'][$val];
+                                $status = $_POST['status'][$val];
+                            }
+
+
+                            //$df = 0;
+                            // $ef = $_POST['store_offer_price'][$val];
+                            $status = $_POST['status'][$val];
+                            $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df, $status);
+                            $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
+
+
+                            $colnum[] = $datatitle['0']['title'];
+                            Yii::app()->user->setFlash('success', 'Selected product list updated Successfully.');
+                            // Yii::app()->user->setFlash('premission_info', 'Product List effective price or discount price not Blank or Zero: ' . implode(' , ', $colnum));
+                            //Yii::app()->user->setFlash('premission_info', 'Product effective price or discount price should not blank,zero or negative');
                         }
                     }
                 }
             } else {
-                 if (isset($_POST['Deletedataarray'])) {
-                $no_of_Deletedataarray= count($_POST['Deletedataarray']);
-                  for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
+                if (isset($_POST['Deletedataarray'])) {
+                   
+                    $no_of_Deletedataarray = count($_POST['Deletedataarray']);
+                    for ($i = 0; $i < $no_of_Deletedataarray; $i++) {
                         $val = $_POST['Deletedataarray'][$i];
-                            $df = $_POST['discount_price'][$val];
-                              $status = $_POST['status'][$val];
-                $ef = $_POST['effective_price'][$val];
-                $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df, $status);
-                $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
-                
-                  }
-                  
-            
-                //echo "heoo";die;
-               // Yii::app()->user->setFlash('premission_info', 'Product list not selected');
-            }
-             else{
-                 Yii::app()->user->setFlash('premission_info', 'Product list not selected');
-            }
+                        $df = $_POST['discount_price'][$val];
+                        $status = $_POST['status'][$val];
+                        $ef = $_POST['effective_price'][$val];
+                        $active_record = $model->savedatagridview($_REQUEST['id'], $val, $ef, $df, $status);
+                        $model->solrbacklogRetailerProductQuotation($val, $_REQUEST['id']);
+                    }
+
+
+                    //echo "heoo";die;
+                    // Yii::app()->user->setFlash('premission_info', 'Product list not selected');
+                } else {
+                    Yii::app()->user->setFlash('premission_info', 'Product list not selected');
+                }
             }
         }
         $this->render('admin', array(
