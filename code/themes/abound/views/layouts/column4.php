@@ -56,13 +56,13 @@ elseif (Yii::app()->controller->id == "store") {
 
     if (Yii::app()->controller->action->id == "create" && substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') > 0) {
 
-        echo '<li><a href="index.php?r=store/admin">Store List</a></li> ';
+     //   echo '<li><a href="index.php?r=store/admin">Store List</a></li> ';
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'C') > 0) {
 
         echo '<li><a href="index.php?r=store/create">Create Store</a></li> ';
     } else if ((Yii::app()->controller->action->id == "update") && (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') > 0 )&& (Yii::app()->session['is_super_admin']==1)) {
 
-        echo '<li><a href="index.php?r=store/admin">Store List</a></li> ';
+       // echo '<li><a href="index.php?r=store/admin">Store List</a></li> ';
     }
 } elseif (Yii::app()->controller->id == "baseProduct") {
 
