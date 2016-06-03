@@ -303,7 +303,8 @@ if (isset($_GET['id'])) {
                                                    
                                                     <td><?php
                                                         if ($sizes_array != Array()) {
-                                                            echo $sizes_array[$j];
+                                                            echo $sizes_array[$j].'  '. $orderline_detail[$i]['pack_unit'];;
+                                                            
                                                         }
                                                         ?></td>
                                                 </tr>

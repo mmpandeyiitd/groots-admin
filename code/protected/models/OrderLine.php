@@ -242,6 +242,38 @@ class OrderLine extends CActiveRecord
         }
         return $title;
     }
+      public static function buyername($id) {
+        $title = '';
+        if (is_numeric($id)) {
+            $connection = Yii::app()->db;
+            $sql = "SELECT `name` FROM `retailer` WHERE `id`=$id";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $title = $command->queryScalar();
+        }
+        return $title;
+    }
+     public static function buyernamegrid($id) {
+       //  echo $id;die;
+        $title = '';
+        if (is_numeric($id)) {
+            $connection = Yii::app()->secondaryDb;
+            $sql = "SELECT `user_id` FROM `order_header` WHERE `order_id`=$id";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $title1 = $command->queryScalar();
+        }
+        if($title1 !='')
+        {
+            $connection = Yii::app()->db;
+            $sql = "SELECT `name` FROM `retailer` WHERE `id`=$title1";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $title = $command->queryScalar();
+            
+        }
+        return $title;
+    }
      public static function webiste($id) {
         $title = '';
         if (is_numeric($id)) {

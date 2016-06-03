@@ -115,15 +115,80 @@ class OrderHeaderController extends Controller {
 
                 //echo $reportdata;die;
             }
-           
+
             if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Paid' || $status_data[0] == 'Out for Delivery') {
                 //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $modelOrderline = new OrderLine;
+                $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
                 $from_email = 'grootsadmin@groots.in';
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
-                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
-                                            <br/>' . $status_data[0] . ' <br/>';
+                $emailurldata = Yii::app()->params['email_app_url1'];
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                                            <br/>' . $status_data[0] . ' <br/>';
+                $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91 99999 99999</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (id :- ' . $modelOrder->attributes['order_number'] . ') status has been changed to <strong >  ' . $status_data[0] . '</strong> <br>
+           
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
                 $body_text = '';
 
                 $mailArray = array(
@@ -143,6 +208,8 @@ class OrderHeaderController extends Controller {
                 $resp = $mailsend->sgSendMail($mailArray);
             }
             if ($status_data[0] == 'Delivered') {
+                $modelOrderline = new OrderLine;
+                $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
                 $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
                 $csv_name = 'order_' . $modelOrder->attributes['order_id'] . '.pdf';
                 $csv_filename = "feeds/order_csv/" . $csv_name;
@@ -150,8 +217,71 @@ class OrderHeaderController extends Controller {
                 $from_name = 'Groots Dashboard Admin';
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['email_app_url'];
-                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
-                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+                $emailurldata = Yii::app()->params['email_app_url1'];
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
+//                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+                $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91 99999 99999</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (id :- ' . $modelOrder->attributes['order_number'] . ') status has been changed to <strong >  ' . $status_data[0] . '</strong> <br>
+            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
                 $body_text = '';
                 $mailArray = array(
                     'to' => array(
@@ -185,7 +315,7 @@ class OrderHeaderController extends Controller {
                     }
                 }
             }
-            if (isset($_POST['uniq_order_size']) && isset($_POST['sizeqty'])  && isset($_POST['sizeqty_old'])) {
+            if (isset($_POST['uniq_order_size']) && isset($_POST['sizeqty']) && isset($_POST['sizeqty_old'])) {
                 $no_records = count($_POST['uniq_order_size']);
 
 
@@ -194,14 +324,12 @@ class OrderHeaderController extends Controller {
                     $size_detail = explode('>', $uniq_order_size);
                     $order_line_id = $size_detail[0];
                     $baseproduct_id = $size_detail[1];
-                    if($_POST['sizeqty'][$i]>0)
-                    {
-                         $size_quantity = $_POST['sizeqty'][$i];
-                            $sizeqty_old = $_POST['sizeqty_old'][$i];
-                    }
-                    else{
-                        $size_quantity =$_POST['sizeqty_old'][$i];
-                         $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    if ($_POST['sizeqty'][$i] > 0) {
+                        $size_quantity = $_POST['sizeqty'][$i];
+                        $sizeqty_old = $_POST['sizeqty_old'][$i];
+                    } else {
+                        $size_quantity = $_POST['sizeqty_old'][$i];
+                        $sizeqty_old = $_POST['sizeqty_old'][$i];
                     }
 //                    $size_quantity = $_POST['sizeqty'][$i];
 //                    $sizeqty_old = $_POST['sizeqty_old'][$i];
@@ -498,15 +626,86 @@ class OrderHeaderController extends Controller {
                     $command->execute();
                     $emai_id = $command->queryAll();
                     $email = $emai_id['0']['billing_email'];
+                    $connection = Yii::app()->secondaryDb;
+                    $sql = "SELECT order_number FROM order_header WHERE order_id ='" . $_POST['selectedIds'][$i] . "'";
+                    $command = $connection->createCommand($sql);
+                    $command->execute();
+                    $order_numberdata = $command->queryAll();
+                    $order_number = $order_numberdata['0']['order_number'];
+                  
                     //$email= "kuldeep@canbrand.in";
-                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] =='Paid' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
+                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] == 'Paid' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+                        $modelOrderline = new OrderLine;
+                        $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
                         $from_email = 'grootsadmin@groots.in';
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
-                                            <br/>: ' . $_POST['status1'] . '<br/>,';
+                        $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                                            <br/>: ' . $_POST['status1'] . '<br/>,';
+                        $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91 99999 99999</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (id :- ' . $order_number . ') status has been changed to <strong >  ' . $_POST['status1'] . '</strong> <br>
+           
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
                         $body_text = '';
 
                         $mailArray = array(
@@ -527,15 +726,79 @@ class OrderHeaderController extends Controller {
                     }
                     if ($_POST['status1'] == 'Delivered') {
                         $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
-
+                        $modelOrderline = new OrderLine;
+                        $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
                         $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
                         $csv_filename = "feeds/order_csv/" . $csv_name;
                         $from_email = 'grootsadmin@groots.in';
                         $from_name = 'Groots Dashboard Admin';
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['email_app_url'];
-                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
-                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+                        $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
+//                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+                        $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91 99999 99999</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (id :- ' . $order_number . ') status has been changed to <strong >  ' . $_POST['status1'] . '</strong> <br>
+           <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
                         $body_text = '';
                         $mailArray = array(
                             'to' => array(
@@ -696,4 +959,3 @@ class OrderHeaderController extends Controller {
     }
 
 }
-
