@@ -58,7 +58,7 @@
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'Pincode *'); ?>
-            <?php echo $form->textField($model, 'pincode'); ?>
+            <?php echo $form->textField($model, 'pincode', array('maxlength' => 6)); ?>
             <?php echo $form->error($model, 'pincode'); ?>
         </div>
         <div class="row">
