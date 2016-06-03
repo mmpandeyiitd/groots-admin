@@ -590,6 +590,8 @@ class BaseProductController extends Controller {
             if (isset($_POST['aiotree']['category_id'])) {
                 foreach ($_POST['aiotree']['category_id'] as $key => $value) {
                     $val = explode("-", $value);
+                    //echo '<pre>';print_r($val);die;
+                   
                     //   $sql = "INSERT INTO product_category_mapping(base_product_id, category_id) VALUES('$id', '$val[3]')";
                     $category_obj->createBaseproductMappings($baseProductId, $val[3]);
                 }
@@ -1723,6 +1725,7 @@ class BaseProductController extends Controller {
                 if (!$okay OR ! $continue) {
                     Yii::app()->user->setFlash('error', 'The file you are trying to upload not a .zip file. Please try again.');
                     $this->render('media');
+                    die;
                 }
 
                 $zip = new ZipArchive();
