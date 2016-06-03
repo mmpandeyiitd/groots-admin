@@ -296,14 +296,29 @@ if (isset($_GET['id'])) {
                                                 
                                                     <?php  
                                                     if($modelOrder->attributes['status']=="Pending"){?>
-                                                         <td style="width: 196px;display: block;">Size:</td>
+                                                         <td style="width: 196px;display: block;">Pack size:</td>
                                                  <?php   }else{?>
-                                                     <td style="width: 196px;">size:</td>
+                                                     <td style="width: 196px;">Pack size:</td>
                                                 <?php  }?>
                                                    
                                                     <td><?php
                                                         if ($sizes_array != Array()) {
-                                                            echo $sizes_array[$j].'  '. $orderline_detail[$i]['pack_unit'];;
+                                                            echo $sizes_array[$j];
+                                                            }
+                                                        ?></td>
+                                                </tr>
+                                                <tr>
+                                                
+                                                    <?php  
+                                                    if($modelOrder->attributes['status']=="Pending"){?>
+                                                         <td style="width: 196px;display: block;">Pack unit:</td>
+                                                 <?php   }else{?>
+                                                     <td style="width: 196px;">Pack unit:</td>
+                                                <?php  }?>
+                                                   
+                                                    <td><?php
+                                                        if ($sizes_array != Array()) {
+                                                            echo  $orderline_detail[$i]['pack_unit'];
                                                             
                                                         }
                                                         ?></td>

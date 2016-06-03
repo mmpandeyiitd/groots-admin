@@ -141,7 +141,7 @@ if (is_numeric($store_id)) {
         <?php } ?>
         <tr>
             <td colspan="4">
-                <h3 style="font-size:16px;">Shipping Address</h3>
+                <h3 style="font-size:16px;">Address:</h3>
                 <h5><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
                 <p><?php echo $modelOrder->attributes['shipping_address'] . ', ' . $modelOrder->attributes['shipping_city'] . ', ' . $modelOrder->attributes['shipping_state'] . ', ' . $modelOrder->attributes['shipping_pincode']; ?></p>
             </td>

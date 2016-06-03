@@ -825,7 +825,7 @@ class OrderHeaderController extends Controller {
 
                         //$active_record = $model->CancelOrderByID($order_ids);
                         if ($active_record) {
-                            Yii::app()->user->setFlash('success', 'Selected order id status updated Successfully.');
+                            Yii::app()->user->setFlash('success', 'Selected order id status updated successfully.');
                         } else {
                             Yii::app()->user->setFlash('premission_info', 'Selected order id status already ' . $status_order . '');
                         }
