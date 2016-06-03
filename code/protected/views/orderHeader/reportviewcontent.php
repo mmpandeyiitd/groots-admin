@@ -86,7 +86,7 @@ if (is_numeric($store_id)) {
         vertical-align: middle;
     }
     .logoInvoice {float:left; width:150px;}
-    
+
     .logoRight {float:right; width:300px;}
 </style>
 <div class="container">
@@ -97,53 +97,56 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td width="100%" style="width:100%" colspan="5">
-                   <table width="100%" border="0" style="width:100%">
-                       <tr>
+                <table width="100%" border="0" style="width:100%">
+                    <tr>
                         <td align="left">
-                            
+
                             <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
-                            
+
                         </td>
                         <td width="400">&nbsp;</td>
                         <td align="left">
                             <p style="logoRight">
-                    <strong>Registered Office:</strong> 
-                    <span style="word-wrap: break-word">
-                        <?php
-                        echo '<br> Address - ';
-                        echo wordwrap($brand_address,20, "<br/>\n");
-                        ?>
-                    </span>
-                    <?php echo '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
-                
+                                <strong>Registered Office:</strong> 
+                                <span style="word-wrap: break-word">
+                                    <?php
+                                    echo '<br> Address - ';
+                                    echo wordwrap($brand_address, 20, "<br/>\n");
+                                    ?>
+                                </span>
+                                <?php echo '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
+
                         </td>
                     </tr>
-                   </table>
-               </td>
+                </table>
+            </td>
         </tr>
-        <?php 
-             $modelOrderline = new OrderLine;
-                $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
-                //echo $website; 
-        if($website=='') {?>
-         <tr>
-            <td colspan="4"><b>Contact no:</b> <?php 
-            $modelOrderline = new OrderLine;
-                $mobile= $modelOrderline->mobile($modelOrder->attributes['user_id']);
-            echo $mobile; ?></td>
-         </tr>
+        <?php
+        $modelOrderline = new OrderLine;
+        $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
+        //echo $website; 
+        if ($website == '') {
+            ?>
+            <tr>
+                <td colspan="4"><b>Contact no:</b> <?php
+                    $modelOrderline = new OrderLine;
+                    $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
+                    echo '+91-' . $mobile;
+                    ?></td>
+            </tr>
         <?php } else { ?>
-        <tr>
-            <td colspan="2"><b>Contact no:</b> <?php 
-            $modelOrderline = new OrderLine;
-                $mobile= $modelOrderline->mobile($modelOrder->attributes['user_id']);
-            echo $mobile;
-            ?></td>
-            <td colspan="3"><b>Website:</b> <?php 
-             $modelOrderline = new OrderLine;
-                $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
-                echo $website; ?></td>
-        </tr>
+            <tr>
+                <td colspan="2"><b>Contact no:</b> <?php
+                    $modelOrderline = new OrderLine;
+                    $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
+                    echo '+91-' . $mobile;
+                    ?></td>
+                <td colspan="3"><b>Website:</b> <?php
+                    $modelOrderline = new OrderLine;
+                    $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
+                    echo $website;
+                    ?></td>
+            </tr>
         <?php } ?>
         <tr>
             <td colspan="4">
@@ -154,14 +157,14 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td colspan="3" style="vertical-align:middle;">
-                <p><strong>Sold By: </strong><?php echo  "Groots";?></p>
+                <p><strong>Sold By: </strong><?php echo " Groots"; ?></p>
             </td>
             <td colspan="1" >
-                <br>
-                   <strong>Invoice No : </strong>
-                
+
+                <strong>Invoice No : </strong>
+
                 <?php
-                echo $modelOrder->attributes['invoice_number']; 
+                echo $modelOrder->attributes['invoice_number'];
 //                $modelOrderline = new OrderLine;
 //                $productname = $modelOrderline->productname($modelOrder->attributes['user_id']);
 //
@@ -219,9 +222,9 @@ if (is_numeric($store_id)) {
             <tr>
                 <td style="text-align:center;">
                     <?php
-                        echo wordwrap($model[$key]->attributes['product_name'], 90, "<br/>\n");
-                        ?>
-                  
+                    echo wordwrap($model[$key]->attributes['product_name'], 90, "<br/>\n");
+                    ?>
+
                 </td>
                 <td style="text-align:center;"> <?php
                     echo $model[$key]->attributes['product_qty'] * $model[$key]->attributes['pack_size'];
@@ -235,7 +238,7 @@ if (is_numeric($store_id)) {
 
         <tr>
             <td colspan="3" style="text-align:right;"><strong>Total Amount </strong></td>
-            <td style="text-align:right;"><?php echo " Rs. "; ?> <?php echo $wsptotal; ?></td>
+            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $wsptotal; ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
@@ -254,7 +257,7 @@ if (is_numeric($store_id)) {
         <?php } ?>
         <tr>
             <td colspan="4">
-              
+
                 <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
                     Thank you for your business! We look forward to serving you again<br>
                     Contact number: +91-997-111-4020<br>
@@ -263,7 +266,7 @@ if (is_numeric($store_id)) {
             </td>
 
         </tr>
-        
+
 
     </table>
 </div>
