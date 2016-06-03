@@ -188,12 +188,14 @@ onclick='return confirm("Do you want to cancel");'/>
        ),
             'link' => array(
                 'header' => 'Action',
+                 'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
                 'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"bckstatus"=>$data->status))."\'"))',
             ),
                
             'link1' => array(
                 'header' => 'Action',
+                 'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
                 'htmlOptions' => array('class' => 'redview'),
                // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',

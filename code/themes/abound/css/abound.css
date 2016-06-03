@@ -810,6 +810,12 @@ input[type="file"] {
 input[type="file"]:focus {
     outline: none;
 }
+.sort-link {
+    //background: url(../img/sort2.png) no-repeat right;
+    display: block;
+    background-size: 12px;
+    padding: 0 10px;
+}
 .desc {
     background: url(../img/sortdown.png) no-repeat right;
     display: block;
