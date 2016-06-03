@@ -75,6 +75,7 @@ class BaseProduct extends CActiveRecord {
         return array(
             array('title,store_id,pack_size,pack_unit', 'required'),
             array('store_id,status', 'numerical', 'integerOnly' => true),
+            array('pack_unit', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in pack unit.'),
             //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
             //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
             //array('grade', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in fabric.'),
