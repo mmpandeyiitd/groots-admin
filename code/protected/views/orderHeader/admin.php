@@ -100,14 +100,6 @@ onclick='return confirm("Do you want to cancel");'/>
 
 
     <?php
-    $count = count($model);
-    if (!empty($model)) {
-        ?>
-        <div class="page-size-wrap">
-            <span>Show : </span><?= $pageSizeDropDown; ?>
-        </div>
-    <?php } ?>
-    <?php
     Yii::app()->clientScript->registerCss('initPageSizeCSS', '.page-size-wrap{text-align: left;}');
 
     $this->widget('zii.widgets.grid.CGridView', array(
