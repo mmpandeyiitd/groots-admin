@@ -126,6 +126,7 @@ class OrderLine extends CActiveRecord
         $criteria=new CDbCriteria;
 
         $criteria->compare('id',$this->id);
+        $criteria->order = 'product_name ASC';
         $criteria->compare('order_id',$this->order_id);
         $criteria->compare('subscribed_product_id',$this->subscribed_product_id);
         $criteria->compare('base_product_id',$this->base_product_id);
