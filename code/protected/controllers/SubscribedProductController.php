@@ -228,7 +228,13 @@ class SubscribedProductController extends Controller {
 
         if (isset($_POST['savedata'])) {
             if (isset($_POST['selectedIds'])) {
+                
+                
+                
+               
+//                 echo '<pre>';print_r($_POST);die;
                 $colnum = array();
+                // echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $no_of_Deletedataarray = count($_POST['Deletedataarray']);
 

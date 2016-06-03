@@ -585,8 +585,7 @@ class OrderHeaderController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-        // print_r($_POST);die;
-
+   
         $model = new OrderHeader('search');
 
         if (isset($_GET['pageSize'])) {
@@ -898,11 +897,12 @@ class OrderHeaderController extends Controller {
             }
             // Yii::app()->user->setFlash('premission_info', 'done.');
         }
-
-
-
-
-
+           if(isset($_REQUEST['status']) && Yii::app()->session['sttus_sess'] != "")
+           {
+              $model->setAttribute('status', $_REQUEST['status']); 
+              Yii::app()->session['sttus_sess'] = "";
+           }
+         
         $this->render('admin', array(
             'model' => $model,
         ));

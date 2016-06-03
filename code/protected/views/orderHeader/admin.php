@@ -77,6 +77,7 @@ onclick='return confirm("Do you want to cancel");'/>
     );
     ?>
     <input name="status" class="activebutton" value="submit" type="submit">
+     
     <div class="dropdownCustom">
 <!--        <select onchange="changestatus(this);">-->
         <select name="status1" value="changestatus">
@@ -167,7 +168,7 @@ onclick='return confirm("Do you want to cancel");'/>
                 'header' => 'Order status',
                 'name' => 'status',
                  'filter'=>array('pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancelled','Paid'=>'Paid'), 
-               
+               // 'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("status"=>$data->status))."\'"))',
                  ),
 //            array(
 //                'header' => 'Amount',

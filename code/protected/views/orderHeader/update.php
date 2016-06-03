@@ -71,7 +71,10 @@ if (isset($_GET['id'])) {
 
     <form name="update" method="post">         
         <div class="orderDetail">
-            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_number']; ?>) <a href="index.php?r=OrderHeader/admin" class="backBtn_new">Back</a></h1> 
+            <?php  
+                 Yii::app()->session['sttus_sess'] = "1";
+            ?>
+            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_number']; ?>) <a href="index.php?r=OrderHeader/admin&status=<?php echo $modelOrder->attributes['status']; ?>" class="backBtn_new">Back</a></h1> 
             <div class="prod_orderDetail_row"> 
 
                 <?php
@@ -246,7 +249,7 @@ if (isset($_GET['id'])) {
                                 <tbody>
                                     <tr>
                                         <td>Product Name:</td>
-                                        <td style="width: 77px;"><?php echo $orderline_detail[$i]['product_name'];
+                                        <td style="width: 77px;"> <?php echo $orderline_detail[$i]['product_name'];
                                 ; ?></td>
                                     </tr>
                                     <tr>
