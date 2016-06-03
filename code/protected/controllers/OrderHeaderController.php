@@ -98,6 +98,8 @@ class OrderHeaderController extends Controller {
         $modelOrder = $this->loadModel($id);
 
         $email = $modelOrder->attributes['billing_email'];
+       
+        
 
         if (isset($_POST['Update'])) {
             $totalchk = 0;
@@ -586,8 +588,9 @@ class OrderHeaderController extends Controller {
      */
     public function actionAdmin() {
    
+        
         $model = new OrderHeader('search');
-
+        
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);

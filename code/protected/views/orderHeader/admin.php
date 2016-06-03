@@ -197,7 +197,7 @@ onclick='return confirm("Do you want to cancel");'/>
             'link' => array(
                 'header' => 'Action',
                 'type' => 'raw',
-                'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
+                'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"bckstatus"=>$data->status))."\'"))',
             ),
                
             'link1' => array(

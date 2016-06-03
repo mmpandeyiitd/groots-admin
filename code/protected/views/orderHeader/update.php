@@ -72,9 +72,15 @@ if (isset($_GET['id'])) {
     <form name="update" method="post">         
         <div class="orderDetail">
             <?php  
+               if(isset($_REQUEST['bckstatus']))
+               {
                  Yii::app()->session['sttus_sess'] = "1";
+                 Yii::app()->session['bckstatus'] = $_REQUEST['bckstatus'];
+               }
+                 
+//                  Yii::app()->session['status'] = $modelOrder->attributes['status'];
             ?>
-            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_number']; ?>) <a href="index.php?r=OrderHeader/admin&status=<?php echo $modelOrder->attributes['status']; ?>" class="backBtn_new">Back</a></h1> 
+            <h1 class="titleNew">Order Info(Order number:<?php echo $modelOrder->attributes['order_number']; ?>) <a href="index.php?r=OrderHeader/admin&status=<?php echo Yii::app()->session['bckstatus']; ?>" class="backBtn_new">Back</a></h1> 
             <div class="prod_orderDetail_row"> 
 
                 <?php
