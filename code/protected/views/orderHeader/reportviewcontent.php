@@ -104,11 +104,17 @@ if (is_numeric($store_id)) {
                             <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
                             
                         </td>
-                        <td width="450">&nbsp;</td>
-                        <td align="right">
+                        <td width="400">&nbsp;</td>
+                        <td align="left">
                             <p style="logoRight">
                     <strong>Registered Office:</strong> 
-                    <?php echo '<br> Address - ' . $brand_address . '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
+                    <span style="word-wrap: break-word">
+                        <?php
+                        echo '<br> Address - ';
+                        echo wordwrap($brand_address,20, "<br/>\n");
+                        ?>
+                    </span>
+                    <?php echo '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
                 
                         </td>
                     </tr>
@@ -148,7 +154,7 @@ if (is_numeric($store_id)) {
         </tr>
         <tr>
             <td colspan="3" style="vertical-align:middle;">
-                <p><strong>Sold By: </strong><?php echo $brand_address . ', ' . $brand_city . ', ' . $brand_state . ', ' . $brand_pincode . ', ' . $brand_country; ?></p>
+                <p><strong>Sold By: </strong><?php echo  "Groots";?></p>
             </td>
             <td colspan="1" >
                 <br>
