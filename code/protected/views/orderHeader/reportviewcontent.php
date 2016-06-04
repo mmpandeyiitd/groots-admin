@@ -110,11 +110,11 @@ if (is_numeric($store_id)) {
                                 <strong>Registered Office:</strong> 
                                 <span style="word-wrap: break-word">
                                     <?php
-                                    echo '<br> Address - ';
+                                    echo '<br> Address:- ';
                                     echo wordwrap($brand_address, 20, "<br/>\n");
                                     ?>
                                 </span>
-                                <?php echo '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Pincode - ' . $brand_pincode . '<br> country - ' . $brand_country; ?></p>
+                                <?php echo '<br> City - ' . $brand_city . '<br> State - ' . $brand_state . '<br> Country - ' . $brand_country.'<br> Pincode - ' . $brand_pincode;?></p>
 
                         </td>
                     </tr>
