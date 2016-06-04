@@ -72,7 +72,7 @@ i		'db'=>array(
 			'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'jelly123#',
+			'password' => 'root',
 			'charset' => 'utf8',
 		),
 
@@ -81,7 +81,7 @@ i		'db'=>array(
             'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_order',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'jelly123#',
+            'password' => 'root',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),  
@@ -90,7 +90,7 @@ i		'db'=>array(
             'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots_log',
             'emulatePrepare' => true,
             'username' => 'root',
-            'password' => 'jelly123#',
+            'password' => 'root',
             'charset' => 'utf8',
             'class'=>'CDbConnection'
         ),

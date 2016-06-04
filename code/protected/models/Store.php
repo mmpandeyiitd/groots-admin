@@ -64,7 +64,7 @@ class Store extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('seller_name,mobile_numbers,email', 'required'),
+            array('business_address_city,business_address_state,business_address,business_address_country,business_address_pincode', 'required'),
            // array('store_name', 'match', 'pattern' => '/^[a-zA-Z\s]+$/','message' => 'Invalid characters in Brand Name.'),
            // array('seller_name', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Contact Person.'),
             array('business_address_city', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in City.'),
