@@ -938,7 +938,8 @@ class OrderHeaderController extends Controller {
 
     public function actionReport($id) {
         // echo "hello";die;
-        $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
+        $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
+            ),array('order'=>'product_name ASC'));
         $modelOrder = $this->loadModel($id);
         $this->renderPartial('reportview', array(
             'model' => $model,
@@ -948,7 +949,9 @@ class OrderHeaderController extends Controller {
 
     public function actionReportnew($id, $status, $email) {
         //  echo $status;die;
-        $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
+        //$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
+          $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
+            ),array('order'=>'product_name ASC'));
         $modelOrder = $this->loadModel($id);
         $store_model = new Store();
         $this->renderPartial('reportviewdata', array(
