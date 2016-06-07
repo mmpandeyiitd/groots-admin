@@ -100,11 +100,9 @@ if (is_numeric($store_id)) {
                 <table width="100%" border="0" style="width:100%">
                     <tr>
                         <td align="left">
-
-                            <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
-
-                        </td>
-                        <td width="400">&nbsp;</td>
+                             <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
+                         </td>
+                        <td width="340">&nbsp;</td>
                         <td align="left">
                             <p style="logoRight">
                                 <strong>Registered Office:</strong> 
