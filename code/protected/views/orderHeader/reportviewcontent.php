@@ -102,7 +102,7 @@ if (is_numeric($store_id)) {
                         <td align="left">
                              <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
                          </td>
-                        <td width="395">&nbsp;</td>
+                        <td width="390">&nbsp;</td>
                         <td align="left">
                             <p style="logoRight">
                                 <strong>Registered Office:</strong> 
