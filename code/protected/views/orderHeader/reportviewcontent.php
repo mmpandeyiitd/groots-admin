@@ -112,7 +112,7 @@ if (is_numeric($store_id)) {
                                     echo wordwrap($brand_address, 20, "<br/>\n");
                                     ?>
                                 </span>
-                                <?php echo '<br> City:- ' . $brand_city . '<br> State:- ' . $brand_state . '<br> Country:- ' . $brand_country.'<br> Pincode:- ' . $brand_pincode;?></p>
+                                <?php echo '<br> City:- ' . wordwrap($brand_city, 18, "<br/>\n")  . '<br> State:-  ' . wordwrap($brand_state, 18, "<br/>\n")  . '<br> Country:- ' . $brand_country.'<br> Pincode:- ' . $brand_pincode;?></p>
 
                         </td>
                     </tr>
