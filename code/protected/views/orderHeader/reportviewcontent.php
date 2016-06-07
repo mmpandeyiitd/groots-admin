@@ -102,7 +102,7 @@ if (is_numeric($store_id)) {
                         <td align="left">
                              <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
                          </td>
-                        <td width="340">&nbsp;</td>
+                        <td width="395">&nbsp;</td>
                         <td align="left">
                             <p style="logoRight">
                                 <strong>Registered Office:</strong> 
@@ -179,10 +179,10 @@ if (is_numeric($store_id)) {
         </tr>
 
         <tr>
-            <th style="text-align:center;"> Product </th>
-            <th style="text-align:center;"> Qty </th>
-            <th style="text-align:center;" colspan="1"> Unit price </th>
-            <th style="text-align:center;"> Total </th>
+            <th style="text-align:left;  padding: 5px;"> Product </th>
+            <th style="text-align:center; padding: 5px;"> Qty </th>
+            <th style="text-align:center; padding: 5px;" colspan="1"> Unit price </th>
+            <th style="text-align:center; padding: 5px;"> Total </th>
         </tr>
 
         <?php
@@ -218,9 +218,9 @@ if (is_numeric($store_id)) {
             ?>  
 
             <tr>
-                <td style="text-align:center;">
+                <td style="text-align:left;">
                     <?php
-                    echo wordwrap($model[$key]->attributes['product_name'], 90, "<br/>\n");
+                    echo wordwrap($model[$key]->attributes['product_name'], 20, "<br/>\n");
                     ?>
 
                 </td>
