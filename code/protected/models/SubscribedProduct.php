@@ -315,9 +315,34 @@ class SubscribedProduct extends CActiveRecord {
 
     public function data_sub($bp, $sid, $mrp, $new_data, $a, $qunt, $wsp, $Weight, $WeightUnit, $Length, $LengthUnit) {
         // echo "hello";die;
+        if($new_data==''){
+            $new_data='NULL';
+        }
+        if($a=='')
+        {
+           $a='NULL'; 
+        }
+        if($Weight=='')
+        {
+           $Weight=0; 
+        }
+        if($WeightUnit=='')
+        {
+           $WeightUnit='NULL';
+        }
+        if($Length=='')
+        {
+           $Length=0; 
+        }
+        if($LengthUnit=='')
+        {
+           $LengthUnit='NULL';
+        }
+        
+        
 
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . " ',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ,weight ='" . $Weight . " ',weight_unit =' " . $WeightUnit . " ',length ='" . $Length . " ',length_unit ='" . $LengthUnit . "  '";
+        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ,weight ='" . $Weight . "',weight_unit =' " . $WeightUnit . "',length ='" . $Length . "',length_unit ='" . $LengthUnit . "'";
         $command = $connection->createCommand($sql);
         $command->execute();
         $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
@@ -354,8 +379,32 @@ class SubscribedProduct extends CActiveRecord {
     }
 
     public function update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $status) {
+       
+        if($diameter==''){
+            $diameter='NULL';
+        }
+        if($grade=='')
+        {
+           $grade='NULL'; 
+        }
+        if($Weight=='')
+        {
+           $Weight=0; 
+        }
+        if($WeightUnit=='')
+        {
+           $WeightUnit='NULL';
+        }
+        if($Length=='')
+        {
+           $Length=0; 
+        }
+        if($LengthUnit=='')
+        {
+           $LengthUnit='NULL';
+        }
         $connection = Yii::app()->db;
-        $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "', weight='" . $Weight . "',weight_unit='" . $WeightUnit . " ',length='" . $Length . " ',status='" . $status . " ',length_unit='" . $LengthUnit . " ' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "' ";
+        $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "', weight='" . $Weight . "',weight_unit='" . $WeightUnit . "',length='" . $Length . " ',status='" . $status . "',length_unit='" . $LengthUnit . "' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "'";
         $command = $connection->createCommand($sql);
 
         $command->execute();

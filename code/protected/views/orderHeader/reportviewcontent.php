@@ -100,8 +100,8 @@ if (is_numeric($store_id)) {
                 <table width="100%" border="0" style="width:100%">
                     <tr>
                         <td align="left">
-                             <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
-                         </td>
+                            <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
+                        </td>
                         <td width="390">&nbsp;</td>
                         <td align="left">
                             <p style="logoRight">
@@ -112,7 +112,7 @@ if (is_numeric($store_id)) {
                                     echo wordwrap($brand_address, 20, "<br/>\n");
                                     ?>
                                 </span>
-                                <?php echo '<br> City:- ' . wordwrap($brand_city, 18, "<br/>\n")  . '<br> State:-  ' . wordwrap($brand_state, 18, "<br/>\n")  . '<br> Country:- ' . $brand_country.'<br> Pincode:- ' . $brand_pincode;?></p>
+                                <?php echo '<br> City:- ' . wordwrap($brand_city, 18, "<br/>\n") . '<br> State:-  ' . wordwrap($brand_state, 18, "<br/>\n") . '<br> Country:- ' . $brand_country . '<br> Pincode:- ' . $brand_pincode; ?></p>
 
                         </td>
                     </tr>
@@ -180,7 +180,7 @@ if (is_numeric($store_id)) {
 
         <tr>
             <th style="text-align:left;  padding: 5px;"> Product </th>
-            <th style="text-align:center; padding: 5px;"> Qty </th>
+            <th style="text-align:center; padding: 5px;"> Total Qty </th>
             <th style="text-align:center; padding: 5px;" colspan="1"> Unit price </th>
             <th style="text-align:center; padding: 5px;"> Total </th>
         </tr>
@@ -225,8 +225,10 @@ if (is_numeric($store_id)) {
 
                 </td>
                 <td style="text-align:center;"> <?php
-                    echo $model[$key]->attributes['product_qty'] * $model[$key]->attributes['pack_size'];
-                    echo ' ';
+                    echo $model[$key]->attributes['product_qty'];
+                    echo ' x ';
+                    echo $model[$key]->attributes['pack_size'];
+
                     echo $model[$key]->attributes['pack_unit'];
                     ?></td>
                 <td style="text-align:center;"><?php echo " Rs. "; ?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
@@ -258,8 +260,10 @@ if (is_numeric($store_id)) {
 
                 <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
                     Thank you for your business! We look forward to serving you again<br>
-                    Contact number: +91-997-111-4020<br>
-                    Contact email id: sales@gogroots.com
+                    Contact email id: sales@gogroots.com <br>
+                    Ordering Support: +91-11-3958-9893<br>
+                    Customer Support: +91-11-3958-8984<br>
+                    Sales Support: +91-11-3958-9895<br>
                 </p>
             </td>
 

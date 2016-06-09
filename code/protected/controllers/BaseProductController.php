@@ -800,7 +800,15 @@ class BaseProductController extends Controller {
 
 
                $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
-                #...................end...................#
+           
+//               $solrBackLog = new SolrBackLog();
+//                //$is_deleted =  ($model->status == 1) ? 0 : 1;
+//                $is_deleted = '0';
+//                $solrBackLog->insertByBaseProductId($model->base_product_id, $is_deleted);
+
+
+
+#...................end...................#
                // echo count($images);die;
                 if(count($imageinfo)!=0){
                    
@@ -1387,7 +1395,7 @@ class BaseProductController extends Controller {
                                         Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
                                     }
                                     if ($categories['0'] == '') {
-                                        Yii::app()->user->setFlash('error', 'Title,Category Id,Pack Size ,Pack Unit,Store Price,Store Offer Price can not be blank.');
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
                                     }
                                 }
 

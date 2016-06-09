@@ -159,7 +159,7 @@ onclick='return confirm("Do you want to cancel");'/>
                 array(
                 'header' => 'Order status',
                 'name' => 'status',
-                 'filter'=>array(''=>'All','pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancel','Paid'=>'Paid'), 
+                 'filter'=>array(''=>'All','pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancelled','Paid'=>'Paid'), 
                // 'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("status"=>$data->status))."\'"))',
                  ),
 //            array(
