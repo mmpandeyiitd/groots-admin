@@ -118,7 +118,7 @@ class OrderHeaderController extends Controller {
                 //echo $reportdata;die;
             }
 
-            if ($status_data[0] == 'Confirmed' || $status_data[0] == 'Cancelled' || $status_data[0] == 'Paid' || $status_data[0] == 'Out for Delivery') {
+            if ($status_data[0] == 'Confirmed') {
                 //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
                 $modelOrderline = new OrderLine;
                 $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
@@ -160,7 +160,8 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (id :- ' . $modelOrder->attributes['order_number'] . ') status has been changed to <strong >  ' . $status_data[0] . '</strong> <br>
+            Your order (' . $modelOrder->attributes['order_number'] . ') is now   ' . $status_data[0] . '. We will keep you posted for further updates.<br>
+                Thank you for choosing Groots!
            
           </span>
           <br>
@@ -209,7 +210,289 @@ class OrderHeaderController extends Controller {
                 $mailsend = new OrderLine();
                 $resp = $mailsend->sgSendMail($mailArray);
             }
-            if ($status_data[0] == 'Delivered') {
+            if ($status_data[0] == 'Out for Delivery') {
+                //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $modelOrderline = new OrderLine;
+                $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
+                $from_email = 'grootsadmin@groots.in';
+                $from_name = 'Groots Dashboard Admin';
+                $subject = 'Groots Buyer Account';
+                $urldata = Yii::app()->params['target_app_url'];
+                $emailurldata = Yii::app()->params['email_app_url1'];
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                                            <br/>' . $status_data[0] . ' <br/>';
+                $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (' . $modelOrder->attributes['order_number'] . ') is now   ' . $status_data[0] . '. Our delivery champ will call you in case of any requirement.<br>
+                Thank you for choosing Groots!
+           
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
+                $body_text = '';
+
+                $mailArray = array(
+                    'to' => array(
+                        '0' => array(
+                            'email' => "$email",
+                        )
+                    ),
+                    'from' => $from_email,
+                    'fromname' => $from_name,
+                    'subject' => $subject,
+                    'html' => $body_html,
+                    'text' => $body_text,
+                    'replyto' => $from_email,
+                );
+                $mailsend = new OrderLine();
+                $resp = $mailsend->sgSendMail($mailArray);
+            }
+            
+             if ($status_data[0] == 'Cancelled') {
+                //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $modelOrderline = new OrderLine;
+                $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
+                $from_email = 'grootsadmin@groots.in';
+                $from_name = 'Groots Dashboard Admin';
+                $subject = 'Groots Buyer Account';
+                $urldata = Yii::app()->params['target_app_url'];
+                $emailurldata = Yii::app()->params['email_app_url1'];
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                                            <br/>' . $status_data[0] . ' <br/>';
+                $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Sorry, we will not be able to service your order on Groots (' . $modelOrder->attributes['order_number'] . '). To know further details, please email on help@gogroots.in<br>
+                Thank you for choosing Groots!
+           
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
+                $body_text = '';
+
+                $mailArray = array(
+                    'to' => array(
+                        '0' => array(
+                            'email' => "$email",
+                        )
+                    ),
+                    'from' => $from_email,
+                    'fromname' => $from_name,
+                    'subject' => $subject,
+                    'html' => $body_html,
+                    'text' => $body_text,
+                    'replyto' => $from_email,
+                );
+                $mailsend = new OrderLine();
+                $resp = $mailsend->sgSendMail($mailArray);
+            }
+            
+            
+            
+             if ($status_data[0] == 'Paid') {
+                //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                $modelOrderline = new OrderLine;
+                $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
+                $from_email = 'grootsadmin@groots.in';
+                $from_name = 'Groots Dashboard Admin';
+                $subject = 'Groots Buyer Account';
+                $urldata = Yii::app()->params['target_app_url'];
+                $emailurldata = Yii::app()->params['email_app_url1'];
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                                            <br/>' . $status_data[0] . ' <br/>';
+                $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+           We have received the payment for your order (' . $modelOrder->attributes['order_number'] . ').<br>
+               Our team will reach out to you for any further update.<br>
+                Thank you for choosing Groots!
+           
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:200px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
+                $body_text = '';
+
+                $mailArray = array(
+                    'to' => array(
+                        '0' => array(
+                            'email' => "$email",
+                        )
+                    ),
+                    'from' => $from_email,
+                    'fromname' => $from_name,
+                    'subject' => $subject,
+                    'html' => $body_html,
+                    'text' => $body_text,
+                    'replyto' => $from_email,
+                );
+                $mailsend = new OrderLine();
+                $resp = $mailsend->sgSendMail($mailArray);
+            }
+            
+             if ($status_data[0] == 'Delivered') {
                 $modelOrderline = new OrderLine;
                 $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
                 $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
@@ -253,8 +536,9 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (id :- ' . $modelOrder->attributes['order_number'] . ') status has been changed to <strong >  ' . $status_data[0] . '</strong> <br>
-            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
+            Your order (' . $modelOrder->attributes['order_number'] . ') is has been ' . $status_data[0] . '. If you have a feedback, please email your concern to help@gogroots.in/ <br>
+                Thank you for choosing Groots! <br>
+            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> Click here to download the invoice </a><br/>
           </span>
           <br>
 
@@ -636,7 +920,7 @@ class OrderHeaderController extends Controller {
                     $order_number = $order_numberdata['0']['order_number'];
                   
                     //$email= "kuldeep@canbrand.in";
-                    if ($_POST['status1'] == 'Confirmed' || $_POST['status1'] == 'Paid' || $_POST['status1'] == 'Cancelled' || $_POST['status1'] == 'Out for Delivery') {
+                    if ($_POST['status1'] == 'Confirmed') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
                         $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
@@ -678,8 +962,191 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (id :- ' . $order_number . ') status has been changed to <strong >  ' . $_POST['status1'] . '</strong> <br>
-           
+            Your order (' . $order_number . ') has been ' . $_POST['status1'] . '. We will keep you posted for further updates.  <br>
+                Thank you for choosing Groots!
+            </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+                        $body_text = '';
+
+                        $mailArray = array(
+                            'to' => array(
+                                '0' => array(
+                                    'email' => "$email",
+                                )
+                            ),
+                            'from' => $from_email,
+                            'fromname' => $from_name,
+                            'subject' => $subject,
+                            'html' => $body_html,
+                            'text' => $body_text,
+                            'replyto' => $from_email,
+                        );
+                        $mailsend = new OrderLine();
+                        $resp = $mailsend->sgSendMail($mailArray);
+                    }
+                    
+                    if ($_POST['status1'] == 'Paid') {
+                        //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+                        $modelOrderline = new OrderLine;
+                        $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
+                        $from_email = 'grootsadmin@groots.in';
+                        $from_name = 'Groots Dashboard Admin';
+                        $subject = 'Groots Buyer Account';
+                        $urldata = Yii::app()->params['target_app_url'];
+                        $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                                            <br/>: ' . $_POST['status1'] . '<br/>,';
+                        $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            We have received the payment for your order (' . $order_number . ') .<br>Our team will reach out to you for any further update.<br>
+                Thank you for choosing Groots!
+            </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+                        $body_text = '';
+
+                        $mailArray = array(
+                            'to' => array(
+                                '0' => array(
+                                    'email' => "$email",
+                                )
+                            ),
+                            'from' => $from_email,
+                            'fromname' => $from_name,
+                            'subject' => $subject,
+                            'html' => $body_html,
+                            'text' => $body_text,
+                            'replyto' => $from_email,
+                        );
+                        $mailsend = new OrderLine();
+                        $resp = $mailsend->sgSendMail($mailArray);
+                    }
+                    
+                    
+                    if ($_POST['status1'] == 'Cancelled') {
+                        //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+                        $modelOrderline = new OrderLine;
+                        $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
+                        $from_email = 'grootsadmin@groots.in';
+                        $from_name = 'Groots Dashboard Admin';
+                        $subject = 'Groots Buyer Account';
+                        $urldata = Yii::app()->params['target_app_url'];
+                        $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                                            <br/>: ' . $_POST['status1'] . '<br/>,';
+                        $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Sorry, we will not be able to service your order on Groots (' . $order_number . '). To know further details, please email on help@gogroots.in <br>
+           Thank you for choosing Groots!
           </span>
           <br>
 
@@ -726,7 +1193,98 @@ class OrderHeaderController extends Controller {
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-                    if ($_POST['status1'] == 'Delivered') {
+                    if ($_POST['status1'] == 'Out for Delivery') {
+                        //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+                        $modelOrderline = new OrderLine;
+                        $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
+                        $from_email = 'grootsadmin@groots.in';
+                        $from_name = 'Groots Dashboard Admin';
+                        $subject = 'Groots Buyer Account';
+                        $urldata = Yii::app()->params['target_app_url'];
+                        $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                                            <br/>: ' . $_POST['status1'] . '<br/>,';
+                        $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+           Your order  (' . $order_number . ')  is now ' . $_POST['status1'] . '. Our delivery champ will call you in case of any requirement. <br>
+           Thank you for choosing Groots!
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+                        $body_text = '';
+
+                        $mailArray = array(
+                            'to' => array(
+                                '0' => array(
+                                    'email' => "$email",
+                                )
+                            ),
+                            'from' => $from_email,
+                            'fromname' => $from_name,
+                            'subject' => $subject,
+                            'html' => $body_html,
+                            'text' => $body_text,
+                            'replyto' => $from_email,
+                        );
+                        $mailsend = new OrderLine();
+                        $resp = $mailsend->sgSendMail($mailArray);
+                    }
+                    
+                     if ($_POST['status1'] == 'Delivered') {
                         $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
                         $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
@@ -770,7 +1328,8 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (id :- ' . $order_number . ') status has been changed to <strong >  ' . $_POST['status1'] . '</strong> <br>
+            Your order (' . $order_number . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in/ <br>
+                Thank you for choosing Groots!<br>
            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
           </span>
           <br>
