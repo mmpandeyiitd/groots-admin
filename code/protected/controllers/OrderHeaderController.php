@@ -176,13 +176,13 @@ class OrderHeaderController extends Controller {
     <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
@@ -268,13 +268,13 @@ class OrderHeaderController extends Controller {
     <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
@@ -361,13 +361,13 @@ class OrderHeaderController extends Controller {
     <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
@@ -457,13 +457,13 @@ class OrderHeaderController extends Controller {
     <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
             <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
