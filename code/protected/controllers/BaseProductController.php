@@ -195,7 +195,7 @@ class BaseProductController extends Controller {
             //echo '<pre>'; print_r($_POST);die;
             if ($_POST['diameter'] == '') {
                 // echo "hello";die;
-                $diameter = '0';
+                $diameter = '';
             }
 
             /* if (!is_numeric($diameter)) {
