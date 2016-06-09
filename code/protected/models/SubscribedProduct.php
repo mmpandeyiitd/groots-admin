@@ -342,7 +342,7 @@ class SubscribedProduct extends CActiveRecord {
         
 
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ,weight ='" . $Weight . "',weight_unit =' " . $WeightUnit . "',length ='" . $Length . "',length_unit ='" . $LengthUnit . "'";
+        $sql = "insert into subscribed_product set store_offer_price='" . $wsp . "',store_price='" . $mrp . "', base_product_id='" . $bp . "' ,grade ='" . $a . "',diameter ='" . $new_data . "',quantity ='" . $qunt . "', store_id='" . $sid . "' ,weight ='" . $Weight . "',weight_unit ='" . $WeightUnit . "',length ='" . $Length . "',length_unit ='" . $LengthUnit . "'";
         $command = $connection->createCommand($sql);
         $command->execute();
         $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted
