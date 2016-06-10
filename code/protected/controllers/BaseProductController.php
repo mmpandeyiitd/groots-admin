@@ -681,9 +681,14 @@ class BaseProductController extends Controller {
             }
             if (isset($_POST['WeightUnit'])) {
                 $WeightUnit = $_POST['WeightUnit'];
+            }else{
+                $Weight=0;
             }
             if (isset($_POST['Length'])) {
                 $Length = $_POST['Length'];
+            }
+            else{
+                $Length=0;
             }
             if (isset($_POST['LengthUnit'])) {
                 $LengthUnit = $_POST['LengthUnit'];
