@@ -154,7 +154,7 @@ class RetailerController extends Controller {
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91 99999 99999</span>
+        <span style="float:right;">+91-11-3958-8984</span>
         <img src="'.$emailurldata .'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -186,13 +186,13 @@ class RetailerController extends Controller {
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
           <li style="display:block; width:170px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
           <li style="display:block; width:170px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
           <li style="display:block; width:170px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
       </td> 
