@@ -75,11 +75,8 @@ class BaseProduct extends CActiveRecord {
         return array(
             array('title,store_id,pack_size,pack_unit', 'required'),
             array('store_id,status', 'numerical', 'integerOnly' => true),
+            array('title', 'match', 'pattern' => '/^[a-zA-Z0-9\s]+$/', 'message' => 'Invalid characters in Product title.'),
             array('pack_unit', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in pack unit.'),
-            //  array('season', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in season.'),
-            //  array('title', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in Style Name.'),
-            //array('grade', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in fabric.'),
-            // array('style_no', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in style no.'),
             array('pack_size', 'numerical', 'integerOnly' => true, 'min' => 1,),
             array('title,pack_unit', 'length', 'max' => 255),
             array('color', 'length', 'max' => 15),
@@ -87,11 +84,11 @@ class BaseProduct extends CActiveRecord {
             array('description', 'length', 'max' => 2000),
             //array('specofic_keys', 'length', 'max' => 1500),
             //array('order_placement_cut_off_date,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
-           // array('admin_type', 'length', 'max' => 250),
+            // array('admin_type', 'length', 'max' => 250),
             array('created_date, modified_date', 'safe'),
             // The following rule is used by search().
 // @todo Please remove those attributes that should not be searched.
-         //   array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
+            //   array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('store_price,store_offer_price', 'safe', 'on' => 'search'),
             array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
@@ -217,7 +214,7 @@ class BaseProduct extends CActiveRecord {
         $criteria->compare('description', $this->description, true);
         $criteria->compare('color', $this->color, true);
         //$criteria->compare('size', $this->size, true);
-       // $criteria->compare('image', $this->image, true);
+        // $criteria->compare('image', $this->image, true);
         $criteria->compare('store_id', $this->store_id, true);
         $criteria->compare('is_configurable', $this->is_configurable);
         $criteria->compare('configurable_with', $this->configurable_with, true);
@@ -584,20 +581,20 @@ class BaseProduct extends CActiveRecord {
 
     public function getproductCount($start_date, $end_date) {
         $issuperadmin = Yii::app()->session['is_super_admin'];
-       /* if ($issuperadmin) {
-            $store_id = Yii::app()->session['brand_admin_id'];
-        } else {
-            $store_id = Yii::app()->session['brand_id'];
-        }*/
-         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
+        /* if ($issuperadmin) {
+          $store_id = Yii::app()->session['brand_admin_id'];
+          } else {
+          $store_id = Yii::app()->session['brand_id'];
+          } */
+        $cDate = date("Y-m-d H:i:s", strtotime($start_date));
         $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
-        $store_id=1;
+        $store_id = 1;
         $row = 0;
         if (is_numeric($store_id)) {
             $sql = "select count(base_product_id) from subscribed_product where store_id=" . $store_id;
-        } 
+        }
         if (!empty($start_date) && !empty($end_date)) {
-        $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
+            $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
         }
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
@@ -819,10 +816,10 @@ class BaseProduct extends CActiveRecord {
         return $title;
     }
 
-    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price,$qunt) {
+    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $qunt) {
 
-       $sql ='update subscribed_product set store_price="'.$store_price.'",store_offer_price="'.$store_offer_price.'",quantity="'.$qunt.'" where base_product_id="'. $baseid.'" AND store_id="'.$s_id.'"';
-       $connection = Yii::app()->db;
+        $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
+        $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
 //        if (!$command->execute()) {
@@ -832,10 +829,11 @@ class BaseProduct extends CActiveRecord {
 //            $command->execute();
 //          }
     }
-     public static function Update_product_title($title,$bp) {
 
-       $sql ='update base_product set title="'.$title.'" where base_product_id="'. $bp.'"';
-       $connection = Yii::app()->db;
+    public static function Update_product_title($title, $bp) {
+
+        $sql = 'update base_product set title="' . $title . '" where base_product_id="' . $bp . '"';
+        $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
 //        if (!$command->execute()) {
@@ -845,7 +843,6 @@ class BaseProduct extends CActiveRecord {
 //            $command->execute();
 //          }
     }
-   
 
     public static function Update_sizechart($base_product_id, $mage, $image_url) {
 
@@ -910,48 +907,48 @@ class BaseProduct extends CActiveRecord {
             ob_flush();
         }
     }
-     public static function downloadproductCSV() {
-       
-            //$sqlchksubsid = "select `bp`.`base_product_id` AS `Base product_id`,`bp`.`title` AS `title`,`bp`.`description` AS `Description`,`bp`.`color` AS `Color`,`bp`.`size` AS `Size`,`bp`.`configurable_with` AS `Configurable_With`,`bp`.`minimum_order_quantity` AS `Available_Quantity`,`bp`.`order_placement_cut_off_date` AS `Order_Placement_Cut_Off_Date`,`bp`.`delevry_date` AS `Delevry_Date`,`bp`.`tags` AS `Tags`,`bp`.`specofic_keys` AS `Attributes`,(case `bp`.`status` when 1 then 'Enable' else 'Disable' end) AS `status`,(case `bp`.`gender` when 1 then 'Men' when 2 then 'Women' else 'unisex' end) AS `gender`,`sp`.`store_price` AS `MRP`,`sp`.`store_offer_price` AS `WSP`,`bp`.`available_quantity` AS `available_quantity`,`s`.`store_name` AS `store_name`,group_concat(distinct `sf`.`store_front_name` separator ',') AS `linesheet` from ((((`base_product` `bp` left join `linesheet_products_mapping` `lp` on((`bp`.`base_product_id` = `lp`.`base_product_id`))) left join `store_front` `sf` on((`sf`.`store_front_id` = `lp`.`store_front_id`))) left join `store` `s` on((`s`.`store_id` = `bp`.`store_id`))) left join `subscribed_product` `sp` on((`bp`.`base_product_id` = `sp`.`base_product_id`))) where `bp`.base_product_id in($base_product_ids) group by `bp`.`base_product_id`";
-            $sqlchksubsid = "SELECT bp.base_product_id AS 'Subscribed Product ID',title AS Name,sp.store_price AS  'Store Price',sp.store_offer_price AS 'Price(Store Offer Price)' FROM `base_product` `bp` LEFT JOIN  `subscribed_product` `sp` ON sp.base_product_id = bp.base_product_id ";
-            $connection = Yii::app()->db;
-            $command = $connection->createCommand($sqlchksubsid);
-            $command->execute();
-            $assocDataArray = $command->queryAll();
-            $fileName = "Bulk_Upload_product_Update.csv";
-            ob_clean();
-            header('Pragma: public');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-            header('Cache-Control: private', false);
-            header('Content-Type: text/csv');
-            header('Content-Disposition: attachment;filename=' . $fileName);
-            if (isset($assocDataArray['0'])) {
-                $fp = fopen('php://output', 'w');
-                $columnstring = implode(',', array_keys($assocDataArray['0']));
-                $updatecolumn = str_replace('_', ' ', $columnstring);
-                $updatecolumn = explode(',', $updatecolumn);
-                fputcsv($fp, $updatecolumn);
-                foreach ($assocDataArray AS $values) {
-                    if (!empty($values['Attributes'])) {
 
-                        $json_array = json_decode($values['Attributes'], true);
+    public static function downloadproductCSV() {
 
-                        if (count($json_array) > 0) {
-                            $json_var = array();
-                            foreach ($json_array['specific_key'] as $key => $value) {
-                                $json_var[] = trim($key) . ATTRIBUTE_SEPARATOR . trim($value);
-                            }
+        //$sqlchksubsid = "select `bp`.`base_product_id` AS `Base product_id`,`bp`.`title` AS `title`,`bp`.`description` AS `Description`,`bp`.`color` AS `Color`,`bp`.`size` AS `Size`,`bp`.`configurable_with` AS `Configurable_With`,`bp`.`minimum_order_quantity` AS `Available_Quantity`,`bp`.`order_placement_cut_off_date` AS `Order_Placement_Cut_Off_Date`,`bp`.`delevry_date` AS `Delevry_Date`,`bp`.`tags` AS `Tags`,`bp`.`specofic_keys` AS `Attributes`,(case `bp`.`status` when 1 then 'Enable' else 'Disable' end) AS `status`,(case `bp`.`gender` when 1 then 'Men' when 2 then 'Women' else 'unisex' end) AS `gender`,`sp`.`store_price` AS `MRP`,`sp`.`store_offer_price` AS `WSP`,`bp`.`available_quantity` AS `available_quantity`,`s`.`store_name` AS `store_name`,group_concat(distinct `sf`.`store_front_name` separator ',') AS `linesheet` from ((((`base_product` `bp` left join `linesheet_products_mapping` `lp` on((`bp`.`base_product_id` = `lp`.`base_product_id`))) left join `store_front` `sf` on((`sf`.`store_front_id` = `lp`.`store_front_id`))) left join `store` `s` on((`s`.`store_id` = `bp`.`store_id`))) left join `subscribed_product` `sp` on((`bp`.`base_product_id` = `sp`.`base_product_id`))) where `bp`.base_product_id in($base_product_ids) group by `bp`.`base_product_id`";
+        $sqlchksubsid = "SELECT bp.base_product_id AS 'Subscribed Product ID',title AS Name,sp.store_price AS  'Store Price',sp.store_offer_price AS 'Price(Store Offer Price)' FROM `base_product` `bp` LEFT JOIN  `subscribed_product` `sp` ON sp.base_product_id = bp.base_product_id ";
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sqlchksubsid);
+        $command->execute();
+        $assocDataArray = $command->queryAll();
+        $fileName = "Bulk_Upload_product_Update.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        if (isset($assocDataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($assocDataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($assocDataArray AS $values) {
+                if (!empty($values['Attributes'])) {
 
-                            $values['Attributes'] = implode(NEXT_ATTRIBUTE_SEPARATOR, $json_var);
+                    $json_array = json_decode($values['Attributes'], true);
+
+                    if (count($json_array) > 0) {
+                        $json_var = array();
+                        foreach ($json_array['specific_key'] as $key => $value) {
+                            $json_var[] = trim($key) . ATTRIBUTE_SEPARATOR . trim($value);
                         }
+
+                        $values['Attributes'] = implode(NEXT_ATTRIBUTE_SEPARATOR, $json_var);
                     }
-                    fputcsv($fp, $values);
                 }
-                fclose($fp);
+                fputcsv($fp, $values);
             }
-            ob_flush();
-        
+            fclose($fp);
+        }
+        ob_flush();
     }
 
 }
