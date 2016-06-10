@@ -353,7 +353,7 @@ class SubscribedProduct extends CActiveRecord {
 
     public function data_sub_csv($bp, $sid, $mrp, $sprice, $grade, $diameter, $quantity, $weight, $weight_unit, $length, $length_unit) {
         //echo $diameter;die;
-        if($diameter=='')
+       /* if($diameter=='')
         {
             $diameter=NULL;
             
@@ -367,9 +367,9 @@ class SubscribedProduct extends CActiveRecord {
         {
             $length_unit=NULL;
             
-        }
+        }*/
         $connection = Yii::app()->db;
-        $sql = "insert into subscribed_product set store_offer_price='" . $sprice . " ' ,store_price= " . $mrp . ", base_product_id= " . $bp . ",grade ='" . $grade . " ',diameter ='" . $diameter . "',quantity =$quantity, store_id=$sid,weight='" . $weight . " ',weight_unit='" . $weight_unit . "',length='" . $length . " ',length_unit='" . $length_unit . "'";
+        $sql = "insert into subscribed_product set store_offer_price='" . $sprice . "' ,store_price= " . $mrp . ", base_product_id= " . $bp . ",grade ='" . $grade . "',diameter ='" . $diameter . "',quantity =$quantity, store_id=$sid,weight='" . $weight . "',weight_unit='" . $weight_unit . "',length='" . $length . "',length_unit='" . $length_unit . "'";
         $command = $connection->createCommand($sql);
         $command->execute();
         $sql = "INSERT INTO solr_back_log(subscribed_product_id,is_deleted)SELECT subscribed_product_id, is_deleted

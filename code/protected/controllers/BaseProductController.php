@@ -696,7 +696,7 @@ class BaseProductController extends Controller {
                 $LengthUnit = $_POST['LengthUnit'];
             }
 
-            if (!is_numeric($Length)) {
+            /*if (!is_numeric($Length)) {
                 Yii::app()->user->setFlash('WSP', 'Indicated length numeric only');
                 $this->render('update', array(
                     'a' => $a['0']['grade'],
@@ -733,7 +733,7 @@ class BaseProductController extends Controller {
                     'specific_keyfield' => $specific_keyfield,
                 ));
                 exit();
-            }
+            }*/
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
@@ -1956,7 +1956,7 @@ class BaseProductController extends Controller {
                 }
                 $media_url_dir = $baseDir;
                 $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $image);
-                //echo $image;die;
+                
                 $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
                 @mkdir($media_url_dir, 0777, true);
                 $success = file_put_contents($media_main, $content_medai_img);
