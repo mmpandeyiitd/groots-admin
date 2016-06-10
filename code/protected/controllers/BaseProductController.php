@@ -1356,26 +1356,26 @@ class BaseProductController extends Controller {
                                 if (isset($cols['categoryId'])) {
                                     $cat_flag = 0;
                                     $pdf = Array();
-                                     $categories = trim($data[$cols['categoryId']]);
-                                    
-                                 //   $categories = explode(';', trim($data[$cols['categoryId']], ';'));
+                                    $categories = trim($data[$cols['categoryId']]);
+
+                                    //   $categories = explode(';', trim($data[$cols['categoryId']], ';'));
                                     // echo '<pre>';print_r($categories['0']);die;
                                     if (is_numeric($categories)) {
-                                         
-                                            $cat_flag = 0;
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT category_id FROM category WHERE category_id in ($categories)";
-                                            $command = $connection->createCommand($sql);
-                                            $pdf = $command->queryAll();
-                                     
 
-                                       /* foreach ($categories as $category) {
-                                            $cat_flag = 0;
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
-                                            $command = $connection->createCommand($sql);
-                                            $pdf = $command->queryAll();
-                                        }*/
+                                        $cat_flag = 0;
+                                        $connection = Yii::app()->db;
+                                        $sql = "SELECT category_id FROM category WHERE category_id in ($categories)";
+                                        $command = $connection->createCommand($sql);
+                                        $pdf = $command->queryAll();
+
+
+                                        /* foreach ($categories as $category) {
+                                          $cat_flag = 0;
+                                          $connection = Yii::app()->db;
+                                          $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
+                                          $command = $connection->createCommand($sql);
+                                          $pdf = $command->queryAll();
+                                          } */
 
                                         if (!is_numeric($categories) || $pdf == Array()) {
                                             $cat_flag++;
@@ -1384,7 +1384,7 @@ class BaseProductController extends Controller {
                                     //  }
                                     if ($cat_flag == 1) {
                                         $cateogryarray[] = $categories;
-                                        Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
                                     }
                                     if ($categories == '') {
                                         Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
@@ -1409,8 +1409,8 @@ class BaseProductController extends Controller {
                                 }
                                 if ($model1->action == 'create') {
                                     if ($pdf != Array()) {
-                                        if (is_numeric($mrp)) {
-                                            if (is_numeric($wsp)) {
+                                        if (is_numeric($mrp) && $mrp>0) {
+                                            if (is_numeric($wsp)&& $wsp>0) {
                                                 if ($mrp >= $wsp) {
                                                     if (($pdf != Array() && is_numeric($wsp)) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp >= $wsp)) {
                                                         // echo $row['pack_unit'];die;
@@ -1466,23 +1466,26 @@ class BaseProductController extends Controller {
                                                                 $model_subscribe->length = $Length;
                                                                 $model_subscribe->length_unit = $Length_Unit;
                                                                 $category_obj = new Category();
-                                                               
-                                                                 $base_product_id = $model1->base_product_id;
 
-                                                                    $category_obj->createBaseproductMappings1($base_product_id, $categories);
-                                                                
+                                                                $base_product_id = $model1->base_product_id;
 
-                                                               /* foreach ($categories as $category) {
-                                                                    $base_product_id = $model1->base_product_id;
+                                                                $category_obj->createBaseproductMappings1($base_product_id, $categories);
 
-                                                                    $category_obj->createBaseproductMappings1($base_product_id, $category);
-                                                                }*/
+
+                                                                /* foreach ($categories as $category) {
+                                                                  $base_product_id = $model1->base_product_id;
+
+                                                                  $category_obj->createBaseproductMappings1($base_product_id, $category);
+                                                                  } */
                                                                 $model_subscribe->save();
                                                                 $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
                                                             }#...................end...................#
 
                                                             if (isset($row['media']) && !empty($row['media'])) {
                                                                 $images = $row['media'];
+                                                                //echo $row['media'];die;
+                                                                $img= substr($images,-3);
+                                                                if($img== 'jpg'|| $img== 'png' || $img=='jpeg'){
                                                                 $insertImages = array();
                                                                 if (isset($images) && $model1->base_product_id > 0) {
                                                                     if (!$model1->isNewRecord) {
@@ -1525,6 +1528,8 @@ class BaseProductController extends Controller {
                                                                         }
                                                                     }
                                                                 }
+                                                            }
+                                                           
                                                             }
                                                             fwrite($handle1, "\nRow : " . $i . " Product id $model1->base_product_id $action successfully." . implode(' AND ', $error));
                                                             //...............................................//
@@ -1628,7 +1633,7 @@ class BaseProductController extends Controller {
                                     $categories = '';
                                     //  is_numeric($data[$cols['categoryIds'])
                                     //$categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                     $categories = trim($data[$cols['categoryId']]);
+                                    $categories = trim($data[$cols['categoryId']]);
 
                                     $category_obj = new Category();
                                     if ($categories != '') {
@@ -1646,9 +1651,9 @@ class BaseProductController extends Controller {
 //                                                foreach ($catinfo as $cat) {
 //                                                    $catIds[] = $cat['category_id'];
 //                                                }
-                                                $catIds[] =$categories;
+                                                $catIds[] = $categories;
 
-                                                $category_obj->insertCategoryMappings($model1->base_product_id,$catIds);
+                                                $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
                                                 //$catDiff = array_diff($categories, $catIds);
                                                 if (!empty($catDiff)) {
 
