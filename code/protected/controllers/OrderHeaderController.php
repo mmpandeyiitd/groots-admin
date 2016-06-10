@@ -536,7 +536,7 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (' . $modelOrder->attributes['order_number'] . ') is has been ' . $status_data[0] . '. If you have a feedback, please email your concern to help@gogroots.in/ <br>
+            Your order (' . $modelOrder->attributes['order_number'] . ') is has been ' . $status_data[0] . '. If you have a feedback, please email your concern to help@gogroots.in<br>
                 Thank you for choosing Groots! <br>
             <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> Click here to download the invoice </a><br/>
           </span>
@@ -1328,7 +1328,7 @@ class OrderHeaderController extends Controller {
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (' . $order_number . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in/ <br>
+            Your order (' . $order_number . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in<br>
                 Thank you for choosing Groots!<br>
            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
           </span>
