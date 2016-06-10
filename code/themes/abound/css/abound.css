@@ -8,6 +8,7 @@ bo {
 /*Nav bar*/
 .grid-view .table td {
     vertical-align: middle;
+    font-size:13px !important;
 } 
 .grid-view .table th {
     vertical-align: middle;
