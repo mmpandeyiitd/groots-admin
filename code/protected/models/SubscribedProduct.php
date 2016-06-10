@@ -403,14 +403,14 @@ class SubscribedProduct extends CActiveRecord {
         {
            $LengthUnit='NULL';
         }*/
-      /*   if($Weight=='')
+         if($Weight=='')
         {
            $Weight=0; 
         }
         if($Length=='')
         {
            $Length=0; 
-        }*/
+        }
         $connection = Yii::app()->db;
         $sql = "update subscribed_product set store_offer_price='" . $wsp . "',grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $quantity . "',store_price='" . $mrp . "', weight='" . $Weight . "',weight_unit='" . $WeightUnit . "',length='" . $Length . " ',status='" . $status . "',length_unit='" . $LengthUnit . "' where base_product_id='" . $base_product_id . "' and store_id='" . $store_id . "'";
         $command = $connection->createCommand($sql);
