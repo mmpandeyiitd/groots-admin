@@ -122,6 +122,9 @@ class BaseProductController extends Controller {
         $images = array();
         $specific_keyfield = '';
         if (isset($_POST['BaseProduct'])) {
+            foreach ($_POST['BaseProduct'] as $tkey => $tvalue) {
+               $_POST['BaseProduct'][$tkey]=trim($tvalue);
+            }
             $model->attributes = $_POST['BaseProduct'];
             $specific_key = array();
             $specific_value = array();
@@ -155,40 +158,40 @@ class BaseProductController extends Controller {
             $images = CUploadedFile::getInstancesByName('images');
             //print_r($_POST);die;
             if (isset($_POST['color'])) {
-                $model->color = $_POST['color'];
+                $model->color = trim($_POST['color']);
             }
             if (isset($_POST['MRP'])) {
-                $mrp = $_POST['MRP'];
+                $mrp = trim($_POST['MRP']);
             }
             if (isset($_POST['WSP'])) {
-                $wsp = $_POST['WSP'];
+                $wsp = trim($_POST['WSP']);
             }
             if (isset($_POST['grade'])) {
-                $grade = $_POST['grade'];
+                $grade = trim($_POST['grade']);
             }
             //  echo $_POST['new_data'];die;
             if (isset($_POST['diameter'])) {
-                $diameter = $_POST['diameter'];
+                $diameter = trim($_POST['diameter']);
             }
             if (isset($_POST['Weight'])) {
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
             if (isset($_POST['WeightUnit'])) {
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
             }
             if (isset($_POST['Length'])) {
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
             }
             if (isset($_POST['LengthUnit'])) {
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
             if (isset($_POST['qunt'])) {
-                $qunt = $_POST['qunt'];
+                $qunt = trim($_POST['qunt']);
             } else {
                 $qunt = 0;
             }
             if (isset($_POST['status'])) {
-                $model->status = $_POST['status'];
+                $model->status = trim($_POST['status']);
             } else {
                 $model->status = 1;
             }
@@ -514,9 +517,14 @@ class BaseProductController extends Controller {
         $new_data = $model_subscribe->getdatarecords_new($id);
         $qunt = $model_subscribe->getdatarecords_new1($id);
         $model = $this->loadModel($id);
-        if (isset($_POST['BaseProduct'])) {
-            $model->attributes = $_POST['BaseProduct'];
+        $model->title=trim($model->title);
+        $model->description=trim($model->description);
+        $model->color=trim($model->color);
+        $model->pack_unit=trim($model->pack_unit);
 
+        if (isset($_POST['BaseProduct'])) {
+           $model->attributes = $_POST['BaseProduct'];
+            // echo "after";print_r($_POST['BaseProduct']);die;
             $specific_key = array();
             $specific_value = array();
             $specific_key11 = array();
@@ -590,10 +598,10 @@ class BaseProductController extends Controller {
                 }
             }
             if ($a == Array()) {
-                $grade = $_POST['a'];
+                $grade = trim($_POST['a']);
             } else {
                 // $grade = $_POST['a'];
-                $grade = $a['0']['grade'];
+                $grade = trim($a['0']['grade']);
             }
 
             $Weight1 = $model_subscribe->getdatarecords_data($id);
@@ -603,47 +611,47 @@ class BaseProductController extends Controller {
             //  echo '<pre>';print_r($LengthUnit1);die;
             if ($Weight1 != Array()) {
 
-                $Weight = $Weight1['0']['weight'];
+                $Weight = trim($Weight1['0']['weight']);
             } else {
                 // $grade = $_POST['a'];
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
 
             if ($WeightUnit1 != Array()) {
-                $WeightUnit = $WeightUnit1['0']['weight_unit'];
+                $WeightUnit = trim($WeightUnit1['0']['weight_unit']);
             } else {
                 // $grade = $_POST['a'];
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
             }
             if ($Length1 != Array()) {
-                $Length = $Length1['0']['length'];
+                $Length = trim($Length1['0']['length']);
             } else {
                 // $grade = $_POST['a'];
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
             }
             if ($LengthUnit1 != Array()) {
-                $LengthUnit = $LengthUnit1['0']['length_unit'];
+                $LengthUnit = trim($LengthUnit1['0']['length_unit']);
             } else {
                 // $grade = $_POST['a'];
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
             if ($new_data == Array()) {
-                $diameter = $_POST['new_data'];
+                $diameter = trim($_POST['new_data']);
             } else {
-                $diameter = $new_data['0']['diameter'];
+                $diameter = trim($new_data['0']['diameter']);
             }
             //  echo '<pre>';  print_r($_POST);die;
             if ($_POST['BaseProduct']['quantity'] == '') {
-                $quantity = $qunt['0']['quantity'];
+                $quantity = trim($qunt['0']['quantity']);
                 //  $quantity=
             } else {
-                $quantity = $_POST['BaseProduct']['quantity'];
+                $quantity = trim($_POST['BaseProduct']['quantity']);
             }
             if (isset($_POST['color'])) {
-                $model->color = $_POST['color'];
+                $model->color = trim($_POST['color']);
             }
             if (isset($_POST['status'])) {
-                $model->status = $_POST['status'];
+                $model->status = trim($_POST['status']);
             } else {
                 $model->status = 0;
             }
@@ -653,45 +661,45 @@ class BaseProductController extends Controller {
             }
 
             if (isset($_POST['MRP'])) {
-                $mrp = $_POST['MRP'];
+                $mrp = trim($_POST['MRP']);
             }
             if (isset($_POST['WSP'])) {
-                $wsp = $_POST['WSP'];
+                $wsp = trim($_POST['WSP']);
             }
             if ($a == Array()) {
                 $grade = $_POST['a'];
             } else {
-                $grade = $a['0']['grade'];
+                $grade = trim($a['0']['grade']);
             }
             if ($new_data == Array()) {
-                $diameter = $_POST['new_data'];
+                $diameter = trim($_POST['new_data']);
             } else {
-                $diameter = $new_data['0']['diameter'];
+                $diameter = trim($new_data['0']['diameter']);
             }
             if ($_POST['BaseProduct']['quantity'] == '') {
-                $quantity = $qunt['0']['quantity'];
+                $quantity = trim($qunt['0']['quantity']);
                 //  $quantity=
             } else {
 
-                $quantity = $_POST['BaseProduct']['quantity'];
+                $quantity = trim($_POST['BaseProduct']['quantity']);
                 // $quantity=$qunt['0']['quantity'];
             }
             if (isset($_POST['Weight'])) {
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
             if (isset($_POST['WeightUnit'])) {
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
             }else{
                 $Weight=0;
             }
             if (isset($_POST['Length'])) {
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
             }
             else{
                 $Length=0;
             }
             if (isset($_POST['LengthUnit'])) {
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
 
             /* if (!is_numeric($Length)) {
@@ -767,6 +775,7 @@ class BaseProductController extends Controller {
               } */
 
             $model->size_chart = CUploadedFile::getInstance($model, 'size_chart');
+           
             $imagecount = count($imageinfo) + count($images);
             if ($imagecount < 3) {
                 if ($model->save()) {
@@ -777,22 +786,22 @@ class BaseProductController extends Controller {
                     $base_product_id = $model->base_product_id;
                     $store_id = $model->store_id;
                     if ($a != Array()) {
-                        $grade = $_POST['a'];
+                        $grade = trim($_POST['a']);
                     } else {
                         // $grade = $_POST['a'];
-                        $grade = $a['0']['grade'];
+                        $grade = trim($a['0']['grade']);
                     }
                     if ($new_data != Array()) {
-                        $diameter = $_POST['new_data'];
+                        $diameter = trim($_POST['new_data']);
                     } else {
-                        $diameter = $new_data['0']['diameter'];
+                        $diameter = trim($new_data['0']['diameter']);
                     }
                     if ($_POST['BaseProduct']['quantity'] == '') {
-                        $quantity = $qunt['0']['quantity'];
+                        $quantity = trim($qunt['0']['quantity']);
                         //  $quantity=
                     } else {
 
-                        $quantity = $_POST['BaseProduct']['quantity'];
+                        $quantity = trim($_POST['BaseProduct']['quantity']);
                         //$quantity=$qunt['0']['quantity'];
                     }
 
