@@ -1250,7 +1250,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1333,7 +1333,9 @@ class BaseProductController extends Controller {
                                     $row['media'] = str_replace("’", "'", trim($data[$cols['image']]));
 
                                 $row['store_id'] = 1;
-                                $row['status'] = 1;
+                                if (isset($cols['Status']))
+                                    $row['status'] = str_replace("’", "'", trim($data[$cols['Status']]));
+                                //$row['status'] = 1;
                                 $row['quantity'] = 0;
                                 if (isset($cols['Store Price']))
                                     $mrp = trim($data[$cols['Store Price']]);
@@ -1925,21 +1927,21 @@ class BaseProductController extends Controller {
         $model = new BaseProduct();
 //        $model_grid = new ProductGridview('search');
         //$model_grid->unsetAttributes();
-        if ($_POST == Array()) {
-            ob_clean();
-            $response = $model->downloadproductCSV();
-            ob_flush();
-            exit();
-        }
+        // if ($_POST == Array()) {
+        //     ob_clean();
+        //     $response = $model->downloadproductCSV();
+        //     ob_flush();
+        //     exit();
+        // }
 
-        /* $file_name = 'Bulk_Upload_product_Update.csv';
-          $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
+         $file_name = 'Bulk_Upload_product_Update.csv';
+          $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Status';
           $size_of_file = strlen($file_data);
           $this->renderPartial('fileDownload', array(
           'file_name' => $file_name,
           'file_data' => $file_data,
           'size_of_file' => $size_of_file
-          )); */
+          )); 
     }
 
     public function actionExport($id) {
