@@ -127,7 +127,7 @@ class OrderHeaderController extends Controller {
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
                 $emailurldata = Yii::app()->params['email_app_url1'];
-//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/><br> ,
 //                                            <br/>' . $status_data[0] . ' <br/>';
                 $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -171,7 +171,7 @@ class OrderHeaderController extends Controller {
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -223,7 +223,7 @@ Sales: +91-11-3958-9895</span>
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
                 $emailurldata = Yii::app()->params['email_app_url1'];
-//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/><br> ,
 //                                            <br/>' . $status_data[0] . ' <br/>';
                 $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -267,7 +267,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -320,7 +320,7 @@ Sales: +91-11-3958-9895</span>
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
                 $emailurldata = Yii::app()->params['email_app_url1'];
-//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/><br> ,
 //                                            <br/>' . $status_data[0] . ' <br/>';
                 $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -364,7 +364,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -419,7 +419,7 @@ Sales: +91-11-3958-9895</span>
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['target_app_url'];
                 $emailurldata = Yii::app()->params['email_app_url1'];
-//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/></br> ,
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br/><br/><br> ,
 //                                            <br/>' . $status_data[0] . ' <br/>';
                 $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -464,7 +464,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -519,7 +519,7 @@ Sales: +91-11-3958-9895</span>
                 $subject = 'Groots Buyer Account';
                 $urldata = Yii::app()->params['email_app_url'];
                 $emailurldata = Yii::app()->params['email_app_url1'];
-//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change</br>:  ' . $status_data[0] . ',
+//                $body_html = 'Hi  <br/> your order id ' . $modelOrder->attributes['order_id'] . ' <br/> status now change<br>:  ' . $status_data[0] . ',
 //                                            <br/> <a href =' . $urldata . $modelOrder->attributes['order_id'] . '_' . md5('Order' . $modelOrder->attributes['order_id']) . '.' . 'pdf' . '> click here download invoice </a><br/>';
                 $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -563,7 +563,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -949,7 +949,7 @@ Sales: +91-11-3958-9895</span>
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
                         $emailurldata = Yii::app()->params['email_app_url1'];
-//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>
 //                                            <br/>: ' . $_POST['status1'] . '<br/>,';
                         $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -992,7 +992,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -1044,7 +1044,7 @@ Sales: +91-11-3958-9895</span>
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
                         $emailurldata = Yii::app()->params['email_app_url1'];
-//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>
 //                                            <br/>: ' . $_POST['status1'] . '<br/>,';
                         $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -1087,7 +1087,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -1140,7 +1140,7 @@ Sales: +91-11-3958-9895</span>
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
                         $emailurldata = Yii::app()->params['email_app_url1'];
-//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>
 //                                            <br/>: ' . $_POST['status1'] . '<br/>,';
                         $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -1183,7 +1183,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -1234,7 +1234,7 @@ Sales: +91-11-3958-9895</span>
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['target_app_url'];
                         $emailurldata = Yii::app()->params['email_app_url1'];
-//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>
 //                                            <br/>: ' . $_POST['status1'] . '<br/>,';
                         $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -1277,7 +1277,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
@@ -1331,7 +1331,7 @@ Sales: +91-11-3958-9895</span>
                         $subject = 'Groots Buyer Account';
                         $urldata = Yii::app()->params['email_app_url'];
                         $emailurldata = Yii::app()->params['email_app_url1'];
-//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change</br>:  ' . $_POST['status1'] . ',
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
                         $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -1375,7 +1375,7 @@ Sales: +91-11-3958-9895</span>
             </a>
             <br>
 <span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984</br>
+Customer Support: +91-11-3958-8984<br>
 Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
