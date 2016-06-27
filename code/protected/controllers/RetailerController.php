@@ -178,6 +178,10 @@ class RetailerController extends Controller {
         <a href="'.$urldata.'">
              <img src="'.$emailurldata .'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
+            <br>
+<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
+Customer Support: +91-11-3958-8984</br>
+Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
      </td>          
