@@ -1927,21 +1927,21 @@ class BaseProductController extends Controller {
         $model = new BaseProduct();
 //        $model_grid = new ProductGridview('search');
         //$model_grid->unsetAttributes();
-        // if ($_POST == Array()) {
-        //     ob_clean();
-        //     $response = $model->downloadproductCSV();
-        //     ob_flush();
-        //     exit();
-        // }
+         if ($_POST == Array()) {
+             ob_clean();
+            $response = $model->downloadproductCSV();
+            ob_flush();
+             exit();
+         }
 
-         $file_name = 'Bulk_Upload_product_Update.csv';
+         /*$file_name = 'Bulk_Upload_product_Update.csv';
           $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Status';
           $size_of_file = strlen($file_data);
           $this->renderPartial('fileDownload', array(
           'file_name' => $file_name,
           'file_data' => $file_data,
           'size_of_file' => $size_of_file
-          )); 
+          )); */
     }
 
     public function actionExport($id) {
