@@ -1407,9 +1407,9 @@ class BaseProductController extends Controller {
                                     }
                                 }
 
-
                                 $errorFlag = 0;
                                 $model1->attributes = $row;
+                                //echo "<pre>";print_r($model1->attributes);die;
                                 $error = array();
                                 $action = $model->action == 'update' ? 'updated' : 'created';
                                 $model_subscribe = new SubscribedProduct();
@@ -1440,6 +1440,8 @@ class BaseProductController extends Controller {
                                                         $model_subscribe->quantity = 0;
 
                                                         //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                                     // echo "<pre>"; print_r($model1->attributes);
+                                                       // die;
                                                         if (!$model1->save(true)) {
 
                                                             foreach ($model1->getErrors() as $errors) {
@@ -1454,7 +1456,7 @@ class BaseProductController extends Controller {
                                                             if ($model1->action == 'create') { #................subscription...............#
                                                                 $model_subscribe = new SubscribedProduct();
                                                                 $model_subscribe->base_product_id = $model1->base_product_id;
-                                                                //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                                                $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
                                                                 $model_subscribe->store_id = 1;
                                                                 $model_subscribe->quantity = 0;
                                                                 if ($wsp != '') {
@@ -1570,6 +1572,7 @@ class BaseProductController extends Controller {
                                         fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . 'category id is not match');
                                     }
                                 } else if ($model1->action == 'update') {
+                                    $model1->save();
                                     if (isset($cols['Subscribed Product ID']))
                                         $bp = trim($data[$cols['Subscribed Product ID']]);
                                     $connection = Yii::app()->db;
@@ -1595,6 +1598,12 @@ class BaseProductController extends Controller {
                                             $row['title'] = str_replace("’", "'", trim($data[$cols['Name']]));
                                             $model1->Update_product_title($row['title'], $bp);
                                         }
+                                        if (isset($cols['Diameter'])) {
+                                                $diameter = $data[$cols['Diameter']];
+                                            } 
+                                         if (isset($cols['Grade'])) {
+                                                $grade = $data[$cols['Grade']];
+                                            } 
                                         if ((is_numeric($wsp)) && $mrp >= $wsp) {
                                             $model_subscribe = new SubscribedProduct();
                                             $model_subscribe->base_product_id = $bp;
@@ -1606,7 +1615,7 @@ class BaseProductController extends Controller {
                                             //$is_deleted =  ($model->status == 1) ? 0 : 1;
                                             $is_deleted = '0';
                                             $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
-                                            $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity);
+                                            $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity, $diameter,$grade);
                                             fwrite($handle1, "\nRow : " . $i . " Product $bp $action. " . implode(' AND ', $error));
                                             //...............................................//
                                         } else {

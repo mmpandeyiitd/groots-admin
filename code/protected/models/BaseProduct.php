@@ -816,12 +816,25 @@ class BaseProduct extends CActiveRecord {
         return $title;
     }
 
-    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $qunt) {
+    public static function Update_subscribed_product($baseid, $s_id, $store_price, $store_offer_price, $qunt,$diameter=null,$grade=null) {
+        if(!empty($diameter) && !empty($grade) ){
+            $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '",diameter ="' . $diameter . '", grade ="' . $grade . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
+        }else if(empty($diameter) && !empty($grade)){
+            $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '",grade ="' . $grade . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
 
-        $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
+        }else if(!empty($diameter) && empty($grade)){
+             $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '",diameter ="' . $diameter . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
+
+        }else{
+            $sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
+        }
+
+
+        //$sql = 'update subscribed_product set store_price="' . $store_price . '",store_offer_price="' . $store_offer_price . '",quantity="' . $qunt . '" where base_product_id="' . $baseid . '" AND store_id="' . $s_id . '"';
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
+
 //        if (!$command->execute()) {
 //          $connection = Yii::app()->db;
 //            $sql ="insert into subscribed_product set store_offer_price='" . $store_offer_price . "',store_price='" . $store_price . "', base_product_id='" . $baseid . "' ,grade ='" . $grade . "',diameter ='" . $diameter . "',quantity ='" . $qunt . "', store_id='" . $s_id . "' ";
