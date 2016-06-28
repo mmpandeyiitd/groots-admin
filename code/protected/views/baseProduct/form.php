@@ -1,4 +1,3 @@
-
 <script src="themes/abound/js/bootstrap-tagsinput.js" type="text/javascript" charset="utf-8"></script>
 <link href="themes/abound/css/bootstrap-tagsinput.css" rel="stylesheet" type="text/css">
 <?php
@@ -355,7 +354,6 @@ $count = 0;
                 if (length == '') {
                     var length = '0';
                 }
-
                 $.each($("input[name='aiotree[category_id][]']:checked"), function () {
                     favorite.push($(this).val());
                 });
@@ -429,7 +427,7 @@ $count = 0;
                     flage = false;
                 }
                 else if (parseInt(weight) < 0) {
-                    //  alert(wsp);
+                    alert(weight);
                     BASE_PRICE_ERROR.push("<li>Indicated Weight always greater than zero </li>");
                     flage = false;
                 }

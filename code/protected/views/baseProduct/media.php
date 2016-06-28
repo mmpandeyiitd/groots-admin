@@ -45,7 +45,7 @@ $this->menu = array(
             <div >
                 <b>*compress images directly to zip and upload.</b><br/>
                 <div >
-                    <span style="float: left;line-height: 60px;font-size: 18px;margin-right: 10px;">Upload CSV File</span>
+                    <span style="float: left;line-height: 60px;font-size: 18px;margin-right: 10px;">Upload Zip File</span>
               <input id="media_zip_file" name="media_zip_file" type="file"/>
               </div>
             </div>

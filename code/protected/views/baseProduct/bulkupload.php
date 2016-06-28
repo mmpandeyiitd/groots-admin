@@ -53,7 +53,7 @@ if ($issuperadmin == 1) {
 </div>
 <div>
     <?php echo $form->labelEx($model, 'csv_file'); ?>
-    <?php echo $form->fileField($model, 'csv_file'); ?>
+    <?php echo $form->fileField($model, 'csv_file',array('size' => 150, 'maxlength' => 300)); ?>
     <?php echo $form->error($model, 'csv_file'); ?>
 </div>
 <div style="clear:both;"></div>

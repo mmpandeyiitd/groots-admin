@@ -62,7 +62,7 @@ if(Yii::app()->controller->id=="store"){
     
     if(Yii::app()->controller->action->id=="mappedProduct"){
         
-       echo "MAP PRODUCT"; 
+       echo "MAP PRODUCTS"; 
     }    
      
 }
@@ -70,7 +70,7 @@ else if($_REQUEST['r']=='SubscribedProduct/admin'){
     
     if(Yii::app()->controller->action->id=="admin"){
         
-       echo "MAP PRODUCT"; 
+       echo "MAP PRODUCTS"; 
     }    
      
 }

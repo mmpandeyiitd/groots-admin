@@ -145,7 +145,7 @@ if (Yii::app()->session['brand_admin_id']) {
                     </td>
                     <td>
                         <h5><?php echo $total_cancelledOrder; ?></h5>
-                        <span>Canceled</span>
+                        <span>Cancelled</span>
                     </td>
                     <td class="gray" >
                         <h5><?php echo $total_returnOrder; ?></h5>

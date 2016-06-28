@@ -315,7 +315,7 @@ class StoreController extends Controller {
             if (isset($_POST['status'])) {
                 $model->status = $_POST['status'];
             } else {
-                $model->status = 0;
+                $model->status = 1;
             }
             if ($model->save()) {
                 if (isset($model->store_logo)) {

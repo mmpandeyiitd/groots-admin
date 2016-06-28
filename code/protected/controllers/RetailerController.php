@@ -119,11 +119,12 @@ class RetailerController extends Controller {
             } else {
                 $model->status = 1;
             }
-             if ($_POST['Retailer']['date_of_onboarding']!='') {
-                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
-            } else {
-                $model->date_of_onboarding = date('Y-m-d H:i:s');
-            }
+              $model->date_of_onboarding = date('Y-m-d H:i:s');
+//             if ($_POST['Retailer']['date_of_onboarding']!='') {
+//                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
+//            } else {
+//                $model->date_of_onboarding = date('Y-m-d H:i:s');
+//            }
          
 //            if($_POST['Retailer']['password'] !='' && strlen($_POST['Retailer']['password'])<12){
 //                  
@@ -153,7 +154,7 @@ class RetailerController extends Controller {
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91 99999 99999</span>
+        <span style="float:right;">+91-11-3958-8984</span>
         <img src="'.$emailurldata .'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -177,6 +178,10 @@ class RetailerController extends Controller {
         <a href="'.$urldata.'">
              <img src="'.$emailurldata .'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
+            <br>
+<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
+Customer Support: +91-11-3958-8984<br>
+Sales: +91-11-3958-9895</span>
         <br> <br> 
       </p>
      </td>          
@@ -184,14 +189,14 @@ class RetailerController extends Controller {
     <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
       <td colspan="2" style="width: 600px;">
         <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
-          <li style="display:block; width:200px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
           </li>
-          <li style="display:block; width:200px; float:left; text-align:center;">
-            <a href="#!" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
           </li>
         </ul>
       </td> 

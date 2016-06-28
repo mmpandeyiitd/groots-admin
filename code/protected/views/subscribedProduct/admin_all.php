@@ -83,12 +83,12 @@ Yii::app()->clientScript->registerScript('search', "
                 'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
             ),
             array(
-                'header' => 'store price',
+                'header' => 'Store price',
                 'name' => 'store_price',
                 'type' => 'raw',
             ),
             array(
-                'header' => 'offer price',
+                'header' => 'Offer price',
                 'name' => 'store_offer_price',
                 'type' => 'raw',
             ),

@@ -122,6 +122,9 @@ class BaseProductController extends Controller {
         $images = array();
         $specific_keyfield = '';
         if (isset($_POST['BaseProduct'])) {
+            foreach ($_POST['BaseProduct'] as $tkey => $tvalue) {
+               $_POST['BaseProduct'][$tkey]=trim($tvalue);
+            }
             $model->attributes = $_POST['BaseProduct'];
             $specific_key = array();
             $specific_value = array();
@@ -155,47 +158,47 @@ class BaseProductController extends Controller {
             $images = CUploadedFile::getInstancesByName('images');
             //print_r($_POST);die;
             if (isset($_POST['color'])) {
-                $model->color = $_POST['color'];
+                $model->color = trim($_POST['color']);
             }
             if (isset($_POST['MRP'])) {
-                $mrp = $_POST['MRP'];
+                $mrp = trim($_POST['MRP']);
             }
             if (isset($_POST['WSP'])) {
-                $wsp = $_POST['WSP'];
+                $wsp = trim($_POST['WSP']);
             }
             if (isset($_POST['grade'])) {
-                $grade = $_POST['grade'];
+                $grade = trim($_POST['grade']);
             }
             //  echo $_POST['new_data'];die;
             if (isset($_POST['diameter'])) {
-                $diameter = $_POST['diameter'];
+                $diameter = trim($_POST['diameter']);
             }
             if (isset($_POST['Weight'])) {
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
             if (isset($_POST['WeightUnit'])) {
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
             }
             if (isset($_POST['Length'])) {
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
             }
             if (isset($_POST['LengthUnit'])) {
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
             if (isset($_POST['qunt'])) {
-                $qunt = $_POST['qunt'];
+                $qunt = trim($_POST['qunt']);
             } else {
                 $qunt = 0;
             }
             if (isset($_POST['status'])) {
-                $model->status = $_POST['status'];
+                $model->status = trim($_POST['status']);
             } else {
                 $model->status = 1;
             }
             //echo '<pre>'; print_r($_POST);die;
             if ($_POST['diameter'] == '') {
                 // echo "hello";die;
-                $diameter = '0';
+                $diameter = '';
             }
 
             /* if (!is_numeric($diameter)) {
@@ -489,7 +492,7 @@ class BaseProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-          //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
+        //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -500,7 +503,7 @@ class BaseProductController extends Controller {
         $record = $getrecord->getRecordById($id);
         $imageinfo = $getrecord->getImageById($id);
         //echo count($imageinfo);die;
-      
+
 
         $mrp = '';
         $wsp = '';
@@ -514,9 +517,14 @@ class BaseProductController extends Controller {
         $new_data = $model_subscribe->getdatarecords_new($id);
         $qunt = $model_subscribe->getdatarecords_new1($id);
         $model = $this->loadModel($id);
-        if (isset($_POST['BaseProduct'])) {
-            $model->attributes = $_POST['BaseProduct'];
+        $model->title=trim($model->title);
+        $model->description=trim($model->description);
+        $model->color=trim($model->color);
+        $model->pack_unit=trim($model->pack_unit);
 
+        if (isset($_POST['BaseProduct'])) {
+           $model->attributes = $_POST['BaseProduct'];
+            // echo "after";print_r($_POST['BaseProduct']);die;
             $specific_key = array();
             $specific_value = array();
             $specific_key11 = array();
@@ -538,7 +546,7 @@ class BaseProductController extends Controller {
                 $model->specofic_keys = $specific_keyfield;
             }
             //echo "hello";die;
-            
+
             $images = CUploadedFile::getInstancesByName('images');
             $model->modified_date = date("Y-m-d H:i:s");
             //echo $model->status;die;
@@ -548,57 +556,52 @@ class BaseProductController extends Controller {
             } else {
                 $model->store_id = Yii::app()->session['brand_id'];
             }
-         
-             $media_object = new Media();
-             $insert_id = Yii::app()->db->getLastInsertID();
+
+            $media_object = new Media();
+            $insert_id = Yii::app()->db->getLastInsertID();
             if (isset($_POST['media_remove'])) {
                 //echo '<pre>';print_r($_POST);die;
-              
-             //  echo '<pre>';print_r($_POST);die;
+                //  echo '<pre>';print_r($_POST);die;
                 foreach ($_POST['media_remove'] as $keyrm => $valuerm) {
                     $mediaremove = Media::model()->deleteMediaByMediaId($valuerm);
-                   // $media_object->updateDefaultMediaByBaseProductId($insert_id, $id);
+                    // $media_object->updateDefaultMediaByBaseProductId($insert_id, $id);
                 }
 //                if (isset($_POST['media_is_default'])) {
 //
 //                    $media_object->getOneMediaremovedefalut($id);
 //                }
-                
-              
                 //echo $id;die;
-                
-                
             }
-            
-            
+
+
             $media_object = new Media();
-            
-             $insert_id = Yii::app()->db->getLastInsertID();
+
+            $insert_id = Yii::app()->db->getLastInsertID();
             if (!isset($_POST['media_is_default'])) {
                 // echo $_POST['media_is_default'];die;
                 $media_object->updateDefaultMediaByBaseProductId($insert_id, $id);
-            }
-             else if (isset($_POST['media_is_default']) && isset($_POST['media_remove'])) {
-                   $media_object->getOneMediaremovedefalut($id);
-               }else{
+            } else if (isset($_POST['media_is_default']) && isset($_POST['media_remove'])) {
+                $media_object->getOneMediaremovedefalut($id);
+            } else {
                 // $media_object->getOneMediaremovedefalut($id);
-                 $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $id);
-              }
+                $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $id);
+            }
 
             $baseProductId = $model->base_product_id;
             $category_obj = new Category();
             if (isset($_POST['aiotree']['category_id'])) {
                 foreach ($_POST['aiotree']['category_id'] as $key => $value) {
                     $val = explode("-", $value);
+                    //echo '<pre>';print_r($val);die;
                     //   $sql = "INSERT INTO product_category_mapping(base_product_id, category_id) VALUES('$id', '$val[3]')";
                     $category_obj->createBaseproductMappings($baseProductId, $val[3]);
                 }
             }
             if ($a == Array()) {
-                $grade = $_POST['a'];
+                $grade = trim($_POST['a']);
             } else {
                 // $grade = $_POST['a'];
-                $grade = $a['0']['grade'];
+                $grade = trim($a['0']['grade']);
             }
 
             $Weight1 = $model_subscribe->getdatarecords_data($id);
@@ -608,47 +611,47 @@ class BaseProductController extends Controller {
             //  echo '<pre>';print_r($LengthUnit1);die;
             if ($Weight1 != Array()) {
 
-                $Weight = $Weight1['0']['weight'];
+                $Weight = trim($Weight1['0']['weight']);
             } else {
                 // $grade = $_POST['a'];
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
 
             if ($WeightUnit1 != Array()) {
-                $WeightUnit = $WeightUnit1['0']['weight_unit'];
+                $WeightUnit = trim($WeightUnit1['0']['weight_unit']);
             } else {
                 // $grade = $_POST['a'];
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
             }
             if ($Length1 != Array()) {
-                $Length = $Length1['0']['length'];
+                $Length = trim($Length1['0']['length']);
             } else {
                 // $grade = $_POST['a'];
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
             }
             if ($LengthUnit1 != Array()) {
-                $LengthUnit = $LengthUnit1['0']['length_unit'];
+                $LengthUnit = trim($LengthUnit1['0']['length_unit']);
             } else {
                 // $grade = $_POST['a'];
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
             if ($new_data == Array()) {
-                $diameter = $_POST['new_data'];
+                $diameter = trim($_POST['new_data']);
             } else {
-                $diameter = $new_data['0']['diameter'];
+                $diameter = trim($new_data['0']['diameter']);
             }
             //  echo '<pre>';  print_r($_POST);die;
             if ($_POST['BaseProduct']['quantity'] == '') {
-                $quantity = $qunt['0']['quantity'];
+                $quantity = trim($qunt['0']['quantity']);
                 //  $quantity=
             } else {
-                $quantity = $_POST['BaseProduct']['quantity'];
+                $quantity = trim($_POST['BaseProduct']['quantity']);
             }
             if (isset($_POST['color'])) {
-                $model->color = $_POST['color'];
+                $model->color = trim($_POST['color']);
             }
             if (isset($_POST['status'])) {
-                $model->status = $_POST['status'];
+                $model->status = trim($_POST['status']);
             } else {
                 $model->status = 0;
             }
@@ -658,80 +661,85 @@ class BaseProductController extends Controller {
             }
 
             if (isset($_POST['MRP'])) {
-                $mrp = $_POST['MRP'];
+                $mrp = trim($_POST['MRP']);
             }
             if (isset($_POST['WSP'])) {
-                $wsp = $_POST['WSP'];
+                $wsp = trim($_POST['WSP']);
             }
             if ($a == Array()) {
                 $grade = $_POST['a'];
             } else {
-                $grade = $a['0']['grade'];
+                $grade = trim($a['0']['grade']);
             }
             if ($new_data == Array()) {
-                $diameter = $_POST['new_data'];
+                $diameter = trim($_POST['new_data']);
             } else {
-                $diameter = $new_data['0']['diameter'];
+                $diameter = trim($new_data['0']['diameter']);
             }
             if ($_POST['BaseProduct']['quantity'] == '') {
-                $quantity = $qunt['0']['quantity'];
+                $quantity = trim($qunt['0']['quantity']);
                 //  $quantity=
             } else {
 
-                $quantity = $_POST['BaseProduct']['quantity'];
+                $quantity = trim($_POST['BaseProduct']['quantity']);
                 // $quantity=$qunt['0']['quantity'];
             }
             if (isset($_POST['Weight'])) {
-                $Weight = $_POST['Weight'];
+                $Weight = trim($_POST['Weight']);
             }
             if (isset($_POST['WeightUnit'])) {
-                $WeightUnit = $_POST['WeightUnit'];
+                $WeightUnit = trim($_POST['WeightUnit']);
+            }else{
+                $Weight=0;
             }
             if (isset($_POST['Length'])) {
-                $Length = $_POST['Length'];
+                $Length = trim($_POST['Length']);
+            }
+            else{
+                $Length=0;
             }
             if (isset($_POST['LengthUnit'])) {
-                $LengthUnit = $_POST['LengthUnit'];
+                $LengthUnit = trim($_POST['LengthUnit']);
             }
 
-            if (!is_numeric($Length)) {
-                Yii::app()->user->setFlash('WSP', 'Indicated length numeric only');
-                $this->render('update', array(
-                    'a' => $a['0']['grade'],
-                    'new_data' => $a['0']['grade'],
-                    'qunt' => $qunt['0']['quantity'],
-                    'model' => $model,
-                    'mrp' => $mrp,
-                    'wsp' => $wsp,
-                    'record' => $record,
-                    'imageinfo' => $imageinfo,
-                    'Weight' => $Weight,
-                    'WeightUnit' => $WeightUnit,
-                    'Length' => $Length,
-                    'LengthUnit' => $LengthUnit,
-                    'specific_keyfield' => $specific_keyfield,
-                ));
-                exit();
-            }
-            if (!is_numeric($Weight)) {
-                Yii::app()->user->setFlash('WSP', 'Indicated weight numeric only');
-                $this->render('update', array(
-                    'a' => $a['0']['grade'],
-                    'new_data' => $a['0']['grade'],
-                    'qunt' => $qunt['0']['quantity'],
-                    'model' => $model,
-                    'mrp' => $mrp,
-                    'wsp' => $wsp,
-                    'record' => $record,
-                    'imageinfo' => $imageinfo,
-                    'Weight' => $Weight,
-                    'WeightUnit' => $WeightUnit,
-                    'Length' => $Length,
-                    'LengthUnit' => $LengthUnit,
-                    'specific_keyfield' => $specific_keyfield,
-                ));
-                exit();
-            }
+            /* if (!is_numeric($Length)) {
+              Yii::app()->user->setFlash('WSP', 'Indicated length numeric only');
+              $this->render('update', array(
+              'a' => $a['0']['grade'],
+              'new_data' => $a['0']['grade'],
+              'qunt' => $qunt['0']['quantity'],
+              'model' => $model,
+              'mrp' => $mrp,
+              'wsp' => $wsp,
+              'record' => $record,
+              'imageinfo' => $imageinfo,
+              'Weight' => $Weight,
+              'WeightUnit' => $WeightUnit,
+              'Length' => $Length,
+              'LengthUnit' => $LengthUnit,
+              'specific_keyfield' => $specific_keyfield,
+              ));
+              exit();
+              }
+              if (!is_numeric($Weight)) {
+              Yii::app()->user->setFlash('WSP', 'Indicated weight numeric only');
+              $this->render('update', array(
+              'a' => $a['0']['grade'],
+              'new_data' => $a['0']['grade'],
+              'qunt' => $qunt['0']['quantity'],
+              'model' => $model,
+              'mrp' => $mrp,
+              'wsp' => $wsp,
+              'record' => $record,
+              'imageinfo' => $imageinfo,
+              'Weight' => $Weight,
+              'WeightUnit' => $WeightUnit,
+              'Length' => $Length,
+              'LengthUnit' => $LengthUnit,
+              'specific_keyfield' => $specific_keyfield,
+              ));
+              exit();
+              } */
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
@@ -765,276 +773,275 @@ class BaseProductController extends Controller {
               ));
               exit();
               } */
-            
+
             $model->size_chart = CUploadedFile::getInstance($model, 'size_chart');
-            $imagecount= count($imageinfo) +count($images);
-            if($imagecount<3){
-            if ($model->save()) {
-                #................subscription...............#
-                $model_subscribe = new SubscribedProduct();
-                $a = $model_subscribe->getdatarecords($id);
+           
+            $imagecount = count($imageinfo) + count($images);
+            if ($imagecount < 3) {
+                if ($model->save()) {
+                    #................subscription...............#
+                    $model_subscribe = new SubscribedProduct();
+                    $a = $model_subscribe->getdatarecords($id);
 
-                $base_product_id = $model->base_product_id;
-                $store_id = $model->store_id;
-                if ($a != Array()) {
-                    $grade = $_POST['a'];
-                } else {
-                    // $grade = $_POST['a'];
-                    $grade = $a['0']['grade'];
-                }
-                if ($new_data != Array()) {
-                    $diameter = $_POST['new_data'];
-                } else {
-                    $diameter = $new_data['0']['diameter'];
-                }
-                if ($_POST['BaseProduct']['quantity'] == '') {
-                    $quantity = $qunt['0']['quantity'];
-                    //  $quantity=
-                } else {
-
-                    $quantity = $_POST['BaseProduct']['quantity'];
-                    //$quantity=$qunt['0']['quantity'];
-                }
-
-
-               $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
-                #...................end...................#
-               // echo count($images);die;
-                if(count($imageinfo)!=0){
-                   
-                if (isset($images) && count($images) > 0  && count($images)<= count($imageinfo) && count($imageinfo)<2) {
-                    // $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
-                    foreach ($images as $image => $pic) {
-                        $flag_set_default = 0;
-                        $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
-                        $base_img_name = uniqid();
-                        //$path  = pathinfo($media);
-                        $file1 = $base_img_name;
-                        $baseDir = MAIN_BASE_MEDAI_DIRPATH;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $media_url_dir = $baseDir;
-                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
-                        $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
-                        @mkdir($media_url_dir, 0777, true);
-//                        $success = file_put_contents($media_main, $content_medai_img);
-                        $width = BASEPRODUCT_BIGIMAGE_WIDTH;
-                        $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
-                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
-
-                        $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $media_url_dir = $baseDir;
-                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
-                        $media_original = $media_url_dir . $base_img_name . '.jpg'; //name
-                        @mkdir($media_url_dir, 0777, true);
-                        $success = file_put_contents($media_original, $content_medai_img);
-
-                        $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
-                        @mkdir($baseThumbPath, 0777, true);
-
-                        $baseDir = $baseThumbPath;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $thumb_url_dir = $baseDir;
-                        $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
-                        $midia_type = 'image';
-                        $is_default = 0;
-                        $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
-                       //echo count($images);die;
-                        if(isset($_POST['media_is_default']))
-                        {
-                        
-                        $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
-                        }
-                        else{
-                        $insert_id = Yii::app()->db->getLastInsertID();
-                        $insert =$insert_id;
-                        $media_object = new Media();
-                        $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
-                        }
-                        @mkdir($thumb_url_dir, 0777, true);
-                        $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
-                        $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
-                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
-                        @unlink(UPLOAD_MEDIA_PATH . $pic->name);
-                        $flag_set_default++;
-                    }
-                }
-                elseif(count($imageinfo)==0){
-                    //echo "hello";die;
-                     Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
-                $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
-                    
-                }
-                }else{
-                    if (count($images)>0) {
-                     $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
-                    foreach ($images as $image => $pic) {
-                        $flag_set_default = 0;
-                        $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
-                        $base_img_name = uniqid();
-                        //$path  = pathinfo($media);
-                        $file1 = $base_img_name;
-                        $baseDir = MAIN_BASE_MEDAI_DIRPATH;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $media_url_dir = $baseDir;
-                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
-                        $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
-                        @mkdir($media_url_dir, 0777, true);
-//                        $success = file_put_contents($media_main, $content_medai_img);
-                        $width = BASEPRODUCT_BIGIMAGE_WIDTH;
-                        $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
-                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
-
-                        $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $media_url_dir = $baseDir;
-                        $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
-                        $media_original = $media_url_dir . $base_img_name . '.jpg'; //name
-                        @mkdir($media_url_dir, 0777, true);
-                        $success = file_put_contents($media_original, $content_medai_img);
-
-                        $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
-                        @mkdir($baseThumbPath, 0777, true);
-
-                        $baseDir = $baseThumbPath;
-                        if ($file1[0]) {
-                            $baseDir .= $file1[0] . '/';
-                        }
-
-                        if ($file1[1]) {
-                            $baseDir .= $file1[1] . '/';
-                        } else {
-                            $baseDir .= '_/';
-                        }
-                        $thumb_url_dir = $baseDir;
-                        $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
-                        $midia_type = 'image';
-                        $is_default = 0;
-                        $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
-                       //echo count($images);die;
-                        if(isset($_POST['media_is_default']))
-                        {
-                        
-                        $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
-                        }
-                        else{
-                        $insert_id = Yii::app()->db->getLastInsertID();
-                        $insert =$insert_id;
-                        $media_object = new Media();
-                        $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
-                        }
-                        @mkdir($thumb_url_dir, 0777, true);
-                        $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
-                        $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
-                        $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
-                        @unlink(UPLOAD_MEDIA_PATH . $pic->name);
-                        $flag_set_default++;
-                    }
-                }
-                }
-                //.......................solor backloag.................//
-                $solrBackLog = new SolrBackLog();
-                //$is_deleted =  ($model->status == 1) ? 0 : 1;
-                $is_deleted = '0';
-                $solrBackLog->insertByBaseProductId($model->base_product_id, $is_deleted);
-                //.........................end.....................................//
-
-                if (isset($model->size_chart)) {
-
-                    $model->size_chart->saveAs(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
-
-                    $base_img_name = uniqid();
-                    //$path  = pathinfo($media);
-                    $file1 = $base_img_name;
-                    $baseDir = UPLOAD_SIZE_CHART_PATH;
-                    if ($file1[0]) {
-                        $baseDir .= $file1[0] . '/';
-                    }
-
-                    if ($file1[1]) {
-                        $baseDir .= $file1[1] . '/';
-                    } else {
-                        $baseDir .= '_/';
-                    }
-                    $media_url_dir = $baseDir;
-                    $content_medai_img = @file_get_contents(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
-                    $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
-                    @mkdir($media_url_dir, 0777, true);
-                    $success = file_put_contents($media_main, $content_medai_img);
-
-                    $baseThumbPath = UPLOAD_SIZE_CHART_PATH;
-                    @mkdir($baseThumbPath, 0777, true);
-
-                    $baseDir = $baseThumbPath;
-                    if ($file1[0]) {
-                        $baseDir .= $file1[0] . '/';
-                    }
-
-                    if ($file1[1]) {
-                        $baseDir .= $file1[1] . '/';
-                    } else {
-                        $baseDir .= '_/';
-                    }
-
-                    $thumb_url_dir = $baseDir;
-                    $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
-                    $image = $base_img_name . '.jpg';
                     $base_product_id = $model->base_product_id;
-                    $model->Update_sizechart($base_product_id, $image, $media_thumb_url);
-                    @mkdir($thumb_url_dir, 0777, true);
-                    $width = SIZECHART_THUMBIMAGE_WIDTH;
-                    $height = SIZECHART_THUMBIMAGE_HEIGHT;
-                    $image = $this->createImage(UPLOAD_SIZE_CHART_PATH . $model->size_chart, $width, $height, $media_thumb_url);
-                    @unlink(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
+                    $store_id = $model->store_id;
+                    if ($a != Array()) {
+                        $grade = trim($_POST['a']);
+                    } else {
+                        // $grade = $_POST['a'];
+                        $grade = trim($a['0']['grade']);
+                    }
+                    if ($new_data != Array()) {
+                        $diameter = trim($_POST['new_data']);
+                    } else {
+                        $diameter = trim($new_data['0']['diameter']);
+                    }
+                    if ($_POST['BaseProduct']['quantity'] == '') {
+                        $quantity = trim($qunt['0']['quantity']);
+                        //  $quantity=
+                    } else {
+
+                        $quantity = trim($_POST['BaseProduct']['quantity']);
+                        //$quantity=$qunt['0']['quantity'];
+                    }
+
+
+                    $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+
+//               $solrBackLog = new SolrBackLog();
+//                //$is_deleted =  ($model->status == 1) ? 0 : 1;
+//                $is_deleted = '0';
+//                $solrBackLog->insertByBaseProductId($model->base_product_id, $is_deleted);
+#...................end...................#
+                    // echo count($images);die;
+                    if (count($imageinfo) != 0) {
+
+                        if (isset($images) && count($images) > 0 && count($images) <= count($imageinfo) && count($imageinfo) < 2) {
+                            // $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+                            foreach ($images as $image => $pic) {
+                                $flag_set_default = 0;
+                                $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
+                                $base_img_name = uniqid();
+                                //$path  = pathinfo($media);
+                                $file1 = $base_img_name;
+                                $baseDir = MAIN_BASE_MEDAI_DIRPATH;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $media_url_dir = $baseDir;
+                                $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                                $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
+                                @mkdir($media_url_dir, 0777, true);
+//                        $success = file_put_contents($media_main, $content_medai_img);
+                                $width = BASEPRODUCT_BIGIMAGE_WIDTH;
+                                $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
+                                $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
+
+                                $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $media_url_dir = $baseDir;
+                                $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                                $media_original = $media_url_dir . $base_img_name . '.jpg'; //name
+                                @mkdir($media_url_dir, 0777, true);
+                                $success = file_put_contents($media_original, $content_medai_img);
+
+                                $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
+                                @mkdir($baseThumbPath, 0777, true);
+
+                                $baseDir = $baseThumbPath;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $thumb_url_dir = $baseDir;
+                                $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
+                                $midia_type = 'image';
+                                $is_default = 0;
+                                $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
+                                //echo count($images);die;
+                                if (isset($_POST['media_is_default'])) {
+
+                                    $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
+                                } else {
+                                    $insert_id = Yii::app()->db->getLastInsertID();
+                                    $insert = $insert_id;
+                                    $media_object = new Media();
+                                    $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
+                                }
+                                @mkdir($thumb_url_dir, 0777, true);
+                                $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
+                                $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
+                                $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
+                                @unlink(UPLOAD_MEDIA_PATH . $pic->name);
+                                $flag_set_default++;
+                            }
+                        } elseif (count($imageinfo) == 0) {
+                            //echo "hello";die;
+                            Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
+                            $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
+                        }
+                    } else {
+                        if (count($images) > 0) {
+                            $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
+                            foreach ($images as $image => $pic) {
+                                $flag_set_default = 0;
+                                $pic->saveAs(UPLOAD_MEDIA_PATH . $pic->name);
+                                $base_img_name = uniqid();
+                                //$path  = pathinfo($media);
+                                $file1 = $base_img_name;
+                                $baseDir = MAIN_BASE_MEDAI_DIRPATH;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $media_url_dir = $baseDir;
+                                $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                                $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
+                                @mkdir($media_url_dir, 0777, true);
+//                        $success = file_put_contents($media_main, $content_medai_img);
+                                $width = BASEPRODUCT_BIGIMAGE_WIDTH;
+                                $height = BASEPRODUCT_BIGIMAGE_HEIGHT;
+                                $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_main);
+
+                                $baseDir = UPLOAD_MEDIA_ORIGINAL_PATH;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $media_url_dir = $baseDir;
+                                $content_medai_img = @file_get_contents(UPLOAD_MEDIA_PATH . $pic->name);
+                                $media_original = $media_url_dir . $base_img_name . '.jpg'; //name
+                                @mkdir($media_url_dir, 0777, true);
+                                $success = file_put_contents($media_original, $content_medai_img);
+
+                                $baseThumbPath = THUMB_BASE_MEDIA_DIRPATH;
+                                @mkdir($baseThumbPath, 0777, true);
+
+                                $baseDir = $baseThumbPath;
+                                if ($file1[0]) {
+                                    $baseDir .= $file1[0] . '/';
+                                }
+
+                                if ($file1[1]) {
+                                    $baseDir .= $file1[1] . '/';
+                                } else {
+                                    $baseDir .= '_/';
+                                }
+                                $thumb_url_dir = $baseDir;
+                                $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
+                                $midia_type = 'image';
+                                $is_default = 0;
+                                $model->insertMedia($media_main, $media_thumb_url, $base_product_id, $midia_type, $is_default);
+                                //echo count($images);die;
+                                if (isset($_POST['media_is_default'])) {
+
+                                    $media_object->updateDefaultMediaByBaseProductId($_POST['media_is_default'], $base_product_id);
+                                } else {
+                                    $insert_id = Yii::app()->db->getLastInsertID();
+                                    $insert = $insert_id;
+                                    $media_object = new Media();
+                                    $media_object->updateDefaultMediaByBaseProductId($insert, $base_product_id);
+                                }
+                                @mkdir($thumb_url_dir, 0777, true);
+                                $width = BASEPRODUCT_THUMBIMAGE_WIDTH;
+                                $height = BASEPRODUCT_THUMBIMAGE_HEIGHT;
+                                $image = $this->createImage(UPLOAD_MEDIA_PATH . $pic->name, $width, $height, $media_thumb_url);
+                                @unlink(UPLOAD_MEDIA_PATH . $pic->name);
+                                $flag_set_default++;
+                            }
+                        }
+                    }
+                    //.......................solor backloag.................//
+                    $solrBackLog = new SolrBackLog();
+                    //$is_deleted =  ($model->status == 1) ? 0 : 1;
+                    $is_deleted = '0';
+                    $solrBackLog->insertByBaseProductId($model->base_product_id, $is_deleted);
+                    //.........................end.....................................//
+
+                    if (isset($model->size_chart)) {
+
+                        $model->size_chart->saveAs(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
+
+                        $base_img_name = uniqid();
+                        //$path  = pathinfo($media);
+                        $file1 = $base_img_name;
+                        $baseDir = UPLOAD_SIZE_CHART_PATH;
+                        if ($file1[0]) {
+                            $baseDir .= $file1[0] . '/';
+                        }
+
+                        if ($file1[1]) {
+                            $baseDir .= $file1[1] . '/';
+                        } else {
+                            $baseDir .= '_/';
+                        }
+                        $media_url_dir = $baseDir;
+                        $content_medai_img = @file_get_contents(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
+                        $media_main = $media_url_dir . $base_img_name . '.jpg'; //name
+                        @mkdir($media_url_dir, 0777, true);
+                        $success = file_put_contents($media_main, $content_medai_img);
+
+                        $baseThumbPath = UPLOAD_SIZE_CHART_PATH;
+                        @mkdir($baseThumbPath, 0777, true);
+
+                        $baseDir = $baseThumbPath;
+                        if ($file1[0]) {
+                            $baseDir .= $file1[0] . '/';
+                        }
+
+                        if ($file1[1]) {
+                            $baseDir .= $file1[1] . '/';
+                        } else {
+                            $baseDir .= '_/';
+                        }
+
+                        $thumb_url_dir = $baseDir;
+                        $media_thumb_url = $thumb_url_dir . $base_img_name . '.jpg';
+                        $image = $base_img_name . '.jpg';
+                        $base_product_id = $model->base_product_id;
+                        $model->Update_sizechart($base_product_id, $image, $media_thumb_url);
+                        @mkdir($thumb_url_dir, 0777, true);
+                        $width = SIZECHART_THUMBIMAGE_WIDTH;
+                        $height = SIZECHART_THUMBIMAGE_HEIGHT;
+                        $image = $this->createImage(UPLOAD_SIZE_CHART_PATH . $model->size_chart, $width, $height, $media_thumb_url);
+                        @unlink(UPLOAD_SIZE_CHART_PATH . $model->size_chart);
+                    }
+
+
+                    Yii::app()->user->setFlash('success', 'Product updated successfully');
+                    $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
                 }
-
-
-                Yii::app()->user->setFlash('success', 'Product updated successfully');
-                $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
-            }
-        }
-            else{
-                    Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
+            } else {
+                Yii::app()->user->setFlash('WSP', 'Maximum 2 images upload allowed');
                 $this->redirect(array('update', 'id' => $model->base_product_id, "store_id" => $_GET['store_id']));
             }
         }
@@ -1243,7 +1250,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit','image');
+                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1263,7 +1270,7 @@ class BaseProductController extends Controller {
                         if ($i >= 0 && count($data) > 0) {
                             $i++;
                             /* header */
-                             if ($i == 1) {
+                            if ($i == 1) {
                                 $colDiff = array_diff($requiredFields, $data);
                                 if (!empty($colDiff)) {
                                     Yii::app()->user->setFlash('error', 'Required columns missing : ' . implode(' , ', $colDiff));
@@ -1322,11 +1329,13 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['color']))
                                     $row['color'] = trim($data[$cols['color']]);
-                                 if (isset($cols['image']))
+                                if (isset($cols['image']))
                                     $row['media'] = str_replace("’", "'", trim($data[$cols['image']]));
 
                                 $row['store_id'] = 1;
-                                $row['status'] = 1;
+                                if (isset($cols['Status']))
+                                    $row['status'] = str_replace("’", "'", trim($data[$cols['Status']]));
+                                //$row['status'] = 1;
                                 $row['quantity'] = 0;
                                 if (isset($cols['Store Price']))
                                     $mrp = trim($data[$cols['Store Price']]);
@@ -1363,35 +1372,44 @@ class BaseProductController extends Controller {
                                 if (isset($cols['categoryId'])) {
                                     $cat_flag = 0;
                                     $pdf = Array();
-                                    $categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                    // echo '<pre>';print_r($categories['0']);die;
-                                    if ($categories['0'] != '') {
+                                    $categories = trim($data[$cols['categoryId']]);
 
-                                        foreach ($categories as $category) {
-                                            $cat_flag = 0;
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
-                                            $command = $connection->createCommand($sql);
-                                            $pdf = $command->queryAll();
-                                        }
-                                       
-                                        if (!is_numeric($category) || $pdf == Array()) {
+                                    //   $categories = explode(';', trim($data[$cols['categoryId']], ';'));
+                                    // echo '<pre>';print_r($categories['0']);die;
+                                    if (is_numeric($categories)) {
+
+                                        $cat_flag = 0;
+                                        $connection = Yii::app()->db;
+                                        $sql = "SELECT category_id FROM category WHERE category_id in ($categories)";
+                                        $command = $connection->createCommand($sql);
+                                        $pdf = $command->queryAll();
+
+
+                                        /* foreach ($categories as $category) {
+                                          $cat_flag = 0;
+                                          $connection = Yii::app()->db;
+                                          $sql = "SELECT category_id FROM category WHERE category_id in ($category)";
+                                          $command = $connection->createCommand($sql);
+                                          $pdf = $command->queryAll();
+                                          } */
+
+                                        if (!is_numeric($categories) || $pdf == Array()) {
                                             $cat_flag++;
                                         }
                                     }
                                     //  }
                                     if ($cat_flag == 1) {
-                                        $cateogryarray[] = $categories['0'];
-                                        Yii::app()->user->setFlash('error', 'Category Id is not valid : ' . implode(' , ', $cateogryarray));
+                                        $cateogryarray[] = $categories;
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
                                     }
-                                    if ($categories['0'] == '') {
-                                        Yii::app()->user->setFlash('error', 'Title,Category Id,Pack Size ,Pack Unit,Store Price,Store Offer Price can not be blank.');
+                                    if ($categories == '') {
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
                                     }
                                 }
 
-
                                 $errorFlag = 0;
                                 $model1->attributes = $row;
+                                //echo "<pre>";print_r($model1->attributes);die;
                                 $error = array();
                                 $action = $model->action == 'update' ? 'updated' : 'created';
                                 $model_subscribe = new SubscribedProduct();
@@ -1406,126 +1424,155 @@ class BaseProductController extends Controller {
                                     $Diameter = 0;
                                 }
                                 if ($model1->action == 'create') {
-                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($pack_saze) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp >= $wsp)) {
-                                        // echo $row['pack_unit'];die;
+                                    if ($pdf != Array()) {
+                                        if (is_numeric($mrp) && $mrp>0) {
+                                            if (is_numeric($wsp)&& $wsp>0) {
+                                                if ($mrp >= $wsp) {
+                                                    if (($pdf != Array() && is_numeric($wsp)) && is_numeric($categories['0']) && is_numeric($Weight) && is_numeric($Length) && (is_numeric($mrp) && $mrp >= $wsp)) {
+                                                        // echo $row['pack_unit'];die;
+                                                        $model_subscribe->store_offer_price = $wsp;
+                                                        $model_subscribe->diameter = $Diameter;
+                                                        $model_subscribe->weight = $Weight;
+                                                        $model_subscribe->weight_unit = $Weight_Unit;
+                                                        $model_subscribe->length = $Length;
+                                                        $model_subscribe->length_unit = $Length_Unit;
+                                                        $model_subscribe->store_price = $mrp;
+                                                        $model_subscribe->quantity = 0;
+
+                                                        //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
+                                                     // echo "<pre>"; print_r($model1->attributes);
+                                                       // die;
+                                                        if (!$model1->save(true)) {
+
+                                                            foreach ($model1->getErrors() as $errors) {
+                                                                // echo "hello";die;
+                                                                $error[] = implode(' AND ', $errors);
+                                                            }
+                                                            fwrite($handle1, "\nRow : " . $i . " Product not $action. " . implode(' AND ', $error));
+                                                        } else {
+
+                                                            // print_r($cols]);die;
+                                                            //echo $data[$cols['Diameter']];die;
+                                                            if ($model1->action == 'create') { #................subscription...............#
+                                                                $model_subscribe = new SubscribedProduct();
+                                                                $model_subscribe->base_product_id = $model1->base_product_id;
+                                                                $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                                                $model_subscribe->store_id = 1;
+                                                                $model_subscribe->quantity = 0;
+                                                                if ($wsp != '') {
+                                                                    $model_subscribe->store_offer_price = $wsp;
+                                                                } else {
+                                                                    $model_subscribe->store_offer_price = 0;
+                                                                }
+                                                                if ($mrp != '') {
+                                                                    $model_subscribe->store_price = $mrp;
+                                                                } else {
+                                                                    //$model_subscribe->store_price = 0;
+                                                                }
+                                                                if (isset($cols['Diameter'])) {
+                                                                    $model_subscribe->diameter = $data[$cols['Diameter']];
+                                                                } else {
+                                                                    $model_subscribe->diameter = 0;
+                                                                }
+                                                                if (isset($cols['Grade'])) {
+                                                                    $model_subscribe->grade = $data[$cols['Grade']];
+                                                                } else {
+                                                                    $model_subscribe->grade = 0;
+                                                                }
+                                                                $model_subscribe->weight = $Weight;
+                                                                $model_subscribe->weight_unit = $Weight_Unit;
+                                                                $model_subscribe->length = $Length;
+                                                                $model_subscribe->length_unit = $Length_Unit;
+                                                                $category_obj = new Category();
+
+                                                                $base_product_id = $model1->base_product_id;
+
+                                                                $category_obj->createBaseproductMappings1($base_product_id, $categories);
 
 
-                                        $model_subscribe->store_offer_price = $wsp;
-                                        $model_subscribe->diameter = $Diameter;
-                                        $model_subscribe->weight = $Weight;
-                                        $model_subscribe->weight_unit = $Weight_Unit;
-                                        $model_subscribe->length = $Length;
-                                        $model_subscribe->length_unit = $Length_Unit;
-                                        $model_subscribe->store_price = $mrp;
-                                        $model_subscribe->quantity = 0;
+                                                                /* foreach ($categories as $category) {
+                                                                  $base_product_id = $model1->base_product_id;
 
-                                        //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity);
-                                        if (!$model1->save(true)) {
+                                                                  $category_obj->createBaseproductMappings1($base_product_id, $category);
+                                                                  } */
+                                                                $model_subscribe->save();
+                                                                $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
+                                                            }#...................end...................#
 
-                                            foreach ($model1->getErrors() as $errors) {
-                                                // echo "hello";die;
-                                                $error[] = implode(' AND ', $errors);
+                                                            if (isset($row['media']) && !empty($row['media'])) {
+                                                                $images = $row['media'];
+                                                                //echo $row['media'];die;
+                                                                $img= substr($images,-3);
+                                                                if($img== 'jpg'|| $img== 'png' || $img=='jpeg'){
+                                                                $insertImages = array();
+                                                                if (isset($images) && $model1->base_product_id > 0) {
+                                                                    if (!$model1->isNewRecord) {
+                                                                        $sql = "DELETE FROM media WHERE base_product_id = $model1->base_product_id";
+                                                                        $connection = Yii::app()->db;
+                                                                        $command = $connection->createCommand($sql);
+                                                                        $command->execute();
+                                                                    }
+
+                                                                    $images = explode(";", $images);
+                                                                    //echo count($images);die;
+                                                                    if (count($images) < 3) {
+
+                                                                        $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
+                                                                    } else if (!empty($insertImages['error'])) {
+                                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                                    }
+
+                                                                    if (!empty($insertImages['error'])) {
+                                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                                    }
+                                                                }
+                                                                /* save each uploaded media into database */
+                                                                if (!empty($insertImages['images'])) {
+                                                                    $insertRows = array();
+                                                                    foreach ($insertImages['images'] as $key => $value) {
+                                                                        $error = array();
+                                                                        $media_model = new Media;
+                                                                        if ($key !== 'error') {
+                                                                            $media_model->attributes = $value;
+                                                                            $media_model->save(true);
+                                                                        } else {
+                                                                            $error[] = $value;
+                                                                        }
+                                                                        foreach ($media_model->getErrors() as $errors) {
+                                                                            $error[] = implode(' AND ', $errors);
+                                                                        }
+                                                                        if (!empty($error)) {
+                                                                            $model1->addError('csv_file', implode(' AND ', $error));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                           
+                                                            }
+                                                            fwrite($handle1, "\nRow : " . $i . " Product id $model1->base_product_id $action successfully." . implode(' AND ', $error));
+                                                            //...............................................//
+                                                        }
+                                                    } else {
+                                                        fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . implode(' AND ', $error));
+                                                    }
+                                                } else {
+
+                                                    fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . 'store price always greater than store offer price');
+                                                }
+                                            } else {
+
+                                                fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . ' store offer price should be numeric and always greater than zero ');
                                             }
-                                            fwrite($handle1, "\nRow : " . $i . " Product not $action. " . implode(' AND ', $error));
                                         } else {
 
-                                            // print_r($cols]);die;
-                                            //echo $data[$cols['Diameter']];die;
-                                            if ($model1->action == 'create') { #................subscription...............#
-                                                $model_subscribe = new SubscribedProduct();
-                                                $model_subscribe->base_product_id = $model1->base_product_id;
-                                                //$model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
-                                                $model_subscribe->store_id = 1;
-                                                $model_subscribe->quantity = 0;
-                                                if ($wsp != '') {
-                                                    $model_subscribe->store_offer_price = $wsp;
-                                                } else {
-                                                    $model_subscribe->store_offer_price = 0;
-                                                }
-                                                if ($mrp != '') {
-                                                    $model_subscribe->store_price = $mrp;
-                                                } else {
-                                                    //$model_subscribe->store_price = 0;
-                                                }
-                                                if (isset($cols['Diameter'])) {
-                                                    $model_subscribe->diameter = $data[$cols['Diameter']];
-                                                } else {
-                                                    $model_subscribe->diameter = 0;
-                                                }
-                                                if (isset($cols['Grade'])) {
-                                                    $model_subscribe->grade = $data[$cols['Grade']];
-                                                } else {
-                                                    $model_subscribe->grade = 0;
-                                                }
-                                                $model_subscribe->weight = $Weight;
-                                                $model_subscribe->weight_unit = $Weight_Unit;
-                                                $model_subscribe->length = $Length;
-                                                $model_subscribe->length_unit = $Length_Unit;
-                                                $category_obj = new Category();
-
-                                                foreach ($categories as $category) {
-                                                    $base_product_id = $model1->base_product_id;
-
-                                                    $category_obj->createBaseproductMappings1($base_product_id, $category);
-                                                }
-                                                $model_subscribe->save();
-                                                $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
-                                            }#...................end...................#
-                                           
-                                            if (isset($row['media']) && !empty($row['media'])) {
-                                                $images = $row['media'];
-                                                $insertImages = array();
-                                                if (isset($images) && $model1->base_product_id > 0) {
-                                                    if (!$model1->isNewRecord) {
-                                                        $sql = "DELETE FROM media WHERE base_product_id = $model1->base_product_id";
-                                                        $connection = Yii::app()->db;
-                                                        $command = $connection->createCommand($sql);
-                                                        $command->execute();
-                                                    }
-
-                                                    $images = explode(";", $images);
-                                                    //echo count($images);die;
-                                                    if(count($images)<3)
-                                                    {
-                                                
-                                                    $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
-                                                    }
-                                                    else if (!empty($insertImages['error'])) {
-                                                        $model1->addError('csv_file', $insertImages['error']);
-                                                    }
-                                                    
-                                                    if (!empty($insertImages['error'])) {
-                                                        $model1->addError('csv_file', $insertImages['error']);
-                                                    }
-                                                }
-                                                /* save each uploaded media into database */
-                                                if (!empty($insertImages['images'])) {
-                                                    $insertRows = array();
-                                                    foreach ($insertImages['images'] as $key => $value) {
-                                                        $error = array();
-                                                        $media_model = new Media;
-                                                        if ($key !== 'error') {
-                                                            $media_model->attributes = $value;
-                                                            $media_model->save(true);
-                                                        } else {
-                                                            $error[] = $value;
-                                                        }
-                                                        foreach ($media_model->getErrors() as $errors) {
-                                                            $error[] = implode(' AND ', $errors);
-                                                        }
-                                                        if (!empty($error)) {
-                                                            $model1->addError('csv_file', implode(' AND ', $error));
-                                                        }
-                                                    }
-                                                }
-                                            }   
-                                            fwrite($handle1, "\nRow : " . $i . " Product id $model1->base_product_id $action successfully." . implode(' AND ', $error));
-                                            //...............................................//
+                                            fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . ' store price should be numeric and always greater than zero ');
                                         }
                                     } else {
-                                        fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . implode(' AND ', $error));
+
+                                        fwrite($handle1, "\nRow : " . $i . " Product not $action.  " . 'category id is not match');
                                     }
                                 } else if ($model1->action == 'update') {
+                                    $model1->save();
                                     if (isset($cols['Subscribed Product ID']))
                                         $bp = trim($data[$cols['Subscribed Product ID']]);
                                     $connection = Yii::app()->db;
@@ -1551,6 +1598,12 @@ class BaseProductController extends Controller {
                                             $row['title'] = str_replace("’", "'", trim($data[$cols['Name']]));
                                             $model1->Update_product_title($row['title'], $bp);
                                         }
+                                        if (isset($cols['Diameter'])) {
+                                                $diameter = $data[$cols['Diameter']];
+                                            } 
+                                         if (isset($cols['Grade'])) {
+                                                $grade = $data[$cols['Grade']];
+                                            } 
                                         if ((is_numeric($wsp)) && $mrp >= $wsp) {
                                             $model_subscribe = new SubscribedProduct();
                                             $model_subscribe->base_product_id = $bp;
@@ -1562,7 +1615,7 @@ class BaseProductController extends Controller {
                                             //$is_deleted =  ($model->status == 1) ? 0 : 1;
                                             $is_deleted = '0';
                                             $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
-                                            $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity);
+                                            $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity, $diameter,$grade);
                                             fwrite($handle1, "\nRow : " . $i . " Product $bp $action. " . implode(' AND ', $error));
                                             //...............................................//
                                         } else {
@@ -1604,27 +1657,29 @@ class BaseProductController extends Controller {
 
                                     $categories = '';
                                     //  is_numeric($data[$cols['categoryIds'])
-                                    $categories = explode(';', trim($data[$cols['categoryId']], ';'));
+                                    //$categories = explode(';', trim($data[$cols['categoryId']], ';'));
+                                    $categories = trim($data[$cols['categoryId']]);
 
                                     $category_obj = new Category();
-                                    if ($categories['0'] != '') {
+                                    if ($categories != '') {
                                         if (isset($categories) && !empty($categories)) {
                                             $connection = Yii::app()->db;
                                             $sql = "SELECT DISTINCT category_id
                                         FROM `category`
-                                        WHERE category_id IN ( " . implode(',', $categories) . " )
+                                        WHERE category_id =$categories
                                         AND is_deleted = 0";
                                             $catinfo = '';
                                             $command = $connection->createCommand($sql);
                                             $catinfo = $command->queryAll();
                                             $catIds = array();
                                             if (isset($catinfo) && !empty($catinfo)) {
-                                                foreach ($catinfo as $cat) {
-                                                    $catIds[] = $cat['category_id'];
-                                                }
+//                                                foreach ($catinfo as $cat) {
+//                                                    $catIds[] = $cat['category_id'];
+//                                                }
+                                                $catIds[] = $categories;
 
                                                 $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
-                                                $catDiff = array_diff($categories, $catIds);
+                                                //$catDiff = array_diff($categories, $catIds);
                                                 if (!empty($catDiff)) {
 
                                                     Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
@@ -1710,7 +1765,7 @@ class BaseProductController extends Controller {
 
                 $file_info = new finfo(FILEINFO_MIME);  // object oriented approach!
                 $file_mime_type = $file_info->buffer(@file_get_contents($target_path));  // e.g. gives "image/jpeg"
-             
+
                 foreach ($accepted_types as $mime_type) {
                     if (strpos($file_mime_type, $mime_type) !== FALSE) {
                         $okay = true;
@@ -1723,6 +1778,7 @@ class BaseProductController extends Controller {
                 if (!$okay OR ! $continue) {
                     Yii::app()->user->setFlash('error', 'The file you are trying to upload not a .zip file. Please try again.');
                     $this->render('media');
+                    die;
                 }
 
                 $zip = new ZipArchive();
@@ -1866,7 +1922,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Pack Size,Pack Unit,Store Price,Store Offer Price,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -1880,15 +1936,15 @@ class BaseProductController extends Controller {
         $model = new BaseProduct();
 //        $model_grid = new ProductGridview('search');
         //$model_grid->unsetAttributes();
-        if ($_POST == Array()) {
-            ob_clean();
+         if ($_POST == Array()) {
+             ob_clean();
             $response = $model->downloadproductCSV();
             ob_flush();
-            exit();
-        }
+             exit();
+         }
 
-        /* $file_name = 'Bulk_Upload_product_Update.csv';
-          $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price';
+         /*$file_name = 'Bulk_Upload_product_Update.csv';
+          $file_data = 'Base product id,title,description,categoryId,color,Grade,Diameter,Pack Size,Pack Unit,Store Price,Store Offer Price,Status';
           $size_of_file = strlen($file_data);
           $this->renderPartial('fileDownload', array(
           'file_name' => $file_name,
