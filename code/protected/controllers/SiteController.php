@@ -103,7 +103,7 @@ class SiteController extends Controller
 			    $log->insertLoginLog();
 
 				$this->redirect(Yii::app()->user->returnUrl);
-			}	$session = Yii::$app->session;
+			}	//$session = Yii::$app->session;
 		}
 		// display the login form
 		$this->render('login',array('model'=>$model));

@@ -422,14 +422,14 @@ class Category extends CActiveRecord {
       } */
 
     public function createBaseproductMappings($baseproduct_id, $category_id) {
+        
         $connection = Yii::app()->db;
-        $sqlins = "update `product_category_mapping` set base_product_id = '" . $baseproduct_id . "', category_id = '" . $category_id . "' where base_product_id=" . $baseproduct_id;
+        $sqlins = "DELETE FROM `product_category_mapping` where base_product_id=$baseproduct_id";
         $command = $connection->createCommand($sqlins);
         $command->execute();
         $sqlins = "INSERT INTO `product_category_mapping`(`base_product_id`, `category_id`) VALUES ('" . $baseproduct_id . "','" . $category_id . "')";
         $command = $connection->createCommand($sqlins);
         $command->execute();
-
         return true;
     }
 

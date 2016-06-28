@@ -19,7 +19,7 @@ if ($issuperadmin == 1) {
     }
 } else {
     $store_id = Yii::app()->session['brand_id'];
-    if ($model->store_id!= $store_id) {
+    if ($model->store_id != $store_id) {
         Yii::app()->user->setFlash('permission_error', 'You are doing something wrong!.');
         $this->redirect(array('DashboardPage/index'));
     }
@@ -47,37 +47,41 @@ if ($issuperadmin == 1) {
     <?php if (Yii::app()->user->hasFlash('error')): ?><div class="errorSummary " style=""><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
 
 
-    
+
 
 
     <fieldset>Registered Office</fieldset>
     <div class="row">
-        <?php echo $form->labelEx($model, 'business_address_country'); ?>
-        <?php echo $form->textField($model, 'business_address_country', array('size' => 40, 'maxlength' => 100)); ?>
-        <?php echo $form->error($model, 'business_address_country'); ?>
+        <?php echo $form->labelEx($model, 'business_address'); ?>
+        <?php echo $form->textField($model, 'business_address', array('size' => 80, 'maxlength' => 300)); ?>
+        <?php echo $form->error($model, 'business_address'); ?>
+    </div>
+    <div class="row">
+        <?php echo $form->labelEx($model, 'business_address_pincode'); ?>
+        <?php echo $form->textField($model, 'business_address_pincode', array('size' => 40, 'maxlength' => 6)); ?>
+        <?php echo $form->error($model, 'business_address_pincode'); ?>
+    </div>
+    <div class="row">
+        <?php echo $form->labelEx($model, 'business_address_city'); ?>
+        <?php echo $form->textField($model, 'business_address_city', array('size' => 40, 'maxlength' => 100)); ?>
+        <?php echo $form->error($model, 'business_address_city'); ?>
     </div>
     <div class="row">
         <?php echo $form->labelEx($model, 'business_address_state'); ?>
         <?php echo $form->textField($model, 'business_address_state', array('size' => 40, 'maxlength' => 100)); ?>
         <?php echo $form->error($model, 'business_address_state'); ?>
     </div>
-    <div class="row">
-        <?php echo $form->labelEx($model, 'business_address'); ?>
-        <?php echo $form->textField($model, 'business_address', array('size' => 80, 'maxlength' => 300)); ?>
-        <?php echo $form->error($model, 'business_address'); ?>
-    </div>
 
     <div class="row">
-        <?php echo $form->labelEx($model, 'business_address_city'); ?>
-        <?php echo $form->textField($model, 'business_address_city', array('size' => 40, 'maxlength' => 100)); ?>
-        <?php echo $form->error($model, 'business_address_city'); ?>
+        <?php echo $form->labelEx($model, 'business_address_country'); ?>
+        <?php echo $form->textField($model, 'business_address_country', array('size' => 40, 'maxlength' => 100)); ?>
+        <?php echo $form->error($model, 'business_address_country'); ?>
     </div>
 
-    <div class="row">
-        <?php echo $form->labelEx($model, 'business_address_pincode'); ?>
-        <?php echo $form->textField($model, 'business_address_pincode', array('size' => 40, 'maxlength' => 6)); ?>
-        <?php echo $form->error($model, 'business_address_pincode'); ?>
-    </div>
+
+
+
+
 
     <div class="row buttons">
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

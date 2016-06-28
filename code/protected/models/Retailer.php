@@ -47,7 +47,7 @@ class Retailer extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name,email,password,mobile,address,city,state', 'required'),
+            array('name,email,password,mobile,address,pincode,city,state', 'required'),
             array('id, status', 'numerical', 'integerOnly' => true),
             array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
@@ -65,7 +65,7 @@ class Retailer extends CActiveRecord {
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, retailer_code, VAT_number, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date', 'safe', 'on' => 'search'),
+            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date', 'safe', 'on' => 'search'),
         );
     }
 
@@ -95,7 +95,7 @@ class Retailer extends CActiveRecord {
             'address' => 'Delivery Address',
             'city' => 'City',
             'state' => 'State',
-//            'image' => 'Image',
+           'pincode' => 'Pincode',
 //            'image_url' => 'Image Url',
             'website' => 'Website',
             'contact_person1' => 'Contact Person1',
@@ -145,7 +145,7 @@ class Retailer extends CActiveRecord {
         $criteria->compare('address', $this->address, true);
         $criteria->compare('city', $this->city, true);
         $criteria->compare('state', $this->state, true);
-//        $criteria->compare('image', $this->image, true);
+       $criteria->compare('pincode', $this->pincode, true);
 //        $criteria->compare('image_url', $this->image_url, true);
         $criteria->compare('website', $this->website, true);
         $criteria->compare('contact_person1', $this->contact_person1, true);

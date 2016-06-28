@@ -77,6 +77,7 @@ onclick='return confirm("Do you want to cancel");'/>
     );
     ?>
     <input name="status" class="activebutton" value="submit" type="submit">
+     
     <div class="dropdownCustom">
 <!--        <select onchange="changestatus(this);">-->
         <select name="status1" value="changestatus">
@@ -98,14 +99,6 @@ onclick='return confirm("Do you want to cancel");'/>
     </style>
 
 
-    <?php
-    $count = count($model);
-    if (!empty($model)) {
-        ?>
-        <div class="page-size-wrap">
-            <span>Show : </span><?= $pageSizeDropDown; ?>
-        </div>
-    <?php } ?>
     <?php
     Yii::app()->clientScript->registerCss('initPageSizeCSS', '.page-size-wrap{text-align: left;}');
 
@@ -166,8 +159,8 @@ onclick='return confirm("Do you want to cancel");'/>
                 array(
                 'header' => 'Order status',
                 'name' => 'status',
-                 'filter'=>array('pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancelled','Paid'=>'Paid'), 
-               
+                 'filter'=>array(''=>'All','pending'=>'Pending','Confirmed'=>'Confirmed','Out for Delivery'=>'Out for Delivery','Delivered'=>'Delivered','Cancelled'=>'Cancelled','Paid'=>'Paid'), 
+               // 'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("status"=>$data->status))."\'"))',
                  ),
 //            array(
 //                'header' => 'Amount',
@@ -175,7 +168,15 @@ onclick='return confirm("Do you want to cancel");'/>
 //                'type' => 'raw',
 //             'value' => '$this->grid->dataProvider->pagination->currentPage * $this->grid->dataProvider->pagination->pageSize + ($row+1)',
 //            ),
-            'created_date',
+           // 'created_date',
+                     array(
+                   'name' => 'created_date',
+                'type' => 'raw',
+                'value'=> function($data){
+          
+           return substr($data->created_date,0, -9);
+       }
+       ),
            
             //'delivery_date',
                  array(
@@ -187,12 +188,14 @@ onclick='return confirm("Do you want to cancel");'/>
        ),
             'link' => array(
                 'header' => 'Action',
+                 'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
-                'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id))."\'"))',
+                'value' => 'CHtml::button("View",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"bckstatus"=>$data->status))."\'"))',
             ),
                
             'link1' => array(
                 'header' => 'Action',
+                 'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
                 'htmlOptions' => array('class' => 'redview'),
                // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',

@@ -57,6 +57,11 @@
             <?php echo $form->error($model, 'address'); ?>
         </div>
         <div class="row">
+            <?php echo $form->labelEx($model, 'Pincode *'); ?>
+            <?php echo $form->textField($model, 'pincode', array('maxlength' => 6)); ?>
+            <?php echo $form->error($model, 'pincode'); ?>
+        </div>
+        <div class="row">
             <?php echo $form->labelEx($model, 'GeoLocation'); ?>
             <?php echo $form->textField($model, 'geolocation',array('maxlength' => 15)); ?>
             <?php echo $form->error($model, 'geolocation'); ?>

@@ -8,6 +8,7 @@ bo {
 /*Nav bar*/
 .grid-view .table td {
     vertical-align: middle;
+    font-size:13px !important;
 } 
 .grid-view .table th {
     vertical-align: middle;
@@ -811,7 +812,7 @@ input[type="file"]:focus {
     outline: none;
 }
 .sort-link {
-    background: url(../img/sort2.png) no-repeat right;
+    //background: url(../img/sort2.png) no-repeat right;
     display: block;
     background-size: 12px;
     padding: 0 10px;
@@ -1658,7 +1659,7 @@ background: #317E34;
     margin: 20px 0;
 }
 .bulk_center input[type="file"] {
-    width: 200px;
+    width: 195px;
 }
 .bulk_center textarea {
     width: 300px;
