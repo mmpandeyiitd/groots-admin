@@ -1671,6 +1671,13 @@ class BaseProductController extends Controller {
 
 
 					//Image Update Ends
+
+					//................solr ...................//
+						$solrBackLog = new SolrBackLog();
+						$is_deleted = '0';
+						$solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
+					//...................end.....................//     
+
                                             fwrite($handle1, "\nRow : " . $i . " Product $bp $action. " . implode(' AND ', $error));
                                             //...............................................//
                                         } else {
