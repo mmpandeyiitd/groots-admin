@@ -200,7 +200,8 @@ if (is_numeric($store_id)) {
         //print_r($model[2]->shipping_charges);die;
 //        //echo $model;
         //echo round($model[2]->shipping_charges);    
-       if(!empty(round($model[2]->shipping_charges))){
+       if(isset($model[2]->shipping_charges) && !empty($model[2]->shipping_charges))
+         {
             $shipping_charge=$model[2]->shipping_charges;
          };
         foreach ($model as $key => $value) {
