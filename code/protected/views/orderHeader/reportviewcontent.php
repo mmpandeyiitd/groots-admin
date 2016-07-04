@@ -199,8 +199,10 @@ if (is_numeric($store_id)) {
 //        echo '<pre>';
         //print_r($model[2]->shipping_charges);die;
 //        //echo $model;
-        //echo round($model[2]->shipping_charges);    
-       if(isset($model[2]->shipping_charges) && !empty($model[2]->shipping_charges))
+        echo round($model[2]->shipping_charges);   
+
+        die; 
+       if(isset($model[2]->shipping_charges) && !empty(round($model[2]->shipping_charges)))
          {
             $shipping_charge=$model[2]->shipping_charges;
          };
