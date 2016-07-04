@@ -48,8 +48,8 @@ class Retailer extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('name,email,password,mobile,address,pincode,city,state', 'required'),
-            array('id, status', 'numerical', 'integerOnly' => true),
-            array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
+            array('id, status,credit_limit', 'numerical', 'integerOnly' => true),
+            array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email,collecttion_agent', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
             array('state,retailer_code,VAT_number,contact_person1', 'length', 'max' => 150),
             array('VAT_number', 'length', 'min' => 11, 'max' => 11),
@@ -113,6 +113,8 @@ class Retailer extends CActiveRecord {
             'owner_email' => 'owner_email',
             'billing_email' => 'billing_email',
             'settlement_days' => 'settlement_days',
+            'credit_limit' => 'Credit Limit',
+            'collecttion_agent' => 'Collecttion Agent',
         );
     }
 
@@ -310,6 +312,15 @@ class Retailer extends CActiveRecord {
         $command->execute();
         // $retailer_name = $command->queryScalar();
         return $category_id_del = $command->queryAll();
+    }
+
+    public function getRetailer() {
+       
+        $connection = Yii::app()->db;
+        $sql = "SELECT name,id FROM `retailer` where 1";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+       return $category_id_del = $command->queryAll();
     }
 
     public function getRetailerNameByID($retialerid) {

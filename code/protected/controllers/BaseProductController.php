@@ -1250,7 +1250,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
+                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1312,8 +1312,8 @@ class BaseProductController extends Controller {
                                     Yii::app()->user->setFlash('error', 'Store ID does not match');
                                     break;
                                 }
-                                if (isset($cols['Base product id']))
-                                    $baseid = str_replace("’", "'", trim($data[$cols['Base product id']]));
+                                if (isset($cols['base_product_id']))
+                                    $baseid = str_replace("’", "'", trim($data[$cols['base_product_id']]));
                                 if (isset($cols['title']))
                                     $row['title'] = str_replace("’", "'", trim($data[$cols['title']]));
                                 if (isset($cols['Pack Size']))
@@ -1617,7 +1617,64 @@ class BaseProductController extends Controller {
                                             $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
                                             $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity, $diameter,$grade);
                                             fwrite($handle1, "\nRow : " . $i . " Product $bp $action. " . implode(' AND ', $error));
+
+
+                                            if (isset($row['media']) && !empty($row['media'])) {
+                                                                $images = $row['media'];
+                                                                //echo $row['media'];die;
+                                                                $img= substr($images,-3);
+                                                                if($img== 'jpg'|| $img== 'png' || $img=='jpeg'){
+                                                                $insertImages = array();
+                                                                if (isset($images) && $model_subscribe->base_product_id > 0) {
+                                                                    if (!$model1->isNewRecord) {
+                                                                        $sql = "DELETE FROM media WHERE base_product_id = $model1->base_product_id";
+                                                                        $connection = Yii::app()->db;
+                                                                        $command = $connection->createCommand($sql);
+                                                                        $command->execute();
+                                                                    }
+
+                                                                    $images = explode(";", $images);
+                                                                    //echo count($images);die;
+                                                                    if (count($images) < 3) {
+
+                                                                        $insertImages = $this->uploadImages($images, $i, $model1->base_product_id);
+                                                                    } else if (!empty($insertImages['error'])) {
+                                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                                    }
+
+                                                                    if (!empty($insertImages['error'])) {
+                                                                        $model1->addError('csv_file', $insertImages['error']);
+                                                                    }
+                                                                }
+                                                                /* save each uploaded media into database */
+                                                                if (!empty($insertImages['images'])) {
+                                                                    $insertRows = array();
+                                                                    foreach ($insertImages['images'] as $key => $value) {
+                                                                        $error = array();
+                                                                        $media_model = new Media;
+                                                                        if ($key !== 'error') {
+                                                                            $media_model->attributes = $value;
+                                                                            $media_model->save(true);
+                                                                        } else {
+                                                                            $error[] = $value;
+                                                                        }
+                                                                        foreach ($media_model->getErrors() as $errors) {
+                                                                            $error[] = implode(' AND ', $errors);
+                                                                        }
+                                                                        if (!empty($error)) {
+                                                                            $model1->addError('csv_file', implode(' AND ', $error));
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                             //...............................................//
+
+                                             //................solr ...................//
+                                                   $solrBackLog = new SolrBackLog();
+                                                    $is_deleted = '0';
+                                                    $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
+                                             //...................end.....................//           
                                         } else {
                                             fwrite($handle1, "\nRow : " . $i . " Product $bp Not $action. Store Offer Price always numeric and less then Store price  " . implode(' AND ', $error));
                                         }

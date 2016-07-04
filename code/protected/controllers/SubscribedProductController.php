@@ -334,10 +334,10 @@ class SubscribedProductController extends Controller {
 
     public function actionlistallproduct() {
         // echo '<pre>';print_r($_POST);die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         //echo '<pre>';
         //print_r($data);die;
 

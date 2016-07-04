@@ -170,7 +170,13 @@ else if(Yii::app()->controller->id=="storeFront"){
         echo "Edit Admin User";
     }
 }
+elseif(Yii::app()->controller->id=="grootsledger")
+{
+    echo "GROOTS LEDGER";
+}
 else{
+
+    
     echo Yii::app()->controller->action->id." ".Yii::app()->controller->id;
 }
 

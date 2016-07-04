@@ -553,4 +553,13 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
         }
     }
 
+    public static function getinfo($id) {
+        $connection = Yii::app()->secondaryDb;
+       $sql = "SELECT order_id,order_number,user_id,created_date,total_payable_amount,agent_name,delivery_date FROM order_header WHERE `order_id` ='".$id."'"
+            ;
+        $command = $connection->createCommand($sql);
+        $pdf = $command->queryAll();
+        return $pdf;
+    }
+
 }
