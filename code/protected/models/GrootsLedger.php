@@ -221,9 +221,9 @@ WHERE oh.created_date between('".$cDate."') and ('".$cdate1."')";
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', ol.seller_name AS 'Client Name', ol.seller_phone, ol.seller_state, ol.seller_city, sum( `total_payable_amount` ) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', ol.seller_name AS 'Client Name', ol.seller_phone, ol.seller_state, ol.seller_city, round(SUM(ol.unit_price *ol.product_qty)) AS 'Total Amount'
 				FROM `order_header` oh
-				LEFT JOIN order_line AS ol ON ol.`order_id` = oh.`order_id`
+			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id`
 				WHERE oh.delivery_date = '".$cDate."'
 				GROUP BY oh.`user_id` ";
               
