@@ -122,18 +122,17 @@
             <?php echo $form->dropDownList($model, 'status', array('0' => 'Deactive','1' => 'Active',)); ?>
             <?php echo $form->error($model, 'status'); ?>
         </div>
-
-        <div class="row">
-            <?php echo $form->labelEx($model, 'credit_limit'); ?>
-             <?php echo $form->textField($model, 'credit_limit', array('size' => 60, 'maxlength' => 150)); ?>
-            <?php echo $form->error($model, 'credit_limit'); ?>
+         <div class="row">
+            <?php echo $form->labelEx($model, 'Shipping Charge'); ?>
+            <?php echo $form->textField($model, 'shipping_charge'); ?>
+            <?php echo $form->error($model, 'shipping_charge'); ?>
+        </div>
+         <div class="row">
+            <?php echo $form->labelEx($model, 'min Order Price'); ?>
+            <?php echo $form->textField($model, 'min_order_price'); ?>
+            <?php echo $form->error($model, 'min_order_price'); ?>
         </div>
 
-        <div class="row">
-            <?php echo $form->labelEx($model, 'collecttion_agent'); ?>
-            <?php echo $form->textField($model, 'collecttion_agent', array('size' => 60, 'maxlength' => 150)); ?>
-            <?php echo $form->error($model, 'collecttion_agent'); ?>
-        </div>
         <div class=" buttons">
             <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
             <?php //echo  CHtml::button("See Request", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerRequest/admin", array('retailer_id' => $retailer_id)) . "'")); ?>

@@ -212,12 +212,12 @@ class OrderLine extends CActiveRecord
         return $lineidinfo;
     } 
     
-     public function Updatesizequantity($order_line_id, $baseproduct_id,$size_quantity){
+     public function Updatesizequantity($order_line_id, $baseproduct_id,$size_quantity,$shipping_charge=0){
         $lineidinfo =FALSE;
         
         if(is_numeric($order_line_id)&&is_numeric($baseproduct_id)&&is_numeric($size_quantity)){
             $connection = Yii::app()->secondaryDb;
-           $sql="update order_line set product_qty=$size_quantity where id = $order_line_id and base_product_id=$baseproduct_id";
+           $sql="update order_line set product_qty=$size_quantity, shipping_charges=$shipping_charge where id = $order_line_id and base_product_id=$baseproduct_id";
             $command = $connection->createCommand($sql);
             $command->execute();
         }
@@ -474,6 +474,19 @@ class OrderLine extends CActiveRecord
 
     // print everything out
     return $response;
+       
+    }
+
+    /*
+    shipping charge add on view
+    */
+    public static function shippingChargeUpdateView($orderid,$shipping_charge) {
+        if(is_numeric($orderid)){
+            $connection = Yii::app()->secondaryDb;
+            $sql="update order_line set shipping_charges=$shipping_charge where order_id = $orderid";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+        }
        
     }
 

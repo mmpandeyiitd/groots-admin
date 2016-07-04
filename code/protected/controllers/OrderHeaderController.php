@@ -99,9 +99,13 @@ class OrderHeaderController extends Controller {
 
         $email = $modelOrder->attributes['billing_email'];
        
-        
+        $shipping_charge=0;
 
         if (isset($_POST['Update'])) {
+         //print_r($_POST);die;
+         if(!empty($_POST['shipping_charges'])){
+              $shipping_charge=$_POST['shipping_charges'];
+         }
             $totalchk = 0;
             $unit_price_discount = array();
             //....................end..........................//
@@ -642,7 +646,8 @@ Sales: +91-11-3958-9895</span>
                     //  $unit_price_discount_qnt=$_POST['unit_price_discount'][$i];
 
                     if ($sizeqty_old != $size_quantity) {
-                        $lineinfo = $linedescinfo->Updatesizequantity($order_line_id, $baseproduct_id, $size_quantity);
+                        $lineinfo = $linedescinfo->Updatesizequantity($order_line_id, $baseproduct_id, $size_quantity,$shipping_charge);
+                        //$updateshipping = $linedescinforeport->updateShippingCharge($shipping_charge,$id);
                         Yii::app()->user->setFlash('success', 'Size Quantity updated Successfully.');
                     }
                 }

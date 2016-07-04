@@ -37,14 +37,19 @@ if ($issuperadmin == 0) {
 }
 $order_id = '';
 $orderline_detail = array();
+$min_order_price=0;
+$shipping_charge=0;
 if (isset($_GET['id'])) {
     $order_id = $_GET['id'];
     if (is_numeric($order_id)) {
         $orderline_detail = $modelOrder->GetOrderdetail($order_id);
+        $min_order_price=$orderline_detail[0]['min_order_price'];
+      
     }
 }
+
 //echo "<pre>";
-//print_r($orderline_detail);
+//print_r($orderline_detail[0]['min_order_price']);die;
 ?>
 <div class="form">
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
@@ -90,12 +95,10 @@ if (isset($_GET['id'])) {
                 $wsptotal = '';
                 $qtytotal = 0;
                 $isize = 0;
-
+                
                 $maxorder = count($orderline_detail);
-
-
-
                 $grandtotal = $wsptotal + $grandtotal;
+                
                 ?>  
                 <?php if ($maxorder > 0) { ?>
 
@@ -223,6 +226,7 @@ if (isset($_GET['id'])) {
                 if ($status_array[0] == 'Confirmed' || $status_array[0] == 'Shipped' || $status_array[0] == 'Delivered' || $status_array[0] == 'Cancelled' || $status_array[0] == 'ReturnedRequested' || $status_array[0] == 'ReturnedComplete' || $status_array[0] == 'Paid') {
                     $updationclose = FALSE;
                 }
+                
                 ?>
                 <div class="dynamic_content">
 
@@ -265,7 +269,7 @@ if (isset($_GET['id'])) {
 
                                     <tr>
                                         <td>Total Qty:</td>
-                                        <td id="tqy_<?php echo array_sum($qtys_array); ?>"><?php echo array_sum($qtys_array); ?></td>
+                                        <td id="tqy_<?php echo array_sum($qtys_array); ?>"><?php echo array_sum($qtys_array)*$sizes_array[0]."&nbsp".$orderline_detail[$i]['pack_unit'];; ?></td>
                                     </tr>
                                     <tr>
                                         <td>Total Amount: </td>
@@ -297,6 +301,7 @@ if (isset($_GET['id'])) {
                                 <?php
                                 $no_baseproducts = count($base_product_ids_array);
                                 if ($no_baseproducts > 0) {
+
                                     for ($j = 0; $j < $no_baseproducts; $j++) {
                                         ?>
                                         <table class = "table">
@@ -312,7 +317,7 @@ if (isset($_GET['id'])) {
                                                    
                                                     <td><?php
                                                         if ($sizes_array != Array()) {
-                                                            echo $sizes_array[$j];
+                                                            echo $sizes_array[$j]."*".$qtys_array[$j];
                                                             }
                                                         ?></td>
                                                 </tr>
@@ -368,21 +373,34 @@ if (isset($_GET['id'])) {
                 $counter++;
                 $isize++;
             }
+            //shipping charge add
+            if(!empty($min_order_price)){
+                    if(round($grandtotal) < $min_order_price){
+                        $shipping_charge=$orderline_detail[0]['shipping_charge'];
+                    }
+                }
+                   $updateShiphCharge = OrderLine::model()->shippingChargeUpdateView($order_id,$shipping_charge); 
+                
 //            $modelOrder->updatelinedescById($modelOrder->attributes['order_id'], $grandtotal, $grand_discount);
             ?> 
             <div class="order_bottomdetails">
                 <div class="span5 pull-right">
-                    <h3><b>Total:</b> <i class="fa fa-inr"></i> <span id="grandt"><?php echo $grandtotal; ?>
+                    <h3><b>Total:</b> <i class="fa fa-inr"></i> <span id="grandt"><?php echo $grandtotal+$shipping_charge; ?>
                             <input type="hidden" id="gtotal_price" name="gtotal_price" placeholder="0" value="<?php echo $grand_discount; ?>" >
                         </span></h3>
                     <h3><b>Discount:</b><i class="fa fa-inr"></i> <?php echo $grand_discount; ?>
                         <!--onblur="granddiscount(this.id)"-->
                         <input type="hidden" name="gtotal_price_discount" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $grand_discount; ?>" >
                     </h3>
-                    <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="grandtd"> <?php echo $grandtotal - $grand_discount; ?></span></h3>
+                    <h3><b>Shipping Charge:</b><i class="fa fa-inr"></i> <?php echo $shipping_charge;?>
+                         
+                        <!--onblur="granddiscount(this.id)"-->
+                        <input type="hidden" id="shipping_charges" name="shipping_charges" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $shipping_charge; ?>" >
+                    </h3>
+                    <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="grandtd"> <?php echo ($grandtotal+$shipping_charge) - $grand_discount; ?></span></h3>
                     <input type="hidden" id="grand_total" class="button_new" name="grand_total" value="<?php echo $grandtotal; ?>"/>
                     <input type="hidden" class="button_new" value="<?php echo $isize; ?>" id="isize" name="isize" /> 
-                    <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" /> 
+                    <input type="submit" class="button_new" value="Update Status" id="Update" name="Update" onclick="checkShippingCharge()"/> 
                     <a href="index.php?r=OrderHeader/report&id=<?php echo $modelOrder->attributes['order_id']; ?>" class="button_new" target="_blank"  >Create Invoice</a>
                 </div> 
             </div>
@@ -403,7 +421,7 @@ if (isset($_GET['id'])) {
 
         function sizecount(Id)
         {
-            alert(Id);
+          
             if ($("#size10_" + Id).val() == '')
                 $("#size10_" + Id).val("0");
 
@@ -572,4 +590,7 @@ if (isset($_GET['id'])) {
             return false;
         });
     });
+    function checkShippingCharge(){
+       var ship=$("#shipping_charges").val();
+    }
 </script>
