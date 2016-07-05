@@ -81,7 +81,7 @@
                         //  'dateFormat' => 'yy-mm-dd',
                         'showAnim' => 'fold',
                         'debug' => true,
-                        'maxDate' => "60",
+                        //'maxDate' => "60",
                     //'minDate' => 0,
                     ), //DateTimePicker options 
                     'htmlOptions' => array('readonly' => 'true'),

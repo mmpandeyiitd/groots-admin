@@ -29,7 +29,6 @@
 		'total_payable_amount',
 		array(
             'name'=>'MIN_DUE_AMOUNT',
-            'header'=>'MIN_DUE_AMOUNT',
             'value'=>'$data->MIN_DUE_AMOUNT',
             'filter' => false,
         ),

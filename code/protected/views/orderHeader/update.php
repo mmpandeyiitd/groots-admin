@@ -385,7 +385,7 @@ if (isset($_GET['id'])) {
             ?> 
             <div class="order_bottomdetails">
                 <div class="span5 pull-right">
-                    <h3><b>Total:</b> <i class="fa fa-inr"></i> <span id="grandt"><?php echo $grandtotal+$shipping_charge; ?>
+                    <h3><b>Total:</b> <i class="fa fa-inr"></i> <span id="grandt"><?php echo $grandtotal; ?>
                             <input type="hidden" id="gtotal_price" name="gtotal_price" placeholder="0" value="<?php echo $grand_discount; ?>" >
                         </span></h3>
                     <h3><b>Discount:</b><i class="fa fa-inr"></i> <?php echo $grand_discount; ?>

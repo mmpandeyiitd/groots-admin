@@ -37,7 +37,7 @@ class Grootsledger extends CActiveRecord
 			array('total_payable_amount', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('order_id, order_number, user_id, agent_name, total_payable_amount, MIN_DUE_AMOUNT, Max_id', 'safe', 'on'=>'search'),
+			array('order_id, order_number, user_id, agent_name, total_payable_amount, MIN_DUE_AMOUNT, Max_id,created_at', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -98,6 +98,12 @@ class Grootsledger extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+                        'defaultOrder'=>'created_at DESC',
+                    ),
+            'pagination' => array(
+                'pageSize' => 100,
+            ),
 		));
 	}
 
