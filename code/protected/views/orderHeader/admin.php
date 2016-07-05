@@ -42,7 +42,44 @@ if ($issuperadmin == 0) {
         confirm("Do you want to cancel");
     }
 </script>
+<!--particular delivery date download csv file-->
+<div class="particular_delivery_date_csv" style="align:right"; >
+    <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
+    <?php
+     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+                    'name'=>'particular_delivery_date_csv_from',
+                    'id'=>'particular_delivery_date_csv_from',
+                     'options'=>array(
+                                 'dateFormat' => 'dd-mm-yy',
+                                
+                                'showAnim'=>'fold',
+                                ),
+                        'htmlOptions'=>array(
+                        'style'=>'height:20px;'
+                                ),
+                        )); 
+                    ?>
+                
+                <label>To</label>
+               <?php
+                $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+                        'name'=>'particular_delivery_date_csv_to',
+                        'id'=>'particular_delivery_date_csv_to',
+                        'options'=>array(
+                                 'dateFormat' => 'dd-mm-yy',
+                                //'maxDate' => "+3M",
+                                //'showAnim'=>'fold',
+                                
+                                'minDate'=>'#particular_delivery_date_csv_from',
 
+                                ),
+                        'htmlOptions'=>array(
+                        'style'=>'height:20px;'
+                                ),
+                        )); 
+                ?>    
+                <input name="filter" class="button_new" type="submit" value="Filter" />
+</div>
 <div class="search-form" style="display:none">
 
     <?php

@@ -1,5 +1,6 @@
 <?php
 $brand_info = array();
+
 foreach ($model as $key => $value) {
     $store_id = $value->store_id;
     if (!empty($store_id)) {
@@ -19,6 +20,7 @@ if (is_numeric($store_id)) {
     $brand_pincode = '';
     $brand_email = '';
     $brand_mobile = '';
+    $shipping_charge = 0;
 
     if ($maxrecord > 0) {
         for ($i = 0; $i < $maxrecord; $i++) {
@@ -195,8 +197,13 @@ if (is_numeric($store_id)) {
         $wsptotal = 0;
         $i = 0;
 //        echo '<pre>';
+        //print_r($model[2]->shipping_charges);die;
 //        //echo $model;
-//        print_r($model);die;
+        //echo round($model[2]->shipping_charges);    
+       if(isset($model[0]->shipping_charges) && !empty(round($model[0]->shipping_charges)))
+         {
+            $shipping_charge=$model[0]->shipping_charges;
+         };
         foreach ($model as $key => $value) {
             $subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
@@ -235,10 +242,13 @@ if (is_numeric($store_id)) {
                 <td style="text-align:right;"><?php echo " Rs. "; ?><?php echo $wsptotal1; ?></td>
             </tr>
         <?php } ?>
-
+        <tr>
+            <td colspan="3" style="text-align:right;"><strong>Shipping Charge </strong></td>
+            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $shipping_charge; ?></strong></td>
+        </tr>
         <tr>
             <td colspan="3" style="text-align:right;"><strong>Total Amount </strong></td>
-            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $wsptotal; ?></strong></td>
+            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $wsptotal+$shipping_charge; ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 

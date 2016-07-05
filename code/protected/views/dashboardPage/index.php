@@ -233,7 +233,7 @@ if (Yii::app()->session['brand_admin_id']) {
                     ?>
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
 
-       <!--<input name="Download" class="button_new" type="submit" value="Download" />-->
+      
                     <input  type="submit" name="downloadbutton" class="button_new" value="Download" />
                 </div>
 

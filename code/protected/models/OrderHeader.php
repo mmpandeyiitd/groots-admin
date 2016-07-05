@@ -387,10 +387,18 @@ class OrderHeader extends CActiveRecord {
     public function GetOrderdetail($order_id) {
         $connection = Yii::app()->db;
 
-        // $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=353  group by `ol`.`colour``.`order_line` `ol`  where ol.order_id=$order_id  group by `ol`.`colour`";      
-        //   $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `cb_dev_groots_order`.`order_line` `ol`  where ol.order_id=$order_id group by `ol`.`colour`";      
-        //$sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`total_price_discount` separator ',') AS `total_price_discount`,group_concat(`ol`.`unit_price_discount` separator ',') AS `unit_price_discount`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`bp`.`minimum_order_quantity` separator ',') AS `min_order_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `order_line` `ol` left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id left join `cb_dev_groots`.subscribed_product sp on sp.subscribed_product_id=ol.subscribed_product_id  where ol.order_id=$order_id  group by `ol`.`colour`,`ol`.`product_name`";
-      $sql = "select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,`ol`.`pack_unit` AS `pack_unit`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`pack_size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status` from `order_line` `ol` left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id left join `cb_dev_groots`.subscribed_product sp on sp.subscribed_product_id=ol.subscribed_product_id  where ol.order_id=$order_id  group by `ol`.`colour`,`ol`.`subscribed_product_id` ORDER BY ol.product_name ASC";
+        $sql="select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,`ol`.`pack_unit` AS `pack_unit`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`pack_size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status`,oh.user_id AS user_id,
+r.min_order_price AS min_order_price,r.shipping_charge AS shipping_charge,oh.shipping_charges as header_shipping_charge
+from `order_line` `ol` 
+left join order_header oh ON ol.order_id=oh.order_id
+left join cb_dev_groots.retailer r ON oh.user_id=r.id
+left join cb_dev_groots.base_product bp 
+on bp.base_product_id=ol.base_product_id 
+left join `cb_dev_groots`.subscribed_product sp 
+on sp.subscribed_product_id=ol.subscribed_product_id
+where ol.order_id=$order_id 
+group by `ol`.`colour`,`ol`.`subscribed_product_id` 
+ORDER BY ol.product_name ASC";
 
 //echo $sql;die;
         $connection = Yii::app()->secondaryDb;
@@ -553,4 +561,22 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
         }
     }
 
+    /*
+    this function use for shipping charges update
+    */
+    // public static function updateShippingCharge($shipping_charge, $order_id){
+    //       $connection = Yii::app()->secondaryDb;
+    //        echo  $sql="update order_header set shipping_charges=$shipping_charge where order_id=$order_id";
+    //         $command = $connection->createCommand($sql);
+    //         $command->execute();
+        
+    // } 
+public static function getinfo($id) {
+        $connection = Yii::app()->secondaryDb;
+       $sql = "SELECT order_id,order_number,user_id,created_date,total_payable_amount,agent_name,delivery_date FROM order_header WHERE `order_id` ='".$id."'"
+            ;
+        $command = $connection->createCommand($sql);
+        $pdf = $command->queryAll();
+        return $pdf;
+    }
 }

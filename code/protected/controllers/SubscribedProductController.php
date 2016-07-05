@@ -237,8 +237,9 @@ class SubscribedProductController extends Controller {
                 // echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $no_of_Deletedataarray = count($_POST['Deletedataarray']);
-
+                 if(isset($_POST['effective_price']))
                 $no_of_effective_price = count($_POST['effective_price']);
+                if(isset($_POST['discount_price']))
                 $no_of_discount_price = count($_POST['discount_price']);
 
                 if ($no_of_Deletedataarray > 0) {
@@ -334,10 +335,10 @@ class SubscribedProductController extends Controller {
 
     public function actionlistallproduct() {
         // echo '<pre>';print_r($_POST);die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         //echo '<pre>';
         //print_r($data);die;
 
