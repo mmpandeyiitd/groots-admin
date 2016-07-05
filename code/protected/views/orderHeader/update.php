@@ -413,18 +413,19 @@ if (isset($_GET['id'])) {
                    if($orderline_detail[0]['header_shipping_charge']!='0.00')
                             {
                                $shipping_charge = $orderline_detail[0]['header_shipping_charge'];
-                                 $chksip=10; 
+                                 echo $chksip=10; 
                             }
                             else
                             {
-                               $shipping_charge = $orderline_detail[0]['shipping_charge'];   
-
+                                if(!empty($orderline_detail[0]['shipping_charge']))
+                                 $shipping_charge = $orderline_detail[0]['shipping_charge'];   
+                                 else
+                                  $shipping_charge=0;  
                                 
-                            } 
+                            }
+                             
             }
 
-
-       
 
                 if($chksip == 0)
                 {
