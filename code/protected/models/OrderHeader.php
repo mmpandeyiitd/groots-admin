@@ -388,7 +388,7 @@ class OrderHeader extends CActiveRecord {
         $connection = Yii::app()->db;
 
         $sql="select `ol`.`order_id` AS `order_id`,`ol`.`colour` AS `color`,`ol`.`pack_unit` AS `pack_unit`,group_concat(`ol`.`base_product_id` separator ',') AS `base_product_id`,group_concat(`ol`.`subscribed_product_id` separator ',') AS `subscribed_product_id`,group_concat(`ol`.`pack_size` separator ',') AS `size`,group_concat(`ol`.`product_qty` separator ',') AS `qty` ,group_concat(`ol`.`product_name` separator ',') AS `product_name` ,group_concat(`ol`.`unit_price` separator ',') AS `unit_price` ,group_concat(`ol`.`shipping_charges` separator ',') AS `shipping_charges`,group_concat(`ol`.`seller_name` separator ',') AS `seller_name`,group_concat(`sp`.`quantity` separator ',') AS `available_quantity`,group_concat(`ol`.`id` separator ',') AS `id` ,group_concat(`ol`.`status` separator ',') AS `status`,oh.user_id AS user_id,
-r.min_order_price AS min_order_price,r.shipping_charge AS shipping_charge
+r.min_order_price AS min_order_price,r.shipping_charge AS shipping_charge,oh.shipping_charges as header_shipping_charge
 from `order_line` `ol` 
 left join order_header oh ON ol.order_id=oh.order_id
 left join cb_dev_groots.retailer r ON oh.user_id=r.id

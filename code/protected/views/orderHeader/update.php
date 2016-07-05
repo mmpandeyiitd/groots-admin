@@ -39,6 +39,7 @@ $order_id = '';
 $orderline_detail = array();
 $min_order_price=0;
 $shipping_charge=0;
+$chksip=0;
 if (isset($_GET['id'])) {
     $order_id = $_GET['id'];
     if (is_numeric($order_id)) {
@@ -194,8 +195,23 @@ if (isset($_GET['id'])) {
                 if (!empty($unit_prices)) {
                     $unit_prices_array = explode(',', $unit_prices);
                 }
-                $shipping_charges = $orderline_detail[$i]['shipping_charges'];
-                if (!empty($shipping_charges)) {
+                if($orderline_detail[$i]['header_shipping_charge']!='0.00')
+                {
+                   $shipping_charges = $orderline_detail[$i]['header_shipping_charge'];
+                   $chksip=10; 
+                }
+                else
+                {
+                  $shipping_charges = $orderline_detail[$i]['shipping_charge'];   
+
+                  
+                }
+
+
+                 
+                
+                if (!empty($shipping_charges))
+                 {
                     $shipping_charges_array = explode(',', $shipping_charges);
                 }
                 /* $total_price_discounts = $orderline_detail[$i]['total_price_discount'];
@@ -374,12 +390,33 @@ if (isset($_GET['id'])) {
                 $isize++;
             }
             //shipping charge add
+           
             if(!empty($min_order_price)){
                     if(round($grandtotal) < $min_order_price){
-                        $shipping_charge=$orderline_detail[0]['shipping_charge'];
-                    }
+
+                        if($orderline_detail[0]['header_shipping_charge']!='0.00')
+                            {
+                               $shipping_charge = $orderline_detail[0]['header_shipping_charge'];
+                                 $chksip=10; 
+                            }
+                            else
+                            {
+                               $shipping_charge = $orderline_detail[0]['shipping_charge'];   
+
+                                
+                            }
+                       
                 }
+            }
+
+
+       
+
+                if($chksip == 0)
+                {
+
                    $updateShiphCharge = OrderLine::model()->shippingChargeUpdateView($order_id,$shipping_charge); 
+                }
                 
 //            $modelOrder->updatelinedescById($modelOrder->attributes['order_id'], $grandtotal, $grand_discount);
             ?> 
