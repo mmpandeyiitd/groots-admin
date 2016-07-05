@@ -237,8 +237,9 @@ class SubscribedProductController extends Controller {
                 // echo '<pre>';print_r($_POST);die;
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $no_of_Deletedataarray = count($_POST['Deletedataarray']);
-
+                 if(isset($_POST['effective_price']))
                 $no_of_effective_price = count($_POST['effective_price']);
+                if(isset($_POST['discount_price']))
                 $no_of_discount_price = count($_POST['discount_price']);
 
                 if ($no_of_Deletedataarray > 0) {
