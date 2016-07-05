@@ -188,7 +188,7 @@ class GrootsLedger extends CActiveRecord
 
      $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',ol.seller_name as 'Client Name',ol.product_name as 'Item Name',ol.product_qty as 'Total Quantity',round((ol.unit_price *ol.product_qty)) as 'Total Amount', oh.`invoice_number` as 'Invoice ID' FROM `order_header` oh
 left join order_line as ol on ol.`order_id`=oh.`order_id`
-WHERE oh.created_date between('".$cDate."') and ('".$cdate1."')";
+WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
 
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
