@@ -486,6 +486,20 @@ class OrderLine extends CActiveRecord
             $sql="update order_line set shipping_charges=$shipping_charge where order_id = $orderid";
             $command = $connection->createCommand($sql);
             $command->execute();
+
+          
+           $connection = Yii::app()->secondaryDb;
+           $sql = "SELECT round(sum(`product_qty`*`unit_price`)) as total_price FROM `order_line` WHERE `order_id`='".$orderid."' group by order_id";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $lineidinfo= $command->queryAll();
+
+            $connection = Yii::app()->secondaryDb;
+            $sql="UPDATE `order_header` SET `shipping_charges`='".$shipping_charge."',`total_payable_amount`='".$lineidinfo[0]['total_price']."',`total_paid_amount`='".$lineidinfo[0]['total_price']."' WHERE order_id ='".$orderid."' ";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+
+
         }
        
     }
