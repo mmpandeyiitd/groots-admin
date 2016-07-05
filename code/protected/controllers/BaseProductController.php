@@ -1456,7 +1456,7 @@ class BaseProductController extends Controller {
                                                             if ($model1->action == 'create') { #................subscription...............#
                                                                 $model_subscribe = new SubscribedProduct();
                                                                 $model_subscribe->base_product_id = $model1->base_product_id;
-                                                                $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], $data[$cols['quantity']]);
+                                                                $model1->Update_subscribed_product($model1->base_product_id, $model1->store_id, $mrp, $wsp, $data[$cols['Grade']], $data[$cols['Diameter']], 0);
                                                                 $model_subscribe->store_id = 1;
                                                                 $model_subscribe->quantity = 0;
                                                                 if ($wsp != '') {

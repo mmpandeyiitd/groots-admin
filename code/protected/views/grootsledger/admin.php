@@ -29,7 +29,9 @@
 		'total_payable_amount',
 		array(
             'name'=>'MIN_DUE_AMOUNT',
-            'value'=>'$data->MIN_DUE_AMOUNT',
+            'value' => '$data->MIN_DUE_AMOUNT ==null ?$data->total_payable_amount:($data->MIN_DUE_AMOUNT==0 ? "All Paid":$data->MIN_DUE_AMOUNT)',
+
+           // 'value' => '$data->MIN_DUE_AMOUNT == 0 ?$data->total_payable_amount: ($data->status == 2 ? "Two" : "None")',
             'filter' => false,
         ),
 

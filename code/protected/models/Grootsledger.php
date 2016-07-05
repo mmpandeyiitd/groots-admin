@@ -67,6 +67,7 @@ class Grootsledger extends CActiveRecord
 			'Max_id' => 'Max',
 			'paid_value'=>'Paid Amount',
 			'return_amount' =>'return_amount',
+			
 		);
 	}
 
@@ -87,7 +88,7 @@ class Grootsledger extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
+        //$criteria->condition = "is_collection_done !=1";
 		$criteria->compare('order_id',$this->order_id);
 		$criteria->compare('order_number',$this->order_number,true);
 		$criteria->compare('user_id',$this->user_id);
