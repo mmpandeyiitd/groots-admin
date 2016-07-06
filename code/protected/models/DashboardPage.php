@@ -90,7 +90,7 @@ class DashboardPage extends CActiveRecord {
     }
 
     public function getTotalLinesheet($start_date, $end_date) {
-
+           $sql='';
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
