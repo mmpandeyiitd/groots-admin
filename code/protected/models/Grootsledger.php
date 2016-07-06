@@ -134,9 +134,9 @@ class Grootsledger extends CActiveRecord
 
 		 public static function downloadCSVByIDs() {
 
-     $sqlchksubsid = "SELECT oh.`order_id`,oh.`order_number`,oh.`user_id` as client_ID,ol.seller_name as Client_Name,oh.`agent_name` as Collection_Agent,gl.total_amount ,gl.due_amount As 'DUE_AMOUNT',gl.paid_amount,gl.return_amount,gl.inv_created_at as INVOICE_CREATED_DATE,gl.created_at FROM `order_header` oh
-			left join order_line as ol on ol.`order_id`=oh.`order_id`
-			left join groots_ledger as gl on gl.order_id=oh.order_id";
+     $sqlchksubsid = "SELECT oh.`order_id` , oh.`order_number` , oh.`user_id` AS client_ID, oh.`agent_name` AS Collection_Agent, gl.total_amount, gl.due_amount AS 'DUE_AMOUNT', gl.paid_amount, gl.return_amount, gl.inv_created_at AS INVOICE_CREATED_DATE, gl.created_at
+FROM `order_header` oh
+LEFT JOIN groots_ledger AS gl ON gl.order_id = oh.order_id";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
         $command->execute();
