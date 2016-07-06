@@ -186,7 +186,7 @@ class GrootsLedger extends CActiveRecord
 
     public static function downloadCSVByIDs($cDate,$cdate1) {
 
-     $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',ol.seller_name as 'Client Name',ol.product_name as 'Item Name',ol.product_qty as 'Total Quantity',round((ol.unit_price *ol.product_qty)) as 'Total Amount', oh.`invoice_number` as 'Invoice ID' FROM `order_header` oh
+     $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',ol.seller_name as 'Client Name',ol.product_name as 'Item Name',ol.product_qty as 'Total Quantity',TRUNCATE((ol.unit_price *ol.product_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID' FROM `order_header` oh
 left join order_line as ol on ol.`order_id`=oh.`order_id`
 WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
 
@@ -221,7 +221,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', ol.seller_name AS 'Client Name', ol.seller_phone, ol.seller_state, ol.seller_city, round(SUM(ol.unit_price *ol.product_qty)) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', ol.seller_name AS 'Client Name', ol.seller_phone, ol.seller_state, ol.seller_city, TRUNCATE(SUM(ol.unit_price *ol.product_qty),2) AS 'Total Amount'
 				FROM `order_header` oh
 			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id`
 				WHERE oh.delivery_date = '".$cDate."'
