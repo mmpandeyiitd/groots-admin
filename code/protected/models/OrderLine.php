@@ -33,7 +33,8 @@ class OrderLine extends CActiveRecord
 
     private $oldAttrs = array();
     public $dbadvert = null;
-    public $action;          
+    public $action;
+    public $store_front_name,$delivery_request_id,$delivery_tracking_number,$unit_price_discount,$total_price_discount,$product_name;
 
     public function tableName()
     {
@@ -49,7 +50,8 @@ class OrderLine extends CActiveRecord
         // will receive user inputs.
         return array(
 
-        array('order_id, subscribed_product_id, base_product_id, store_id, store_front_id, product_qty', 'numerical', 'integerOnly'=>true),
+        array('order_id, subscribed_product_id, base_product_id, store_id, store_front_id', 'numerical', 'integerOnly'=>true),
+            array('product_qty', 'type', 'type'=> 'float'),
         array('store_name, store_email, seller_name, status, seller_phone, seller_state, seller_city', 'length', 'max'=>150),
         array('store_front_name,delivery_request_id,delivery_tracking_number', 'length', 'max'=>250),
         array('colour', 'length', 'max'=>30),
@@ -106,6 +108,8 @@ class OrderLine extends CActiveRecord
         'total_price_discount	' => 'total_price_discount'
         );
     }
+
+
 
     /**
     * Retrieves a list of models based on the current search/filter conditions.
@@ -504,6 +508,22 @@ class OrderLine extends CActiveRecord
 
         }
        
+    }
+
+    public static function getOrderLinebyOrderId($orderId){
+        $orderLines = '';
+        if (is_numeric($orderId)) {
+            $connection = Yii::app()->secondaryDb;
+            $sql = "SELECT ol.*, bp.title as product_name, bp.pack_size, bp.pack_unit  FROM `order_line` ol join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE `order_id`=$orderId order by bp.title asc";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $orderLines = $command->queryAll();
+        }
+        return $orderLines;
+    }
+
+    public function getProductName(){
+        return $this->product_name;
     }
 
 }

@@ -30,9 +30,6 @@ class UserIdentity extends CUserIdentity {
                 $this->errorCode = self::ERROR_NONE;   
                 $permission_info=json_decode($user['permission_info'],true);
 
-                $this->errorCode = self::ERROR_NONE;
-                $permission_info = json_decode($user['permission_info'], true);
-
                 Yii::app()->session['last_json'] = $user['permission_info'];
                 Yii::app()->session['premission_info'] = $permission_info;
                 Yii::app()->session['checkType'] = 'Admin';

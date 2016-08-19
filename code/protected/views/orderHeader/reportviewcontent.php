@@ -1,13 +1,13 @@
 <?php
 $brand_info = array();
-
-foreach ($model as $key => $value) {
-    $store_id = $value->store_id;
+//print_r($model);die;
+foreach ($model as $value) {
+    $store_id = $value['store_id'];
     if (!empty($store_id)) {
         break;
     }
 }
-if (is_numeric($store_id)) {
+/*if (is_numeric($store_id)) {
     $store_model = new Store();
     $brand_info = $store_model->findAllByAttributes(array('store_id' => 1));
     $maxrecord = count($brand_info);
@@ -35,7 +35,7 @@ if (is_numeric($store_id)) {
             $brand_mobile = $brand_info[$i]['mobile_numbers'];
         }
     }
-}
+}*/
 //else{
 //    Yii::app()->user->setFlash('premission_info', 'Store id not found.');
 //      Yii::app()->controller->redirect("index.php?r=OrderHeader/admin");
@@ -78,10 +78,10 @@ if (is_numeric($store_id)) {
     }
     table {
         //font-family: sans-serif; 
-        width: 795px; 
-        border-collapse: collapse; 
+        width: 700px;
+        border-collapse: collapse;
         display: block;
-        margin: 20px auto 0;
+        margin: 5px auto 0;
     }
     table tr td {
         padding: 5px;
@@ -94,97 +94,74 @@ if (is_numeric($store_id)) {
 <div class="container">
     <table border="1">
         <tr>
-            <td colspan="2" style="vertical-align:middle;">Order Id: <?php echo $modelOrder->attributes['order_number']; ?></td>
-            <td colspan="3" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> Invoice </h3></td>
+
+            <td colspan="5" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> Invoice </h3></td>
         </tr>
         <tr>
             <td width="100%" style="width:100%" colspan="5">
-                <table width="100%" border="0" style="width:100%">
+                <table  border="0" style="width:690px">
                     <tr>
-                        <td align="left">
-                            <img src="http://admin.groots.dev.canbrand.in/themes/abound/img/logo.png" style="width:150px;"/>
-                        </td>
-                        <td width="390">&nbsp;</td>
-                        <td align="left">
-                            <p style="logoRight">
-                                <strong>Registered Office:</strong> 
-                                <span style="word-wrap: break-word">
+                        <td align="left" colspan="4" width="65%" style="vertical-align:top">
+                            <table border="0" style="width:100%"><tr><td>
+                            <img src="themes/abound/img/logo.png" style="width:150px;"/>
+                                    </td>
+                             </tr>
+                                <tr><td>
+                                        <p style="logoRight">
+                                            <strong><?php echo $modelOrder->groots_authorized_name; ?></strong></p>
+                                        <p style="logoRight">
+                                            <strong>Registered Office:</strong>
+                                            <span style="word-wrap: break-word">
                                     <?php
                                     echo '<br> Address:- ';
-                                    echo wordwrap($brand_address, 20, "<br/>\n");
+                                    echo wordwrap($modelOrder->groots_address, 50, "<br/>\n");
                                     ?>
                                 </span>
-                                <?php echo '<br> City:- ' . wordwrap($brand_city, 18, "<br/>\n") . '<br> State:-  ' . wordwrap($brand_state, 18, "<br/>\n") . '<br> Country:- ' . $brand_country . '<br> Pincode:- ' . $brand_pincode; ?></p>
+                                            <?php echo  wordwrap($modelOrder->groots_city, 18, "<br/>\n") ."-"  . $modelOrder->groots_pincode; ?></p>
 
+                                    </td></tr></table>
+                        </td>
+                        <td align="left" width="200px"></td>
+
+                        <td align="left top" width="35%" style="vertical-align:top">
+                            Order Id: <?php echo $modelOrder->attributes['order_number']; ?>
+                            <br>
+                            <strong>Invoice No : </strong>
+
+                            <?php
+                            echo INVOICE_TEXT.date('Y').date('m').$modelOrder->attributes['order_id'];
+                            ?>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
-        <?php
-        $modelOrderline = new OrderLine;
-        $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
-        //echo $website; 
-        if ($website == '') {
-            ?>
-            <tr>
-                <td colspan="4"><b>Contact no:</b> <?php
-                    $modelOrderline = new OrderLine;
-                    $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
-                    echo '+91-' . $mobile;
-                    ?></td>
-            </tr>
-        <?php } else { ?>
-            <tr>
-                <td colspan="2"><b>Contact no:</b> <?php
-                    $modelOrderline = new OrderLine;
-                    $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
-                    echo '+91-' . $mobile;
-                    ?></td>
-                <td colspan="3"><b>Website:</b> <?php
-                    $modelOrderline = new OrderLine;
-                    $website = $modelOrderline->webiste($modelOrder->attributes['user_id']);
-                    echo $website;
-                    ?></td>
-            </tr>
-        <?php } ?>
+
         <tr>
             <td colspan="4">
-                <h3 style="font-size:16px;">Address:</h3>
-                <h5><?php echo $modelOrder->attributes['shipping_name']; ?></h5>
-                <p><?php echo $modelOrder->attributes['shipping_address'] . ', ' . $modelOrder->attributes['shipping_city'] . ', ' . $modelOrder->attributes['shipping_state'] . ', ' . $modelOrder->attributes['shipping_pincode']; ?></p>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="3" style="vertical-align:middle;">
-                <p><strong>Sold By: </strong><?php echo " Groots"; ?></p>
-            </td>
-            <td colspan="1" >
 
-                <strong>Invoice No : </strong>
+                <strong><?php echo $retailer->attributes['name']; ?></strong>
+                <br>
+
+                <?php echo $retailer->attributes['address'] . ', ' . $retailer->attributes['city'] . ', ' . $retailer->attributes['state'] . ', ' . $retailer->attributes['pincode']; ?>
+                <br>
 
                 <?php
-                echo $modelOrder->attributes['invoice_number'];
-//                $modelOrderline = new OrderLine;
-//                $productname = $modelOrderline->productname($modelOrder->attributes['user_id']);
-//
-//                $delivery_date = $modelOrder->attributes['delivery_date'];
-//                //echo $delivery_date;
-//                // echo $productname;die;
-//                $name = substr($productname, 0, 3);
-//                $mont = date('m', strtotime($delivery_date));
-//                $year = date('Y', strtotime($delivery_date));
-//                $date = date('d', strtotime($delivery_date));
-//                echo $name . $mont . $year . $date;
+                $modelOrderline = new OrderLine;
+                $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
+                echo '+91-' . $mobile;
                 ?>
+
+
             </td>
         </tr>
 
+
         <tr>
-            <th style="text-align:left;  padding: 5px;"> Product </th>
-            <th style="text-align:center; padding: 5px;"> Total Qty </th>
-            <th style="text-align:center; padding: 5px;" colspan="1"> Unit price </th>
-            <th style="text-align:center; padding: 5px;"> Total </th>
+            <th style="text-align:left;  padding: 5px; width:40%;"> Product </th>
+            <th style="text-align:center; padding: 5px;  width:15%;  "> Total Qty </th>
+            <th style="text-align:center; padding: 5px; width:15%;" colspan="1"> Unit price </th>
+            <th style="text-align:center; padding: 5px; width:30%;"> Total </th>
         </tr>
 
         <?php
@@ -205,7 +182,7 @@ if (is_numeric($store_id)) {
             $shipping_charge=$model[0]->shipping_charges;
          };
         foreach ($model as $key => $value) {
-            $subcatinfo = new SubscribedProduct;
+            /*$subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
             $linedescinfo = new OrderLine;
             $lineinfo = $linedescinfo->getlinedescById($value->id);
@@ -221,34 +198,34 @@ if (is_numeric($store_id)) {
             // $wsptotal = $wsptotal - $lineinfodeltail[0]['total_price_discount'];
             $wsptotal = $wsptotal + $wsptotal1;
             $grandtotal = $wsptotal + $grandtotal;
-            $grand_producttotal = $qtytotal + $grand_producttotal;
+            $grand_producttotal = $qtytotal + $grand_producttotal;*/
             ?>  
 
             <tr>
-                <td style="text-align:left;">
+                <td style="text-align:left; width:40%; ">
                     <?php
-                    echo wordwrap($model[$key]->attributes['product_name'], 20, "<br/>\n");
+                    echo wordwrap($model[$key]['product_name'], 20, "<br/>\n");
                     ?>
 
                 </td>
-                <td style="text-align:center;"> <?php
-                    echo $model[$key]->attributes['product_qty'];
+                <td style="text-align:center;  width: 15%;"> <?php
+                    echo $model[$key]['product_qty'];
                     echo ' x ';
-                    echo $model[$key]->attributes['pack_size'];
+                    echo $model[$key]['pack_size'];
 
-                    echo $model[$key]->attributes['pack_unit'];
+                    echo $model[$key]['pack_unit'];
                     ?></td>
-                <td style="text-align:center;"><?php echo " Rs. "; ?><?php echo $model[$key]->attributes['unit_price']; ?> </td>
-                <td style="text-align:right;"><?php echo " Rs. "; ?><?php echo $wsptotal1; ?></td>
+                <td style="text-align:center;  width: 15%;"><?php echo " Rs. "; ?><?php echo $model[$key]['unit_price']; ?> </td>
+                <td style="text-align:center;  width: 30%;"><?php echo " Rs. "; ?><?php echo $model[$key]['price']; ?></td>
             </tr>
         <?php } ?>
         <tr>
             <td colspan="3" style="text-align:right;"><strong>Shipping Charge </strong></td>
-            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $shipping_charge; ?></strong></td>
+            <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->shipping_charges; ?></strong></td>
         </tr>
         <tr>
             <td colspan="3" style="text-align:right;"><strong>Total Amount </strong></td>
-            <td style="text-align:right;"><strong><?php echo " Rs. "; ?> <?php echo $wsptotal+$shipping_charge; ?></strong></td>
+            <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->total_payable_amount; ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 

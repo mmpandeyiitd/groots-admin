@@ -61,6 +61,25 @@
             <?php echo $form->textField($model, 'pincode', array('maxlength' => 6)); ?>
             <?php echo $form->error($model, 'pincode'); ?>
         </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'city'); ?>
+            <?php echo $form->textField($model, 'city',array('maxlength' => 18)); ?>
+            <?php echo $form->error($model, 'city'); ?>
+        </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'state'); ?>
+            <?php echo $form->textField($model, 'state',array('maxlength' => 18)); ?>
+            <?php echo $form->error($model, 'state'); ?>
+        </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'Demand Centre *'); ?>
+            <?php echo $form->textField($model, 'demand_centre',array('maxlength' =>15)); ?>
+            <?php echo $form->error($model, 'demand_centre'); ?>
+        </div>
+
         <div class="row">
             <?php echo $form->labelEx($model, 'GeoLocation'); ?>
             <?php echo $form->textField($model, 'geolocation',array('maxlength' => 15)); ?>
@@ -95,26 +114,6 @@
             <?php echo $form->labelEx($model, 'Time of Delivery'); ?>
             <?php echo $form->textField($model, 'time_of_delivery',array('maxlength' =>12)); ?>
             <?php echo $form->error($model, 'time_of_delivery'); ?>
-        </div>
-        <div class="row">
-            <?php echo $form->labelEx($model, 'Demand Centre'); ?>
-            <?php echo $form->textField($model, 'demand_centre',array('maxlength' =>15)); ?>
-            <?php echo $form->error($model, 'demand_centre'); ?>
-        </div>
-       
-     
-    </div>
-    <div class="">
-        <div class="row">
-            <?php echo $form->labelEx($model, 'city'); ?>
-            <?php echo $form->textField($model, 'city',array('maxlength' => 18)); ?>
-            <?php echo $form->error($model, 'city'); ?>
-        </div>
-
-        <div class="row">
-            <?php echo $form->labelEx($model, 'state'); ?>
-            <?php echo $form->textField($model, 'state',array('maxlength' => 18)); ?>
-            <?php echo $form->error($model, 'state'); ?>
         </div>
 
         <div class="row">

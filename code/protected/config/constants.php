@@ -82,6 +82,9 @@ define('CSV_BASE_PDT_DIR','csvupload/base_product/');
 define('LOG_BASE_PDT_DIR','log/base_product/');
 define('BANNER_IMG_PATH','catbanners/');
 
+define('ORDER_NUMBER_PREFIX','GRT');
+define('INVOICE_TEXT','GFV');
+
 
 
   

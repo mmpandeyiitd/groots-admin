@@ -288,7 +288,9 @@ class DashboardPage extends CActiveRecord {
 
     public static function downloadCSVByIDs($oDate) {
 
-        $sqlchksubsid = "SELECT ol.product_name AS 'Product name',ol.grade AS 'Grade',ol.diameter AS Diameter,colour,round(sum(ol.product_qty * ol.pack_size)) as Quantity,ol.pack_unit as Unit,ol.weight AS 'Indicated Weight',ol.weight_unit AS 'Indicated Weight Unit',ol.length AS 'Indicated Length',ol.length_unit AS 'Indicated Length unit', oh.`delivery_date` AS 'Delivery date' FROM `order_header` `oh` LEFT JOIN order_line ol ON ol.`order_id`=oh .`order_id` WHERE oh.`delivery_date`='" . $oDate . "' AND oh.status !='Cancelled' group by ol.subscribed_product_id,ol.pack_unit";
+        /*$sqlchksubsid = "SELECT ol.product_name AS 'Product name',ol.grade AS 'Grade',ol.diameter AS Diameter,colour,round(sum(ol.product_qty * ol.pack_size)) as Quantity,ol.pack_unit as Unit,ol.weight AS 'Indicated Weight',ol.weight_unit AS 'Indicated Weight Unit',ol.length AS 'Indicated Length',ol.length_unit AS 'Indicated Length unit', oh.`delivery_date` AS 'Delivery date' FROM `order_header` `oh` LEFT JOIN order_line ol ON ol.`order_id`=oh .`order_id` WHERE oh.`delivery_date`='" . $oDate . "' AND oh.status !='Cancelled' group by ol.subscribed_product_id,ol.pack_unit";*/
+
+        $sqlchksubsid = "SELECT bp.title AS 'Product name',sp.grade AS 'Grade',sp.diameter AS Diameter,bp.color,round(sum(ol.product_qty * bp.pack_size)) as Quantity,bp.pack_unit as Unit,sp.weight AS 'Indicated Weight',sp.weight_unit AS 'Indicated Weight Unit',sp.length AS 'Indicated Length',sp.length_unit AS 'Indicated Length unit', oh.`delivery_date` AS 'Delivery date' FROM `order_header` `oh` INNER JOIN order_line ol ON ol.`order_id`=oh .`order_id`  INNER JOIN cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id INNER JOIN cb_dev_groots.subscribed_product sp on sp.base_product_id=ol.base_product_id WHERE oh.`delivery_date`='" . $oDate . "'AND oh.status !='Cancelled' group by ol.subscribed_product_id,bp.pack_unit";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
         $command->execute();

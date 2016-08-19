@@ -13,7 +13,25 @@ if(Yii::app()->session['is_super_admin']){
 if (Yii::app()->controller->id == "DashboardPage") {
 
     echo '<li><a href="index.php?r=baseProduct/bulkuploadstore_id=1">Bulk Upload subscribed product</a></li> ';
-} else if (Yii::app()->controller->id == "users") {
+}
+elseif (Yii::app()->controller->id == "orderHeader") {
+
+
+    if (Yii::app()->controller->action->id == "admin") {
+
+        echo '<li><a href="index.php?r=orderHeader/create&store_id=' . $store_id . '">Create Order</a></li> 
+        <!--<li><a href="index.php?r=orderHeader/bulkupload&store_id=1">Bulk Upload Orders</a></li> !-->
+        ';
+    }
+    else if (Yii::app()->controller->action->id == "create"  ) {
+
+        echo '<li><a href="index.php?r=orderHeader/admin">order List</a></li> ';
+    }  
+     elseif (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
+        //echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
+    }
+}
+ else if (Yii::app()->controller->id == "users") {
     if (Yii::app()->controller->action->id == "create" && substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'R') > 0) {
         echo '<li><a href="index.php?r=users/admin">Admin User List</a></li> ';
     } else if (Yii::app()->controller->action->id == "update" && substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'R') > 0) {
@@ -161,7 +179,5 @@ elseif (Yii::app()->controller->id == "lookbook" && (Yii::app()->controller->act
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['lookbook'], 'C') > 0) {
         echo '<li><a href="index.php?r=lookbook/create&store_id=' . $store_id . '">Create Lookbook</a></li> ';
     }
-} elseif (Yii::app()->controller->id == "orderHeader") {
-    
-}
+} 
 ?>

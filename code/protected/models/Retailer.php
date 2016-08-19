@@ -47,7 +47,7 @@ class Retailer extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name,email,password,mobile,address,pincode,city,state', 'required'),
+            array('name,email,password,mobile,address,pincode,city,state,allocated_warehouse_id', 'required'),
             array('id, status,credit_limit', 'numerical', 'integerOnly' => true),
 
             array('min_order_price, shipping_charge', 'numerical'),
@@ -158,7 +158,8 @@ class Retailer extends CActiveRecord {
 //        $criteria->compare('product_categories', $this->product_categories, true);
 //        $criteria->compare('categories_of_interest', $this->categories_of_interest, true);
 //        $criteria->compare('store_size', $this->store_size);
-        $criteria->compare('status', $this->status);
+        //$criteria->compare('status', $this->status);
+        $criteria->compare('status', 1);
         //$criteria->compare('request_status',$this->request_status);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);

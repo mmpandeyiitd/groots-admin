@@ -164,27 +164,25 @@ onclick='return confirm("Do you want to cancel");'/>
                 'header' => 'Billing name',
                 'name' => 'billing_name',
                 'type' => 'raw',
+                'value'=> function($data){
+                    return $data->name;
+                }
             ),
                  array(
                 'header' => 'Address',
                 'name' => 'shipping_address',
                 'type' => 'raw',
                 'value'=> function($data){
-           return $data->shipping_address.' ( '.$data->shipping_city.' )';
+           return $data->address.', '.$data->city.', '.$data->state;
        }
        ), 
-               
-//             array(
-//               // 'header' => 'Demand Centre',
-//                'name' => 'shipping_state',
-//                'type' => 'raw',
-//            ),
-                  array(
-              
+
+            array(
+                 'header' => 'Demand Centre',
                 'name' => 'shipping_state',
                 'type' => 'raw',
                 'value'=> function($data){
-           return ucfirst($data->shipping_state);
+           return ucfirst($data->warehouse_name);
        }
        ),
            /* array(

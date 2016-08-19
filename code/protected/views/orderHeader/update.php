@@ -44,6 +44,7 @@ if (isset($_GET['id'])) {
     $order_id = $_GET['id'];
     if (is_numeric($order_id)) {
         $orderline_detail = $modelOrder->GetOrderdetail($order_id);
+        //print_r($orderline_detail);die;
         $min_order_price=$orderline_detail[0]['min_order_price'];
       
     }
@@ -231,8 +232,11 @@ if (isset($_GET['id'])) {
                     $orderline_ids_array = explode(',', $orderline_ids);
                 }
                 $orderheader_id = $orderline_detail[$i]['order_id'];
+                $total_price='';
+                if (isset($unit_prices_array[0])){
+                    $total_price = $unit_prices_array[0] * array_sum($qtys_array);
+                }
 
-                $total_price = $unit_prices_array[0] * array_sum($qtys_array);
                 $grandtotal+=$total_price;
                 // $total_discount = $unit_price_discounts_array[0] * array_sum($qtys_array);
                 // $grand_discount+=$total_discount;
@@ -285,7 +289,7 @@ if (isset($_GET['id'])) {
 
                                     <tr>
                                         <td>Total Qty:</td>
-                                        <td id="tqy_<?php echo array_sum($qtys_array); ?>"><?php echo array_sum($qtys_array)*$sizes_array[0]."&nbsp".$orderline_detail[$i]['pack_unit'];; ?></td>
+                                        <td id="tqy_<?php echo array_sum($qtys_array); ?>"><?php echo array_sum($qtys_array)*(isset($sizes_array[0]) ? $sizes_array[0]:0)."&nbsp".$orderline_detail[$i]['pack_unit'];; ?></td>
                                     </tr>
                                     <tr>
                                         <td>Total Amount: </td>

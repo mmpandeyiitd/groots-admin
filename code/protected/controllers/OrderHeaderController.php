@@ -71,29 +71,225 @@ class OrderHeaderController extends Controller {
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
-    public function actionCreate() {
+    public function actionCreate()
+    {
+        //print("<pre>");
         $model = new OrderHeader;
+        $retailerProducts = '';
+        $retailerId = '';
+        $retailer = '';
+        $warehouses = '';
+        //print_r($_POST);
+        //print_r($_GET);
+        //die;
+
+        if (isset($_POST['select-retailer'])) {
+
+            $retailerId = $_POST['retailer-dd'];
+            if($retailerId>0) {
+                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+                $retailer = Retailer::model()->findByPk($retailerId);
+                $warehouses = Warehouse::model()->findAll();
+            }
+            //print_r($retailerProducts);die;
+            /*foreach ($retailerProducts as $retailerProduct) {
+           # code...
+            }*/
+        }
+        if (isset($_POST['create'])) {
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+                $retailerId = $_POST['retailerId'];
+                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+                $retailer = Retailer::model()->findByPk($retailerId);
+                $warehouses = Warehouse::model()->findAll();
+                $orderHeader = new OrderHeader();
+                $orderHeader->user_id = $retailerId;
+                $orderHeader->status = $_POST['status'];
+                if(isset($_POST['comment']) && !empty($_POST['comment'])){
+                    $orderHeader->user_comment = $_POST['comment'];
+                }
+                if(isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])){
+                    $orderHeader->shipping_charges = $_POST['shippingCharge'];
+                }
+                if(isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])){
+                    $orderHeader->discount_amt = $_POST['discountCharge'];
+                }
+                $orderHeader->total=$_POST['sumAmount'];
+                $orderHeader->total_payable_amount =$_POST['finalAmount'];
+                $orderHeader->delivery_date = $_POST['deliveryDate'];
+                $orderHeader->warehouse_id = $_POST['warehouse'];
+                $orderHeader->order_number = $this->getNextOrderNo();
+                $orderHeader->created_date = date("y-m-d H:i:s");
+                $orderHeader->save();
+                foreach ($_POST['quantity'] as $key => $quantity) {
+                    if ($quantity > 0) {
+                        $orderLine = new OrderLine();
+                        $orderLine->order_id = $orderHeader->order_id;
+                        $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
+                        $orderLine->base_product_id = $_POST['base_product_id'][$key];
+                        $orderLine->product_qty = $quantity;
+                        $orderLine->unit_price = $_POST['store_offer_price'][$key];
+                        $orderLine->price = $_POST['amount'][$key];
+                        $orderLine->store_id = 1;
+                        $orderLine->created_date = date("y-m-d H:i:s");
+                        $orderLine->save();
+                    }
+                }
+                Yii::app()->user->setFlash('success', 'Order Created Successfully.');
+
+
+                $transaction->commit();
+                $this->redirect(array('OrderHeader/admin'));
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Order Creation failed.');
+                throw $e;
+            }
+        }
+//var_dump($retailer);die;
+        $this->render('create', array(
+            'model' => $model,
+            'retailerProducts' => $retailerProducts,
+            'retailer' => $retailer,
+            'retailerId' => $retailerId,
+            'warehouses' => $warehouses,
+        ));
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
-        if (isset($_POST['OrderHeader'])) {
+        /*if (isset($_POST['OrderHeader'])) {
             $model->attributes = $_POST['OrderHeader'];
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->order_id));
-        }
+        }*/
 
-        $this->render('create', array(
-            'model' => $model,
-        ));
+
     }
 
+    private function getNextOrderNo(){
+        $lastOrderId = OrderHeader::getLastOrderId();
+        $currentOrderId = $lastOrderId+1;
+        return ORDER_NUMBER_PREFIX.$currentOrderId;
+    }
+
+    private function initailize($retailerId){
+        global $retailerProducts,$retailer,$warehouses;
+        $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+        $retailer = Retailer::model()->findByPk($retailerId);
+        $warehouses = Warehouse::model()->findAll();
+
+    }
+
+
+    public  function  actionUpdate($id){
+//print("<pre>");
+        $retailerProducts = '';
+        $retailerId = '';
+        $retailer = '';
+        $warehouses = '';
+        $itemArray = '';
+
+        $orderLine = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
+        $orderHeader = $this->loadModel($id);
+
+        $retailerId = $orderHeader->user_id;
+        $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+        $retailer = Retailer::model()->findByPk($retailerId);
+        $warehouses = Warehouse::model()->findAll();
+
+        foreach ($orderLine as $item){
+            $itemArray[$item->base_product_id] = $item;
+        }
+
+        if (isset($_POST['update'])) {
+            //print("<pre>");
+            //print_r($_POST);die;
+
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+
+                $orderHeader->status = $_POST['status'];
+                if (isset($_POST['comment']) && !empty($_POST['comment'])) {
+                    $orderHeader->user_comment = $_POST['comment'];
+                }
+                if (isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])) {
+                    $orderHeader->shipping_charges = $_POST['shippingCharge'];
+                }
+                if (isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])) {
+                    $orderHeader->discount_amt = $_POST['discountCharge'];
+                }
+                $orderHeader->total = $_POST['sumAmount'];
+                $orderHeader->total_payable_amount = $_POST['finalAmount'];
+                $orderHeader->delivery_date = $_POST['deliveryDate'];
+                $orderHeader->warehouse_id = $_POST['warehouse'];
+                $orderHeader->save();
+                foreach ($_POST['quantity'] as $key => $quantity) {
+
+                    if ($quantity > 0) {
+                        echo "here1-";
+                        if(isset($itemArray[$_POST['base_product_id'][$key]])){
+                            $orderLine = $itemArray[$_POST['base_product_id'][$key]];echo "here2-";
+                        }
+                        else{echo "here3-";
+                            $orderLine = new OrderLine();
+                            $orderLine->order_id = $orderHeader->order_id;
+                            $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
+                            $orderLine->base_product_id = $_POST['base_product_id'][$key];
+                            $orderLine->created_date = date("y-m-d H:i:s");
+                        }
+
+
+                        $orderLine->product_qty = $quantity;
+                        $orderLine->unit_price = $_POST['store_offer_price'][$key];
+                        $orderLine->price = $_POST['amount'][$key];
+                        $orderLine->store_id = 1;
+                        $orderLine->save();
+                    }
+                    else{
+                        if(isset($itemArray[$_POST['base_product_id'][$key]])){echo "here4-";
+                            $orderLine = $itemArray[$_POST['base_product_id'][$key]];
+                            $orderLine->deleteByPk($orderLine->id);
+                        }
+
+                    }
+                    if($key ==12){
+                        //print_r($orderLine);die;
+                    }
+
+                }
+                Yii::app()->user->setFlash('success', 'Order Updated Successfully.');
+
+
+                $transaction->commit();
+                $this->redirect(array('OrderHeader/admin'));
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Order Update failed.');
+                throw $e;
+            }
+
+        }
+
+
+        $this->render('updateNew', array(
+            'model' => $orderHeader,
+            'orderLine' => $itemArray,
+            'retailerProducts' => $retailerProducts,
+            'retailer' => $retailer,
+            'retailerId' => $retailerId,
+            'warehouses' => $warehouses,
+        ));
+
+
+    }
     /**
      * Updates a particular model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionUpdate($id) {
+    public function actionUpdateOld($id) {
         $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $modelOrder = $this->loadModel($id);
 
@@ -1542,12 +1738,24 @@ Sales: +91-11-3958-9895</span>
 
     public function actionReport($id) {
         // echo "hello";die;
-        $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
-            ),array('order'=>'product_name ASC'));
+        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
+            ),array('order'=>'product_name ASC'));*/
+        $model = OrderLine::getOrderLinebyOrderId($id);
+        //var_dump($model);die;
         $modelOrder = $this->loadModel($id);
+        $store = Store::model()->findByAttributes(array('store_id' => 1));
+        $modelOrder->groots_address = $store->business_address;
+        $modelOrder->groots_city = $store->business_address_city;
+        $modelOrder->groots_state = $store->business_address_state;
+        $modelOrder->groots_country = $store->business_address_country;
+        $modelOrder->groots_pincode = $store->business_address_pincode;
+        $modelOrder->groots_authorized_name = $store->store_name;
+
+        $retailer = Retailer::model()->findByPk($modelOrder->user_id);
         $this->renderPartial('reportview', array(
             'model' => $model,
             'modelOrder' => $modelOrder,
+            'retailer'=> $retailer,
         ));
     }
 

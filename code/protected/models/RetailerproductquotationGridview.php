@@ -12,6 +12,8 @@
  * @property string $retailer_id
  * @property string $effective_price
  * @property string $discount_price
+ * @property string $media_url
+ * @property string $thumb_url
  */
 class RetailerproductquotationGridview extends CActiveRecord {
 
@@ -37,7 +39,7 @@ class RetailerproductquotationGridview extends CActiveRecord {
             array('discount_price','compare','compareValue'=>'100','operator'=>'<','message'=>'Percentage must be less than 100'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('title, store_price, store_offer_price, quantity, store, retailer_id, effective_price, discount_price', 'safe', 'on' => 'search'),
+            array('subscribed_product_id, title, store_price, store_offer_price, pack_size, pack_unit, quantity, store, retailer_id, effective_price, discount_price, ,media_url, thumb_url', 'safe', 'on' => 'search'),
         );
     }
 

@@ -60,6 +60,18 @@ class OrderHeader extends CActiveRecord {
     public $secondaryDb = null;
     public $store_id;
     public $created_date;
+    public $name;
+    public $address;
+    public $city;
+    public $state;
+    public $warehouse_name;
+    public $warehouse_id;
+    public $groots_authorized_name;
+    public $groots_address;
+    public $groots_city;
+    public $groots_state;
+    public $groots_country;
+    public $groots_pincode;
 
     // public $status_array;
 
@@ -74,7 +86,7 @@ class OrderHeader extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('order_number, user_id,shipping_phone', 'required'),
+            array('user_id', 'required'),
             array('user_id,shipping_phone,shipping_pincode', 'numerical', 'integerOnly' => true),
             array('order_number, billing_name', 'length', 'max' => 255),
             array('payment_method', 'length', 'max' => 16),
@@ -184,7 +196,6 @@ class OrderHeader extends CActiveRecord {
      */
     public function search() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
@@ -192,9 +203,13 @@ class OrderHeader extends CActiveRecord {
             $store_id = Yii::app()->session['brand_id'];
         }
         $criteria = new CDbCriteria;
-          $criteria->order = 'created_date DESC';
-          $criteria->compare('t.delivery_date', $this->delivery_date, true);
-          $criteria->compare('t.created_date', $this->created_date, true);
+        //$criteria->condition = 'order_id > 35';
+        $criteria->select = " t.*, r.address, r.state, r.city, r.name, w.id as warehouse_id, w.name as warehouse_name";
+        $criteria->join = ' join cb_dev_groots.retailer r on r.id = t.user_id ';
+        $criteria->join .= ' join cb_dev_groots.warehouses w on w.id = t.warehouse_id ';
+        $criteria->order = 'created_date DESC';
+        $criteria->compare('t.delivery_date', $this->delivery_date, true);
+        $criteria->compare('t.created_date', $this->created_date, true);
         /*if (isset($_GET['retailer_id'])) {
             if (!empty($criteria->condition)) {
                 $criteria->condition .= ' AND ';
@@ -222,7 +237,7 @@ class OrderHeader extends CActiveRecord {
         }
         $criteria->order = 'created_date DESC';
 
-        //$criteria->join = 'left JOIN order_line ON order_line.order_id = t.order_id';
+        $criteria->join = 'left JOIN order_line ON order_line.order_id = t.order_id';
         $criteria->distinct = true;
 
 
@@ -571,7 +586,7 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
     //         $command->execute();
         
     // } 
-public static function getinfo($id) {
+    public static function getinfo($id) {
         $connection = Yii::app()->secondaryDb;
        $sql = "SELECT order_id,order_number,user_id,created_date,total_payable_amount,agent_name,delivery_date FROM order_header WHERE `order_id` ='".$id."'"
             ;
@@ -579,4 +594,60 @@ public static function getinfo($id) {
         $pdf = $command->queryAll();
         return $pdf;
     }
+
+    public function getName(){
+        return $this->name;
+    }
+
+    public function getAddress(){
+        return $this->address;
+    }
+
+    public function getCity(){
+        return $this->city;
+    }
+
+    public function getState(){
+        return $this->state;
+    }
+
+    public static function getLastOrderId(){
+        $order = self::model()->find(array('select'=>'order_id', 'order'=>'order_id desc', 'limit'=>1));
+        return $order->order_id;
+    }
+
+    public function getWarehouseId(){
+        return $this->warehouse_id;
+    }
+
+    public function getWarehouseName(){
+        return $this->warehouse_name;
+    }
+
+    public function getGrootsAddress(){
+        return $this->groots_address;
+    }
+
+    public function getGrootsCity(){
+        return $this->groots_city;
+    }
+
+    public function getGrootsState(){
+        return $this->groots_state;
+    }
+
+    public function getGrootsCountry(){
+        return $this->groots_country;
+    }
+
+    public function getGrootsPincode(){
+        return $this->groots_pincode;
+    }
+
+    public function getGrootsAuthorizedName(){
+        return $this->groots_authorized_name;
+    }
+
 }
+
+
