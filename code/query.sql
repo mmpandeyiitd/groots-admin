@@ -20,7 +20,7 @@ left join `store` `s` on((`s`.`store_id` = `sp`.`store_id`))) left join
 
 
 
-alter table cb_dev_groots.subscribed_product modify column subscribed_product_id int(11) unsigned NOT NULL AUTO_INCREMENT, modify column `base_product_id` int(11) unsigned NOT NULL, add index fk_sub_prod_1 (base_product_id), add CONSTRAINT prod_prices_fk_1 foreign key (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id);
+alter table cb_dev_groots.subscribed_product modify column subscribed_product_id int(11) unsigned NOT NULL AUTO_INCREMENT, modify column `base_product_id` int(11) unsigned NOT NULL, add index fk_sub_prod_1 (base_product_id), add CONSTRAINT fk_sub_prod_1 foreign key (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id);
 
 CREATE TABLE cb_dev_groots.`product_prices` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,

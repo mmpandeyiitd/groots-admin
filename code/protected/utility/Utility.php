@@ -10,6 +10,6 @@ class Utility
 {
     public static function getDefaultDeliveryDate(){
         $time=strtotime("+12 hour");
-        return date("d-m-Y",$time);
+        return date("Y-m-d",$time);
     }
 }

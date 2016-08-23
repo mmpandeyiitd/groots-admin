@@ -82,7 +82,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <span class="detail"><?php  ?>
                         <?php
                     $delivery_date = substr($model->attributes['delivery_date'], 0, 10);
-                        if(!isset($delivery_date)){
+                        if(!isset($delivery_date) || empty($delivery_date)){
                             $delivery_date = Utility::getDefaultDeliveryDate();
                         }
 
@@ -91,7 +91,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             'id'=>'deliveryDate',
                             'value'=> $delivery_date,
                             'options'=>array(
-                                'dateFormat' => 'dd-mm-yy',
+                                'dateFormat' => 'yy-mm-dd',
                                 'showAnim'=>'fold',
                             ),
                             'htmlOptions'=>array(
@@ -115,12 +115,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <div class="clearfix"></div>
                     <label>Status:</label> <span class="">
                         <select name="status" class="selectNew">
-                            <option value="Pending" <?php if($model->status=='Pending') {echo "'selected'='selected' ";} ?> >Pending </option>
-                            <option value="Confirmed" <?php if($model->status=='Confirmed') {echo "'selected'='selected' ";} ?>> Confirmed </option>
-                            <option value="Out for Delivery" <?php if($model->status=='Out for Delivery') {echo "'selected'='selected' ";} ?>>Out for Delivery</option>
-                            <option value="Delivered" <?php if($model->status=='Delivered') {echo "'selected'='selected' ";} ?> >Delivered</option>
-                            <option value="Cancelled" <?php if($model->status=='Cancelled') {echo "'selected'='selected' ";} ?> >Cancelled</option>
-                            <option value="Paid" <?php if($model->status=='Paid') {echo "'selected'='selected' ";} ?> >Paid</option>
+                            <option value="Pending" <?php if($model->status=='Pending') {echo "selected='selected' ";} ?> >Pending </option>
+                            <option value="Confirmed" <?php if($model->status=='Confirmed') {echo "selected='selected' ";} ?>> Confirmed </option>
+                            <option value="Out for Delivery" <?php if($model->status=='Out for Delivery') {echo "selected='selected' ";} ?>>Out for Delivery</option>
+                            <option value="Delivered" <?php if($model->status=='Delivered') {echo "selected='selected' ";} ?> >Delivered</option>
+                            <option value="Cancelled" <?php if($model->status=='Cancelled') {  echo "selected='selected' ";} ?> >Cancelled</option>
+                            <option value="Paid" <?php if($model->status=='Paid') {echo "selected='selected' ";} ?> >Paid</option>
                         </select>
                     </span>
                     <div class="clearfix"></div>
@@ -305,8 +305,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
         var quantity = $("#quantity_" + prodId).val();
         $("#amount_" + prodId).val(unitPrice * quantity);
         var totalquantity;
-        console.log(packSize);
-        console.log(packUnit);
+
         if(packUnit=="g"){
             totalquantity = packSize*quantity/1000;
         }
@@ -320,15 +319,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     function populateAllAmountFields() {
         $(".amount").each(function(){
 
-            /*sumAmount += Number($(this).val());
-             console.log(sumAmount);*/
 
             var prodId = $(this).attr('id').split("_")[1];
 
             var unitPrice = Number($("#unitPrice_" + prodId).val());
             var quantity = Number($("#quantity_" + prodId).val());
-            console.log(unitPrice);
-            console.log(quantity);
+
             if(quantity > 0){
                 $("#amount_" + prodId).val(unitPrice * quantity);
             }
@@ -338,7 +334,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     }
 
     function calculateTotalAmount() {
-        console.log("here123");
+
 
         var shipping = Number($("#shipping").val());
         //var discount = $("#discount").val();
@@ -350,7 +346,6 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
         $(".amount").each(function(){
 
             sumAmount += Number($(this).val());
-            console.log(sumAmount);
         });
 
         if(sumAmount < minOrder){
