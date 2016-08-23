@@ -16,8 +16,8 @@
 )); ?>
 
 
- <div class="">
-	<?php echo $form->labelEx($model, 'Select a retailer'); ?>
+ <div <?php if(isset($update)) echo "style='display:none;'" ?> >
+	<?php echo $form->labelEx($model, '<b>Select a retailer</b>'); ?>
 	<?php
 	$disabled = "";
 	if(isset($update)) {
@@ -32,7 +32,7 @@
 
     <?php
 	if(!isset($update)) {
-		echo CHtml::submitButton('Get retailer product', array('name' => 'select-retailer'));
+		echo CHtml::submitButton('Get retailer products', array('name' => 'select-retailer'));
 	}?>
 </div>
 

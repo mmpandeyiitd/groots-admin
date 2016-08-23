@@ -209,7 +209,7 @@ onclick='return confirm("Do you want to cancel");'/>
                 'type' => 'raw',
                 'value'=> function($data){
           
-           return substr($data->created_date,0, -9);
+           return $data->created_date;
        }
        ),
            

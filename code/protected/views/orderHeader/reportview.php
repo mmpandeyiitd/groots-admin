@@ -1,12 +1,14 @@
 <?php
     // get the HTML
     ob_start();
+
     echo $this->renderPartial('reportviewcontent' ,array('model' => $model,
               'modelOrder' =>$modelOrder, 'retailer'=>$retailer,), true);//die;
     $content = ob_get_clean();
  
     // convert in PDF
-  echo $content;die;
+//echo $content;
+//die;
     require_once( dirname(__FILE__) . '/../../extensions/html2pdf/html2pdf.php');
 
     try

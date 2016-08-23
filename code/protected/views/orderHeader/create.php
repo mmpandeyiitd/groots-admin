@@ -5,7 +5,7 @@
 
 
 $this->breadcrumbs=array(
-	'Order Headers'=>array('admin'),
+	'Orders'=>array('admin'),
 	'Create',
 );
 
@@ -15,12 +15,12 @@ $this->breadcrumbs=array(
 
 <div class="" >
   
-<div class="portlet-content">
+<div class="">
 <?php $this->renderPartial('_retailerDropdown', array('model'=>$model, 'retailerId'=>$retailerId)); ?>
 
 
 <?php
-if(isset($retailerProducts) && $retailerProducts != '' ) { $this->renderPartial('_create', array('model'=>$model, 'retailerProducts'=> $retailerProducts, 'retailerId'=>$retailerId, 'retailer'=>$retailer, 'warehouses'=>$warehouses));
+if(isset($retailerProducts) && $retailerProducts != '' ) { $this->renderPartial('_createOrder', array('model'=>$model, 'retailerProducts'=> $retailerProducts, 'retailerId'=>$retailerId, 'retailer'=>$retailer, 'warehouses'=>$warehouses));
 }
 ?>
 

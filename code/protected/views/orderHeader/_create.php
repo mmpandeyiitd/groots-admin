@@ -76,16 +76,17 @@ if ($issuperadmin == 0) {
                     <div class="clearfix"></div>
                     <label>Address:</label> <span class="detail"><?php echo $retailer->attributes['address']; ?></span>
                     <div class="clearfix"></div>
-                    <label>City:</label> <span class="detail"><?php echo $retailer->attributes['city']; ?></span>y
+                    <label>City:</label> <span class="detail"><?php echo $retailer->attributes['city']; ?></span>
                     <div class="clearfix"></div>
                     <label>State:</label> <span class="detail"><?php echo $retailer->attributes['state']; ?></span>
                     <div class="clearfix"></div>
                     <label>Pincode:</label> <span class="detail"><?php echo $retailer->attributes['pincode']; ?></span>
                     <div class="clearfix"></div>
                     <label>Country:</label> <span class="detail">India</span>
-                    <label>Mobile:</label> <span class="detail"><?php echo $retailer->attributes['telephone']; ?></span>
                     <div class="clearfix"></div>
+                    <label>Mobile:</label> <span class="detail"><?php echo isset($retailer->attributes['telephone']) ? $retailer->attributes['telephone'] : "none"; ?></span>
                     <div class="clearfix"></div>
+
                     <label>Delivery Date:</label>
                     <span class="detail"><?php  ?>
                         <?php

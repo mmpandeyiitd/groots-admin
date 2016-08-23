@@ -1093,7 +1093,7 @@ Sales: +91-11-3958-9895</span>
      */
     public function actionAdmin() {
    
-        
+
         $model = new OrderHeader('search');
         
         if (isset($_GET['pageSize'])) {
@@ -1750,7 +1750,6 @@ Sales: +91-11-3958-9895</span>
         $modelOrder->groots_country = $store->business_address_country;
         $modelOrder->groots_pincode = $store->business_address_pincode;
         $modelOrder->groots_authorized_name = $store->store_name;
-
         $retailer = Retailer::model()->findByPk($modelOrder->user_id);
         $this->renderPartial('reportview', array(
             'model' => $model,

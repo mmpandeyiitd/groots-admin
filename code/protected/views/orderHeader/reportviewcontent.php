@@ -99,38 +99,66 @@ foreach ($model as $value) {
         </tr>
         <tr>
             <td width="100%" style="width:100%" colspan="5">
-                <table  border="0" style="width:690px">
+                <table  border="1" style="width:690px">
                     <tr>
-                        <td align="left" colspan="4" width="65%" style="vertical-align:top">
-                            <table border="0" style="width:100%"><tr><td>
-                            <img src="themes/abound/img/logo.png" style="width:150px;"/>
+                        <td  style="vertical-align:top;align:left;width=70%;">
+                            <table border="0" style="width:100%">
+                                <tr>
+                                    <td>
+                                        <img src="themes/abound/img/logo.png" style="width:150px;"/>
                                     </td>
-                             </tr>
-                                <tr><td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <p style="logoRight">
                                             <strong><?php echo $modelOrder->groots_authorized_name; ?></strong></p>
                                         <p style="logoRight">
                                             <strong>Registered Office:</strong>
                                             <span style="word-wrap: break-word">
-                                    <?php
-                                    echo '<br> Address:- ';
-                                    echo wordwrap($modelOrder->groots_address, 50, "<br/>\n");
-                                    ?>
-                                </span>
+                                                <?php
+                                                echo '<br> Address:- ';
+                                                echo wordwrap($modelOrder->groots_address, 50, "<br/>\n");
+                                                ?>
+                                            </span>
                                             <?php echo  wordwrap($modelOrder->groots_city, 18, "<br/>\n") ."-"  . $modelOrder->groots_pincode; ?></p>
 
-                                    </td></tr></table>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
-                        <td align="left" width="200px"></td>
 
-                        <td align="left top" width="35%" style="vertical-align:top">
-                            Order Id: <?php echo $modelOrder->attributes['order_number']; ?>
-                            <br>
-                            <strong>Invoice No : </strong>
 
-                            <?php
-                            echo INVOICE_TEXT.date('Y').date('m').$modelOrder->attributes['order_id'];
-                            ?>
+                        <td  style="align:left;width=30%;">
+                            <table border="0" style="width:100%">
+                                <tr >
+                                    <td style="border-bottom:1pt solid black;">
+                                        <span style="float:left;">
+                                        <strong>Order Id: </strong><?php echo $modelOrder->attributes['order_number']; ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td style="border-bottom:1pt solid black;">
+                                        <span>
+                                        <strong>Invoice No : </strong>
+                                        <?php
+                                        $deliveryDateArray = explode("-", $modelOrder->attributes['delivery_date']);
+                                        echo INVOICE_TEXT.$deliveryDateArray[0].$deliveryDateArray[1].$modelOrder->attributes['order_id'];
+                                        ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td style="border-bottom:1pt solid black;">
+                                        <span>
+                                        <strong>Date : </strong>
+                                        <?php
+                                        echo date('d')."-".date('m')."-".date('Y');
+                                        ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -138,7 +166,7 @@ foreach ($model as $value) {
         </tr>
 
         <tr>
-            <td colspan="4">
+            <td colspan="5">
 
                 <strong><?php echo $retailer->attributes['name']; ?></strong>
                 <br>
@@ -158,10 +186,11 @@ foreach ($model as $value) {
 
 
         <tr>
-            <th style="text-align:left;  padding: 5px; width:40%;"> Product </th>
-            <th style="text-align:center; padding: 5px;  width:15%;  "> Total Qty </th>
+            <th style="text-align:left;  padding: 5px; width:35%;"> Product </th>
+            <th style="text-align:center; padding: 5px;  width:15%;  "> Units * Pack Size </th>
+            <th style="text-align:center; padding: 5px;  width:15%;  "> Total Qty (kg) </th>
             <th style="text-align:center; padding: 5px; width:15%;" colspan="1"> Unit price </th>
-            <th style="text-align:center; padding: 5px; width:30%;"> Total </th>
+            <th style="text-align:center; padding: 5px; width:20%;"> Total </th>
         </tr>
 
         <?php
@@ -202,9 +231,9 @@ foreach ($model as $value) {
             ?>  
 
             <tr>
-                <td style="text-align:left; width:40%; ">
+                <td style="text-align:left; width:35%; ">
                     <?php
-                    echo wordwrap($model[$key]['product_name'], 20, "<br/>\n");
+                    echo $model[$key]['product_name'];
                     ?>
 
                 </td>
@@ -215,22 +244,31 @@ foreach ($model as $value) {
 
                     echo $model[$key]['pack_unit'];
                     ?></td>
+                <td style="text-align:center;  width: 15%;"> <?php
+                    if($model[$key]['pack_unit']=='g'){
+                       echo  ((int)$model[$key]['product_qty']) * ((int) $model[$key]['pack_size'])/1000;
+                    }
+                    else{
+                        echo  ((int)$model[$key]['product_qty']) * ((int) $model[$key]['pack_size']);
+                    }
+
+                    ?></td>
                 <td style="text-align:center;  width: 15%;"><?php echo " Rs. "; ?><?php echo $model[$key]['unit_price']; ?> </td>
-                <td style="text-align:center;  width: 30%;"><?php echo " Rs. "; ?><?php echo $model[$key]['price']; ?></td>
+                <td style="text-align:center;  width: 20%;"><?php echo " Rs. "; ?><?php echo $model[$key]['price']; ?></td>
             </tr>
         <?php } ?>
         <tr>
-            <td colspan="3" style="text-align:right;"><strong>Shipping Charge </strong></td>
+            <td colspan="4" style="text-align:right;"><strong>Shipping Charge </strong></td>
             <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->shipping_charges; ?></strong></td>
         </tr>
         <tr>
-            <td colspan="3" style="text-align:right;"><strong>Total Amount </strong></td>
+            <td colspan="4" style="text-align:right;"><strong>Total Amount </strong></td>
             <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->total_payable_amount; ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
             <tr>
-                <td colspan="4">
+                <td colspan="5">
                     <strong>Comment : </strong>
                     <span style="word-wrap: break-word">
                         <?php
@@ -243,7 +281,7 @@ foreach ($model as $value) {
 
         <?php } ?>
         <tr>
-            <td colspan="4">
+            <td colspan="5">
 
                 <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
                     Thank you for your business! We look forward to serving you again<br>
@@ -251,6 +289,8 @@ foreach ($model as $value) {
                     Ordering Support: +91-11-3958-9893<br>
                     Customer Support: +91-11-3958-8984<br>
                     Sales Support: +91-11-3958-9895<br>
+                    <br>
+                    All disputes are subject to the jurisdiction of the courts of Delhi.
                 </p>
             </td>
 
