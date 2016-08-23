@@ -1,5 +1,5 @@
-code/protected/config/constants.php
-#code/protected/config/main.php
+#code/protected/config/constants.php
+code/protected/config/main.php
 *.log
 *.txt
 code/images/*
