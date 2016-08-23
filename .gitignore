@@ -1,5 +1,5 @@
 code/protected/config/constants.php
-code/protected/config/main.php
+#code/protected/config/main.php
 *.log
 *.txt
 code/images/*
@@ -9,6 +9,8 @@ code/csvupload/*
 code/protected/views/storeFront/*
 code/.idea/*
 code/.idea
+code/feeds/*
+code/zips/*
 project4.ppx
 project4.ppj
 .jsdtscope
