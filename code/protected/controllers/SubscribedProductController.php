@@ -444,4 +444,14 @@ class SubscribedProductController extends Controller {
         }
     }
 
+    protected function beforeAction($action) {
+
+        $session = Yii::app()->session['user_id'];
+
+        if ($session == '') {
+            echo Yii::app()->controller->redirect("index.php?r=site/login");
+        }
+        return true;
+    }
+
 }

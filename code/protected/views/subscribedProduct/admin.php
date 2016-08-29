@@ -105,7 +105,7 @@ $pageSizeDropDown = CHtml::dropDownList(
 $this->widget('zii.widgets.grid.CGridView', array(
     'itemsCssClass' => 'table table-striped table-bordered table-hover',
     'id' => 'ympdm-store-grid',
-    'dataProvider' => $model_grid->search('created_date DESC'),
+    'dataProvider' => $model_grid->search(''),
     'filter' => $model_grid,
     
     'columns' => array(
@@ -116,10 +116,10 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'id' => 'selectedIds',
             'value' => '$data->subscribed_product_id',
             'class' => 'CCheckBoxColumn',
-            'checked'=>'($data->effective_price!=" "? true : false);',
+            'checked'=>'($data->retailer_id==$data->selected_retailer_id ? true : false);',
             'selectableRows' => '100',
         ),
-        
+        'subscribed_product_id',
         'title',
         'store_price',
         'store_offer_price',

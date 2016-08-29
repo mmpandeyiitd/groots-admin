@@ -1249,8 +1249,8 @@ class BaseProductController extends Controller {
                     $this->render('bulkupload', array('model' => $model));
                 }
                 $i = 0;
-                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit');
-                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
+                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit', 'Effective Price Date');
+                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1479,6 +1479,9 @@ class BaseProductController extends Controller {
                                                                 } else {
                                                                     $model_subscribe->grade = 0;
                                                                 }
+                                                                if (isset($cols['Effective Price Date'])) {
+                                                                    $effective_date = $data[$cols['Effective Price Date']];
+                                                                }
                                                                 $model_subscribe->weight = $Weight;
                                                                 $model_subscribe->weight_unit = $Weight_Unit;
                                                                 $model_subscribe->length = $Length;
@@ -1497,6 +1500,10 @@ class BaseProductController extends Controller {
                                                                   } */
                                                                 $model_subscribe->save();
                                                                 $model_subscribe->data_sub_csv($model1->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->grade, $model_subscribe->diameter, $model_subscribe->quantity, $model_subscribe->weight, $model_subscribe->weight_unit, $model_subscribe->length, $model_subscribe->length_unit);
+
+                                                                // insert in product prices
+                                                                $subscribed_product = SubscribedProduct::model()->findByAttributes(array('base_product_id'=>$model1->base_product_id));
+                                                                $this->addUpdateProductPrices($subscribed_product->base_product_id, $subscribed_product->subscribed_product_id, $mrp, $wsp, $effective_date);
                                                             }#...................end...................#
 
                                                             if (isset($row['media']) && !empty($row['media'])) {
@@ -1580,9 +1587,9 @@ class BaseProductController extends Controller {
                                     $command = $connection->createCommand($sql);
                                     $command->execute();
                                     $category_id_del = $command->queryAll();
-
                                     if ($category_id_del != array()) {
-
+                                        $subscribed_product_id = $category_id_del[0]['subscribed_product_id'];
+                                        $effective_date = date('Y-m-d');
                                         if (isset($cols['Store Price'])) {
                                             $mrp = trim($data[$cols['Store Price']]);
                                         } else if ($category_id_del != array()) {
@@ -1601,9 +1608,13 @@ class BaseProductController extends Controller {
                                         if (isset($cols['Diameter'])) {
                                                 $diameter = $data[$cols['Diameter']];
                                             } 
-                                         if (isset($cols['Grade'])) {
+                                        if (isset($cols['Grade'])) {
                                                 $grade = $data[$cols['Grade']];
-                                            } 
+                                        }
+                                        if (isset($cols['Effective Price Date'])) {
+                                            $effective_date = $data[$cols['Effective Price Date']];
+                                        }
+
                                         if ((is_numeric($wsp)) && $mrp >= $wsp) {
                                             $model_subscribe = new SubscribedProduct();
                                             $model_subscribe->base_product_id = $bp;
@@ -1616,6 +1627,10 @@ class BaseProductController extends Controller {
                                             $is_deleted = '0';
                                             $solrBackLog->insertByBaseProductId($model_subscribe->base_product_id, $is_deleted);
                                             $model1->Update_subscribed_product($model_subscribe->base_product_id, $model1->store_id, $model_subscribe->store_price, $model_subscribe->store_offer_price, $model_subscribe->quantity, $diameter,$grade);
+
+                                            //insert in proudct prices
+                                            $this->addUpdateProductPrices($bp, $subscribed_product_id, $mrp, $wsp, $effective_date);
+
 
 					//Image Update Starts
 
@@ -1855,6 +1870,21 @@ class BaseProductController extends Controller {
         ));
     }
 
+    public function addUpdateProductPrices($base_product_id, $subscribed_product_id,$store_price,$store_offer_price,$effective_date){
+        $productPrices = ProductPrice::model()->findByAttributes(array('base_product_id'=> $base_product_id, 'subscribed_product_id'=>$subscribed_product_id, 'effective_date'=>$effective_date));
+        if(!isset($productPrices) || empty($productPrices)){
+            $productPrices  = new ProductPrice();
+            $productPrices->base_product_id = $base_product_id;
+            $productPrices->subscribed_product_id = $subscribed_product_id;
+            $productPrices->effective_date = $effective_date;
+        }
+
+        $productPrices->store_price = $store_price;
+        $productPrices->store_offer_price = $store_offer_price;
+
+        $productPrices->save();
+    }
+
     public function actionMedia() {
 
         if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
@@ -2041,7 +2071,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Store Price,Store Offer Price,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,

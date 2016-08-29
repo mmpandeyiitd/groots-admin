@@ -108,6 +108,12 @@ alter table groots_orders.order_header add column warehouse_id int(11) unsigned 
 
 update cb_dev_groots.store set store_name="GROOTS FOOD VENTURE PRIVATE LIMITED";
 
+alter table cb_dev_groots.product_prices add column `store_price` decimal(12,2) NOT NULL DEFAULT '0.00' after subscribed_product_id;
 
+alter table cb_dev_groots.product_prices change column price `store_offer_price` decimal(12,2) NOT NULL DEFAULT '0.00';
+
+ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNIQUE KEY `uk_prod_price_1` (`base_product_id`,`subscribed_product_id`,`effective_date`)
+
+-------------------------------------------------------------
 
 

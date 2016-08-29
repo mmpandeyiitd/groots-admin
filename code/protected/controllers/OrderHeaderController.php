@@ -23,7 +23,6 @@ class OrderHeaderController extends Controller {
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
         }
-
         if (Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] != "S") {
             Yii::app()->user->setFlash('permission_error', 'You have no permission');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -40,7 +39,7 @@ class OrderHeaderController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'sales_by_retailer', 'sales_by_retailer_detail', 'sale_by_style', 'sale_by_style_dateial', 'sale_summery', 'sale_summery_detail', 'view', 'Reportnew', 'admin', 'report', 'Dispatch'),
+                'actions' => array('index', 'sales_by_retailer', 'sales_by_retailer_detail', 'sale_by_style', 'sale_by_style_dateial', 'sale_summery', 'sale_summery_detail', 'view', 'Reportnew', 'admin', 'report', 'Dispatch', 'productPricesByRetailerAndDate'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -87,7 +86,7 @@ class OrderHeaderController extends Controller {
 
             $retailerId = $_POST['retailer-dd'];
             if($retailerId>0) {
-                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $warehouses = Warehouse::model()->findAll();
             }
@@ -100,7 +99,7 @@ class OrderHeaderController extends Controller {
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 $retailerId = $_POST['retailerId'];
-                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+                $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $warehouses = Warehouse::model()->findAll();
                 $orderHeader = new OrderHeader();
@@ -195,7 +194,7 @@ class OrderHeaderController extends Controller {
         $orderHeader = $this->loadModel($id);
 
         $retailerId = $orderHeader->user_id;
-        $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId));
+        $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
         $retailer = Retailer::model()->findByPk($retailerId);
         $warehouses = Warehouse::model()->findAll();
 
@@ -206,7 +205,8 @@ class OrderHeaderController extends Controller {
         if (isset($_POST['update'])) {
             //print("<pre>");
             //print_r($_POST);die;
-
+            //print_r($_POST);die;
+            //print_r($_POST);die;
             $transaction = Yii::app()->db->beginTransaction();
             try {
 
@@ -228,11 +228,10 @@ class OrderHeaderController extends Controller {
                 foreach ($_POST['quantity'] as $key => $quantity) {
 
                     if ($quantity > 0) {
-                        echo "here1-";
                         if(isset($itemArray[$_POST['base_product_id'][$key]])){
-                            $orderLine = $itemArray[$_POST['base_product_id'][$key]];echo "here2-";
+                            $orderLine = $itemArray[$_POST['base_product_id'][$key]];
                         }
-                        else{echo "here3-";
+                        else{
                             $orderLine = new OrderLine();
                             $orderLine->order_id = $orderHeader->order_id;
                             $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
@@ -248,7 +247,7 @@ class OrderHeaderController extends Controller {
                         $orderLine->save();
                     }
                     else{
-                        if(isset($itemArray[$_POST['base_product_id'][$key]])){echo "here4-";
+                        if(isset($itemArray[$_POST['base_product_id'][$key]])){
                             $orderLine = $itemArray[$_POST['base_product_id'][$key]];
                             $orderLine->deleteByPk($orderLine->id);
                         }
@@ -1773,6 +1772,19 @@ Sales: +91-11-3958-9895</span>
             'store_model' => $store_model,
         ));
         //$this->renderPartial("reportview");
+    }
+
+
+    public function actionProductPricesByRetailerAndDate(){
+        $effectiveDate = $_GET['date'];
+        $retailerId =  $_GET['retailerId'];
+        $productPrices = ProductPrice::getRetailerSubscribedProductPricesByDate($retailerId, $effectiveDate);
+        $sProdIdPriceArray = array();
+        foreach ($productPrices as $productPrice){
+            $sProdIdPriceArray[$productPrice['base_product_id']] = $productPrice['store_offer_price'];
+        }
+        echo json_encode($sProdIdPriceArray);
+
     }
 
 }

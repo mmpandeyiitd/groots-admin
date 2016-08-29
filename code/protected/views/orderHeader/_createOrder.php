@@ -93,6 +93,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             'options'=>array(
                                 'dateFormat' => 'yy-mm-dd',
                                 'showAnim'=>'fold',
+                                'onSelect' => 'js:function(date) {updatePricesByDate(date);}'
+
                             ),
                             'htmlOptions'=>array(
                                 'style'=>'height:20px;'
@@ -140,7 +142,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <th style="font-weight:normal; width: 40%;" ><strong>Product</strong></th>
                     <th style="font-weight:normal; width: 12%;" ><strong>Pack Unit Size</strong></th>
                     <th style="font-weight:normal; width: 12%;"><strong>Unit Price</strong></th>
-                    <th style="font-weight:normal; width: 12%;" ><strong>Quantity</strong></th>
+                    <th style="font-weight:normal; width: 12%;" ><strong>Quantity in Packs</strong></th>
                     <th style="font-weight:normal; width: 12%;"><strong>Total Quantity (Kg)</strong></th>
                     <th style="font-weight:normal; width: 12%;"><strong>Total Amount</strong></th>
                 </tr>
@@ -151,7 +153,10 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <?php
                     //  $updationclose = TRUE;
                     foreach ($retailerProducts as $_retailerProduct) {
-
+                        $unitPrice=$_retailerProduct->effective_price;
+                        if((int)$unitPrice==0){
+                            $unitPrice=$_retailerProduct->store_offer_price;
+                        }
                     ?>
                     <tr>
                         <div class="dynamic_content">
@@ -161,28 +166,39 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             <td style="width: 40%;"> <?php echo $_retailerProduct->title;; ?></td>
 
                             <td style="width: 12%;"> <?php echo $_retailerProduct->pack_size . $_retailerProduct->pack_unit;; ?></td>
-                            <td style="width: 12%;"> <?php echo $_retailerProduct->store_offer_price;; ?></td>
+                            <td style="width: 12%;" class="unitPrice" id="unitPrice_<?php echo $_retailerProduct->base_product_id; ?>"> <?php echo $unitPrice; ?></td>
 
-                            <td style="width: 12%;"><input type="text" class="inputs" name="quantity[]"
-                                                           id="quantity_<?php echo $_retailerProduct->base_product_id; ?>"
+
+
+                            <td style="width: 12%;">
+
+                                <input type="text" class="quantityInPacks readOnlyInput" name="quantity[]"
+                                                           id="quantityInPacks_<?php echo $_retailerProduct->base_product_id; ?>"
                                                            value="<?php if (isset($orderLine[$_retailerProduct->base_product_id])) {
                                                                echo $orderLine[$_retailerProduct->base_product_id]['product_qty'];
                                                            } ?> "
-                                                           onchange="populateAmountField(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->store_offer_price.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)">
+                                                           onchange="populateAmountField(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" readonly="readonly">
                             </td>
 
-                            <td style="width: 12%; align="center" id="totalQuantity_<?php echo $_retailerProduct->base_product_id; ?>"
-                                class="totalQuantity">
-                                <?php
-                                if (isset($orderLine[$_retailerProduct->base_product_id])) {
-                                    if ($_retailerProduct->pack_unit == 'g') {
-                                        echo ($orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size)/1000;
-                                    }
-                                    else {
-                                        echo ((int)$orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size);
-                                    }
+                            <td style="width: 12%; align="center" >
+                            <?php
+                            $totalQuantity = '';
+                            if (isset($orderLine[$_retailerProduct->base_product_id])) {
+                                if ($_retailerProduct->pack_unit == 'g') {
+                                    $totalQuantity = ($orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size)/1000;
                                 }
-                                ?>
+                                else {
+                                    $totalQuantity = ((int)$orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size);
+                                }
+                            }
+
+                            ?>
+
+                                <input type="text" class="inputs" name="quantityInKg" class="quantityInKg inputs"
+                                   id="quantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
+                                   value="<?php echo $totalQuantity ?> "
+                                   onchange="populateAmountField(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
+
                             </td>
 
                                     <td style="width: 12%;"> <input type="text" id="amount_<?php echo $_retailerProduct->base_product_id; ?>" class="amount readOnlyInput" name="amount[]" value="" readonly="readonly"/>
@@ -199,7 +215,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             ?>
                             <input type='hidden' name='order_line_id[]' value='<?php if(isset($orderLine[$_retailerProduct->base_product_id])){echo $orderLine[$_retailerProduct->base_product_id]['id'];} ?> '/>
                         <?php } ?>
-                        <input type='hidden' name='store_offer_price[]' id='unitPrice_<?php echo $_retailerProduct->base_product_id; ?>' value='<?php echo $_retailerProduct->store_offer_price; ?>'/>
+                        <input type='hidden' name='store_offer_price[]' id='unitPrice_<?php echo $_retailerProduct->base_product_id; ?>' value='<?php echo $unitPrice; ?>'/>
 
                         <?php
                     }
@@ -246,6 +262,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
 
                     <input type="hidden" id="retailerId" name="retailerId" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->id; ?>" >
+                    <input type="hidden" id="selectDelvDate" name="selectDelvDate" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $delivery_date; ?>" >
                     <input type="hidden" id="minOrder" name="minOrder" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->min_order_price; ?>" >
                     <input type="hidden" id="shipping" name="shipping" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->shipping_charge; ?>" >
                     <input type="hidden" id="finalAmount" name="finalAmount" placeholder="0" class="form-control" style="width:120px;" value="" >
@@ -293,26 +310,85 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                 alert("Order at least one item");
                 event.preventDefault();
             }
-        })
+        });
+
+        /*$("#deliverDate").change(function () {
+            updatePricesByDate();
+        })*/
 
 
     });
 
 
-    function populateAmountField(prodId, unitPrice, packSize, packUnit) {
+    function updatePricesByDate(newDate){
 
-        //this.value = this.value.replace(/[^0-9\.]/g,'');
-        var quantity = $("#quantity_" + prodId).val();
-        $("#amount_" + prodId).val(unitPrice * quantity);
-        var totalquantity;
+        var prevDelvDate = $("#selectDelvDate").val();
+        console.log(prevDelvDate);
+        console.log(newDate);
+        if(prevDelvDate != newDate){
+            console.log("changed");
+        }
+        else {
+            console.log("not changed");
+        }
 
-        if(packUnit=="g"){
-            totalquantity = packSize*quantity/1000;
+
+        var retailerId = Number($("#retailerId").val());
+        var data = {"date":newDate, "retailerId":retailerId};
+
+        if (retailerId && data) {
+            $.ajax({
+                'url': '?r=orderHeader/productPricesByRetailerAndDate',
+                'cache': false,
+                'method': "POST",
+                'data': data,
+
+                'success': function (data) {
+                    setProductPrices(data);
+                    $("#selectDelvDate").val(newDate);
+                },
+                'error': function () {
+                    alert('prices not available for the selected date');
+                }
+
+            });
+
+        }
+    }
+
+    function setProductPrices(data) {
+        console.log(data);
+        if(data){
+            $(".unitPrice").each(function(){
+                 $(this).html("");
+             });
+            var data = $.parseJSON(data);
+            $.each(data, function(k, v) {
+                $("#unitPrice_"+k).html(v);
+            });
+            populateAllAmountFields();
+            calculateTotalAmount();
+
         }
         else{
-            totalquantity = packSize*quantity;
+            alert('prices not available for the selected date, Please select some other date');
         }
-        $("#totalQuantity_" + prodId).html(totalquantity);
+    }
+
+    function populateAmountField(prodId, unitPrice, packSize, packUnit) {
+
+        var quantityInKg = $("#quantityInKg_" + prodId).val();
+        var quantityInPacks;
+
+        if(packUnit=="g"){
+            quantityInPacks = quantityInKg*1000/packSize;
+        }
+        else{
+            quantityInPacks = quantityInKg/packSize;
+        }
+        var amount = unitPrice * quantityInPacks;
+        $("#amount_" + prodId).val(amount.toFixed(2));
+        $("#quantityInPacks_" + prodId).val(quantityInPacks);
         calculateTotalAmount();
     }
 
@@ -322,11 +398,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
             var prodId = $(this).attr('id').split("_")[1];
 
-            var unitPrice = Number($("#unitPrice_" + prodId).val());
-            var quantity = Number($("#quantity_" + prodId).val());
+            var unitPrice = Number($("#unitPrice_" + prodId).html());
+            var quantityInPacks = Number($("#quantityInPacks_" + prodId).val());
 
-            if(quantity > 0){
-                $("#amount_" + prodId).val(unitPrice * quantity);
+            if(quantityInPacks > 0){
+                var amount = unitPrice * quantityInPacks;
+                $("#amount_" + prodId).val(amount.toFixed(2));
             }
 
 
@@ -334,14 +411,15 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     }
 
     function calculateTotalAmount() {
-
+        /*var num = parseFloat($(this).val());
+        var cleanNum = num.toFixed(2);*/
 
         var shipping = Number($("#shipping").val());
         //var discount = $("#discount").val();
         var minOrder = Number($("#minOrder").val());
 
-        var sumAmount=0;
-        var finalAmount=0;
+        var sumAmount=0.00;
+        var finalAmount=0.00;
 
         $(".amount").each(function(){
 
@@ -357,6 +435,9 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
             shipping = 0;
         }
 
+        shipping = shipping.toFixed(2);
+        sumAmount = sumAmount.toFixed(2);
+        finalAmount = finalAmount.toFixed(2);
         $("#shippingCharge").val(shipping);
         $("#shippingChargeDisplay").html(shipping);
         $("#sumAmount").val(sumAmount);

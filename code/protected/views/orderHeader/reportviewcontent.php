@@ -246,10 +246,10 @@ foreach ($model as $value) {
                     ?></td>
                 <td style="text-align:center;  width: 15%;"> <?php
                     if($model[$key]['pack_unit']=='g'){
-                       echo  ((int)$model[$key]['product_qty']) * ((int) $model[$key]['pack_size'])/1000;
+                       echo  ((float)$model[$key]['product_qty']) * ( (float)$model[$key]['pack_size'])/1000;
                     }
                     else{
-                        echo  ((int)$model[$key]['product_qty']) * ((int) $model[$key]['pack_size']);
+                        echo  ((float)$model[$key]['product_qty']) * ((float)$model[$key]['pack_size']);
                     }
 
                     ?></td>

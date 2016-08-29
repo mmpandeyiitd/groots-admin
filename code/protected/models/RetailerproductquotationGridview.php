@@ -20,6 +20,9 @@ class RetailerproductquotationGridview extends CActiveRecord {
     /**
      * @return string the associated database table name
      */
+
+    public $selected_retailer_id;
+
     public function tableName() {
         return 'retailerproductquotation_gridview';
     }
@@ -89,13 +92,13 @@ class RetailerproductquotationGridview extends CActiveRecord {
             $retailer_id = $_GET['id'];
             $sub_ids = $this->getSubcribeid($retailer_id);
             // $criteria->alias = 'rp2';
-             $criteria->select = "rp2.status,t.subscribed_product_id,t.title,t.store_price,t.store_offer_price,IF(rp2.`effective_price` IS NULL,0,rp2.`effective_price`) AS effective_price,
+             $criteria->select = "$retailer_id as selected_retailer_id,rp2.status,rp2.retailer_id,t.subscribed_product_id,t.title,t.store_price,t.store_offer_price,IF(rp2.`effective_price` IS NULL,0,rp2.`effective_price`) AS effective_price,
 IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
             $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
             $criteria->group = "t.subscribed_product_id";
 
-          // $criteria->order = "rp2.effective_price DESC,rp2.discount_price DESC";
-         //  echo '<pre>';print_r($criteria);die;
+            $criteria->order = "t.title ASC";
+            //echo '<pre>';print_r($criteria);die;
             
         }
        
@@ -141,6 +144,11 @@ left join `retailerproductquotation_gridview` as rp2 on  rp2.subscribed_product_
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+
+    //getters
+    public function getSelectedRetailerId(){
+        return $this->selected_retailer_id;
     }
    
 
