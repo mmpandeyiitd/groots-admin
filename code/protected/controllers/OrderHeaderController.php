@@ -128,6 +128,7 @@ class OrderHeaderController extends Controller {
                         $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
                         $orderLine->base_product_id = $_POST['base_product_id'][$key];
                         $orderLine->product_qty = $quantity;
+                        $orderLine->delivered_qty = $quantity;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
                         $orderLine->price = $_POST['amount'][$key];
                         $orderLine->store_id = 1;
@@ -240,7 +241,8 @@ class OrderHeaderController extends Controller {
                         }
 
 
-                        $orderLine->product_qty = $quantity;
+                        $orderLine->product_qty = $_POST['product_qty'][$key];;
+                        $orderLine->delivered_qty = $quantity;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
                         $orderLine->price = $_POST['amount'][$key];
                         $orderLine->store_id = 1;
@@ -1735,7 +1737,7 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
-    public function actionReport($id) {
+    public function actionReport($id, $type) {
         // echo "hello";die;
         /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
             ),array('order'=>'product_name ASC'));*/
@@ -1754,6 +1756,7 @@ Sales: +91-11-3958-9895</span>
             'model' => $model,
             'modelOrder' => $modelOrder,
             'retailer'=> $retailer,
+            'type' => $type,
         ));
     }
 

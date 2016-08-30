@@ -91,14 +91,28 @@ foreach ($model as $value) {
 
     .logoRight {float:right; width:300px;}
 </style>
+<?php
+    if($type == "invoice"){
+        $title = "Invoice";
+        $challanNoText = "Invoice No";
+        $text = "";
+    }
+    elseif($type == "dc"){
+        $title = "Delivery Challan";
+        $challanNoText = "DC No";
+        $text = "This is the copy of delivery challan. Invoice will be sent to you after the delivery process is completed.";
+    }
+
+
+?>
 <div class="container">
     <table border="1">
         <tr>
 
-            <td colspan="5" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> Invoice </h3></td>
+            <td colspan="6" style="vertical-align:middle;"><h3 style="margin:0; text-align:center;"> <?php echo $title; ?> </h3></td>
         </tr>
         <tr>
-            <td width="100%" style="width:100%" colspan="5">
+            <td width="100%" style="width:100%" colspan="6">
                 <table  border="1" style="width:690px">
                     <tr>
                         <td  style="vertical-align:top;align:left;width=70%;">
@@ -140,7 +154,7 @@ foreach ($model as $value) {
                                 <tr >
                                     <td style="border-bottom:1pt solid black;">
                                         <span>
-                                        <strong>Invoice No : </strong>
+                                        <strong><?php echo $challanNoText;?> : </strong>
                                         <?php
                                         $deliveryDateArray = explode("-", $modelOrder->attributes['delivery_date']);
                                         echo INVOICE_TEXT.$deliveryDateArray[0].$deliveryDateArray[1].$modelOrder->attributes['order_id'];
@@ -153,7 +167,7 @@ foreach ($model as $value) {
                                         <span>
                                         <strong>Date : </strong>
                                         <?php
-                                        echo date('d')."-".date('m')."-".date('Y');
+                                        echo substr($modelOrder->attributes['delivery_date'],0,10);
                                         ?>
                                         </span>
                                     </td>
@@ -166,7 +180,7 @@ foreach ($model as $value) {
         </tr>
 
         <tr>
-            <td colspan="5">
+            <td colspan="6">
 
                 <strong><?php echo $retailer->attributes['name']; ?></strong>
                 <br>
@@ -186,11 +200,12 @@ foreach ($model as $value) {
 
 
         <tr>
+            <th style="text-align:left;  padding: 5px; width:7%;"> S.No. </th>
             <th style="text-align:left;  padding: 5px; width:35%;"> Product </th>
             <th style="text-align:center; padding: 5px;  width:15%;  "> Units * Pack Size </th>
             <th style="text-align:center; padding: 5px;  width:15%;  "> Total Qty (kg) </th>
-            <th style="text-align:center; padding: 5px; width:15%;" colspan="1"> Unit price </th>
-            <th style="text-align:center; padding: 5px; width:20%;"> Total </th>
+            <th style="text-align:center; padding: 5px; width:10%;" colspan="1"> Unit price </th>
+            <th style="text-align:center; padding: 5px; width:18%;"> Total </th>
         </tr>
 
         <?php
@@ -211,6 +226,7 @@ foreach ($model as $value) {
             $shipping_charge=$model[0]->shipping_charges;
          };
         foreach ($model as $key => $value) {
+            $counter++;
             /*$subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
             $linedescinfo = new OrderLine;
@@ -228,9 +244,22 @@ foreach ($model as $value) {
             $wsptotal = $wsptotal + $wsptotal1;
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;*/
+            $quantityInPacks = '';
+            if($type == "invoice"){
+                $quantityInPacks = $model[$key]['delivered_qty'];
+            }
+            elseif($type == "dc"){
+                $quantityInPacks = $model[$key]['product_qty'];
+            }
             ?>  
 
             <tr>
+                <td style="text-align:left; width:7%; ">
+                    <?php
+                    echo $counter;
+                    ?>
+
+                </td>
                 <td style="text-align:left; width:35%; ">
                     <?php
                     echo $model[$key]['product_name'];
@@ -238,7 +267,7 @@ foreach ($model as $value) {
 
                 </td>
                 <td style="text-align:center;  width: 15%;"> <?php
-                    echo $model[$key]['product_qty'];
+                    echo $quantityInPacks;
                     echo ' x ';
                     echo $model[$key]['pack_size'];
 
@@ -246,29 +275,29 @@ foreach ($model as $value) {
                     ?></td>
                 <td style="text-align:center;  width: 15%;"> <?php
                     if($model[$key]['pack_unit']=='g'){
-                       echo  ((float)$model[$key]['product_qty']) * ( (float)$model[$key]['pack_size'])/1000;
+                       echo  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
                     }
                     else{
-                        echo  ((float)$model[$key]['product_qty']) * ((float)$model[$key]['pack_size']);
+                        echo  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
                     }
 
                     ?></td>
-                <td style="text-align:center;  width: 15%;"><?php echo " Rs. "; ?><?php echo $model[$key]['unit_price']; ?> </td>
-                <td style="text-align:center;  width: 20%;"><?php echo " Rs. "; ?><?php echo $model[$key]['price']; ?></td>
+                <td style="text-align:center;  width: 10%;"><?php echo " Rs. "; ?><?php echo $model[$key]['unit_price']; ?> </td>
+                <td style="text-align:center;  width: 18%;"><?php echo " Rs. "; ?><?php echo $model[$key]['price']; ?></td>
             </tr>
         <?php } ?>
         <tr>
-            <td colspan="4" style="text-align:right;"><strong>Shipping Charge </strong></td>
+            <td colspan="5" style="text-align:right;"><strong>Shipping Charge </strong></td>
             <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->shipping_charges; ?></strong></td>
         </tr>
         <tr>
-            <td colspan="4" style="text-align:right;"><strong>Total Amount </strong></td>
+            <td colspan="5" style="text-align:right;"><strong>Total Amount </strong></td>
             <td style="text-align:center;"><strong><?php echo " Rs. "; ?> <?php echo $modelOrder->total_payable_amount; ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     <strong>Comment : </strong>
                     <span style="word-wrap: break-word">
                         <?php
@@ -281,7 +310,7 @@ foreach ($model as $value) {
 
         <?php } ?>
         <tr>
-            <td colspan="5">
+            <td colspan="6">
 
                 <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
                     Thank you for your business! We look forward to serving you again<br>
@@ -290,6 +319,7 @@ foreach ($model as $value) {
                     Customer Support: +91-11-3958-8984<br>
                     Sales Support: +91-11-3958-9895<br>
                     <br>
+                    <?php echo $text;?><br>
                     All disputes are subject to the jurisdiction of the courts of Delhi.
                 </p>
             </td>

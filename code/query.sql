@@ -117,3 +117,12 @@ ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNI
 -------------------------------------------------------------
 
 
+
+
+
+alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
+
+
+
+
+
