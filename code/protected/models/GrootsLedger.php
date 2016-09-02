@@ -186,15 +186,19 @@ class GrootsLedger extends CActiveRecord
 
     public static function downloadCSVByIDs($cDate,$cdate1) {
 
-     $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',ol.seller_name as 'Client Name',ol.product_name as 'Item Name',ol.product_qty as 'Total Quantity',TRUNCATE((ol.unit_price *ol.product_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID' FROM `order_header` oh
-left join order_line as ol on ol.`order_id`=oh.`order_id`
-WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
+
+        $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',r.name as 'Client Name',bp.title as 'Item Name',bp.pack_size as 'Pack Size', bp.pack_unit as 'Pack Unit', ol.delivered_qty as 'Total Quantity (Kg)',TRUNCATE((ol.unit_price *ol.delivered_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID', oh.order_id as 'Order Id' FROM `order_header` oh
+left join order_line as ol on ol.`order_id`=oh.`order_id` left join cb_dev_groots.retailer r on r.id=oh.user_id
+left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
+WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status not in ('Cancelled')";
+
 
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
         $command->execute();
         $assocDataArray = $command->queryAll();
-        $fileName = "orderlist.csv";
+        //var_dump($assocDataArray);die;
+        $fileName = "totalOrderByClientsProduct.csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -209,7 +213,21 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
 
             $updatecolumn = explode(',', $updatecolumn);
             fputcsv($fp, $updatecolumn);
-            foreach ($assocDataArray AS $values) {
+            foreach ($assocDataArray AS $key=>$values) {
+                //var_dump($values);die;
+                $delvQuantityInKg = '';
+                $deliveryDateArray = explode("-", $values['Delivery Date']);
+                $invoice_no =  INVOICE_TEXT.$deliveryDateArray[0].$deliveryDateArray[1].$values['Order Id'];
+                $values['Invoice ID'] = $invoice_no;
+
+                if ($values['Pack Unit'] == 'g') {
+                    $delvQuantityInKg = $values['Total Quantity (Kg)'] * $values['Pack Size']/1000;
+                }
+                else {
+                    $delvQuantityInKg = $values['Total Quantity (Kg)'] * $values['Pack Size'];
+                }
+                $values['Total Quantity (Kg)'] = $delvQuantityInKg;
+                //print_r($values);die;
                 fputcsv($fp, $values);
             }
             fclose($fp);
@@ -217,14 +235,15 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
         ob_flush();
     }
 
-    public static function downloadCSVByCIDs($cDate) {
+    public static function  downloadCSVByCIDs($cDate) {
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', ol.seller_name AS 'Client Name', ol.seller_phone, ol.seller_state, ol.seller_city, TRUNCATE(SUM(ol.unit_price *ol.product_qty),2) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', r.name AS 'Client Name', TRUNCATE(SUM(ol.unit_price *ol.delivered_qty),2) AS 'Total Amount'
 				FROM `order_header` oh
-			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id`
-				WHERE oh.delivery_date = '".$cDate."'
+			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id` 
+			   left join cb_dev_groots.retailer r on r.id=oh.user_id
+				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
 				GROUP BY oh.`user_id` ";
               
         $connection = Yii::app()->secondaryDb;
@@ -237,7 +256,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."')";
         catch (Exception $e) {
          $transaction->rollback();
         }
-        $fileName = "orderlist.csv";
+        $fileName = "totalOrderByClient.csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');

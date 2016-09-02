@@ -2,6 +2,7 @@
 code/protected/config/main.php
 *.log
 *.txt
+*.pyc
 code/images/*
 code/assets/*
 code/log/*

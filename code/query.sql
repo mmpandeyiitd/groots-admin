@@ -114,13 +114,35 @@ alter table cb_dev_groots.product_prices change column price `store_offer_price`
 
 ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNIQUE KEY `uk_prod_price_1` (`base_product_id`,`subscribed_product_id`,`effective_date`)
 
+alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
+
 -------------------------------------------------------------
 
+alter table cb_dev_groots.retailer add column initial_payable_amount decimal(10,2) DEFAULT NULL, add COLUMN total_payable_amount decimal(10,2) DEFAULT NULL;
+
+CREATE TABLE groots_orders.`retailer_payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `retailer_id` int(11)  NOT NULL,
+  paid_amount decimal(10,2) NOT NULL DEFAULT 0,
+  `date` date NOT NULL,
+  payment_type enum('Cash', 'Cheque', 'DemandDraft', 'OnlineTransfer') NOT NULL DEFAULT 'Cash',
+  cheque_no VARCHAR(256) DEFAULT NULL,
+  comment TEXT DEFAULT NULL,
+  created_at date NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX fk_rt_pm_1 (retailer_id),
+  CONSTRAINT fk_rt_pm_1 FOREIGN KEY (retailer_id) REFERENCES cb_dev_groots.retailer(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT NULL DEFAULT 1;
 
 
 
 
-alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
+
+
+
 
 
 

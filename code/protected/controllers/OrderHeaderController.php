@@ -137,8 +137,8 @@ class OrderHeaderController extends Controller {
                     }
                 }
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
-
-
+                $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
             } catch (\Exception $e) {
@@ -185,6 +185,7 @@ class OrderHeaderController extends Controller {
 
     public  function  actionUpdate($id){
 //print("<pre>");
+        //print_r($_POST);die;
         $retailerProducts = '';
         $retailerId = '';
         $retailer = '';
@@ -193,6 +194,7 @@ class OrderHeaderController extends Controller {
 
         $orderLine = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $orderHeader = $this->loadModel($id);
+        $orderAmount = $orderHeader->total_payable_amount;
 
         $retailerId = $orderHeader->user_id;
         $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
@@ -255,14 +257,15 @@ class OrderHeaderController extends Controller {
                         }
 
                     }
-                    if($key ==12){
+                    if($key ==3){
                         //print_r($orderLine);die;
                     }
 
                 }
                 Yii::app()->user->setFlash('success', 'Order Updated Successfully.');
-
-
+                $retailer->total_payable_amount -= $orderAmount;
+                $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
             } catch (\Exception $e) {
@@ -1094,7 +1097,7 @@ Sales: +91-11-3958-9895</span>
      */
     public function actionAdmin() {
    
-
+//die("here");
         $model = new OrderHeader('search');
         
         if (isset($_GET['pageSize'])) {

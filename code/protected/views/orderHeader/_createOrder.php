@@ -225,7 +225,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                                         $delvQuantityInKg = ($orderLine[$_retailerProduct->base_product_id]['delivered_qty']) * ((int)$_retailerProduct->pack_size)/1000;
                                     }
                                     else {
-                                        $delvQuantityInKg = ((int)$orderLine[$_retailerProduct->base_product_id]['delivered_qty']) * ((int)$_retailerProduct->pack_size);
+                                        $delvQuantityInKg = ($orderLine[$_retailerProduct->base_product_id]['delivered_qty']) * ((int)$_retailerProduct->pack_size);
                                     }
                                 }
 
@@ -251,7 +251,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                         </tr>
                         <input type='hidden' name='subscribed_product_id[]' value='<?php echo $_retailerProduct->subscribed_product_id; ?>'/>
                         <input type='hidden' name='base_product_id[]' value='<?php echo $_retailerProduct->base_product_id; ?>'/>
-                        <input type='hidden' name='product_qty[]'  id="product_qty_"<?php echo $_retailerProduct->base_product_id;?> value="<?php if (isset($orderLine[$_retailerProduct->base_product_id])) {
+                        <input type='hidden' name='product_qty[]'  id="product_qty_<?php echo $_retailerProduct->base_product_id;?>" value="<?php if (isset($orderLine[$_retailerProduct->base_product_id])) {
                             echo $orderLine[$_retailerProduct->base_product_id]['product_qty'];
                         } ?> "/>
                         <?php if(isset($update)){
@@ -292,6 +292,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <?php if(isset($update)){ ?>
 
                         <input type="submit" class="button_new" value="Update" id="update" name="update" style="width: auto;"/>
+                        <!--<a href="index.php?r=OrderHeader/report&id=<?php //echo $model->attributes['order_id']; ?>" class="button_new" style="width: auto;" target="_blank"  >Create Invoice</a>-->
+
 
                         <?php
                     }
@@ -377,6 +379,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
 
         var retailerId = Number($("#retailerId").val());
+        console.log("retailerId"+retailerId);
         var data = {"date":newDate, "retailerId":retailerId};
 
         if (retailerId && data) {
@@ -420,6 +423,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
     function onQuanityInputChange(prodId, unitPrice, packSize, packUnit, updateAmountField){
         var quantityInKg = $("#quantityInKg_" + prodId).val();
+
         if(packUnit=="g"){
             quantityInPacks = quantityInKg*1000/packSize;
         }
@@ -427,7 +431,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
             quantityInPacks = quantityInKg/packSize;
         }
         $("#product_qty_" + prodId).val(quantityInPacks);
-        console.log(updateAmountField);
+       // console.log("quantityInPacks"+quantityInPacks);
+        //console.log(updateAmountField);
         if(updateAmountField=='true'){
             $("#delvQuantityInKg_" + prodId).val(quantityInKg);
             populateAmountField(quantityInKg, prodId, unitPrice, packSize, packUnit);

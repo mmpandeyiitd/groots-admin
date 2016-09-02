@@ -19,7 +19,15 @@
 <div class="" >
 
     <div class="">
-        <?php $this->renderPartial('_retailerDropdown', array('model'=>$model, 'retailerId'=>$retailerId, 'update'=>true)); ?>
+        <?php //$this->renderPartial('_retailerDropdown', array('model'=>$model, 'retailerId'=>$retailerId, 'update'=>true)); ?>
+        <?php
+        $this->widget('RetailerDropdown', array(
+            'model'=>$model,
+            'retailerId'=>$retailerId,
+            'update'=>true,
+
+        ));
+        ?>
 
 
         <?php

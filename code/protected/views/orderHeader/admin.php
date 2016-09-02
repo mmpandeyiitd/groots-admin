@@ -142,7 +142,7 @@ onclick='return confirm("Do you want to cancel");'/>
     $this->widget('zii.widgets.grid.CGridView', array(
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'id' => 'order-header-grid',
-        'dataProvider' => $model->search('created_date DESC'),
+        'dataProvider' => $model->search(),
         'filter' => $model,
         //  'summaryText'  => '{Start} - {End} / {count}',
         'columns' => array(

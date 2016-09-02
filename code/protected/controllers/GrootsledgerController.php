@@ -32,7 +32,7 @@ class GrootsledgerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','report'),
+				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -214,10 +214,204 @@ class GrootsledgerController extends Controller
 		));
 	}
 
+    public function actionCreatePayment(){
+        //print("<pre>");
+        //print_r($_POST);die;
+        $retailerId = $_GET['retailerId'];
+        $retailer = Retailer::model()->findByPk($retailerId);
+        $retailerPayment = new RetailerPayment();
+        if(isset($_POST['create'])){
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+                //$retailerPayment = new RetailerPayment();
+                //$retailerPayment->load($_POST['RetailerPayment']);
+                $retailerPayment->attributes = $_POST['RetailerPayment'];
+                $retailerPayment->created_at = date('Y-m-d');
+                //print_r($retailerPayment);die;
+                if ($retailerPayment->save()) {
+                    $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                    $retailer->save();
+                    $transaction->commit();
+                    Yii::app()->user->setFlash('success', 'Payment has been saved');
+                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                } else
+                    Yii::app()->user->setFlash('error', 'Payment could not be saved');
+            }
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Payment could not be saved.');
+                throw $e;
+            }
+
+        }
+        $retailerPayment->retailer_id = $retailerId;
+        $retailerPayment->retailerName = $retailer->name;
+        $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
+        //print_r($retailerPayment);die;
+
+        //echo "here", die;
+        $this->render('payment',array(
+            'model'=>$retailerPayment,
+            'retailerId' => $retailerId,
+        ));
+    }
+
+    public function actionUpdatePayment(){
+        //print("<pre>");
+        //print_r($_POST);die;
+        if(isset($_POST['update'])){
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+                //$retailerPayment = new RetailerPayment();
+                $retailerPayment = RetailerPayment::model()->findByPk($_POST['RetailerPayment']['id']);
+                $paid_amount = $retailerPayment->paid_amount;
+                //$retailerPayment->load($_POST['RetailerPayment']);
+                $retailerPayment->attributes = $_POST['RetailerPayment'];
+                //var_dump(Yii::app()->request());die;
+                //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
+                //print_r($retailerPayment);die;
+                $retailerPayment->paid_amount = $_POST['RetailerPayment']['paid_amount'];
+                $retailerPayment->date = $_POST['RetailerPayment']['date'];
+                $retailerPayment->payment_type = $_POST['RetailerPayment']['payment_type'];
+                $retailerPayment->cheque_no = $_POST['RetailerPayment']['cheque_no'];
+                $retailerPayment->status = $_POST['RetailerPayment']['status'];
+                $retailerPayment->comment = $_POST['RetailerPayment']['comment'];
+                if ($retailerPayment->save()) {
+
+                    $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+                    $retailer->total_payable_amount += $paid_amount;
+                    $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                    $retailer->save();
+                    $transaction->commit();
+                    Yii::app()->user->setFlash('success', 'Payment has been saved');
+                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                } else
+                    Yii::app()->user->setFlash('error', 'Payment could not be saved');
+            }
+            catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Payment could not be saved.');
+                throw $e;
+            }
+
+        }
+        $paymentId = $_GET['id'];
+        if(!isset($retailerPayment)){
+            $retailerPayment = RetailerPayment::model()->findByPk($paymentId);
+        }
+        if(!isset($retailer)) {
+            $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+        }
+
+        $retailerPayment->retailerName = $retailer->name;
+        $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
+        //print_r($retailerPayment);die;
+        //echo "here", die;
+        $this->render('payment',array(
+            'model'=>$retailerPayment,
+            'update' => true,
+        ));
+    }
+
+    public function actionAdmin()
+    {
+        //print("<pre>");
+        $retailer= new Retailer();
+        $model = new OrderHeader();
+        $retailerOrders ='';
+        $retailerPayments = '';
+        $dataprovider = array();
+        if(isset($_POST['retailer-dd'])){
+            $retailerId = $_POST['retailer-dd'];
+        }
+
+        if(!isset($retailerId) || empty($retailerId) ){
+            if(isset($_GET['retailerId'])){
+                $retailerId = $_GET['retailerId'];
+            }
+        }
+//echo $retailerId;die;
+//print_r($_POST);die;
+        if (isset($retailerId) || !empty($retailerId)) {
+
+
+            if($retailerId>0) {
+                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId),array('condition'=>'status != "Cancelled"' ,'order'=> 'delivery_date ASC'));
+                $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0', 'order'=> 'date ASC'));
+                $retailer = Retailer::model()->findByPk($retailerId);
+                $outstanding = $retailer->initial_payable_amount;
+                foreach ($retailerOrders as $order){
+                    $tmp = array();
+                    $tmp['id'] = $order->order_id;
+                    $tmp['date'] = substr($order->delivery_date,0,10);
+                    $tmp['type'] = "Order";
+                    $tmp['invoiceAmount'] = $order->total_payable_amount;
+                    $tmp['paymentAmount'] = '';
+                    $tmp['outstanding'] = '';
+                    $tmp['update_url'] = 'OrderHeader/update';
+                    array_push($dataprovider, $tmp);
+                }
+
+                foreach ($retailerPayments as $payment){
+                    $tmp = array();
+                    $tmp['id'] = $payment->id;
+                    $tmp['date'] = substr($payment->date, 0,10);
+                    $tmp['type'] = "Payment";
+                    $tmp['invoiceAmount'] = '';
+                    $tmp['paymentAmount'] = $payment->paid_amount;
+                    $tmp['update_url'] = 'Grootsledger/UpdatePayment';
+                    array_push($dataprovider, $tmp);
+                }
+                $dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
+                //print_r($dataprovider);die;
+                foreach ($dataprovider as $key=>$data){
+                    if($data['type'] == 'Order'){
+                        $outstanding += $data['invoiceAmount'];
+                    }
+                    elseif($data['type'] == 'Payment'){
+                        $outstanding -= $data['paymentAmount'];
+                    }
+                    $data['outstanding'] = $outstanding;
+                    $dataprovider[$key] = $data;
+                }
+                $dataprovider = new CArrayDataProvider($dataprovider, array(
+                    'id'=>'id',
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'date desc',
+                        ),
+                    ),
+                    'pagination'=>array(
+                        'pageSize'=>500,
+                    ),
+                ));
+            }
+            //print_r($dataprovider);
+            //die;
+            /*foreach ($retailerProducts as $retailerProduct) {
+           # code...
+            }*/
+        }
+
+
+
+
+
+
+
+        $this->render('list',array(
+           'model'=>$model,
+            'retailer' => $retailer,
+            'data' => $dataprovider,
+
+        ));
+    }
+
+
 	/**
 	 * Manages all models.
 	 */
-	public function actionAdmin()
+	public function actionAdminOld()
 	{
 		$model=new Grootsledger('search');
 		$model->unsetAttributes();  // clear any default values
@@ -267,4 +461,17 @@ class GrootsledgerController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+    protected function beforeAction() {
+        $session = Yii::app()->session['user_id'];
+        if ($session == '') {
+            echo Yii::app()->controller->redirect("index.php?r=site/logout");
+        }
+        if (Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] != "S") {
+            Yii::app()->user->setFlash('permission_error', 'You have no permission');
+            Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+        }
+
+        return true;
+    }
 }

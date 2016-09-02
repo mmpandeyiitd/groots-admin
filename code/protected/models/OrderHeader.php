@@ -207,7 +207,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->select = " t.*, r.address, r.state, r.city, r.name, w.id as warehouse_id, w.name as warehouse_name";
         $criteria->join = ' join cb_dev_groots.retailer r on r.id = t.user_id ';
         $criteria->join .= ' join cb_dev_groots.warehouses w on w.id = t.warehouse_id ';
-        $criteria->order = 'created_date DESC';
+        //$criteria->order = 'created_date DESC';
         $criteria->compare('t.delivery_date', $this->delivery_date, true);
         $criteria->compare('t.created_date', $this->created_date, true);
         /*if (isset($_GET['retailer_id'])) {
@@ -304,6 +304,10 @@ class OrderHeader extends CActiveRecord {
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
+            'sort'=>array(
+                'defaultOrder'=>'created_date DESC',
+            ),
+
 //            'pagination' => array(
 //                
 //                //'pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize']),
@@ -315,6 +319,59 @@ class OrderHeader extends CActiveRecord {
             
             ));
     }
+
+
+    public function searchledger($retailerId=null, $fromDate=null, $toDate=null)
+    {
+        // @todo Please modify the following code to remove attributes that should not be searched.
+
+
+        $where = '';
+        if($fromDate && $toDate){
+            $where = " where date >= '$fromDate' and date <= '$toDate'";
+        }
+        elseif ($fromDate){
+            $where = " where date >= '$fromDate'";
+        }
+        elseif ($toDate){
+            $where = " where date <= '$toDate'";
+        }
+
+        $sql="
+            SELECT order_id as id, delivery_date as date, 'Order' as type, total_payable_amount as invoiceAmount, NULL as paymentAmount, NULL as outstanding,           'OrderHeader/update' as update_url 
+            FROM order_header oh where oh.user_id = $retailerId and status != 'Cancelled' 
+            UNION ALL 
+            SELECT  id, date, 'Payment' as type, NULL as invoiceAmount, payment as paymentAmount, NULL as outstanding, 'OrderHeader/update' as update_url 
+            FROM retailer_payments where retailer_id = $retailerId and status=1  
+            $where ";
+
+        $sqlCount = "
+            select COUNT (*) (
+            SELECT oh.id
+            FROM order_header oh where oh.user_id = $retailerId and status != 'Cancelled' 
+            UNION ALL 
+            SELECT rp.id
+            FROM retailer_payments rp where retailer_id = $retailerId and status=1  
+            $where 
+            )";
+
+        $count=Yii::app()->secondaryDb->createCommand($sqlCount)->queryScalar();
+
+        $sqlDataProvider = new CSqlDataProvider($sql, array(
+            'totalItemCount'=>$count,
+            'sort'=>array(
+                'attributes'=>array(
+                    'id', 'date', 'type',
+                ),
+            ),
+            'pagination'=>array(
+                'pageSize'=>100,
+            ),
+        ));
+
+        return new $sqlDataProvider;
+    }
+
 
     /**
      * Returns the static model of the specified AR class.

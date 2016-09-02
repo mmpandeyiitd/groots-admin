@@ -1988,6 +1988,21 @@ hr {
     margin-left: 15px;
     margin-top: 20px;
 }
+
+.button_new {
+    width: auto;
+    padding: 10px 20px;
+    border: 1px solid #324287;
+    margin-bottom: 50px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    border-radius: 4px !important;
+    background: #521042;
+    border-color: #521042 !important;
+    margin-left: 15px;
+    margin-top: 20px;
+}
+
 .order_bottomdetails input[type="text"] {
     width: 70px !important;
     height: 20px !important;

@@ -16,8 +16,13 @@ $this->breadcrumbs=array(
 <div class="" >
   
 <div class="">
-<?php $this->renderPartial('_retailerDropdown', array('model'=>$model, 'retailerId'=>$retailerId)); ?>
+<?php
+	$this->widget('RetailerDropdown', array(
+	'model'=>$model,
+		'retailerId'=>$retailerId,
 
+	));
+?>
 
 <?php
 if(isset($retailerProducts) && $retailerProducts != '' ) { $this->renderPartial('_createOrder', array('model'=>$model, 'retailerProducts'=> $retailerProducts, 'retailerId'=>$retailerId, 'retailer'=>$retailer, 'warehouses'=>$warehouses));

@@ -83,30 +83,46 @@ class Grootsledger extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+    public function search()
+    {
+        // @todo Please modify the following code to remove attributes that should not be searched.
 
-		$criteria=new CDbCriteria;
+        $criteria=new CDbCriteria;
         //$criteria->condition = "is_collection_done !=1";
-		$criteria->compare('order_id',$this->order_id);
-		$criteria->compare('order_number',$this->order_number,true);
-		$criteria->compare('user_id',$this->user_id);
-		$criteria->compare('agent_name',$this->agent_name,true);
-		$criteria->compare('total_payable_amount',$this->total_payable_amount,true);
-		$criteria->compare('MIN_DUE_AMOUNT',$this->MIN_DUE_AMOUNT);
-		$criteria->compare('Max_id',$this->Max_id);
+        $criteria->compare('order_id',$this->order_id);
+        $criteria->compare('order_number',$this->order_number,true);
+        $criteria->compare('user_id',$this->user_id);
+        $criteria->compare('agent_name',$this->agent_name,true);
+        $criteria->compare('total_payable_amount',$this->total_payable_amount,true);
+        $criteria->compare('MIN_DUE_AMOUNT',$this->MIN_DUE_AMOUNT);
+        $criteria->compare('Max_id',$this->Max_id);
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'sort'=>array(
-                        'defaultOrder'=>'created_at DESC',
-                    ),
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+            'sort'=>array(
+                'defaultOrder'=>'created_at DESC',
+            ),
             'pagination' => array(
                 'pageSize' => 100,
             ),
-		));
-	}
+        ));
+    }
+
+    public function leder(){
+        $sql = 'SELECT t2.* FROM table1Name t1, table2Name t2 WHERE t1.collumName = '.$id.' AND t2. collumName = t1. collumName and t2. collumName > ' . new CDbExpression('now()');
+
+        $count_query = 'select count(*) FROM table1Name t1, table2Name t2 WHERE t1.collumName = '.$id.' AND t2. collumName = t1. collumName and t2. collumName > ' . new CDbExpression('now()');
+
+        $item_count = Yii::app()->db->createCommand($count_query)->queryScalar();
+
+        $dataProvider=new CSqlDataProvider($sql, array(
+            'keyField'=>'id',
+            'totalItemCount'=>$item_count,
+            'pagination'=>array(
+                'pageSize'=>Yii::app()->session['pageSize'],
+            ),
+        ));
+    }
 
 	/**
 	 * @return CDbConnection the database connection used for this class

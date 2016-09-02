@@ -24,4 +24,4 @@ def deploy_dev_branch(branch):
 def deploy_tag(tag):
   local("git archive --format tar.gz --output /tmp/admin.tar.gz refs/tags/%s^{}" %(tag))
   put('/tmp/admin.tar.gz', '/tmp')
-  run("cd /var/www/html && mkdir admin_new && cd admin_new && tar -xf /tmp/admin.tar.gz && cp -r ../main.php admin/code/protected/config/main.php  && cd /var/www/html && mv admin admin_old && mv admin_new admin && echo %s > admin/version && sudo rm -r admin_old && touch admin/.production" %(tag))
+  run("cd /var/www/html && mkdir admin_new && cd admin_new && tar -xf /tmp/admin.tar.gz && cp -r ../main.php admin/code/protected/config/main.php  && cd /var/www/html && mv admin admin_old && mv admin_new admin  && sudo rm -r admin_old")
