@@ -26,6 +26,9 @@
       //  $html2pdf->setDefaultFont('Arial');
         $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
         $html2pdf->Output($downloadFileName);
+        /*if($zip==true){
+            return $html2pdf;
+        }*/
         var_dump($html2pdf);
     }
     catch(HTML2PDF_exception $e) {

@@ -2,7 +2,7 @@ i<?php
 // get the HTML
 ob_start();
 $pdfdata = $this->renderPartial('reportviewcontent', array('model' => $model,
-    'modelOrder' => $modelOrder, 'status' => $status, 'email' => $email,'store_model'=> $store_model,), true);
+    'modelOrder' => $modelOrder, 'status' => $status, 'email' => $email,'store_model'=> $store_model,'type'=>$type,), true);
 $content = $pdfdata;
 
 // convert in PDF

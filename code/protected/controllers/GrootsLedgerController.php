@@ -108,29 +108,24 @@ class GrootsLedgerController extends Controller
         $model=new GrootsLedger;
          
          if (isset($_POST['filter'])) {
+             $start_date = $_POST['GrootsLedger']['created_at'];
+             $end_date = $_POST['GrootsLedger']['inv_created_at'];
 
-           	$start_date = $_POST['GrootsLedger']['created_at'];
-            $end_date = $_POST['GrootsLedger']['inv_created_at'];
-            
-            $cDate = date("Y-m-d", strtotime($start_date));
-            $cdate1 = date("Y-m-d", strtotime($end_date));
-            if ($cDate > $cdate1)
-             {
-                Yii::app()->user->setFlash('error', 'End date always greater than Start date');
-                 Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
-            } elseif ($cDate == $cdate1) 
-            {
-                Yii::app()->user->setFlash('error', 'Start date and end date should not be same or Blank !!');
-                 Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
-            }
+             $cDate = date("Y-m-d", strtotime($start_date));
+             $cdate1 = date("Y-m-d", strtotime($end_date));
+             if ($cDate > $cdate1)
+              {
+                 Yii::app()->user->setFlash('error', 'End date always greater than Start date');
+                  Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+             }
+
             else
             {
-            	ob_clean();
-                $data= $model->downloadCSVByIDs($cDate,$cdate1);
-                ob_flush();
-                exit();
-            }
-          
+                ob_clean();
+                 $data= $model->downloadCSVByIDs($cDate,$cdate1);
+                 ob_flush();
+                 exit();
+             }
           
         }
 

@@ -192,7 +192,7 @@ left join order_line as ol on ol.`order_id`=oh.`order_id` left join cb_dev_groot
 left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
 WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status not in ('Cancelled')";
 
-
+//echo $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sqlchksubsid);
         $command->execute();
@@ -245,7 +245,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
 				GROUP BY oh.`user_id` ";
-              
+echo  $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
      try {
         $command = $connection->createCommand($sqlchksubsid);

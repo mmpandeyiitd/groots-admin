@@ -196,7 +196,7 @@ if (Yii::app()->session['brand_admin_id']) {
             </div>
             <div class="dashboard-table">
                 <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
-                <h4>Download Orders Summary</h4>
+                <h4>Download Order Quantity Summary</h4>
                 <div class="right_date">
                     <?php
                     /* $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array( 
@@ -234,7 +234,42 @@ if (Yii::app()->session['brand_admin_id']) {
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
 
       
-                    <input  type="submit" name="downloadbutton" class="button_new" value="Download" />
+                    <input  type="submit" name="orderQtSummary" class="button_new" value="Download" />
+                </div>
+
+            </div>
+            <div class="clearfix">
+                </div>
+
+            <div class="dashboard-table">
+                <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
+                <h4>Download Delevered Quantity Summary</h4>
+                <div class="right_date">
+                    <?php
+
+                    $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                        'model' => $model,
+                        'name' => 'deliverySummaryDeliveryDate',
+                        'attribute' => 'deliverySummaryDeliveryDate',
+                        'flat' => false, //remove to hide the datepicker
+                        'options' => array(
+                            'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
+                            // 'minDate' => 0,
+                            'dateFormat' => 'dd-mm-yy',
+                            //'minDate'=>-5,
+                            'maxDate' => "+3M",
+                        ),
+                        'value' => $model->order_start_date,
+                        'htmlOptions' => array(
+                            'style' => '', 'readonly' => 'true'
+                        ),
+                    ));
+                    echo $form->error($model, 'order_start_date');
+                    ?>
+                    <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
+
+
+                    <input  type="submit" name="deliveredQtSummary" class="button_new" value="Download" />
                 </div>
 
             </div>

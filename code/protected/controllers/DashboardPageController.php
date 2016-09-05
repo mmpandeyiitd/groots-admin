@@ -137,7 +137,7 @@ class DashboardPageController extends Controller {
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
         }
-        if (isset($_POST['downloadbutton'])) {
+        if (isset($_POST['orderQtSummary'])) {
           
            if ($_POST['DashboardPage']['order_start_date'] !='') {
             $order_start_date = $_POST['DashboardPage']['order_start_date'];
@@ -154,6 +154,27 @@ class DashboardPageController extends Controller {
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
            }else {
+                Yii::app()->user->setFlash('error', 'Date not selected');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }
+        }
+        if (isset($_POST['deliveredQtSummary'])) {
+
+            if ($_POST['DashboardPage']['deliverySummaryDeliveryDate'] !='') {
+                $order_start_date = $_POST['DashboardPage']['deliverySummaryDeliveryDate'];
+                $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
+                //echo $oDate;die;
+                $odate1 = date("Y-m-d H:i:s");
+                if (isset($oDate)) {
+                    ob_clean();
+                    $data= $model->downloadCSVDelivered($oDate);
+                    ob_flush();
+                    exit();
+                }else {
+                    // Yii::app()->user->setFlash('error', 'Date not greater then current date');
+                    Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+                }
+            }else {
                 Yii::app()->user->setFlash('error', 'Date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }

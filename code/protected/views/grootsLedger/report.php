@@ -12,12 +12,14 @@
         
         <div class="dashboard-table">
             <form method="post">
-           <h4>Reports</h4>
-            <div class="right_date">
-    <?php
-                
-                $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
+           <h4 style="width:20%">Reports</h4>
+            <div class="right_date" style="width:80%">
+                <label>From Date</label>
+                <?php
+
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                     'model' => $model,
+                    'name' => 'created_at',
                     'attribute' => 'created_at',
                     'value' => $model->created_at,
                     'options' => array(
@@ -30,26 +32,27 @@
                 ));
                 echo $form->error($model, 'created_at');
                 ?>
-               
-                <label>To</label>
-             
+
+
+                <label>To Date</label>
                 <?php
 
-                $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                     'model' => $model,
+                    'name' => 'inv_created_at',
                     'attribute' => 'inv_created_at',
                     'value' => $model->inv_created_at,
                     'options' => array(
-                        //  'dateFormat' => 'yy-mm-dd',
+                        'dateFormat' => 'yy-mm-dd',
                         'showAnim' => 'fold',
                         'debug' => true,
                         //'maxDate' => "60",
-                    //'minDate' => 0,
-                    ), //DateTimePicker options 
+                    ), //DateTimePicker options
                     'htmlOptions' => array('readonly' => 'true'),
                 ));
                 echo $form->error($model, 'inv_created_at');
-                ?>    
+                ?>
+
                 <input name="filter" class="button_new" type="submit" value="Download" />
                
                </div>
@@ -65,8 +68,8 @@
 
        <div class="dashboard-table">
             <form method="post">
-           <h4>Report By client</h4>
-            <div class="right_date">
+           <h4 style="width:20%">Report By client</h4>
+            <div class="right_date" style="width:80%">
              
              
                
@@ -74,7 +77,7 @@
              
                 <?php
 
-                $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                     'model' => $model,
                     'name' =>'tocdate',
                     'options' => array(

@@ -185,7 +185,7 @@ class OrderHeaderController extends Controller {
 
     public  function  actionUpdate($id){
 //print("<pre>");
-        //print_r($_POST);die;
+//        print_r($_POST);die;
         $retailerProducts = '';
         $retailerId = '';
         $retailer = '';
@@ -197,7 +197,25 @@ class OrderHeaderController extends Controller {
         $orderAmount = $orderHeader->total_payable_amount;
 
         $retailerId = $orderHeader->user_id;
+        $baseProductIds = array();
+        $baseProductIdPriceMap = array();
         $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
+        foreach ($retailerProducts as $product){
+            array_push($baseProductIds, $product->base_product_id);
+        }
+
+        $productPrices = ProductPrice::model()->findAllByAttributes(array('base_product_id'=>$baseProductIds, 'effective_date'=>$orderHeader->delivery_date),array('select'=>'base_product_id, store_price, store_offer_price'));
+
+        foreach ($productPrices as $productPrice){
+            $baseProductIdPriceMap[$productPrice->base_product_id] = $productPrice;
+        }
+
+        foreach ($retailerProducts as $key=>$product){
+            $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
+            $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
+            $retailerProducts[$key] = $product;
+        }
+
         $retailer = Retailer::model()->findByPk($retailerId);
         $warehouses = Warehouse::model()->findAll();
 
@@ -230,7 +248,8 @@ class OrderHeaderController extends Controller {
                 $orderHeader->save();
                 foreach ($_POST['quantity'] as $key => $quantity) {
 
-                    if ($quantity > 0) {
+                    $orderQt = $_POST['product_qty'][$key];
+                    if ($quantity > 0 || $orderQt > 0) {
                         if(isset($itemArray[$_POST['base_product_id'][$key]])){
                             $orderLine = $itemArray[$_POST['base_product_id'][$key]];
                         }
@@ -243,7 +262,7 @@ class OrderHeaderController extends Controller {
                         }
 
 
-                        $orderLine->product_qty = $_POST['product_qty'][$key];;
+                        $orderLine->product_qty = $orderQt;
                         $orderLine->delivered_qty = $quantity;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
                         $orderLine->price = $_POST['amount'][$key];
@@ -715,7 +734,7 @@ Sales: +91-11-3958-9895</span>
              if ($status_data[0] == 'Delivered') {
                 $modelOrderline = new OrderLine;
                 $buyername = $modelOrderline->buyername($modelOrder->attributes['user_id']);
-                $reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email);
+                //$reportdata = $this->actionReportnew($_REQUEST['order_id'], $status_data[0], $email, 'invoice');
                 $csv_name = 'order_' . $modelOrder->attributes['order_id'] . '.pdf';
                 $csv_filename = "feeds/order_csv/" . $csv_name;
                 $from_email = 'grootsadmin@groots.in';
@@ -1096,7 +1115,7 @@ Sales: +91-11-3958-9895</span>
      * Manages all models.
      */
     public function actionAdmin() {
-   
+ //print("<pre>");
 //die("here");
         $model = new OrderHeader('search');
         
@@ -1127,6 +1146,28 @@ Sales: +91-11-3958-9895</span>
         if (isset($_GET['OrderHeader']))
             $model->attributes = $_GET['OrderHeader'];
         // echo '<pre>'; print_r ($_POST);die;
+
+        if (isset($_POST['reportDownload']) && $_POST['reportDownload']!='') {
+            $type = $_POST['reportDownload'];
+            if (isset($_POST['selectedIds'])) {
+                $no_of_selectedIds = count($_POST['selectedIds']);
+                $pdfArray = array();
+                for ($i = 0; $i < $no_of_selectedIds; $i++) {
+                    array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
+                }
+
+                $zipFileName=$type.".zip";
+                //$file_path=$_SERVER['DOCUMENT_ROOT'].'/Harshal/files/';
+//print_r($pdfArray);die;
+
+                $this->zipFilesAndDownload($pdfArray,$zipFileName);
+
+
+
+
+
+            }
+        }
         if (isset($_POST['status'])) {
             if (isset($_POST['selectedIds'])) {
                 $no_of_selectedIds = count($_POST['selectedIds']);
@@ -1526,7 +1567,7 @@ Sales: +91-11-3958-9895</span>
                     }
                     
                      if ($_POST['status1'] == 'Delivered') {
-                        $reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
+                        //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email, 'invoice');
                         $modelOrderline = new OrderLine;
                         $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
                         $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
@@ -1740,12 +1781,12 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
-    public function actionReport($id, $type) {
+    public function actionReport($id, $type, $zip=false) {
         // echo "hello";die;
         /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
             ),array('order'=>'product_name ASC'));*/
+
         $model = OrderLine::getOrderLinebyOrderId($id);
-        //var_dump($model);die;
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
@@ -1755,15 +1796,58 @@ Sales: +91-11-3958-9895</span>
         $modelOrder->groots_pincode = $store->business_address_pincode;
         $modelOrder->groots_authorized_name = $store->store_name;
         $retailer = Retailer::model()->findByPk($modelOrder->user_id);
-        $this->renderPartial('reportview', array(
-            'model' => $model,
-            'modelOrder' => $modelOrder,
-            'retailer'=> $retailer,
-            'type' => $type,
-        ));
+        if($zip==true){
+            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+        }
+        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+
     }
 
-    public function actionReportnew($id, $status, $email) {
+    public function createPdf($model,$modelOrder,$retailer,$type,$zip ){
+
+
+        //die("here23");
+        //print_r($model);die;
+        ob_start();
+
+        echo $this->renderPartial('reportviewcontent' ,array('model' => $model,
+            'modelOrder' =>$modelOrder, 'retailer'=>$retailer, 'type'=>$type), true);//die;
+        $content = ob_get_clean();
+        require_once( dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
+        $title = "";
+        if($type=="dc"){
+            $title = "Delivery Challan Groots Admin Panel";
+        }
+        else{
+            $title = "Invoice Order Groots Admin Panel";
+        }
+        $downloadFileName=$retailer->name." (".substr($modelOrder->delivery_date, 0, 10).").pdf";
+
+        try
+        {
+            $html2pdf = new HTML2PDF('P', 'A4', 'en');
+            $html2pdf->pdf->SetTitle($title);
+//      $html2pdf->setModeDebug();
+            //  $html2pdf->setDefaultFont('Arial');
+            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            //echo $zip; die("here2");
+            if($zip==true){
+                return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
+            }
+            else{
+                $html2pdf->Output($downloadFileName);
+                var_dump($html2pdf);
+            }
+
+
+        }
+        catch(HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+    }
+
+    public function actionReportnew($id, $status, $email, $type) {
         //  echo $status;die;
         //$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
           $model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
@@ -1776,6 +1860,7 @@ Sales: +91-11-3958-9895</span>
             'status' => $status,
             'email' => $email,
             'store_model' => $store_model,
+            'type'=> $type,
         ));
         //$this->renderPartial("reportview");
     }
@@ -1791,6 +1876,41 @@ Sales: +91-11-3958-9895</span>
         }
         echo json_encode($sProdIdPriceArray);
 
+    }
+
+    function zipFilesAndDownload($file_names,$archive_file_name)
+    {
+        //echo $file_path;die;
+        $dir = dirname(__FILE__) . '/../../../../dump/';
+        $zipName = $dir.$archive_file_name;
+        $zip = new ZipArchive();
+        //create the file and throw the error if unsuccessful
+        if ($zip->open($zipName, ZIPARCHIVE::CREATE )!==TRUE) {
+            exit("cannot open <$zipName>\n");
+        }
+        //add each files of $file_name array to archive
+
+        foreach($file_names as $file)
+        {
+            $pdf = $file['pdf'];
+            $name =$file['name'];
+            $fullName = $dir.$name;
+            $pdf->Output($fullName, 'F');
+            $zip->addFile($fullName, $name);
+            //echo $file_path.$files,$files."
+
+        }
+        $zip->close();
+
+        //then send the headers to force download the zip file
+        header("Content-type: application/zip");
+        header("Content-Disposition: attachment; filename=$archive_file_name");
+        header("Content-length: " . filesize($zipName));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        readfile($zipName);
+        exit;
+        //var_dump($zipName);
     }
 
 }

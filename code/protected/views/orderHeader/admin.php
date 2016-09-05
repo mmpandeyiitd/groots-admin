@@ -114,7 +114,16 @@ onclick='return confirm("Do you want to cancel");'/>
     );
     ?>
     <input name="status" class="activebutton" value="submit" type="submit">
-     
+
+    <div class="dropdownCustom">
+        <!--        <select onchange="changestatus(this);">-->
+        <select name="reportDownload" value="reportDownload">
+            <option value="">Select to Download</option>
+            <option value="invoice">Invoice</option>
+            <option value="dc">Delivery Challan</option>
+        </select>
+    </div>
+
     <div class="dropdownCustom">
 <!--        <select onchange="changestatus(this);">-->
         <select name="status1" value="changestatus">

@@ -162,12 +162,14 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     //  $updationclose = TRUE;
                     foreach ($retailerProducts as $_retailerProduct) {
                         $unitPrice=$_retailerProduct->effective_price;
+                        $isEffectivePrice = 1;
                         if((int)$unitPrice==0){
                             $unitPrice=$_retailerProduct->store_offer_price;
+                            $isEffectivePrice = 0;
                         }
                     ?>
                     <tr>
-                        <div class="dynamic_content">
+                        <div class="dynamic_content row_<?php echo $_retailerProduct->base_product_id; ?>">
                             <div class="clearfix"></div>
 
 
@@ -210,7 +212,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
                                 <input type="text" style="width:80px;" class="inputs" name="quantityInKg" class="quantityInKg inputs"
                                    id="quantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php echo $totalQuantity ?> "
+                                   value="<?php echo $totalQuantity ?>"
                                    onchange="onQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'".",'".$updateAmountField."'" ; ?>)" >
 
                             </td>
@@ -233,7 +235,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
                             <input type="text" style="width:80px;"  name="delvQuantityInKg" class="delvQuantityInKg inputs"
                                    id="delvQuantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php echo $delvQuantityInKg ?> "
+                                   value="<?php echo $delvQuantityInKg ?>"
                                    onchange="onDelvQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
 
                             </td>
@@ -250,16 +252,16 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                         </div>
                         </tr>
                         <input type='hidden' name='subscribed_product_id[]' value='<?php echo $_retailerProduct->subscribed_product_id; ?>'/>
-                        <input type='hidden' name='base_product_id[]' value='<?php echo $_retailerProduct->base_product_id; ?>'/>
+                        <input type='hidden' name='base_product_id[]' class='base_product_id' value='<?php echo $_retailerProduct->base_product_id; ?>'/>
                         <input type='hidden' name='product_qty[]'  id="product_qty_<?php echo $_retailerProduct->base_product_id;?>" value="<?php if (isset($orderLine[$_retailerProduct->base_product_id])) {
                             echo $orderLine[$_retailerProduct->base_product_id]['product_qty'];
-                        } ?> "/>
+                        } ?>"/>
                         <?php if(isset($update)){
                             ?>
                             <input type='hidden' name='order_line_id[]' value='<?php if(isset($orderLine[$_retailerProduct->base_product_id])){echo $orderLine[$_retailerProduct->base_product_id]['id'];} ?> '/>
                         <?php } ?>
                         <input type='hidden' name='store_offer_price[]' id='unitPrice_<?php echo $_retailerProduct->base_product_id; ?>' value='<?php echo $unitPrice; ?>'/>
-
+                        <input type='hidden' name='is_effective_price[]' id='isEffectivePrice_<?php echo $_retailerProduct->base_product_id; ?>' value='<?php echo $isEffectivePrice; ?>'/>
                         <?php
                     }
                     ?>
@@ -357,9 +359,11 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
             }
         });
 
-        /*$("#deliverDate").change(function () {
-            updatePricesByDate();
-        })*/
+        $("#update").click(function(event){
+            if(beforeUpdate(event)){
+                //event.preventDefault();
+            }
+        });
 
 
     });
@@ -405,12 +409,11 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     function setProductPrices(data) {
         console.log(data);
         if(data){
-            $(".unitPrice").each(function(){
-                 $(this).html("");
-             });
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
-                $("#unitPrice_"+k).html(v);
+                if($('#isEffectivePrice_'+k).val()==0){
+                    $("#unitPrice_"+k).html(v);
+                }
             });
             populateAllAmountFields();
             calculateTotalAmount();
@@ -517,12 +520,41 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
     }
 
-    function beforeCreate(){
-        var sumAmount = Number($("#sumAmount").val());
-        if (sumAmount==0){
-            alert("Order at least one item");
-            return false;
-        }
+
+    function beforeUpdate(event) {
+        $(".base_product_id").each(function(){
+            base_prod_id = $(this).val();
+            order_qt = $("#quantityInKg_" + base_prod_id).val().trim();
+            //console.log("order qt "+order_qt);
+            delv_qt = $("#delvQuantityInKg_" + base_prod_id).val().trim();
+
+            //console.log("delv qt "+delv_qt);
+            if((order_qt=='' && delv_qt>0) || order_qt>0 && delv_qt==''){
+                alert("either order or deliver quantity field is zero");
+                event.preventDefault();
+                return false;
+            }
+
+
+            /*if(order_qt > 0 && delv_qt > 0){
+                console.log("non zero");
+            }
+            else if((order_qt==undefined || order_qt==0) && (delv_qt==undefined ||delv_qt == 0)){
+                //console.log("zero");
+                //$(".row_"+base_prod_id).children(':input').attr("disabled", "disabled");
+
+            }
+            else{
+                alert("either order or deliver quantity field is zero");
+                event.preventDefault();
+                return false;
+                //
+
+            }*/
+        });
+        return true;
     }
+
+
 
 </script>
