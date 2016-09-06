@@ -105,6 +105,7 @@ foreach ($model as $value) {
 
 
 ?>
+<page>
 <div class="container">
     <table border="1">
         <tr>
@@ -329,3 +330,7 @@ foreach ($model as $value) {
 
     </table>
 </div>
+    <page_footer>
+        Order Id - <?php echo $modelOrder->attributes['order_number']; ?>
+        </page_footer>
+</page>
