@@ -1250,7 +1250,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit', 'Effective Price Date');
-                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status');
+                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Subscribed Product ID');
@@ -1407,6 +1407,16 @@ class BaseProductController extends Controller {
                                     }
                                 }
 
+                                if (isset($cols['parent id'])) {
+                                    $parent_id = trim($data[$cols['parent id']]);
+                                    if($parent_id>0){
+                                        $row['parent_id'] = $parent_id;
+                                    }
+                                    else{
+                                        $row['parent_id'] = null;
+                                    }
+
+                                }
                                 $errorFlag = 0;
                                 $model1->attributes = $row;
                                 //echo "<pre>";print_r($model1->attributes);die;
@@ -2071,7 +2081,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,

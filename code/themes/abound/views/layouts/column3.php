@@ -174,9 +174,13 @@ elseif(Yii::app()->controller->id=="grootsledger")
 {
     echo "GROOTS LEDGER";
 }
+elseif(Yii::app()->controller->id=="purchaseHeader")
+{
+    if(Yii::app()->controller->action->id=="admin"){
+        echo "Purchase List";
+    }
+}
 else{
-
-    
     echo Yii::app()->controller->action->id." ".Yii::app()->controller->id;
 }
 

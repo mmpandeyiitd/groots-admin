@@ -1,4 +1,64 @@
-<?php /* @var $this Controller */ ?>
+<?php /* @var $this Controller */
+$store_id = Yii::app()->session['brand_admin_id'];
+$logoutArr = array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?'));
+$loginArr = array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => ""));
+$reportArr = array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
+$buyerArr = array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
+$categoryArr = array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false));
+$productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false));
+$regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false));
+$orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false));
+$dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true);
+
+
+$warehouseOrderArr = array('label' => '<i class="fa fa-dashboard"></i> Order', 'url' => array('/order/index'), 'visible' => true);
+$inventoryArr = array('label' => '<i class="fa fa-dashboard"></i> Inventory', 'url' => array('/inventory/index'), 'visible' => true);
+$purchaseArr = array('label' => '<i class="fa fa-dashboard"></i> Purchase', 'url' => array('/purchaseHeader/admin'), 'visible' => true);
+$transferArr = array('label' => '<i class="fa fa-dashboard"></i> Transfer', 'url' => array('/transferHeader/admin'), 'visible' => true);
+/*$warehouse1Arr = array('label' => '<i class="fa fa-dashboard"></i> Sector 5', 'url' => array('#'), 'visible' => true, 'items'=> array(
+    $warehouseOrderArr,$inventoryArr,$transferArr,$purchaseArr
+),
+    'itemOptions'=>array('class'=>'dropdown'),
+    'linkOptions'=> array(
+        'class' => 'dropdown-toggle',
+        'data-toggle' => 'dropdown',
+    ),
+    'itemCssClass' => 'item-test',
+    'encodeLabel' => false,
+    'htmlOptions' => array('class' => 'nav navbar-nav'),
+);
+$warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'url' => array('#'), 'visible' => true,
+                    'items'=> array(
+                        $warehouse1Arr,
+                    ),
+                    'itemOptions'=>array('class'=>'dropdown'),
+                    'linkOptions'=> array(
+                        'class' => 'dropdown-toggle',
+                        'data-toggle' => 'dropdown',
+                    ),
+                    'submenuHtmlOptions' => array('class' => 'dropdown-menu'),
+    'htmlOptions' => array('class' => 'nav navbar-nav'),
+    'submenuHtmlOptions' => array('class' => 'dropdown-menu'),
+    'itemCssClass' => 'item-test',
+    'encodeLabel' => false,
+);*/
+
+$warehouse1Arr = array('label' => '<i class="fa fa-dashboard"></i> Sector 5', 'url' => array('purchaseHeader/admin'), 'visible' => true, 'items'=> array(
+    $warehouseOrderArr,$inventoryArr,$transferArr,$purchaseArr
+),
+    'htmlOptions' => array('class' => 'dropdown-submenu'),
+);
+$warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'url' => array('purchaseHeader/admin'), 'visible' => true,
+    'items'=> array(
+        $warehouse1Arr,
+    ),
+    'htmlOptions' => array('class' => 'dropdown-submenu'),
+    'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
+
+);
+
+?>
 <?php $this->beginContent('//layouts/main'); ?>
 
 <div class="row-fluid">
@@ -14,7 +74,29 @@
                
             </div>
             <?php
-            if ((Yii::app()->session['is_super_admin'] == 1) && (!isset(Yii::app()->session['brand_admin_id']))&& (isset(Yii::app()->session['is_super_admin'])) && ($_REQUEST['r'] != 'retailer/update') && ($_REQUEST['r'] != 'SubscribedProduct/admin') && ($_REQUEST['r'] != 'subscribedProduct/mappedProduct') && ($_REQUEST['r'] != 'retailerProductQuotation/admin')) {
+            $this->widget('zii.widgets.CMenu', array(
+                'htmlOptions' => array('class' => 'nav navbar-nav'),
+                'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
+                'itemCssClass' => 'item-test',
+                'encodeLabel' => false,
+                'items' => array(
+                    $dashboardArr,
+                    $orderArr,
+                    $warehouseArr,
+                    $regOffArray,
+                    $productArr,
+                    $categoryArr,
+                    $buyerArr,
+                    $collectionArr,
+                    $reportArr,
+                    $loginArr,
+                    $logoutArr,
+
+                ),
+            ));
+
+
+            /*if ((Yii::app()->session['is_super_admin'] == 1) && (!isset(Yii::app()->session['brand_admin_id']))&& (isset(Yii::app()->session['is_super_admin'])) && ($_REQUEST['r'] != 'retailer/update') && ($_REQUEST['r'] != 'SubscribedProduct/admin') && ($_REQUEST['r'] != 'subscribedProduct/mappedProduct') && ($_REQUEST['r'] != 'retailerProductQuotation/admin')) {
                 $store_id = Yii::app()->session['brand_admin_id'];
                 $this->widget('zii.widgets.CMenu', array(
                     'htmlOptions' => array('class' => 'nav'),
@@ -22,17 +104,18 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                        array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                       array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                      
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
+
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && (isset(Yii::app()->session['brand_admin_id'])) && ($_REQUEST['r'] != 'retailer/update')) {
@@ -43,17 +126,17 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                        array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                      
-                      array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                       array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailer/update')) {
@@ -65,17 +148,17 @@
                     'encodeLabel' => false,
                     'items' => array(
                         array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                      array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                       
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'SubscribedProduct/admin')) {
@@ -86,17 +169,18 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                        array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                      array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                     
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                     ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'subscribedProduct/mappedProduct')) {
@@ -107,18 +191,18 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                        array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                       array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-  
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                      ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailerProductQuotation/admin') && ($_REQUEST['id'] != '')) {
@@ -129,18 +213,18 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                        array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                      array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                       
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                      ),
                 ));
             } elseif ((Yii::app()->session['is_super_admin'] == 1) && ($_REQUEST['r'] == 'retailerProductQuotation/admin') && ($_REQUEST['id'] == '')) {
@@ -151,18 +235,18 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                       array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                      array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
-                        
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                         array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
-                      ), 
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
+                        $regOffArray,
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
+                      ),
                 ));
             } else {
 
@@ -173,21 +257,21 @@
                     'itemCssClass' => 'item-test',
                     'encodeLabel' => false,
                     'items' => array(
-                       array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true),
-                        array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false)),
-                       array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false)),
+                        $dashboardArr,
+                        $orderArr,
+                        $warehouseArr,
 
-                       array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false)), 
-                        array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                           array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false)),
-                        
-                        array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => "")),
-                        array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?')),
+                        $regOffArray,
+                        $productArr,
+                        $categoryArr,
+                        $buyerArr,
+                        $collectionArr,
+                        $reportArr,
+                        $loginArr,
+                        $logoutArr,
                      ),
                 ));
-            }
+            }*/
             ?>
         </div>
         <div class="sidebar-nav">
@@ -195,14 +279,16 @@
 
 
 <?php
+
+
+/*
 $this->widget('zii.widgets.CMenu', array(
-    /* 'type'=>'list', */
     'encodeLabel' => false,
     'items' => array(
        
         array('label' => 'OPERATIONS', 'items' => $this->menu),
     ),
-));
+));*/
 ?>
         </div>
         <br>

@@ -334,7 +334,7 @@ class SubscribedProductController extends Controller {
     }
 
     public function actionlistallproduct() {
-        // echo '<pre>';print_r($_POST);die;
+        //echo '<pre>';//print_r($_POST);die;
         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -344,7 +344,6 @@ class SubscribedProductController extends Controller {
 
         $model = new SubscribedProduct('search');
         $model->unsetAttributes(); // clear any default values
-
         if (isset($_POST['downloadbutton'])) {
 
             if (isset($_POST['selectedIds'])) {

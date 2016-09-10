@@ -133,14 +133,6 @@ elseif (Yii::app()->controller->id == "store") {
     }
 }
 
-
-
-
-
-
-
-
-
 elseif (Yii::app()->controller->id == "lookbook" && (Yii::app()->controller->action->id == "Adminphoto" || Yii::app()->controller->action->id == "photogallarycreate" || Yii::app()->controller->action->id == "Photogallaryupdate")) {
     if (Yii::app()->controller->action->id == "photogallarycreate" && substr_count(Yii::app()->session['premission_info']['module_info']['photogallery'], 'R') > 0) {
         echo '<li><a href="index.php?r=lookbook/Adminphoto&store_id=' . $store_id . '">Photo Gallery List</a></li> ';
@@ -179,5 +171,18 @@ elseif (Yii::app()->controller->id == "lookbook" && (Yii::app()->controller->act
     } else if (Yii::app()->controller->action->id == "admin" && substr_count(Yii::app()->session['premission_info']['module_info']['lookbook'], 'C') > 0) {
         echo '<li><a href="index.php?r=lookbook/create&store_id=' . $store_id . '">Create Lookbook</a></li> ';
     }
-} 
+}
+else{
+    $this->widget('zii.widgets.CMenu', array(
+        /* 'type'=>'list', */
+        'encodeLabel' => false,
+        'items' => $this->menu /*array(
+            $this->menu,
+            array('label' => 'OPERATIONS', 'items' => $this->menu),
+        )*/
+    ));
+}
+
+
+
 ?>

@@ -71,6 +71,12 @@ Yii::app()->clientScript->registerScript('search', "
                 'class' => 'CCheckBoxColumn',
                 'selectableRows' => '100',
             ),
+            array(
+                'header' => 'id',
+                'name' => 'base_product_id',
+                'value' => '$data->BaseProduct->base_product_id',
+                'type' => 'raw',
+            ),
 //        array(
 //            'name' => 'store_front_id',
 //            'type' => 'raw',

@@ -860,7 +860,7 @@ input[type="file"]:focus {
 }
 .left_sidemenu .item-test a {
     font-size: 12px;
-    padding: 10px 15px;
+    /*padding: 10px 15px;*/
     color: #3A3A3A;
     border-bottom: 1px solid rgba(76, 144, 78, 0.4);
     border-top: 1px solid rgba(255, 255, 255, 0.73);
@@ -869,6 +869,15 @@ input[type="file"]:focus {
 }
 .left_sidemenu .item-test a i {
     padding-right: 5px;
+}
+.left_sidemenu  li {
+    line-height: 25px;
+}
+.left_sidemenu .item-test li {
+    line-height: 20px;
+}
+.left_sidemenu .item-test li a {
+    display: block;
 }
 .left_sidemenu .active a,
 .left_sidemenu .item-test a:hover {
@@ -2152,3 +2161,19 @@ border-right: 1px solid #4C904E;
     border-color: #521042 !important;
     margin-left: 5px;
 }
+
+#alphabetical-nav ul {
+    list-style: none;
+}
+
+#alphabetical-nav ul li a {
+    display: inline;
+}
+
+/*
+purchase-header-grid td,th {
+    width:100%;
+}
+#purchase-header-grid .input {
+    width:100%;
+}*/
