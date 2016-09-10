@@ -198,7 +198,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                                     $totalQuantity = ($orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size)/1000;
                                 }
                                 else {
-                                    $totalQuantity = ((int)$orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size);
+                                    $totalQuantity = ($orderLine[$_retailerProduct->base_product_id]['product_qty']) * ((int)$_retailerProduct->pack_size);
                                 }
                             }
                             if(isset($update)){
