@@ -68,4 +68,19 @@ class Utility
 
         return $new_array;
     }
+
+    public static function convertOrderToKg($qty, $pack_size, $pack_unit ){
+        $quantityInKg = '';
+        if ($pack_unit == 'g') {
+            $quantityInKg = $qty * ((int)$pack_size)/1000;
+        }
+        else {
+            $quantityInKg = $qty * ((int)$pack_size);
+        }
+        return $quantityInKg;
+    }
+
+    public static function converOrderToUnit(){
+
+    }
 }

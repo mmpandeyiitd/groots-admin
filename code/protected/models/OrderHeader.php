@@ -290,7 +290,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('transaction_time', $this->transaction_time, true);
         $criteria->compare('payment_mod', $this->payment_mod, true);
         $criteria->compare('bankname', $this->bankname, true);
-       
+        $criteria->compare('warehouse_id', $this->warehouse_id, true);
         //$criteria->compare('cron_processed_flag', $this->cron_processed_flag, true);
 //        $criteria->compare('source_url', $this->source_url, true);
 //        $criteria->compare('source_type', $this->source_type, true);
@@ -650,6 +650,20 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
         $command = $connection->createCommand($sql);
         $pdf = $command->queryAll();
         return $pdf;
+    }
+
+    public static function getAvgOrderByItem($w_id){
+        $avgOrders = array();
+        $start_date = date('Y-m-d', strtotime('-'.SCHD_INV_AVG_DAYS.' day', strtotime(date('Y-m-d'))));
+        $connection = Yii::app()->secondaryDb;
+        $sql = "select ol.base_product_id as bp_id, AVG(ol.delivered_qty) as qty, bp.pack_size, bp.pack_unit  from order_header oh join order_line ol on ol.order_id=oh.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$start_date."' and oh.status != 'Cancelled' and ol.delivered_qty > 0 and oh.warehouse_id=$w_id group by ol.base_product_id";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        foreach ($result as $row){
+            $avgOrders[$row['bp_id']] = $row;
+        }
+        return $avgOrders;
     }
 
     public function getName(){

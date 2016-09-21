@@ -3,16 +3,16 @@
 /* @var $model TransferHeader */
 
 $this->breadcrumbs=array(
-	'Transfer Headers'=>array('index'),
+	'Transfer Orders'=>array('admin&w_id='.$w_id),
 	'Create',
 );
 
 $this->menu=array(
-	array('label'=>'List TransferHeader', 'url'=>array('index')),
-	array('label'=>'Manage TransferHeader', 'url'=>array('admin')),
+	array('label'=>'List TransferHeader', 'url'=>array('admin&w_id='.$w_id)),
+	//array('label'=>'Manage TransferHeader', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Create TransferHeader</h1>
+<h1>Create Transfer Orders</h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_transferForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'otherItems'=>$otherItems, 'w_id'=>$w_id)); ?>

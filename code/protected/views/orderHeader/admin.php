@@ -3,6 +3,14 @@
 /* @var $model OrderHeader */
 ob_clean();
 $issuperadmin = Yii::app()->session['is_super_admin'];
+$w_id='';
+if(isset($_GET['w_id'])){
+    $w_id = $_GET['w_id'];
+}
+$this->menu=array(
+    //array('label'=>'List InventoryHeader', 'url'=>array('index')),
+    array('label'=>'Create Order', 'url'=>array('create&w_id='.$w_id)),
+);
 if ($issuperadmin == 0) {
 
     if (empty(Yii::app()->session['brand_admin_id']) && empty(Yii::app()->session['brand_id'])) {
@@ -26,13 +34,16 @@ if ($issuperadmin == 0) {
     $this->breadcrumbs = array(
         'Brand' => array('store/admin'),
         $store_name => array('store/update', "id" => $store_id),
-        'Orders' => array('orderHeader/admin',),
+        'Orders' => array('orderHeader/admin&w_id='.$w_id,),
         'Manage',
     );
+
+
+
 } else {
     $store_id = Yii::app()->session['brand_id'];
     $this->breadcrumbs = array(
-        'Orders' => array('admin',),
+        'Orders' => array('admin&w_id='.$w_id,),
         'Manage',
     );
 }

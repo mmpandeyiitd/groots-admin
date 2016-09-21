@@ -146,39 +146,6 @@ insert into cb_dev_groots.warehouses values(null, 'Azadpur, delhi', null, 'Azadp
 
   alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
 
-CREATE TABLE groots_orders.`inventory` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `warehouse_id` int(11) UNSIGNED NOT NULL,
-  `base_product_id` int(11) UNSIGNED NOT NULL,
-  schedule_inv decimal(10,2) DEFAULT NULL,
-  present_inv decimal(10,2) DEFAULT NULL,
-  wastage decimal(10,2) DEFAULT NULL,
-  created_at date NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  INDEX fk_inv_1 (warehouse_id),
-  INDEX fk_inv_2 (base_product_id),
-  CONSTRAINT fk_inv_1 FOREIGN KEY (warehouse_id) REFERENCES cb_dev_groots.warehouses(id),
-  CONSTRAINT fk_inv_2 FOREIGN KEY (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
-CREATE TABLE groots_orders.`inventory_history` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inv_id` int(11) NOT NULL,
-  `warehouse_id` int(11) UNSIGNED NOT NULL,
-  `base_product_id` int(11) UNSIGNED NOT NULL,
-  schedule_inv decimal(10,2) DEFAULT NULL,
-  present_inv decimal(10,2) DEFAULT NULL,
-  wastage decimal(10,2) DEFAULT NULL,
-  inv_change_type VARCHAR(255) DEFAULT NULL ,
-  inv_change_id int(11) NOT NULL,
-  inv_change_quantity decimal(10,2) DEFAULT NULL ,
-  created_at date NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  INDEX fk_inv_hist_1 (inv_id),
-  CONSTRAINT fk_inv_hist_1 FOREIGN KEY (inv_id) REFERENCES groots_orders.inventory(id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 ALTER TABLE cb_dev_groots.base_product ADD COLUMN parent_id int(11) unsigned DEFAULT NULL , add index fk_base_prod_1 (parent_id), add CONSTRAINT fk_base_prod_1 foreign key (parent_id) REFERENCES cb_dev_groots.base_product(base_product_id);
 
@@ -212,8 +179,8 @@ CREATE TABLE cb_dev_groots.`vendors` (
   `store_size` int(10) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
   `credit_limit` int(155) DEFAULT NULL,
-  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified_date` datetime DEFAULT NULL,
+  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `min_order_price` float DEFAULT NULL,
   `shipping_charge` float DEFAULT NULL,
   `allocated_warehouse_id` int(11) unsigned NOT NULL DEFAULT '1',
@@ -324,7 +291,7 @@ CREATE TABLE groots_orders.`transfer_line` (
   `unit_price` decimal(10,2) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
   `status` enum('pending','Confirmed','ReturnedRequested','Cancelled','returned') CHARACTER SET utf8 DEFAULT 'pending',
-  created_at date NOT NULL,
+  created_at datetime NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX fk_tranfer_line_1 (transfer_id),
@@ -340,7 +307,56 @@ alter table purchase_header add column `paid_amount` decimal(10,2) DEFAULT NULL
 
 
 
+CREATE TABLE groots_orders.`inventory_header` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `warehouse_id` int(11) UNSIGNED NOT NULL,
+  `base_product_id` int(11) UNSIGNED NOT NULL,
+  schedule_inv decimal(10,2) DEFAULT NULL,
+  schedule_inv_type enum('percents', 'days') default 'days',
+  extra_inv decimal(10,2) DEFAULT NULL,
+  extra_inv_type enum('percents', 'days') default 'percents',
+  created_at datetime NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX fk_inv_1 (warehouse_id),
+  INDEX fk_inv_2 (base_product_id),
+  CONSTRAINT fk_inv_1 FOREIGN KEY (warehouse_id) REFERENCES cb_dev_groots.warehouses(id),
+  CONSTRAINT fk_inv_2 FOREIGN KEY (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+CREATE TABLE groots_orders.`inventory` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inv_id` int(11) NOT NULL,
+  `warehouse_id` int(11) UNSIGNED NOT NULL,
+  `base_product_id` int(11) UNSIGNED NOT NULL,
+  schedule_inv decimal(10,2) DEFAULT NULL,
+  present_inv decimal(10,2) DEFAULT NULL,
+  wastage decimal(10,2) DEFAULT NULL,
+  extra_inv decimal(10,2) DEFAULT NULL,
+  inv_change_type VARCHAR(255) DEFAULT NULL ,
+  inv_change_id int(11) NOT NULL,
+  inv_change_quantity decimal(10,2) DEFAULT NULL ,
+  date DATE DEFAULT  NULL,
+  created_at DATETIME NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  INDEX fk_inv_hist_1 (inv_id),
+  CONSTRAINT fk_inv_hist_1 FOREIGN KEY (inv_id) REFERENCES groots_orders.inventory(id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+alter table groots_orders.inventory modify column `inv_change_id` int(11) default NULL;
+
+insert into groots_orders.inventory_header select null, 1, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product;
+
+insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now() from cb_dev_groots.base_product bp join inventory_header ih on ih.base_product_id=bp.base_product_id;
+
+ALTER TABLE groots_orders.inventory ADD UNIQUE KEY `uk_inv_1` (`inv_id`,`date`);
+
+ALTER TABLE groots_orders.inventory_header ADD UNIQUE KEY `uk_inv_hd_1` (warehouse_id, `base_product_id`);
 
 
 
+#alter table groots_orders.inventory_history add column transferIn decimal(10,2) DEFAULT NULL, add column transferOut decimal(10,2) DEFAULT NULL, add column order decimal(10,2) DEFAULT NULL, add column purchase decimal(10,2) DEFAULT NULL
 
+insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join inventory_header ih on ih.base_product_id=bp.base_product_id;

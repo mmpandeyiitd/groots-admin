@@ -14,7 +14,7 @@ if (Yii::app()->controller->id == "DashboardPage") {
 
     echo '<li><a href="index.php?r=baseProduct/bulkuploadstore_id=1">Bulk Upload subscribed product</a></li> ';
 }
-elseif (Yii::app()->controller->id == "orderHeader") {
+/*elseif (Yii::app()->controller->id == "orderHeader") {
 
 
     if (Yii::app()->controller->action->id == "admin") {
@@ -30,7 +30,7 @@ elseif (Yii::app()->controller->id == "orderHeader") {
      elseif (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') > 0) {
         //echo '<li><a href="index.php?r=SubscribedProduct/listallproduct&store_id=' . $store_id . '">product List</a></li> ';
     }
-}
+}*/
  else if (Yii::app()->controller->id == "users") {
     if (Yii::app()->controller->action->id == "create" && substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'R') > 0) {
         echo '<li><a href="index.php?r=users/admin">Admin User List</a></li> ';

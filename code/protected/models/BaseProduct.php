@@ -54,6 +54,7 @@ class BaseProduct extends CActiveRecord {
     public $image;
     public $base_product_id;
     public $action;
+
     public $categoryIds = null;
     public $store_offer_price;
     public $size_chart;
@@ -63,7 +64,11 @@ class BaseProduct extends CActiveRecord {
     public $qunt;
 
     public function tableName() {
-        return 'base_product';
+        return 'cb_dev_groots.base_product';
+    }
+
+    public function getDbConnection() {
+        return Yii::app()->db;
     }
 
     /**
@@ -965,6 +970,34 @@ class BaseProduct extends CActiveRecord {
             fclose($fp);
         }
         ob_flush();
+    }
+
+
+    public static function PopularItems(){
+        //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
+        $popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' base_product_id in (264,310,606)'));
+        $purchaseLineArr = array();
+        foreach ($popularItems as $item){
+            /*$tmp = array();
+            $tmp['bp_id'] = $item->base_product_id;
+            $tmp['title'] = $item->title;
+            array_push($purchaseLineArr, $tmp);*/
+
+            $purchaseLine = new PurchaseLine();
+            $purchaseLine->base_product_id = $item->base_product_id;
+            $purchaseLine->title = $item->title;
+            array_push($purchaseLineArr, $purchaseLine);
+        }
+        $otherItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title'));
+        $otherItemArray = array();
+        foreach ($otherItems as $item){
+            $tmp = array();
+            $tmp['bp_id'] = $item->base_product_id;
+            $tmp['title'] = $item->title;
+            array_push($otherItemArray, $tmp);
+        }
+
+        return [$purchaseLineArr, $otherItemArray];
     }
 
 }

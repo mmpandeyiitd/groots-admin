@@ -27,7 +27,7 @@ class TransferHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,source_warehouse_id,dest_warehouse_id,status,delivery_date,comment,invoice_number,created_at', 'safe', 'on' => 'search'),
+            array('id,source_warehouse_id,dest_warehouse_id,status,delivery_date,comment,invoice_number,created_at', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -39,6 +39,8 @@ class TransferHeader extends CActiveRecord
         // class name for the relations automatically generated below.
         return array(
             'TransferLine' => array(self::HAS_MANY, 'TransferLine', 'transfer_id'),
+            'SourceWarehouse' => array(self::BELONGS_TO,  'Warehouse', 'source_warehouse_id'),
+            'DestWarehouse' => array(self::BELONGS_TO,  'Warehouse', 'dest_warehouse_id'),
         );
     }
 
@@ -72,6 +74,21 @@ class TransferHeader extends CActiveRecord
         ));
     }
 
+    public function searchNew() {
+        // @todo Please modify the following code to remove attributes that should not be searched.
+
+        $criteria = new CDbCriteria;
+        $criteria->compare('source_warehouse_id', $this->source_warehouse_id);
+        $criteria->compare('dest_warehouse_id', $this->dest_warehouse_id);
+        $criteria->compare('status', $this->status);
+        $criteria->compare('delivery_date', $this->delivery_date);
+        $criteria->compare('comment', $this->comment);
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+        ));
+    }
+
+
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -80,6 +97,12 @@ class TransferHeader extends CActiveRecord
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+
+    public static function status(){
+        $connection = Yii::app()->secondaryDb;
+        $status = Utility::get_enum_values($connection, self::tableName(), 'status' );
+        return $status;
     }
 
 }

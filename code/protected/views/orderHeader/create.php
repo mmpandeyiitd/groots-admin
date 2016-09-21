@@ -3,12 +3,18 @@
 /* @var $model OrderHeader */
 /* @var $retailerProducts retailerProducts */
 
-
+$w_id='';
+if(isset($_GET['w_id'])){
+	$w_id = $_GET['w_id'];
+}
 $this->breadcrumbs=array(
-	'Orders'=>array('admin'),
+	'Orders'=>array('admin&w_id='.$w_id),
 	'Create',
 );
-
+$this->menu=array(
+	array('label'=>'Order List', 'url'=>array('admin&w_id='.$w_id)),
+	//array('label'=>'Create Order', 'url'=>array('create&w_id='.$w_id)),
+);
 ?>
 
 <h1>Create An Order</h1>

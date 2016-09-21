@@ -11,11 +11,47 @@ $regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'ur
 $orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false));
 $dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true);
 
+function generateOrderMenu($id){
+    $orderArr = array('label' => '<i ></i> Order', 'url' => array('/orderHeader/admin&w_id='.$id), 'visible' => true);
+    return $orderArr;
+}
+function generateInventoryMenu($id){
+    $inventoryArr = array('label' => '<i ></i> Inventory', 'url' => array('/inventory/admin&w_id='.$id), 'visible' => true);
+    return $inventoryArr;
+}
+function generatePurchaseMenu($id){
+    $purchaseArr = array('label' => '<i ></i> Purchase', 'url' => array('/purchaseHeader/admin&w_id='.$id), 'visible' => true);
+    return $purchaseArr;
+}
+function generateTransferMenu($id){
+    $transferArr = array('label' => '<i ></i> Transfer', 'url' => array('/transferHeader/admin&w_id='.$id), 'visible' => true);
+    return $transferArr;
+}
 
-$warehouseOrderArr = array('label' => '<i class="fa fa-dashboard"></i> Order', 'url' => array('/order/index'), 'visible' => true);
-$inventoryArr = array('label' => '<i class="fa fa-dashboard"></i> Inventory', 'url' => array('/inventory/index'), 'visible' => true);
-$purchaseArr = array('label' => '<i class="fa fa-dashboard"></i> Purchase', 'url' => array('/purchaseHeader/admin'), 'visible' => true);
-$transferArr = array('label' => '<i class="fa fa-dashboard"></i> Transfer', 'url' => array('/transferHeader/admin'), 'visible' => true);
+
+
+$warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
+$warehouseMenuArr = array();
+foreach ($warehouses as $warehouse){
+    $id = $warehouse->id;
+    $m = array('label' => '<i ></i> '.$warehouse->name, 'url' => '#', 'visible' => true, 'items'=> array(
+        generateOrderMenu($id),generateInventoryMenu($id),generateTransferMenu($id),generatePurchaseMenu($id)
+    ),
+        //'htmlOptions' => array('class' => 'dropdown-submenu'),
+    );
+    array_push($warehouseMenuArr, $m);
+}
+
+$warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' => true,
+    'items'=> $warehouseMenuArr,
+    'itemCssClass' => 'ex1',
+    //'htmlOptions' => array('class' => 'dropdown-submenu'),
+    //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
+
+);
+
+
+
 /*$warehouse1Arr = array('label' => '<i class="fa fa-dashboard"></i> Sector 5', 'url' => array('#'), 'visible' => true, 'items'=> array(
     $warehouseOrderArr,$inventoryArr,$transferArr,$purchaseArr
 ),
@@ -44,20 +80,6 @@ $warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'u
     'encodeLabel' => false,
 );*/
 
-$warehouse1Arr = array('label' => '<i class="fa fa-dashboard"></i> Sector 5', 'url' => array('purchaseHeader/admin'), 'visible' => true, 'items'=> array(
-    $warehouseOrderArr,$inventoryArr,$transferArr,$purchaseArr
-),
-    'htmlOptions' => array('class' => 'dropdown-submenu'),
-);
-$warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'url' => array('purchaseHeader/admin'), 'visible' => true,
-    'items'=> array(
-        $warehouse1Arr,
-    ),
-    'htmlOptions' => array('class' => 'dropdown-submenu'),
-    'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
-
-);
-
 ?>
 <?php $this->beginContent('//layouts/main'); ?>
 
@@ -73,11 +95,12 @@ $warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'u
                 <h3> <?php echo Yii::app()->user->name; ?></h3>
                
             </div>
+            <nav class="vertical">
             <?php
             $this->widget('zii.widgets.CMenu', array(
-                'htmlOptions' => array('class' => 'nav navbar-nav'),
-                'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
-                'itemCssClass' => 'item-test',
+                //'htmlOptions' => array('class' => 'nav navbar-nav'),
+                //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
+                'itemCssClass' => 'ex1',
                 'encodeLabel' => false,
                 'items' => array(
                     $dashboardArr,
@@ -95,6 +118,9 @@ $warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'u
                 ),
             ));
 
+            ?>
+            </nav>
+            <?php
 
             /*if ((Yii::app()->session['is_super_admin'] == 1) && (!isset(Yii::app()->session['brand_admin_id']))&& (isset(Yii::app()->session['is_super_admin'])) && ($_REQUEST['r'] != 'retailer/update') && ($_REQUEST['r'] != 'SubscribedProduct/admin') && ($_REQUEST['r'] != 'subscribedProduct/mappedProduct') && ($_REQUEST['r'] != 'retailerProductQuotation/admin')) {
                 $store_id = Yii::app()->session['brand_admin_id'];
@@ -273,6 +299,7 @@ $warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'u
                 ));
             }*/
             ?>
+
         </div>
         <div class="sidebar-nav">
 
@@ -315,7 +342,7 @@ $this->widget('zii.widgets.CMenu', array(
     <div class="span2 ">
         &nbsp;
     </div>
-    <div class="span9 right_section">
+    <div class="span9 right_section" style="z-index: 1;">
         <div class="">
 
 

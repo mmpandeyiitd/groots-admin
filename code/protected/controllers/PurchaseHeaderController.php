@@ -77,54 +77,73 @@ class PurchaseHeaderController extends Controller
 	public function actionCreate()
 	{
 	    //echo "<pre>";
-		$model=new PurchaseHeader;
-
-        list($popularItems, $otherItems) = $this->PopularItems();
+		$model=new PurchaseHeader('search');
+        $w_id = $_GET['w_id'];
+        list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>50,
             ),
         ));
-
+//print_r($_POST);die;
         //print_r($otherItems);die;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['PurchaseHeader']))
+		if(isset($_POST['purchase-create']))
 		{
-			$model->attributes=$_POST['PurchaseHeader'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+
+                $model->attributes=$_POST['PurchaseHeader'];
+                $model->created_at = date('Y-m-d');
+                //print_r($model);die;
+
+                if($model->total_payable_amount > 0 && $model->save()){
+
+                    foreach ($_POST['price'] as $key => $price) {
+                        if ($price > 0) {
+                            $purchaseLine = new PurchaseLine();
+                            $purchaseLine->purchase_id = $model->id;
+                            $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                            if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                $purchaseLine->order_qty = $_POST['order_qty'][$key];
+                            }
+                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                $purchaseLine->received_qty = $_POST['received_qty'][$key];
+                            }
+
+                            //$purchaseLine->unit_price = $_POST['store_offer_price'][$key];
+                            $purchaseLine->price = $price;
+                            $purchaseLine->created_at = date("y-m-d H:i:s");
+                            $purchaseLine->save();
+                        }
+                    }
+                    $transaction->commit();
+                    $this->redirect(array('admin','w_id'=>$model->warehouse_id));
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Purchase order Creation failed.');
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Purchase order Creation failed.');
+                throw $e;
+            }
+
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
-            'items'=>$dataProvider,
+            'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
+            'w_id' => $_GET['w_id'],
 		));
 	}
 
-	public function PopularItems(){
-        $popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
-        $purchaseLineArr = array();
-        foreach ($popularItems as $item){
-            $purchaseLine = new PurchaseLine();
-            $purchaseLine->base_product_id = $item->base_product_id;
-            $purchaseLine->title = $item->title;
-            array_push($purchaseLineArr, $purchaseLine);
-        }
-        $otherItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> 'popularity > 1', 'select'=>'base_product_id,title'));
-        $otherItemArray = array();
-        foreach ($otherItems as $item){
-            $tmp = array();
-            $tmp['bp_id'] = $item->base_product_id;
-            $tmp['title'] = $item->title;
-            array_push($otherItemArray, $tmp);
-        }
 
-        return [$purchaseLineArr, $otherItemArray];
-    }
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -132,20 +151,89 @@ class PurchaseHeaderController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
+	    //echo "<pre>";
+		//print_r($_POST);die;
+        $model=$this->loadModel($id);
+        $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
+        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        $purchaseLineMap = array();
+        $purchaseLinesArr = array();
+        foreach ($purchaseLines as $item){
+            //var_dump($item->BaseProduct); die;
+            $purchaseLineMap[$item->base_product_id] = $item;
+            array_push($purchaseLinesArr,$item);
+        }
 
+        $dataProvider=new CArrayDataProvider($purchaseLinesArr, array(
+            'pagination'=>array(
+                'pageSize'=>50,
+            ),
+        ));
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['PurchaseHeader']))
-		{
-			$model->attributes=$_POST['PurchaseHeader'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
+        if(isset($_POST['purchase-update'])) {
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
+
+                $model->attributes = $_POST['PurchaseHeader'];
+
+                if ($model->save()) {
+                    foreach ($_POST['price'] as $key => $price) {
+                        //$orderQt = $_POST['product_qty'][$key];
+                        if ($price > 0 ) {
+                            if(isset($purchaseLineMap[$_POST['base_product_id'][$key]])){
+                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
+                            }
+                            else{
+                                $purchaseLine = new PurchaseLine();
+                                $purchaseLine->purchase_id = $model->id;
+                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                $purchaseLine->created_at = date("y-m-d H:i:s");
+
+                            }
+
+                            if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                $purchaseLine->order_qty = $_POST['order_qty'][$key];
+                            }
+
+                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                $purchaseLine->received_qty = $_POST['received_qty'][$key];
+                            }
+
+                            $purchaseLine->price = $price;
+
+                            $purchaseLine->save();
+                        }
+                        else{
+                            if(isset($purchaseLineMap[$_POST['base_product_id'][$key]])){
+                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
+                                $purchaseLine->deleteByPk($purchaseLine->id);
+                            }
+
+                        }
+                    }
+                    $transaction->commit();
+                    $this->redirect(array('admin','w_id'=>$model->warehouse_id));
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Purchase order Update failed.');
+                }
+            }catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Purchase order Creation failed.');
+                throw $e;
+            }
+        }
+
 
 		$this->render('update',array(
 			'model'=>$model,
+            'purchaseLines'=> $purchaseLines,
+            'dataProvider'=>$dataProvider,
+            'otherItems'=> $otherItems,
+            'w_id' => $_GET['w_id'],
+            'update'=>true,
 		));
 	}
 
@@ -181,12 +269,14 @@ class PurchaseHeaderController extends Controller
 	{
 		$model=new PurchaseHeader('search');
 		$model->unsetAttributes();  // clear any default values
+        $w_id = $_GET['w_id'];
 		if(isset($_GET['PurchaseHeader']))
 			$model->attributes=$_GET['PurchaseHeader'];
 
 		$this->render('admin',array(
 			'model'=>$model,
-		));
+            'w_id' => $w_id,
+        ));
 	}
 
 	/**

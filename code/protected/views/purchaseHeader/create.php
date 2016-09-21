@@ -2,13 +2,14 @@
 /* @var $this PurchaseHeaderController */
 /* @var $model PurchaseHeader */
 
+
 $this->breadcrumbs=array(
-	'Purchase Headers'=>array('index'),
+	'Purchase Headers'=>array('admin'),
 	'Create',
 );
 
 $this->menu=array(
-	array('label'=>'List Purchases', 'url'=>array('admin')),
+	array('label'=>'List Purchases', 'url'=>array('admin&w_id=$w_id')),
 	//array('label'=>'Manage PurchaseHeader', 'url'=>array('admin')),
 );
 ?>
@@ -16,6 +17,6 @@ $this->menu=array(
 <h1>Create Purchases</h1>
 
 <?php //$this->renderPartial('_form', array('model'=>$model)); ?>
-<?php $this->renderPartial('_purchaseForm', array('model'=>$model, 'items'=>$items, 'otherItems'=>$otherItems)); ?>
+<?php $this->renderPartial('_purchaseForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'otherItems'=>$otherItems, 'w_id'=>$w_id)); ?>
 
 

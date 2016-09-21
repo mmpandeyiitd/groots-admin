@@ -32,8 +32,18 @@
 
 <?php echo $form->errorSummary($model->errors); ?>
 
+<div class="row" style="display: inline;">
+    <?php echo $form->labelEx($model,'vendor_id'); ?>
+    <?php echo $form->dropDownList($model,
+    'vendor_id',
+    CHtml::listData(Vendor::model()->findAllByAttributes(array('allocated_warehouse_id' => $w_id, 'status'=>1), array('select'=>'id,name','order' => 'name')),'id','name'),
+    array('empty' => 'Select a vendor', 'options'=>array($model->vendor_id=>array('selected'=>'selected')))
+    );
+    ?>
+    <?php echo $form->error($model,'vendor_id'); ?>
+</div>
 
-<div class="row">
+<div class="row" >
     <?php echo $form->labelEx($model,'paid_amount'); ?>
     <?php echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255)); ?>
     <?php echo $form->error($model,'paid_amount'); ?>
@@ -61,7 +71,7 @@
 <div class="row">
     <?php echo $form->labelEx($model,'payment_method'); ?>
     <?php echo $form->dropDownList($model,'payment_method',
-        CHtml::listData(RetailerPayment::paymentTypes(),'value', 'value'),
+        CHtml::listData(PurchaseHeader::paymentMethod(),'value', 'value'),
         array('empty' => 'Select a Payment method'));
 
     ?>
@@ -71,7 +81,7 @@
     <div class="row">
         <?php echo $form->labelEx($model,'payment_status'); ?>
         <?php echo $form->dropDownList($model,'payment_status',
-            CHtml::listData(RetailerPayment::paymentTypes(),'value', 'value'),
+            CHtml::listData(PurchaseHeader::paymentStatus(),'value', 'value'),
             array('empty' => 'Select a Payment status'));
 
         ?>
@@ -81,7 +91,7 @@
 <div class="row">
     <?php echo $form->labelEx($model,'status'); ?>
     <?php echo $form->dropDownList($model,'status',
-        CHtml::listData(RetailerPayment::status(),'value', 'value'));
+        CHtml::listData(PurchaseHeader::status(),'value', 'value'));
 
     ?>
     <?php echo $form->error($model,'status'); ?>
@@ -105,7 +115,8 @@
 
                 <?php echo CHtml::CheckBox('cb_'.$item['bp_id'],'', array (
                         'value'=>'on',
-                        'class'=>'cb_item'
+                        'class'=>'cb_item',
+                        'id' => 'cb_'.$item['bp_id'],
                     )); ?>
 
                 <span class="title" id="title_<?php echo $item['bp_id']; ?>"><?php echo $item['title']; ?><span>
@@ -126,13 +137,15 @@
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'dataProvider'=>$items,
+        'dataProvider'=>$dataProvider,
         //'filter'=>$model,
         'columns'=>array(
             array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
-                'value' => '$data->base_product_id',
+                'value' => function ($data) {
+                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field', 'readonly'=>'readonly'));
+                },
                 'type' => 'raw',
             ),
             array(
@@ -140,7 +153,7 @@
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;'),
                 'value' => function ($data) {
-                    return CHtml::label($data->title, $data->title,array('class'=>'input'));
+                    return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
                 },
                 'type' => 'raw',
             ),
@@ -167,7 +180,8 @@
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return CHtml::textField('price[]', $data->price, array('class'=>'input'));
+                    return CHtml::textField('price[]', $data->price, array('class'=>'input price', 'id'=>'price_'.$data->base_product_id, 'onchange'=>'onPriceChange(
+                    '.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
             ),
@@ -186,18 +200,22 @@
 
 ?>
 
-
-<?php echo $form->hiddenField($model,'id'); ?>
+    <div class="order_bottomdetails" align="right">
+        <?php echo $form->labelEx($model,'total_payable_amount'); ?>
+        <?php echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount')); ?>
+        <?php echo $form->error($model,'total_payable_amount'); ?>
+    </div>
+<?php echo $form->hiddenField($model,'warehouse_id', array('value' => $w_id)); ?>
 <?php echo $form->hiddenField($model,'created_at'); ?>
 
 
 <div class="row buttons">
     <?php
     if($update==true){
-        echo CHtml::submitButton('Update', array('name'=>'update'));
+        echo CHtml::submitButton('Update', array('name'=>'purchase-update'));
     }
     else{
-        echo CHtml::submitButton('Create', array('name'=>'create'));
+        echo CHtml::submitButton('Create', array('name'=>'purchase-create'));
     }
     ?>
 
@@ -243,13 +261,20 @@
                 var i = 0;
                 row.find('td').each (function() {
                     if(i==0){
-                        $(this).html(prodId);
+                        console.log("here123");
+                        $(this).find("input").val(prodId);
                     }
                     else if(i==1) {
                         $(this).find('label').each(function () {
                             $(this).html(title);
                         });
                     }
+                    else{
+                        $(this).find("input").each(function () {
+                            $(this).val('');
+                        })
+                    }
+
                     i++;
                 });
                 row.insertAfter(lastRow);
@@ -257,6 +282,17 @@
             }
         });
         $("#alpha-nav-div").css('display', 'none');
+    }
+    
+    function onPriceChange($bp_id) {
+        updateTotalAmount()
+    }
+    function  updateTotalAmount() {
+        var sumAmount = 0;
+        $(".price").each(function(){
+            sumAmount += Number($(this).val());
+        });
+        $("#sumAmount").val(sumAmount);
     }
 
 </script>

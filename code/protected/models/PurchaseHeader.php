@@ -27,7 +27,7 @@ class PurchaseHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, comment,invoice_number,created_at', 'safe', 'on' => 'search'),
+            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, paid_amount,comment,invoice_number,created_at', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -39,6 +39,7 @@ class PurchaseHeader extends CActiveRecord
 // class name for the relations automatically generated below.
         return array(
             'PurchaseLine' => array(self::HAS_MANY, 'PurchaseLine', 'purchase_id'),
+            'Vendor' => array(self::BELONGS_TO,  'Vendor', 'vendor_id'),
         );
     }
 
@@ -81,6 +82,24 @@ class PurchaseHeader extends CActiveRecord
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+
+    public static function paymentMethod(){
+        $connection = Yii::app()->secondaryDb;
+        $paymentMethods = Utility::get_enum_values($connection, self::tableName(), 'payment_method' );
+        return $paymentMethods;
+    }
+
+    public static function paymentStatus(){
+        $connection = Yii::app()->secondaryDb;
+        $paymentStatus = Utility::get_enum_values($connection, self::tableName(), 'payment_status' );
+        return $paymentStatus;
+    }
+
+    public static function status(){
+        $connection = Yii::app()->secondaryDb;
+        $status = Utility::get_enum_values($connection,self::tableName(), 'status' );
+        return $status;
     }
 
 }

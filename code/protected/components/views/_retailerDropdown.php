@@ -7,6 +7,11 @@
 <div class="form">
 
 <?php
+$w_id='';
+if(isset($_GET['w_id'])){
+	$w_id = $_GET['w_id'];
+}
+
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'order-header-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
@@ -24,9 +29,15 @@ $form=$this->beginWidget('CActiveForm', array(
 	if($update != '') {
 		$disabled = "disabled";
 	}
+	if(isset($w_id) && $w_id>0){
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> ' allocated_warehouse_id = '.$w_id. ' and status =1');
+	}
+	else{
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> 'status=1');
+	}
 	    echo $form->dropDownList($model,
 	      'user_id',
-	      CHtml::listData(Retailer::model()->findAll(array('select'=>'id,name','order' => 'name')),'id','name'),
+	      CHtml::listData(Retailer::model()->findAll($retailerQueryArr),'id','name'),
 	      array('empty' => 'Select a retailer', 'name' => 'retailer-dd', 'disabled'=>$disabled, 'options'=>array($retailerId=>array('selected'=>'selected')))
 	    );
 	?>

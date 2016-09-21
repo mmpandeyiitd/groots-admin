@@ -6,7 +6,7 @@ bo {
     padding-top: 20px;
 }
 /*Nav bar*/
-.grid-view .table td {
+.grid-view .table td, label {
     vertical-align: middle;
     font-size:13px !important;
 } 
@@ -140,6 +140,12 @@ h4,
 th {
     font-family: 'Carrois Gothic', sans-serif;
 }
+h1 {
+    font-size: 25px;
+    line-height: 0px;
+}
+
+
 .portlet > .portlet-decoration,
 .sidebar-nav > ul > li > a,
 .navbar li > a,
@@ -563,7 +569,16 @@ ul.yiiPager li.hidden {
 }
 div.form > form .row {
     margin-left: 0px;
+    display: inline;
 }
+.row > * {
+    display: inline-block;
+}
+
+.row label {
+    width: 200px;
+}
+
 /*Footer*/
 
 footer {
@@ -721,6 +736,18 @@ footer {
 }
 .grid-view .pager {
     text-align: left;
+}
+.grid-view .id-field {
+    width:50px;
+    background-color: inherit;
+    border:none;
+    -webkit-box-shadow: none;
+}
+.grid-view .input {
+    width:100px;
+}
+.grid-view .inv-input {
+    width:50px;
 }
 .portlet-content .form .note {
     margin-left: 0px;
@@ -2147,6 +2174,7 @@ hr {
     
 background: #EDF4ED;
 border-right: 1px solid #4C904E;
+    overflow: visible;
 }
 
 .activebutton {
@@ -2177,3 +2205,58 @@ purchase-header-grid td,th {
 #purchase-header-grid .input {
     width:100%;
 }*/
+
+
+
+
+/*VERTICAL MENU*/
+nav.vertical{
+    position:relative;
+    width:100%;
+}
+
+/* ALL UL */
+nav.vertical ul{
+    list-style: none;
+}
+/* ALL LI */
+nav.vertical li{
+    position:relative;
+
+}
+/* ALL A */
+nav.vertical a{
+    display:block;
+    color:#eee;
+    text-decoration:none;
+    padding:10px 15px;
+    background:#667;
+    transition:0.2s;
+}
+/* ALL A HOVER */
+nav.vertical li:hover > a{
+    background:#778;
+}
+
+/* INNER UL HIDE */
+nav.vertical ul ul{
+    position:absolute;
+    left:0%;
+    top:0;
+    width:100%;
+    visibility:hidden;
+    opacity:0;
+    transition: transform 0.2s;
+    transform: translateX(120px);
+    overflow:visible;
+    display:block;
+    z-index: 99999999999999;
+    /*overflow-x: visible;*/
+}
+/* INNER UL SHOW */
+nav.vertical li.ex1:hover > ul{
+    /*left:100%;*/
+    visibility:visible;
+    opacity:1;
+    /*transform: translateX(0px);*/
+}

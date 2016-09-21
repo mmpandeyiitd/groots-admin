@@ -75,4 +75,9 @@ class Vendor extends CActiveRecord
         return parent::model($className);
     }
 
+    /*public function vendorsBywarehouse($w_id){
+        $vendors = Vendor::findAllByAttributes(array('allocated_warehouse_id' => $w_id), (array('select'=>'id,name','order' => 'name')),'id','name');
+
+    }*/
+
 }

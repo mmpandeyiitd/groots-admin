@@ -32,7 +32,7 @@ class TransferHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','admin'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -74,49 +74,178 @@ class TransferHeaderController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
-	{
-		$model=new TransferHeader;
+    public function actionCreate()
+    {
+        //echo "<pre>";
+        $model=new TransferHeader('search');
+        $w_id = $_GET['w_id'];
+        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        $dataProvider=new CArrayDataProvider($popularItems, array(
+            'pagination'=>array(
+                'pageSize'=>50,
+            ),
+        ));
+//print_r($_POST);die;
+        //print_r($otherItems);die;
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+        // Uncomment the following line if AJAX validation is needed
+        // $this->performAjaxValidation($model);
 
-		if(isset($_POST['TransferHeader']))
-		{
-			$model->attributes=$_POST['TransferHeader'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
+        if(isset($_POST['transfer-create']))
+        {
+            //$transaction = Yii::app()->db->beginTransaction();
+            try {
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
+                $model->attributes=$_POST['TransferHeader'];
+                $model->created_at = date('Y-m-d');
+                //print_r($model);die;
+
+                if($model->save()){
+
+                    foreach ($_POST['order_qty'] as $key => $order_qty) {
+                        if ($order_qty > 0) {
+                            $transferLine = new TransferLine();
+                            $transferLine->transfer_id = $model->id;
+                            $transferLine->base_product_id = $_POST['base_product_id'][$key];
+                            if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                $transferLine->order_qty = $_POST['order_qty'][$key];
+                            }
+                            if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
+                                $transferLine->delivered_qty = $_POST['delivered_qty'][$key];
+                            }
+                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                $transferLine->received_qty = $_POST['received_qty'][$key];
+                            }
+
+                            //$transferLine->unit_price = $_POST['store_offer_price'][$key];
+                                $transferLine->created_at = date("y-m-d H:i:s");
+                            $transferLine->save();
+                        }
+                    }
+                    //$transaction->commit();
+                    $this->redirect(array('admin','w_id'=>$model->dest_warehouse_id));
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+                }
+            } catch (\Exception $e) {
+                //$transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+                throw $e;
+            }
+
+        }
+
+        $this->render('create',array(
+            'model'=>$model,
+            'dataProvider'=>$dataProvider,
+            'otherItems'=> $otherItems,
+            'w_id' => $_GET['w_id'],
+        ));
+    }
 
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
+    public function actionUpdate($id)
+    {
+         //echo "<pre>";
+        //print_r($_POST);die;
+        $model=$this->loadModel($id);
+        $transferLines = TransferLine::model()->findAllByAttributes(array('transfer_id' => $id));
+        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        $transferLineMap = array();
+        $transferLinesArr = array();
+        foreach ($transferLines as $item){
+            //var_dump($item->BaseProduct); die;
+            $transferLineMap[$item->base_product_id] = $item;
+            array_push($transferLinesArr,$item);
+        }
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+        $dataProvider=new CArrayDataProvider($transferLinesArr, array(
+            'pagination'=>array(
+                'pageSize'=>50,
+            ),
+        ));
+        // Uncomment the following line if AJAX validation is needed
+        // $this->performAjaxValidation($model);
 
-		if(isset($_POST['TransferHeader']))
-		{
-			$model->attributes=$_POST['TransferHeader'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
+        if(isset($_POST['transfer-update'])) {
+            $transaction = Yii::app()->db->beginTransaction();
+            try {
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
-	}
+                $model->attributes = $_POST['TransferHeader'];
 
+                if ($model->save()) {
+                    foreach ($_POST['order_qty'] as $key => $order_qty) {
+                        //$orderQt = $_POST['product_qty'][$key];
+                        $order_qty = trim($_POST['order_qty'][$key]);
+                        $delivered_qty = trim($_POST['delivered_qty'][$key]);
+                        $received_qty = trim($_POST['received_qty'][$key]);
+
+                        if(!isset($order_qty) || empty($order_qty)){
+                            $order_qty = 0;
+                        }
+                        if(!isset($delivered_qty) || empty($delivered_qty)){
+                            $delivered_qty = 0;
+                        }
+                        if(!isset($received_qty) || empty($received_qty)){
+                            $received_qty = 0;
+                        }
+
+
+                        //echo "ord ".$order_qty." delv ".$delivered_qty." rec ".$received_qty;die;
+                        if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
+                            if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
+                                $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
+                            }
+                            else{
+                                $transferLine = new TransferLine();
+                                $transferLine->transfer_id = $model->id;
+                                $transferLine->base_product_id = $_POST['base_product_id'][$key];
+                                $transferLine->created_at = date("y-m-d H:i:s");
+
+                            }
+
+                            $transferLine->order_qty = $order_qty;
+                            $transferLine->delivered_qty = $delivered_qty;
+                            $transferLine->received_qty = $received_qty;
+
+                            $transferLine->save();
+                        }
+                        else{
+                            if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
+                                $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
+                                $transferLine->deleteByPk($transferLine->id);
+                            }
+
+                        }
+                    }
+                    $transaction->commit();
+                    $this->redirect(array('admin','w_id'=>$model->dest_warehouse_id));
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Transfer order Update failed.');
+                }
+            }catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+                throw $e;
+            }
+        }
+
+
+        $this->render('update',array(
+            'model'=>$model,
+            'transferLines'=> $transferLines,
+            'dataProvider'=>$dataProvider,
+            'otherItems'=> $otherItems,
+            'w_id' => $_GET['w_id'],
+            'update'=>true,
+        ));
+    }
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
@@ -147,13 +276,32 @@ class TransferHeaderController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new TransferHeader('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['TransferHeader']))
-			$model->attributes=$_GET['TransferHeader'];
+	    //echo "<pre>";
+        //print_r($_GET);die;
+		$transferIn=new TransferHeader('search');
+        $transferOut=new TransferHeader('search');
+
+        $transferIn->unsetAttributes();  // clear any default values
+        $transferOut->unsetAttributes();
+        $w_id = $_GET['w_id'];
+        $transferIn->dest_warehouse_id = $w_id;
+        $transferOut->source_warehouse_id = $w_id;
+        if(isset($_GET['TransferIn'])) {
+            $transferIn->attributes = $_GET['TransferIn'];
+        }
+        if(isset($_GET['TransferOut'])) {
+            $transferOut->attributes = $_GET['TransferOut'];
+        }
+        $transferInDataProvider=$transferIn->searchNew();
+
+        $transferOutDataProvider=$transferOut->searchNew();
 
 		$this->render('admin',array(
-			'model'=>$model,
+			'transferInDataProvider'=>$transferInDataProvider,
+            'transferIn'=> $transferIn,
+            'transferOutDataProvider'=> $transferOutDataProvider,
+            'transferOut'=>$transferOut,
+            'w_id' => $w_id,
 		));
 	}
 

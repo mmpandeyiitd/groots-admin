@@ -1118,7 +1118,10 @@ Sales: +91-11-3958-9895</span>
  //print("<pre>");
 //die("here");
         $model = new OrderHeader('search');
-        
+        $w_id='';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);
@@ -1126,7 +1129,9 @@ Sales: +91-11-3958-9895</span>
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['OrderHeader']))
             $model->attributes = $_GET['OrderHeader'];
-        //echo "eeeee";die;
+        if(isset($w_id) and $w_id>0){
+            $model->warehouse_id = $w_id;
+        }
         if (isset($_POST['cancelbutton'])) {
             if (isset($_POST['selectedIds'])) {
                 $no_of_selectedIds = count($_POST['selectedIds']);

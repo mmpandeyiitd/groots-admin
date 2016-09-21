@@ -11,6 +11,7 @@
 class PurchaseLine extends CActiveRecord
 {
     public $title='';
+    public $delivered_qty='';
 
     /**
      * @return string the associated database table name
@@ -42,7 +43,9 @@ class PurchaseLine extends CActiveRecord
         // class name for the relations automatically generated below.
         return array(
             'PurchaseHeader' => array(self::BELONGS_TO,  'PurchaseHeader', 'purchase_id'),
+            'BaseProduct' => array(self::BELONGS_TO,  'BaseProduct', 'base_product_id'),
         );
+
     }
 
     /**
@@ -75,6 +78,21 @@ class PurchaseLine extends CActiveRecord
         ));
     }
 
+    public static function getPurchaseSumByDate($w_id, $date){
+
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT ol.base_product_id as id, SUM(ol.received_qty) as qty, bp.pack_size, bp.pack_unit  FROM `purchase_line` ol join purchase_header oh on oh.id=ol.purchase_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status != 'Cancelled' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        $orderLines = array();
+        foreach ($result as $item){
+            $orderLines[$item['id']] = Utility::convertOrderToKg($item['qty'], $item['pack_size'], $item['pack_unit']);
+        }
+
+        return $orderLines;
+    }
+
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -87,6 +105,10 @@ class PurchaseLine extends CActiveRecord
 
     public function getTitle(){
         return $this->title;
+    }
+
+    public function getDeliveredQty(){
+        return $this->delivered_qty;
     }
 
 }
