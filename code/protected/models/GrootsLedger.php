@@ -239,13 +239,14 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', r.name AS 'Client Name', TRUNCATE(SUM(ol.unit_price *ol.delivered_qty),2) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', r.name AS 'Client Name', TRUNCATE((SUM(bp.pack_size_in_gm *ol.product_qty))/1000,2) AS 'Total Ordered Quantity(Kg)', TRUNCATE((SUM(bp.pack_size_in_gm *ol.delivered_qty))/1000,2) AS 'Total Delivered Quantity(Kg)',  TRUNCATE(SUM(ol.unit_price *ol.delivered_qty),2) AS 'Total Amount'
 				FROM `order_header` oh
 			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id` 
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
+			   JOIN  cb_dev_groots.base_product bp on bp.id=ol.base_product_id
 				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
 				GROUP BY oh.`user_id` ";
-echo  $sqlchksubsid;die;
+//echo  $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
      try {
         $command = $connection->createCommand($sqlchksubsid);

@@ -116,8 +116,6 @@ ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNI
 
 alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
 
--------------------------------------------------------------
-
 alter table cb_dev_groots.retailer add column initial_payable_amount decimal(10,2) DEFAULT NULL, add COLUMN total_payable_amount decimal(10,2) DEFAULT NULL;
 
 CREATE TABLE groots_orders.`retailer_payments` (
@@ -136,6 +134,33 @@ CREATE TABLE groots_orders.`retailer_payments` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT NULL DEFAULT 1;
+
+-------------------------------------------------------------
+
+alter table cb_dev_groots.base_product ADD COLUMN pack_size_in_gm float DEFAULT 0 AFTER pack_unit;
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='gm';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='g';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='kg';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='dozen';
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

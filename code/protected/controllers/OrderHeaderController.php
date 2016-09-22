@@ -1883,6 +1883,12 @@ Sales: +91-11-3958-9895</span>
         //echo $file_path;die;
         $dir = dirname(__FILE__) . '/../../../../dump/';
         $zipName = $dir.$archive_file_name;
+
+        $files = glob($dir."*"); // get all file names
+        foreach($files as $file){ // iterate files
+            if(is_file($file))
+                unlink($file); // delete file
+        }
         $zip = new ZipArchive();
         //create the file and throw the error if unsuccessful
         if ($zip->open($zipName, ZIPARCHIVE::CREATE )!==TRUE) {
@@ -1902,6 +1908,7 @@ Sales: +91-11-3958-9895</span>
         }
         $zip->close();
 
+
         //then send the headers to force download the zip file
         header("Content-type: application/zip");
         header("Content-Disposition: attachment; filename=$archive_file_name");
@@ -1909,6 +1916,8 @@ Sales: +91-11-3958-9895</span>
         header("Pragma: no-cache");
         header("Expires: 0");
         readfile($zipName);
+
+
         exit;
         //var_dump($zipName);
     }
