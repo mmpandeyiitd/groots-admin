@@ -18,7 +18,7 @@ class OrderHeaderController extends Controller {
         );
     }
 
-    protected function beforeAction() {
+    protected function beforeAction($action) {
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
@@ -1821,7 +1821,7 @@ Sales: +91-11-3958-9895</span>
         else{
             $title = "Invoice Order Groots Admin Panel";
         }
-        $downloadFileName=$retailer->name." (".substr($modelOrder->delivery_date, 0, 10).").pdf";
+        $downloadFileName=$retailer->name." (".substr($modelOrder->delivery_date, 0, 10).")"." ". $modelOrder->order_id.".pdf";
 
         try
         {
@@ -1830,7 +1830,7 @@ Sales: +91-11-3958-9895</span>
 //      $html2pdf->setModeDebug();
             //  $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            //echo $zip; die("here2");
+            //echo $zip; die("here2"); 
             if($zip==true){
                 return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
             }
