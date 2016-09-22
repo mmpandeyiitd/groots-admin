@@ -11,9 +11,9 @@ return array(
 
 	// application components
 	'components'=>array(
-		'db'=>array(
+		/*'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),
+		),*/
 		// uncomment the following to use a MySQL database
 		/*
 		'db'=>array(
@@ -24,7 +24,25 @@ return array(
 			'charset' => 'utf8',
 		),
 		*/
-		'log'=>array(
+        'db'=>array(
+            'connectionString' => 'mysql:host=localhost;dbname=cb_dev_groots',
+            'emulatePrepare' => true,
+            'username' => 'root',
+            'password' => 'root',
+            'charset' => 'utf8',
+        ),
+
+
+        'secondaryDb'=>array(
+            'connectionString' => 'mysql:host=localhost;dbname=groots_orders',
+            'emulatePrepare' => true,
+            'username' => 'root',
+            'password' => 'root',
+            'charset' => 'utf8',
+            'class'=>'CDbConnection'
+        ),
+
+        'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
 				array(
@@ -46,6 +64,15 @@ return array(
             'loginUrl' => array('/user/login'), # login form path
             'returnUrl' => array('/user/profile'), # page after login
             'returnLogoutUrl' => array('/user/login'), # page after logout
+        ),
+    ),
+    'commandMap'=>array(
+        'migrate'=>array(
+            'class'=>'system.cli.commands.MigrateCommand',
+            'migrationPath'=>'application.modules.user.migrations',
+            'migrationTable'=>'tbl_migration',
+            'connectionID'=>'db',
+            'templateFile'=>'application.migrations.template',
         ),
     ),
 );

@@ -227,7 +227,7 @@ class DashboardPageController extends Controller {
         }
     }
 
-    protected function beforeAction($action) {
+    /*protected function beforeAction($action) {
 
         $session = Yii::app()->session['user_id'];
 
@@ -235,6 +235,6 @@ class DashboardPageController extends Controller {
             echo Yii::app()->controller->redirect("index.php?r=site/login");
         }
         return true;
-    }
+    }*/
 
 }

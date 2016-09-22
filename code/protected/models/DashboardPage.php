@@ -108,7 +108,7 @@ class DashboardPage extends CActiveRecord {
         if (!empty($start_date) && !empty($end_date)) {
             $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
         }
-        // echo $sql;die;
+        //echo $sql;die;
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         if ($command->execute()) {

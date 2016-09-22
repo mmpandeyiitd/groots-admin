@@ -19,6 +19,7 @@ class OrderHeaderController extends Controller {
     }
 
     protected function beforeAction() {
+        return true;
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");

@@ -216,8 +216,38 @@ class User extends CActiveRecord
 
     public function afterSave() {
         if (get_class(Yii::app())=='CWebApplication'&&Profile::$regMode==false) {
-            Yii::app()->user->updateSession();
+            //Yii::app()->user->updateSession();
+            $this->updatesession();
         }
         return parent::afterSave();
+    }
+    private function updatesession(){
+        //$user = Users::model()->get
+        $user = Users::model()->getUserInfo('admin@gogroots.com', 'admin');
+        if (isset($user['id']) && !empty($user['id'])) {
+            if (isset($user['id']) && !empty($user['id'])) {
+
+
+
+                //$this->errorCode = self::ERROR_NONE;
+                $permission_info=json_decode($user['permission_info'],true);
+
+                Yii::app()->session['last_json'] = $user['permission_info'];
+                Yii::app()->session['premission_info'] = $permission_info;
+                Yii::app()->session['checkType'] = 'Admin';
+                Yii::app()->session['checkPermission'] = '2';
+                Yii::app()->session['store_id'] = $user['id'];
+                Yii::app()->session['user_id'] = $user['id'];
+
+                Yii::app()->session['is_super_admin'] = $user['is_superadmin'];
+                Yii::app()->session['checkAccess'] = 'Admin';
+
+                Yii::app()->session['brand_id'] = $user['brand_id'];
+                Yii::app()->session['checkAccess'] = 'Admin';
+            } else {
+                //$this->errorCode = self::ERROR_USERNAME_INVALID;
+            }
+            //return !$this->errorCode;
+        }
     }
 }

@@ -5622,3 +5622,19 @@ Stack trace:
 REQUEST_URI=/index.php?r=purchaseHeader/admin
 in /home/manmohan/Projects/groots/html/admin/code/protected/controllers/PurchaseHeaderController.php (272)
 in /home/manmohan/Projects/groots/html/admin/code/index.php (17)
+2016/09/21 13:01:38 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'cb_dev_groots.tbl_migration' doesn't exist. The SQL statement executed was: SHOW FULL COLUMNS FROM `tbl_migration`.
+2016/09/21 16:36:09 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value for 'lastvisit_at'. The SQL statement executed was: ALTER TABLE `{{users}}` ADD `lastvisit_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00'.
+2016/09/21 17:29:28 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1067 Invalid default value for 'lastvisit_at'. The SQL statement executed was: ALTER TABLE `{{users}}` ADD `lastvisit_at` TIMESTAMP NOT NULL DEFAULT null.
+2016/09/21 17:31:09 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[22007]: Invalid datetime format: 1292 Incorrect datetime value: '0000-00-00 00:00:00' for column 'lastvisit_at' at row 1. The SQL statement executed was: UPDATE `{{users}}` SET create_at = FROM_UNIXTIME(createtime), lastvisit_at = IF(lastvisit,FROM_UNIXTIME(lastvisit),'0000-00-00 00:00:00').
+2016/09/22 00:16:52 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[23000]: Integrity constraint violation: 1022 Can't write; duplicate key in table '#sql-38d_2f'. The SQL statement executed was: ALTER TABLE `profiles` ADD CONSTRAINT `user_profile_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT.
+2016/09/22 00:43:36 [error] [php] require_once(/home/manmohan/Projects/groots/html/admin/code/protected/migrations/m110805_153437_installYiiUser.php): failed to open stream: No such file or directory (/home/manmohan/Projects/groots/html/admin/code/framework/cli/commands/MigrateCommand.php:428)
+Stack trace:
+#0 /home/manmohan/Projects/groots/html/admin/code/framework/cli/commands/MigrateCommand.php(145): MigrateCommand->migrateDown()
+#1 unknown(0): MigrateCommand->actionDown()
+#2 /home/manmohan/Projects/groots/html/admin/code/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#3 /home/manmohan/Projects/groots/html/admin/code/framework/console/CConsoleCommandRunner.php(71): MigrateCommand->run()
+#4 /home/manmohan/Projects/groots/html/admin/code/framework/console/CConsoleApplication.php(92): CConsoleCommandRunner->run()
+#5 /home/manmohan/Projects/groots/html/admin/code/framework/base/CApplication.php(180): CConsoleApplication->processRequest()
+#6 /home/manmohan/Projects/groots/html/admin/code/framework/yiic.php(33): CConsoleApplication->run()
+#7 /home/manmohan/Projects/groots/html/admin/code/protected/yiic.php(7): require_once()
+

@@ -80,6 +80,7 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
+	    die("site/login");
              Yii::app()->user->logout();
 		$model=new LoginForm;
 

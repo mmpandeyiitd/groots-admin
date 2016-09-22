@@ -19,7 +19,7 @@ class Users extends CActiveRecord {
      * @return string the associated database table name
      */
     public function tableName() {
-        return 'users';
+        return 'users1';
     }
 
     /**
@@ -116,11 +116,10 @@ class Users extends CActiveRecord {
     }
 
     public function getUserInfo($username, $pass) {
-
         $user_info = '';
         if (isset($username) AND isset($pass)) {
             $connection = Yii::app()->db;
-            $sql = "select * from users where email='" . $username . "' and password='" . $pass . "'";
+            $sql = "select * from users1 where email='" . $username . "' and password='" . $pass . "'";
             $command = $connection->createCommand($sql);
             $command->execute();
             foreach ($command->queryAll() as $pcm) {

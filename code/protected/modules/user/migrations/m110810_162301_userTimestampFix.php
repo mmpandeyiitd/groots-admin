@@ -20,8 +20,8 @@ class m110810_162301_userTimestampFix extends CDbMigration
         switch ($this->dbType()) {
             case "mysql":
                     $this->addColumn(Yii::app()->getModule('user')->tableUsers,'create_at',"TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
-                    $this->addColumn(Yii::app()->getModule('user')->tableUsers,'lastvisit_at',"TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00'");
-                    $this->execute("UPDATE `".Yii::app()->getModule('user')->tableUsers."` SET create_at = FROM_UNIXTIME(createtime), lastvisit_at = IF(lastvisit,FROM_UNIXTIME(lastvisit),'0000-00-00 00:00:00')");
+                    $this->addColumn(Yii::app()->getModule('user')->tableUsers,'lastvisit_at',"TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
+                    $this->execute("UPDATE `".Yii::app()->getModule('user')->tableUsers."` SET create_at = FROM_UNIXTIME(createtime), lastvisit_at = IF(lastvisit,FROM_UNIXTIME(lastvisit),CURRENT_TIMESTAMP)");
                     $this->dropColumn(Yii::app()->getModule('user')->tableUsers,'createtime');
                     $this->dropColumn(Yii::app()->getModule('user')->tableUsers,'lastvisit');
                 break;

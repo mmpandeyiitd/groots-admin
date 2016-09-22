@@ -17,6 +17,7 @@
 	  $baseUrl = Yii::app()->theme->baseUrl; 
 	  $cs = Yii::app()->getClientScript();
 	  Yii::app()->clientScript->registerCoreScript('jquery');
+    Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl . '/css/rbac.css');
 	?>
     <!-- Fav and Touch and touch icons -->
     <link rel="shortcut icon" href="<?php echo $baseUrl;?>/img/icons/favicon.ico">
@@ -39,7 +40,7 @@
 <!--         <link rel="alternate stylesheet" type="text/css" media="screen" title="style7" href="<?php echo $baseUrl;?>/css/style-red.css" /> -->
         <link rel="stylesheet" type="text/css" media="screen" title="style7" href="<?php echo $baseUrl;?>/css/checkbox-radio.css" />
         <link rel="stylesheet" href="<?php echo $baseUrl;?>/font-awesome/css/font-awesome.min.css">
-      
+
 	  <?php
 	  $cs->registerScriptFile($baseUrl.'/js/bootstrap.min.js');
 	  $cs->registerScriptFile($baseUrl.'/js/plugins/jquery.sparkline.js');
