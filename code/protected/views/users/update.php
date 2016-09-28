@@ -6,10 +6,10 @@ $this->breadcrumbs=array(
 	$model->name=>array('view','id'=>$model->id),
 	'Update',
 );
-  if (!(strstr(Yii::app()->session['premission_info']['module_info']['Users'], 'U'))|| (Yii::app()->session['premission_info']['menu_info']['users_menu_info'] != "S")) {
+  /*if (!(strstr(Yii::app()->session['premission_info']['module_info']['Users'], 'U'))|| (Yii::app()->session['premission_info']['menu_info']['users_menu_info'] != "S")) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
 ?>
 
@@ -20,8 +20,8 @@ $this->breadcrumbs=array(
 <div class="" id="yw0">
 <!--<ul class="tab_list">
     
-   <?php if(substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'R')>0) {?> <li><a href="index.php?r=users/admin">User List</a></li><?php }?>
-     <?php if (substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'C')>0) {?><li><a href="index.php?r=users/create">Create User</a></li><?php }?>
+   <?php //if(substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'R')>0) {?> <li><a href="index.php?r=users/admin">User List</a></li><?php //}?>
+     <?php //if (substr_count(Yii::app()->session['premission_info']['module_info']['Users'], 'C')>0) {?><li><a href="index.php?r=users/create">Create User</a></li><?php //}?>
 </ul>-->
 <div class="portlet-content" style="padding:20px;">
 	<?php $this->renderPartial('_form', array('model'=>$model)); ?>

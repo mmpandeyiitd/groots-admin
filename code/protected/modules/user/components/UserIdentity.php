@@ -42,6 +42,8 @@ class UserIdentity extends CUserIdentity
 			$this->_id=$user->id;
 			$this->username=$user->username;
 			$this->errorCode=self::ERROR_NONE;
+            $userAuthItems = AuthAssignment::getAllUserAuthItems($user->id);
+            Yii::app()->session['auth_items'] = implode(',', $userAuthItems);
 		}
 		return !$this->errorCode;
 	}

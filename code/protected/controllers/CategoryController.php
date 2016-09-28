@@ -19,7 +19,7 @@ class CategoryController extends Controller {
         );
     }
 
-    protected function beforeAction($action) {
+    /*protected function beforeAction($action) {
 
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
@@ -49,8 +49,11 @@ class CategoryController extends Controller {
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
         return true;
-    }
+    }*/
 
+    protected function beforeAction() {
+        return parent::beforeAction();
+    }
     /**
      * Specifies the access control rules.
      * This method is used by the 'accessControl' filter.
@@ -94,10 +97,10 @@ class CategoryController extends Controller {
         $log_db = Yii::app()->db_log;
         $model = new Category;
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
         if ($category_id == null) {
@@ -180,10 +183,10 @@ class CategoryController extends Controller {
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'U') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         if (isset($_POST['Category'])) {
             $model->attributes = $_POST['Category'];
             if ($model->save()) {
@@ -237,10 +240,10 @@ class CategoryController extends Controller {
         $baseProductModel->setAttribute('status', '=1');
         $reset = '';
         $data = '';
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'U') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['category'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         //................................................//
 

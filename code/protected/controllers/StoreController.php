@@ -90,10 +90,10 @@ class StoreController extends Controller {
      */
     public function actionCreate() {
         $model = new Store;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
         $password = '';
@@ -294,10 +294,10 @@ class StoreController extends Controller {
         // $id = Yii::app()->session['store_id'];
         $model = $this->loadModel($id);
         $status = $model->status;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'U') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
@@ -490,10 +490,10 @@ class StoreController extends Controller {
         //  $model->unsetAttributes();
         // $model->setAttribute('store_id','1');
         // $model->attributes = @$record[0];
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin != 1) {
            

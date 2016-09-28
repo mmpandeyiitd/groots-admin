@@ -8,10 +8,10 @@ $this->breadcrumbs = array(
 );
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
-$visible_action_delete = FALSE;
-if(array_key_exists('Users',Yii::app()->session['premission_info']['module_info'])){
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
+$visible_action_delete = true;
+/*if(array_key_exists('Users',Yii::app()->session['premission_info']['module_info'])){
 if (strstr(Yii::app()->session['premission_info']['module_info']['Users'], 'C')) {
     $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['Users'], 'C');
 } else {
@@ -27,7 +27,7 @@ if (strstr(Yii::app()->session['premission_info']['module_info']['Users'], 'U'))
 } else {
     $visible_action_edit = FALSE;
 }
-}
+}*/
 #.........End Visibility.....#
 $this->menu = array(
     //array('label' => 'Create Admin User', 'url' => array('create'), 'visible' => $visible_dropdownmenu),

@@ -45,7 +45,7 @@ class PurchaseHeaderController extends Controller
 		);
 	}
 
-    protected function beforeAction() {
+    /*protected function beforeAction() {
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
@@ -56,6 +56,25 @@ class PurchaseHeaderController extends Controller
         }
 
         return true;
+    }*/
+
+    protected function beforeAction() {
+        $w_id='';
+        if(parent::beforeAction()){
+            if(isset($_GET['w_id'])){
+                $w_id = $_GET['w_id'];
+            }
+            if($w_id>0 && $this->checkAccessByData('PurchaseViewer', array('warehouse_id'=>$w_id))){
+                return true;
+            }
+            elseif($this->checkAccess('SuperAdmin')){
+                return true;
+            }
+            else{
+                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                Yii::app()->controller->redirect("index.php?r=user/profile");
+            }
+        }
     }
 
 
@@ -78,7 +97,14 @@ class PurchaseHeaderController extends Controller
 	{
 	    //echo "<pre>";
 		$model=new PurchaseHeader('search');
-        $w_id = $_GET['w_id'];
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
@@ -153,6 +179,14 @@ class PurchaseHeaderController extends Controller
 	{
 	    //echo "<pre>";
 		//print_r($_POST);die;
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
         $model=$this->loadModel($id);
         $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
         list($popularItems, $otherItems) = BaseProduct::PopularItems();

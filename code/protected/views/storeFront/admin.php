@@ -30,10 +30,10 @@ if ($issuperadmin == 1) {
 
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
-$visible_action_delete = FALSE;
-if (array_key_exists('linesheet', Yii::app()->session['premission_info']['module_info'])) {
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
+$visible_action_delete = true;
+/*if (array_key_exists('linesheet', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['linesheet'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['linesheet'], 'C');
     } else {
@@ -49,7 +49,7 @@ if (array_key_exists('linesheet', Yii::app()->session['premission_info']['module
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
 #.........End Visibility.....#
 
 Yii::app()->clientScript->registerScript('search', "

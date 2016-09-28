@@ -5,15 +5,15 @@
 $this->breadcrumbs = array(
     'Categories',
 );
-$visible_action_delete = FALSE;
-if (array_key_exists('category', Yii::app()->session['premission_info']['module_info'])) {
+$visible_action_delete = TRUE;
+/*if (array_key_exists('category', Yii::app()->session['premission_info']['module_info'])) {
        
     if (strstr(Yii::app()->session['premission_info']['module_info']['category'], 'D')) {
         $visible_action_delete = strstr(Yii::app()->session['premission_info']['module_info']['category'], 'D');
     } else {
         $visible_action_delete = FALSE;
     }
-}
+}*/
 
 ?>
 

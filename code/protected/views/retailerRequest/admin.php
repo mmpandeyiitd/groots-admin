@@ -18,10 +18,10 @@ if (isset($_GET['retailer_id'])) {
 
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
-$visible_action_delete = FALSE;
-if (array_key_exists('retailerrequest', Yii::app()->session['premission_info']['module_info'])) {
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
+$visible_action_delete = true;
+/*if (array_key_exists('retailerrequest', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['retailerrequest'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['retailerrequest'], 'C');
     } else {
@@ -40,7 +40,7 @@ if (array_key_exists('retailerrequest', Yii::app()->session['premission_info']['
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
 #.........End Visibility.....#
 
 $this->breadcrumbs = array(

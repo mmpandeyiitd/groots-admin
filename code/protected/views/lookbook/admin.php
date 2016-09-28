@@ -32,10 +32,10 @@ if ($issuperadmin == 1) {
 }
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
-$visible_action_delete = FALSE;
-if (array_key_exists('lookbook', Yii::app()->session['premission_info']['module_info'])) {
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
+$visible_action_delete = true;
+/*if (array_key_exists('lookbook', Yii::app()->session['premission_info']['module_info'])) {
     
     if (strstr(Yii::app()->session['premission_info']['module_info']['lookbook'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['lookbook'], 'C');
@@ -55,7 +55,7 @@ if (array_key_exists('lookbook', Yii::app()->session['premission_info']['module_
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
 #.........End Visibility.....#
 
 $this->menu = array(

@@ -1,84 +1,141 @@
 <?php /* @var $this Controller */
 $store_id = Yii::app()->session['brand_admin_id'];
+$userAuthItemArr = Utility::getUserAuthItemsArrFromSession();
+$meunAuthItemMap = array(
+    'report'=>array('SuperAdmin'),
+    'collection' => array('SuperAdmin'),
+    'buyer' => array('SuperAdmin'),
+    'category' => array('SuperAdmin'),
+    'product' => array('SuperAdmin'),
+    'order' => array('SuperAdmin'),
+    'dashboard' => array('SuperAdmin'),
+    'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer'),
+    'warehouseOrder' => array('OrderViewer'),
+    'warehouseInventory' => array('InventoryViewer'),
+    'warehouseTransfer' => array('TransferViewer'),
+    'warehousePurchase' => array('PurchaseViewer'),
+);
+$isReportVisible = isMenuVisible($meunAuthItemMap['report']);
+$isCollectionVisible = isMenuVisible($meunAuthItemMap['collection']);
+$isBuyerVisible = isMenuVisible($meunAuthItemMap['buyer']);
+$isCategoryVisible = isMenuVisible($meunAuthItemMap['category']);
+$isProductVisible = isMenuVisible($meunAuthItemMap['product']);
+$isOrderVisible = isMenuVisible($meunAuthItemMap['order']);
+$isDashboardVisible = isMenuVisible($meunAuthItemMap['dashboard']);
+//$isWarehouseVisible = isMenuVisible($meunAuthItemMap['warehouse'], array('warehouse_id'=>1));
+//$isReportVisible = true;
+//var_dump($this->context);die("here");
+//die("123");
+function isMenuVisible($authItemArr, $data=null){
+    foreach ($authItemArr as $item){
+        $access = Yii::app()->user->checkAccess($item, $data, false);
+        //echo $access; die;
+        if($access){
+            return true;
+        }
+    }
+    return false;
+}
+
 $logoutArr = array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?'));
 $loginArr = array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => ""));
-$reportArr = array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
-$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
-$buyerArr = array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['retailers_menu_info'] == "S" ? true : false));
-$categoryArr = array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['category_menu_info'] == "S" ? true : false));
-$productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['baseproduct_menu_info'] == "S" ? true : false));
-$regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['brand_menu_info'] == "S" ? true : false));
-$orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => (@Yii::app()->session['premission_info']['menu_info']['orderinfo_menu_info'] == "S" ? true : false));
-$dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => true);
+$reportArr = array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => $isReportVisible);
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => $isCollectionVisible);
+$buyerArr = array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' =>$isBuyerVisible);
+$categoryArr = array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => $isCategoryVisible);
+$productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => $isProductVisible);
+$regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => false);
+$orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => $isOrderVisible);
+$dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => $isDashboardVisible);
 
-function generateOrderMenu($id){
-    $orderArr = array('label' => '<i ></i> Order', 'url' => array('/orderHeader/admin&w_id='.$id), 'visible' => true);
-    return $orderArr;
-}
-function generateInventoryMenu($id){
-    $inventoryArr = array('label' => '<i ></i> Inventory', 'url' => array('/inventory/admin&w_id='.$id), 'visible' => true);
-    return $inventoryArr;
-}
-function generatePurchaseMenu($id){
-    $purchaseArr = array('label' => '<i ></i> Purchase', 'url' => array('/purchaseHeader/admin&w_id='.$id), 'visible' => true);
-    return $purchaseArr;
-}
-function generateTransferMenu($id){
-    $transferArr = array('label' => '<i ></i> Transfer', 'url' => array('/transferHeader/admin&w_id='.$id), 'visible' => true);
-    return $transferArr;
+function generateOrderMenu($id, $meunAuthItemMap){
+    if(isMenuVisible($meunAuthItemMap['warehouseOrder'], array('warehouse_id'=>$id))){
+        return array('label' => '<i ></i> Order', 'url' => array('/orderHeader/admin&w_id='.$id), 'visible' => true);
+    }
+    else{
+        return array();
+    }
 }
 
-
-
-$warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
-$warehouseMenuArr = array();
-foreach ($warehouses as $warehouse){
-    $id = $warehouse->id;
-    $m = array('label' => '<i ></i> '.$warehouse->name, 'url' => '#', 'visible' => true, 'items'=> array(
-        generateOrderMenu($id),generateInventoryMenu($id),generateTransferMenu($id),generatePurchaseMenu($id)
-    ),
-        //'htmlOptions' => array('class' => 'dropdown-submenu'),
-    );
-    array_push($warehouseMenuArr, $m);
+function generateInventoryMenu($id, $meunAuthItemMap){
+    if(isMenuVisible($meunAuthItemMap['warehouseInventory'], array('warehouse_id'=>$id))){
+        return array('label' => '<i ></i> Inventory', 'url' => array('/inventory/admin&w_id='.$id), 'visible' => true);
+    }
+    else{
+        return array();
+    }
 }
 
-$warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' => true,
-    'items'=> $warehouseMenuArr,
+function generatePurchaseMenu($id, $meunAuthItemMap){
+    if(isMenuVisible($meunAuthItemMap['warehousePurchase'], array('warehouse_id'=>$id))){
+        return  array('label' => '<i ></i> Purchase', 'url' => array('/purchaseHeader/admin&w_id='.$id), 'visible' => true);
+    }
+    else{
+        return array();
+    }
+}
+
+function generateTransferMenu($id, $meunAuthItemMap){
+    if(isMenuVisible($meunAuthItemMap['warehouseTransfer'], array('warehouse_id'=>$id))){
+        return array('label' => '<i ></i> Transfer', 'url' => array('/transferHeader/admin&w_id='.$id), 'visible' => true);
+    }
+    else{
+        return array();
+    }
+}
+
+
+function generateWarehouseItems($w_id, $meunAuthItemMap){
+    $warehouseItems = array();
+    $orderItem = generateOrderMenu($w_id, $meunAuthItemMap);
+    if(sizeof($orderItem) > 0){
+        array_push($warehouseItems, $orderItem);
+    }
+    $invItem = generateInventoryMenu($w_id, $meunAuthItemMap);
+    if(sizeof($invItem) > 0){
+        array_push($warehouseItems, $invItem);
+    }
+    $purchaseItem = generatePurchaseMenu($w_id, $meunAuthItemMap);
+    if(sizeof($purchaseItem) > 0){
+        array_push($warehouseItems, $purchaseItem);
+    }
+    $transferItem = generateTransferMenu($w_id, $meunAuthItemMap);
+    if(sizeof($transferItem) > 0){
+        array_push($warehouseItems, $transferItem);
+    }
+    return $warehouseItems;
+}
+
+
+
+$warehouses = generateWarehouses($meunAuthItemMap);
+$isWarehouseVisible = sizeof($warehouses)>0 ? true : false;
+$warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' => $isWarehouseVisible,
+    'items'=> $warehouses,
     'itemCssClass' => 'ex1',
     //'htmlOptions' => array('class' => 'dropdown-submenu'),
     //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
 
 );
 
+function generateWarehouses($meunAuthItemMap){
+    $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
+    $warehouseMenuArr = array();
+    foreach ($warehouses as $warehouse){
+        $id = $warehouse->id;
+        $warehouseItems = generateWarehouseItems($id, $meunAuthItemMap);
+        $isThisWarehouseVisible = sizeof($warehouseItems)>0 ? true : false;
+        if($isThisWarehouseVisible){
+            $m = array('label' => '<i ></i> '.$warehouse->name, 'url' => '#', 'visible' => $isThisWarehouseVisible, 'items'=> $warehouseItems,
+                //'htmlOptions' => array('class' => 'dropdown-submenu'),
+            );
+            array_push($warehouseMenuArr, $m);
+        }
 
+    }
+    return $warehouseMenuArr;
+}
 
-/*$warehouse1Arr = array('label' => '<i class="fa fa-dashboard"></i> Sector 5', 'url' => array('#'), 'visible' => true, 'items'=> array(
-    $warehouseOrderArr,$inventoryArr,$transferArr,$purchaseArr
-),
-    'itemOptions'=>array('class'=>'dropdown'),
-    'linkOptions'=> array(
-        'class' => 'dropdown-toggle',
-        'data-toggle' => 'dropdown',
-    ),
-    'itemCssClass' => 'item-test',
-    'encodeLabel' => false,
-    'htmlOptions' => array('class' => 'nav navbar-nav'),
-);
-$warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'url' => array('#'), 'visible' => true,
-                    'items'=> array(
-                        $warehouse1Arr,
-                    ),
-                    'itemOptions'=>array('class'=>'dropdown'),
-                    'linkOptions'=> array(
-                        'class' => 'dropdown-toggle',
-                        'data-toggle' => 'dropdown',
-                    ),
-                    'submenuHtmlOptions' => array('class' => 'dropdown-menu'),
-    'htmlOptions' => array('class' => 'nav navbar-nav'),
-    'submenuHtmlOptions' => array('class' => 'dropdown-menu'),
-    'itemCssClass' => 'item-test',
-    'encodeLabel' => false,
-);*/
 
 ?>
 <?php $this->beginContent('//layouts/main'); ?>
@@ -106,7 +163,7 @@ $warehouseArr = array('label' => '<i class="fa fa-dashboard"></i> Warehouse', 'u
                     $dashboardArr,
                     $orderArr,
                     $warehouseArr,
-                    $regOffArray,
+                    //$regOffArray,
                     $productArr,
                     $categoryArr,
                     $buyerArr,

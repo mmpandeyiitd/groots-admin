@@ -179,7 +179,7 @@ CREATE TABLE cb_dev_groots.`vendors` (
   `store_size` int(10) DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT '1',
   `credit_limit` int(155) DEFAULT NULL,
-  `created_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_date` DATETIME NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `min_order_price` float DEFAULT NULL,
   `shipping_charge` float DEFAULT NULL,
@@ -359,4 +359,23 @@ ALTER TABLE groots_orders.inventory_header ADD UNIQUE KEY `uk_inv_hd_1` (warehou
 
 #alter table groots_orders.inventory_history add column transferIn decimal(10,2) DEFAULT NULL, add column transferOut decimal(10,2) DEFAULT NULL, add column order decimal(10,2) DEFAULT NULL, add column purchase decimal(10,2) DEFAULT NULL
 
+#populate inventory one time
+
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join inventory_header ih on ih.base_product_id=bp.base_product_id;
+
+rename table cb_dev_groots.users to cb_dev_groots.users1;
+update cb_dev_groots.users set email="admin@gogroots.com" where username='admin';
+
+#create auth items from rbac panels
+insert into users values (null, "warehouseEditor", md5("w@123"), "w@abc.com","", 0, 1, now(), now()), (null, "procurementEditor", md5("p@123"), "p@abc.com","", 0, 1, now(), now()), (null, "inventoryEditor", md5("w@123"), "i@abc.com","", 0, 1, now(), now()), (null, "transferEditor", md5("w@123"), "t@abc.com","", 0, 1, now(), now()), (null, "orderEditor", md5("w@123"), "o@abc.com","", 0, 1, now(), now()), (null, "purchaseEditor", md5("w@123"), "ps@abc.com","", 0, 1, now(), now()), (null, "orderViewer", md5("w@123"), "ov@abc.com","", 0, 1, now(), now()), (null, "inventoryViewer", md5("w@123"), "iv@abc.com","", 0, 1, now(), now());
+
+insert into users values (null, "transferViewer", md5("w@123"), "tv@abc.com","", 0, 1, now(), now()), (null, "purchaseViewer", md5("w@123"), "pv@abc.com","", 0, 1, now(), now());
+insert into profiles select id, username, username from users;
+
+insert into AuthAssignment(itemname, userid) values ('WarehouseEditor', 10), ('ProcurementEditor', 11), ('InventoryEditor', 12), ('OrderEditor',14), ('TransferEditor', 13), ('PurchaseEditor', 15), ('InventoryViewer', 17), ('OrderViewer', 16) ;
+
+insert into AuthAssignment(itemname, userid, bizrule) values ('TransferViewer', 18, "return $params['warehouse_id']==1;"), ('PurchaseViewer', 19, "return $params['warehouse_id']==1;") ;
+
+update AuthAssignment set bizrule="return $params['warehouse_id']==1;" where userid in (10,12,13,14,15,16,17);
+
+insert into profiles select id,username, username from users where id>1;

@@ -56,13 +56,14 @@ if (!empty($category_id)) {
 $visible_dropdownmenu = FALSE;
 $visible_action_edit = FALSE;
 $visible_action_delete = FALSE;
-if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
+/*if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C');
     } else {
         $visible_dropdownmenu = FALSE;
     }
-}
+}*/
+$visible_dropdownmenu = true;
 #.........End Visibility.....#
 ?>
 

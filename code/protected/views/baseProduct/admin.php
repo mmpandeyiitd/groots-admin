@@ -42,7 +42,7 @@ $store_name = Yii::app()->session['store_name'];
 $visible_dropdownmenu = FALSE;
 $visible_action_edit = FALSE;
 $visible_action_delete = FALSE;
-if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
+/*if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C');
     } else {
@@ -54,7 +54,10 @@ if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['modu
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
+
+$visible_dropdownmenu = TRUE;
+$visible_action_edit = TRUE;
 
 #.........End Visibility.....#
 

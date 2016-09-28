@@ -70,10 +70,10 @@ class RetailerProductQuotationController extends Controller {
     public function actionCreate() {
         //echo $_REQUEST);die;
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
 
         $model = new RetailerProductQuotation;
@@ -141,14 +141,14 @@ class RetailerProductQuotationController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-         if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'U') == 0) {
+         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
         if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
        
         $model = new RetailerProductQuotation;
         $ret_data = $model->updatedatalist($_REQUEST['id'], $_REQUEST['retailer_id']);
@@ -268,10 +268,10 @@ class RetailerProductQuotationController extends Controller {
      */
     public function actionAdmin() {
        //  print_r($_POST);die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['retailerProductQuotation'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         
         // echo '<pre>';print_r($_POST);die;
         

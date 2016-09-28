@@ -99,10 +99,10 @@ class BaseProductController extends Controller {
         // echo '<pre>';print_r($_POST);die;
 
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         set_time_limit(0);
         $model = new BaseProduct;
@@ -493,10 +493,10 @@ class BaseProductController extends Controller {
      */
     public function actionUpdate($id) {
         //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         set_time_limit(0);
         $getrecord = new ProductCategoryMapping();
@@ -1095,10 +1095,10 @@ class BaseProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         $model = new BaseProduct();
         $model_grid = new ProductGridview('search');
@@ -1206,10 +1206,10 @@ class BaseProductController extends Controller {
     }
 
     public function actionBulkUpload() {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         set_time_limit(0);
         $logfile = '';
         $baseid = '';
@@ -1897,10 +1897,10 @@ class BaseProductController extends Controller {
 
     public function actionMedia() {
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
 
         $oldfilename = '';
         if (isset($_FILES["media_zip_file"]["name"])) {
@@ -2226,10 +2226,10 @@ class BaseProductController extends Controller {
 
     public function actionConfigurablegrid() {
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         $category_obj = new Category();
         $cat_base_product_ids = null;
         $category_id = isset($_GET['category_id']) ? $_GET['category_id'] : null;
@@ -2260,10 +2260,10 @@ class BaseProductController extends Controller {
 
     public function actionCreateconfigurable($id = null, $category_id = null) {
 
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         if (!empty($id)) {
 
             $cat_base_product_ids = '';
@@ -2322,10 +2322,10 @@ class BaseProductController extends Controller {
     }
 
     public function actionconfigurable_group($id = null) {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         if (!empty($id)) {
             if (isset($_GET['category_id'])) {
                 $category_id = $_GET['category_id'];
@@ -2416,10 +2416,10 @@ class BaseProductController extends Controller {
     }
 
     public function actionaddedstyle($id = null) {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         if (!empty($id)) {
             if (isset($_GET['category_id'])) {
                 $category_id = $_GET['category_id'];

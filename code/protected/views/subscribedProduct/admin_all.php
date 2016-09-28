@@ -5,10 +5,10 @@ $this->breadcrumbs = array(
     'Product' => array('listallproduct', 'store_id' => $store_id),);
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
 $visible_action_delete = FALSE;
-if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
+/*if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C')) {
         $visible_dropdownmenu = strstr(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C');
     } else {
@@ -20,7 +20,7 @@ if (array_key_exists('baseproduct', Yii::app()->session['premission_info']['modu
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
 
 #.........End Visibility.....#
 

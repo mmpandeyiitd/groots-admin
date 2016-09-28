@@ -5,9 +5,9 @@ $this->breadcrumbs = array(
 );
 
 #......Menu & Action Visibility.....#
-$visible_dropdownmenu = FALSE;
-$visible_action_edit = FALSE;
-if (array_key_exists('brand', Yii::app()->session['premission_info']['module_info'])) {
+$visible_dropdownmenu = true;
+$visible_action_edit = true;
+/*if (array_key_exists('brand', Yii::app()->session['premission_info']['module_info'])) {
     if (strstr(Yii::app()->session['premission_info']['module_info']['brand'], 'C')) {
         $visible_dropdownmenu = TRUE;
     } else {
@@ -19,7 +19,7 @@ if (array_key_exists('brand', Yii::app()->session['premission_info']['module_inf
     } else {
         $visible_action_edit = FALSE;
     }
-}
+}*/
 #.........End Visibility.....#
 
 

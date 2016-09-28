@@ -180,7 +180,6 @@ class DashboardPageController extends Controller {
             }
         }
        
-        //}
         $this->render('index', array(
             'model' => $model,
             'start_date' => $start_date,
@@ -237,4 +236,17 @@ class DashboardPageController extends Controller {
         return true;
     }*/
 
+    protected function beforeAction() {
+        if(parent::beforeAction()){
+            if($this->checkAccess('SuperAdmin')){
+                //die("here0");
+                return true;
+            }
+            else{
+                //die("here1");
+                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                Yii::app()->controller->redirect("index.php?r=user/profile");
+            }
+        }
+    }
 }

@@ -136,9 +136,9 @@ if ($issuperadmin == 1) {
     <div class="row buttons" >
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
          <?php
-    if (!$model->isNewRecord && substr_count(Yii::app()->session['premission_info']['module_info']['photogallery'], 'D') > 0) {
+    //if (!$model->isNewRecord && substr_count(Yii::app()->session['premission_info']['module_info']['photogallery'], 'D') > 0) {
         echo CHtml::submitButton('Delete', array('confirm' => 'Are you sure you want to Delete?'));
-    }
+    //}
     ?>
     </div>
 

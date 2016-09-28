@@ -278,12 +278,12 @@ class Retailer extends CActiveRecord {
     }
 
     public function gettotal_retailersForindex($start_date, $end_date) {
-        $adminid = Yii::app()->session['brand_id'];
-        $issuperadmin = Yii::app()->session['is_super_admin'];
+        //$adminid = Yii::app()->session['brand_id'];
+        //$issuperadmin = Yii::app()->session['is_super_admin'];
         $row = 0;
         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
         $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
-        if ($issuperadmin == 1) {
+        //if ($issuperadmin == 1) {
             $sql = "select count(id) from retailer where 1=1";
             if (!empty($start_date) && !empty($end_date)) {
                 $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
@@ -292,10 +292,10 @@ class Retailer extends CActiveRecord {
             $command = $connection->createCommand($sql);
             $command->execute();
             $row = $command->queryScalar();
-        } else {
+        /*} else {
             $row = $this->getMappedretailersByBrandAdmin($adminid);
             $row = count($row);
-        }
+        }*/
         return $row;
     }
 

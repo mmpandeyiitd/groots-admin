@@ -65,8 +65,16 @@ class InventoryController extends Controller
 	    //echo "<pre>";
 		//print_r($_POST);die;
         //$model=new Inventory('search');
+
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('InventoryEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=inventory/admin&w_id=".$w_id);
+        }
         $inv_header = new InventoryHeader('search');
-        $w_id= $_GET['w_id'];
         $date = date('Y-m-d');
         //$date = "2016-09-15";
         $inv_header->date = $date;
@@ -150,6 +158,14 @@ class InventoryController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('InventoryEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=inventory/admin&w_id=".$w_id);
+        }
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -317,5 +333,24 @@ class InventoryController extends Controller
 
     public function getQuantities(){
 
+    }
+
+    protected function beforeAction() {
+        $w_id='';
+        if(parent::beforeAction()){
+            if(isset($_GET['w_id'])){
+                $w_id = $_GET['w_id'];
+            }
+            if($w_id>0 && $this->checkAccessByData('InventoryViewer', array('warehouse_id'=>$w_id))){
+                return true;
+            }
+            elseif($this->checkAccess('SuperAdmin')){
+                return true;
+            }
+            else{
+                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                Yii::app()->controller->redirect("index.php?r=user/profile");
+            }
+        }
     }
 }

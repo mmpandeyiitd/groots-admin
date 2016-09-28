@@ -86,5 +86,14 @@ class AuthAssignment extends CActiveRecord
 		);
 	}
 
+    public static function getAllUserAuthItems($userid)
+    {
+        $authAssignments = AuthAssignment::model()->findAllByAttributes(array('userid'=>$userid), array('select'=>'itemname'));
+        $itemArr = array();
+        foreach ($authAssignments as $authAssignment ){
+            array_push($itemArr, $authAssignment->itemname);
+        }
+        return $itemArr;
+    }
 	
 }

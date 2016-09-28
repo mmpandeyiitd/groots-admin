@@ -48,4 +48,9 @@ class LoginController extends Controller
 
 		return $user->lastvisit_at != '0000-00-00 00:00:00';
 	}
+
+	/*private function getReturnUrl(){
+	    $authItemArr = Utility::getUserAuthItemsArrFromSession();
+
+    }*/
 }

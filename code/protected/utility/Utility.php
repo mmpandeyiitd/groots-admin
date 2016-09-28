@@ -83,4 +83,18 @@ class Utility
     public static function converOrderToUnit(){
 
     }
+
+    public static function loginCheck($controller){
+        if($controller->checkAccess('registered')){
+            return true;
+        }
+        else{
+            Yii::app()->controller->redirect("index.php?r=user/login");
+        }
+    }
+
+    public static function getUserAuthItemsArrFromSession(){
+        $authItems = Yii::app()->session['auth_items'];
+        return explode(',', $authItems);
+    }
 }

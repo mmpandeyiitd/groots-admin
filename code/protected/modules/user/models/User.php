@@ -217,11 +217,11 @@ class User extends CActiveRecord
     public function afterSave() {
         if (get_class(Yii::app())=='CWebApplication'&&Profile::$regMode==false) {
             //Yii::app()->user->updateSession();
-            $this->updatesession();
+            //$this->updatesession();
         }
         return parent::afterSave();
     }
-    private function updatesession(){
+    /*private function updatesession(){
         //$user = Users::model()->get
         $user = Users::model()->getUserInfo('admin@gogroots.com', 'admin');
         if (isset($user['id']) && !empty($user['id'])) {
@@ -249,5 +249,5 @@ class User extends CActiveRecord
             }
             //return !$this->errorCode;
         }
-    }
+    }*/
 }

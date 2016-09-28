@@ -6,9 +6,9 @@ $this->breadcrumbs = array(
 );
 
 #....Start Session clear for Brand admin...#
-if (Yii::app()->session['brand_admin_id']) {
+/*if (Yii::app()->session['brand_admin_id']) {
     unset(Yii::app()->session['brand_admin_id']);
-}
+}*/
 #....End Session clear for Brand admin...#
 ?>
 <?php if (Yii::app()->user->hasFlash('error')): ?><div class="errorSummary" style="color: "><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>

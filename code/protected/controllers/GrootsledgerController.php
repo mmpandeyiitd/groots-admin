@@ -462,7 +462,7 @@ class GrootsledgerController extends Controller
 		}
 	}
 
-    protected function beforeAction() {
+    /*protected function beforeAction() {
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
@@ -473,5 +473,8 @@ class GrootsledgerController extends Controller
         }
 
         return true;
+    }*/
+    protected function beforeAction() {
+        return parent::beforeAction();
     }
 }

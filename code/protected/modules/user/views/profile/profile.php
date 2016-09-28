@@ -5,8 +5,7 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	((UserModule::isAdmin())
 		?array('label'=>UserModule::t('Manage Users'), 'url'=>array('/user/admin'))
-		:array()),
-    array('label'=>UserModule::t('List User'), 'url'=>array('/user')),
+		:array('label'=>'', 'url'=>array(''))),
     array('label'=>UserModule::t('Edit'), 'url'=>array('edit')),
     array('label'=>UserModule::t('Change password'), 'url'=>array('changepassword')),
     array('label'=>UserModule::t('Logout'), 'url'=>array('/user/logout')),
@@ -23,7 +22,7 @@ $this->menu=array(
 		<th class="label"><?php echo CHtml::encode($model->getAttributeLabel('username')); ?></th>
 	    <td><?php echo CHtml::encode($model->username); ?></td>
 	</tr>
-	<?php 
+	<?php
 		$profileFields=ProfileField::model()->forOwner()->sort()->findAll();
 		if ($profileFields) {
 			foreach($profileFields as $field) {

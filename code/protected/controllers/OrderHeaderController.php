@@ -18,8 +18,7 @@ class OrderHeaderController extends Controller {
         );
     }
 
-    protected function beforeAction() {
-        return true;
+    /*protected function beforeAction() {
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
@@ -30,6 +29,24 @@ class OrderHeaderController extends Controller {
         }
 
         return true;
+    }*/
+    protected function beforeAction() {
+        $w_id='';
+        if(parent::beforeAction()){
+            if(isset($_GET['w_id'])){
+                $w_id = $_GET['w_id'];
+            }
+            if($w_id>0 && $this->checkAccessByData('OrderViewer', array('warehouse_id'=>$w_id))){
+                return true;
+            }
+            elseif($this->checkAccess('SuperAdmin')){
+                return true;
+            }
+            else{
+                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                Yii::app()->controller->redirect("index.php?r=user/profile");
+            }
+        }
     }
 
     /**
@@ -74,6 +91,14 @@ class OrderHeaderController extends Controller {
     public function actionCreate()
     {
         //print("<pre>");
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('OrderEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin&w_id=".$w_id);
+        }
         $model = new OrderHeader;
         $retailerProducts = '';
         $retailerId = '';
@@ -187,6 +212,14 @@ class OrderHeaderController extends Controller {
     public  function  actionUpdate($id){
 //print("<pre>");
 //        print_r($_POST);die;
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('OrderEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin&w_id=".$w_id);
+        }
         $retailerProducts = '';
         $retailerId = '';
         $retailer = '';
@@ -1116,6 +1149,9 @@ Sales: +91-11-3958-9895</span>
      * Manages all models.
      */
     public function actionAdmin() {
+        if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>1))){
+       }
+
  //print("<pre>");
 //die("here");
         $model = new OrderHeader('search');
@@ -1123,6 +1159,8 @@ Sales: +91-11-3958-9895</span>
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
+
+
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);
@@ -1756,7 +1794,7 @@ Sales: +91-11-3958-9895</span>
               $model->setAttribute('status', $_REQUEST['status']); 
               Yii::app()->session['sttus_sess'] = "";
            }
-         
+
         $this->render('admin', array(
             'model' => $model,
         ));

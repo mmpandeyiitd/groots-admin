@@ -32,12 +32,28 @@ class Controller extends CController
                 'accessDeniedUrl'=>'/user/login',// used if User is logged in
                 'loginUrl'=>'/user/login'// used if User is NOT logged in
             ),
+            'accessComponent'=>array(
+                'class'=>'application.modules.rbac.components.RBACAccessVerifier',
+                // optional default settings
+                'checkDefaultIndex'=>'id', 			// used from buisness Rule if no Index given
+                'allowCaching'=>false,				// cache RBAC Tree ### D-O--N-O-T--E-N-A-B-L-E ### while development ;)
+                'accessDeniedUrl'=>'/user/login',	// used if User is logged in
+                'loginUrl'=>'/user/login'			// used if User is NOT logged in
+            ),
         );
     }
 
     public function beforeRender( $view ) {
         Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . '/js/jquery-listnav.min.js');
         Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl . '/css/listnav.css');
+        return true;
+    }
+
+    protected function beforeAction() {
+        $action = $this->action->id;
+        if($action!=="login"){
+            return Utility::loginCheck($this);
+        }
         return true;
     }
 }

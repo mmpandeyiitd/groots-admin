@@ -58,10 +58,10 @@ class SubscribedProductController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         $model = new SubscribedProduct;
 
         // Uncomment the following line if AJAX validation is needed
@@ -85,10 +85,10 @@ class SubscribedProductController extends Controller {
      */
     public function actionUpdate($id) {
         //echo '<pre>'; print_r($_POST);die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'U') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -105,10 +105,10 @@ class SubscribedProductController extends Controller {
     }
 
     public function actionmappedProduct() {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         //$model=$this->loadModel($id);
         $effective_price = '';
 
@@ -209,10 +209,10 @@ class SubscribedProductController extends Controller {
      */
     public function actionAdmin() {
         // echo '<pre>'; print_r($_POST);die;
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         $no_of_Deletedataarray = 1;
         $model = new SubscribedProduct;
         $model_grid = new RetailerproductquotationGridview('search');
@@ -443,7 +443,7 @@ class SubscribedProductController extends Controller {
         }
     }
 
-    protected function beforeAction($action) {
+    /*protected function beforeAction($action) {
 
         $session = Yii::app()->session['user_id'];
 
@@ -451,6 +451,9 @@ class SubscribedProductController extends Controller {
             echo Yii::app()->controller->redirect("index.php?r=site/login");
         }
         return true;
-    }
+    }*/
 
+    protected function beforeAction() {
+        return parent::beforeAction();
+    }
 }

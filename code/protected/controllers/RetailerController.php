@@ -18,7 +18,7 @@ class RetailerController extends Controller {
         );
     }
 
-    protected function beforeAction($action) {
+    /*protected function beforeAction($action) {
 
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
@@ -48,6 +48,10 @@ class RetailerController extends Controller {
             }
         }
         return true;
+    }*/
+
+    protected function beforeAction() {
+        return parent::beforeAction();
     }
 
     /**
@@ -102,11 +106,11 @@ class RetailerController extends Controller {
         // echo Yii::app()->session['premission_info']['module_info']['retialers'];die;
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-        if ((substr_count(Yii::app()->session['premission_info']['module_info']['retailers'], 'C') == 0)) {
+        /*if ((substr_count(Yii::app()->session['premission_info']['module_info']['retailers'], 'C') == 0)) {
             Yii::app()->user->setFlash('permissio_error', 'You have Not Permission to Create');
             $this->redirect(array('retailer/admin'));
             return;
-        }
+        }*/
         if (isset($_POST['Retailer'])) {
             $data_pass= $_POST['Retailer']['password'];
             $model->attributes = $_POST['Retailer'];
@@ -315,11 +319,11 @@ Sales: +91-11-3958-9895</span>
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-        if (isset(Yii::app()->session['premission_info']->module_info->retailers) && (strpos(Yii::app()->session['premission_info']->module_info->retailers, 'C') == false )) {
+        /*if (isset(Yii::app()->session['premission_info']->module_info->retailers) && (strpos(Yii::app()->session['premission_info']->module_info->retailers, 'C') == false )) {
             Yii::app()->user->setFlash('error', 'You have Not Permission to Update');
             $this->redirect(array('retailer/update'));
             return;
-        }
+        }*/
         if (isset($_POST['Retailer'])) {
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
@@ -509,15 +513,15 @@ Sales: +91-11-3958-9895</span>
         //  $model->unsetAttributes();
         // $model->setAttribute('store_id','1');
         // $model->attributes = @$record[0];
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['brand'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
-        $issuperadmin = Yii::app()->session['is_super_admin'];
+        }*/
+        /*$issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin != 1) {
             $brand_id = Yii::app()->session['brand_id'];
             $this->redirect(array('brandprofile', 'store_id' => $brand_id));
-        } else {
+        } else {*/
             $model->unsetAttributes();
             $model->unsetAttributes();  // clear any default values
             if (isset($_GET['Retailer']))
@@ -525,7 +529,7 @@ Sales: +91-11-3958-9895</span>
             $this->render('admin', array(
                 'model' => $model,
             ));
-        }
+        //}
     }
 
     /**

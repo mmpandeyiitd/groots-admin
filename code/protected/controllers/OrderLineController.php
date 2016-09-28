@@ -19,13 +19,16 @@ class OrderLineController extends Controller
         );
     }
     
-    protected function beforeAction() {
+    /*protected function beforeAction() {
         $session = Yii::app()->session['user_id'];
 
         if ($session == '') {
             echo Yii::app()->controller->redirect("index.php?r=site/logout");
         }
         return true;
+    }*/
+    protected function beforeAction() {
+        return parent::beforeAction();
     }
 
     /**

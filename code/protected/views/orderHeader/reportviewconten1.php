@@ -2,10 +2,10 @@
 
 class SubscribedProductController extends Controller {
 public function actionBulkUpload() {
-        if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
+        /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'C') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-        }
+        }*/
         set_time_limit(0);
         $logfile = '';
         $baseid = '';

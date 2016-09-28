@@ -93,18 +93,18 @@ class DashboardPage extends CActiveRecord {
 
     public function getTotalLinesheet($start_date, $end_date) {
            $sql='';
-        $issuperadmin = Yii::app()->session['is_super_admin'];
+        /*$issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
             $store_id = Yii::app()->session['brand_admin_id'];
         } else {
             $store_id = Yii::app()->session['brand_id'];
-        }
+        }*/
         $cDate = date("Y-m-d H:i:s", strtotime($start_date));
         $cdate1 = date("Y-m-d H:i:s", strtotime($end_date));
         $row = 0;
-        if ($issuperadmin) {
+        //if ($issuperadmin) {
             $sql = "select count(category_id) from category where 1=1";
-        }
+        //}
         if (!empty($start_date) && !empty($end_date)) {
             $sql = $sql . " and (created_date BETWEEN '" . "$cDate" . "' AND '" . "$cdate1" . "')";
         }
