@@ -77,7 +77,7 @@ class Retailer extends CActiveRecord {
     public function relations() {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
-        return array(
+        return array('warehouse_name' => array(self::BELONGS_TO, 'Warehouse', 'allocated_warehouse_id')
         );
     }
 

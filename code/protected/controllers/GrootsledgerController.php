@@ -32,7 +32,7 @@ class GrootsledgerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment'),
+				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','DailyCollection'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -313,6 +313,69 @@ class GrootsledgerController extends Controller
         ));
     }
 
+    public function actiondailyCollection(){
+      //echo "<pre>";
+      // $model = new Grootsledger('search');
+      // $model->unsetAttributes();
+      // if(isset($_GET['Grootsledger']))
+      // $model->attributes=$_GET['Grootsledger'];
+
+      $retailer = new Retailer();
+      $dataprovider = array();
+      $cur_date = date('Y-m-d');
+      $retailers = Retailer::model()->findAllByAttributes(array('status' => 1,'due_date' => $cur_date,), array('condition'=> 'total_payable_amount > 0' , 'select'=>'id, name, total_payable_amount, allocated_warehouse_id' ));
+      foreach ($retailers as $rowinfo) {
+        $tmp = array();
+        $tmp['id'] = $rowinfo->id;
+        $tmp['name'] = $rowinfo->name;
+        $tmp['amount'] = $rowinfo->total_payable_amount;
+        $tmp['warehouse'] = $rowinfo->warehouse_name->name;
+        array_push($dataprovider, $tmp);
+      }
+      $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'warehouse','name',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+      
+      if(isset($_POST['update'])){
+          $retailerIds = $_POST['retailer_id'];
+          $payments = $_POST['amount'];
+          
+          foreach ($retailerIds as $key => $retailerId) {
+            $paymentAmount = $payments[$key];
+             $current_retailer = Retailer::model()->findByAttributes(array('id' =>$retailerId ));
+            
+             if(isset($paymentAmount)){
+              $current_retailer->total_payable_amount-=$paymentAmount;
+              $current_retailer->save();
+            }
+          }
+      }
+// die("here");
+      if(isset($_GET['download']) && $_GET['download']==true){
+        $model = new Grootsledger();
+      // $model->unsetAttributes();
+      // echo "<pre>";
+      // var_dump($model);die();
+      // if(isset($_GET['Grootsledger']))
+      // $model->attributes=$_GET['Grootsledger'];
+        ob_clean();
+          $model->downloadDailyCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+      else{
+       $this->render('dailyCollection',array(
+          'data' => $dataprovider,
+          ));
+      }
+    }
+       
+
     public function actionAdmin()
     {
         //print("<pre>");
@@ -441,6 +504,12 @@ class GrootsledgerController extends Controller
 	 * @return Grootsledger the loaded model
 	 * @throws CHttpException
 	 */
+
+
+
+
+
+
 	public function loadModel($id)
 	{
 		$model=Grootsledger::model()->findByPk($id);

@@ -181,5 +181,38 @@ LEFT JOIN groots_ledger AS gl ON gl.order_id = oh.order_id";
     }
 
 
+    public static function downloadDailyCollectionCsv(){
+    	$sql = "select re.name, re.total_payable_amount, wa.name as warehouse_name
+    	from cb_dev_groots.retailer as re
+    	inner join cb_dev_groots.warehouses as wa
+    	on re.payment_warehouse_id = wa.id where (re.total_payable_amount > 0) and (re.status ='1') and (due_date = CURDATE());";
+    	$connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+      	$fileName = date('Y-m-d')."collection.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
+
 
 }
