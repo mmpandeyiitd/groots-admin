@@ -356,12 +356,13 @@ ALTER TABLE groots_orders.inventory ADD UNIQUE KEY `uk_inv_1` (`inv_id`,`date`);
 ALTER TABLE groots_orders.inventory_header ADD UNIQUE KEY `uk_inv_hd_1` (warehouse_id, `base_product_id`);
 
 
-
 #alter table groots_orders.inventory_history add column transferIn decimal(10,2) DEFAULT NULL, add column transferOut decimal(10,2) DEFAULT NULL, add column order decimal(10,2) DEFAULT NULL, add column purchase decimal(10,2) DEFAULT NULL
 
 #populate inventory one time
 
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join inventory_header ih on ih.base_product_id=bp.base_product_id;
+
+alter table groots_orders.inventory add column `wastage_others` decimal(10,2) DEFAULT NULL;
 
 rename table cb_dev_groots.users to cb_dev_groots.users1;
 update cb_dev_groots.users set email="admin@gogroots.com" where username='admin';

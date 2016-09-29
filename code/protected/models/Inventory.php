@@ -19,6 +19,7 @@ class Inventory extends CActiveRecord
     public $start_date="";
     public $end_date="";
     public $order_id='';
+    public $prev_day_inv='';
     /**
      * @return string the associated database table name
      */
@@ -118,6 +119,8 @@ class Inventory extends CActiveRecord
     }
 
 
+
+
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!
@@ -162,6 +165,10 @@ class Inventory extends CActiveRecord
 
     public function getOrderId(){
         return $this->order_id;
+    }
+
+    public function getPrevDayInv(){
+        return $this->prev_day_inv;
     }
 
 }

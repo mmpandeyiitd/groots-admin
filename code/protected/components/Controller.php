@@ -54,6 +54,9 @@ class Controller extends CController
         if($action!=="login"){
             return Utility::loginCheck($this);
         }
+        elseif($this->id == 'site'){
+            Yii::app()->controller->redirect("index.php?r=user/login");
+        }
         return true;
     }
 }

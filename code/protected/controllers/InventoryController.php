@@ -91,7 +91,7 @@ class InventoryController extends Controller
         $purchaseSum = PurchaseLine::getPurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
         $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
-        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id);
+        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
         $quantitiesMap = array();
         $quantitiesMap['orderSum'] = $orderSum;
         $quantitiesMap['purchaseSum'] = $purchaseSum;
@@ -226,11 +226,20 @@ class InventoryController extends Controller
 	}
 
 	public function  actionAdmin(){
+	    //echo "<pre>";
         $model=new Inventory('search');
         $inv_header = new InventoryHeader('search');
         $w_id= $_GET['w_id'];
-        $date = date('Y-m-d');
-        $date = "2016-09-15";
+        //print_r($_POST);die;
+        if(isset($_POST['inventory-date']) && !empty($_POST['Inventory'])){
+            $date = $_POST['Inventory']['date'];
+        }
+        else{
+            //$date = date('Y-m-d');
+            $date = "2016-09-15";
+        }
+        $model->date = $date;
+
         //$model->date = $date;
         $model->warehouse_id = $w_id;
         if(isset($_GET['Inventory'])) {
@@ -240,12 +249,14 @@ class InventoryController extends Controller
         //$inventories = Inventory::model()->with('BaseProduct')->findAllByAttributes(array('warehouse_id'=>$w_id, 'date'=>$date),array('order'=> ' BaseProduct.title ASC'));
         $dataProvider = $model->search();
         //$dataProvider = $inv_header->search();
+        $prevDayInv = $this->getPrevDayInv($date);
         $orderSum = OrderLine::getOrderSumByDate($w_id, $date);
         $purchaseSum = PurchaseLine::getPurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
         $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
-        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id);
+        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
         $quantitiesMap = array();
+        $quantitiesMap['prevDayInv'] = $prevDayInv;
         $quantitiesMap['orderSum'] = $orderSum;
         $quantitiesMap['purchaseSum'] = $purchaseSum;
         $quantitiesMap['transferInSum'] = $transferInSum;
@@ -254,7 +265,7 @@ class InventoryController extends Controller
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
-
+//print_r($_POST);die;
         if(isset($_POST['inventory-update']))
         {
             $transaction = Yii::app()->db->beginTransaction();
@@ -264,6 +275,7 @@ class InventoryController extends Controller
                     $schedule_inv = trim($_POST['schedule_inv'][$key]);
                     $present_inv = trim($_POST['present_inv'][$key]);
                     $wastage = trim($_POST['wastage'][$key]);
+                    $wastage_others = trim($_POST['wastage_others'][$key]);
                     $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date));
                     //var_dump($inv);die;
                     if($inv==false){
@@ -281,6 +293,7 @@ class InventoryController extends Controller
                     }
                     $inv->present_inv = $present_inv;
                     $inv->wastage = $wastage;
+                    $inv->wastage_others = $wastage_others;
                     $inv->extra_inv = $_POST['extra_inv'][$key];
                     $inv->save();
                 }
@@ -352,5 +365,16 @@ class InventoryController extends Controller
                 Yii::app()->controller->redirect("index.php?r=user/profile");
             }
         }
+    }
+
+    public function getPrevDayInv($today){
+        $invArr = array();
+        $time = strtotime($today.' -1 days');
+        $prevDay = date("Y-m-d", $time);
+        $invs = Inventory::model()->findAllByAttributes(array('date'=>$prevDay), array('select'=>'base_product_id, present_inv'));
+        foreach ($invs as $inv){
+            $invArr[$inv->base_product_id] = $inv->present_inv;
+        }
+        return $invArr;
     }
 }

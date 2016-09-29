@@ -29,7 +29,7 @@ function getIfExist($quantitiesMap, $key, $data){
 <div class="form">
 
     <?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'purchase-form',
+        'id'=>'inv-date',
         // Please note: When you enable ajax validation, make sure the corresponding
         // controller action is handling ajax validation correctly.
         // There is a call to performAjaxValidation() commented in generated controller code.
@@ -54,12 +54,11 @@ function getIfExist($quantitiesMap, $key, $data){
 
 
     <div class="row">
-        <?php echo $form->labelEx($model,'start_date'); ?>
+        <?php echo $form->labelEx($model,'date'); ?>
         <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
-            'attribute'=>'start_date',
-
-            'id'=>'start_date',
+            'attribute'=>'date',
+            'id'=>'date',
             //'value'=> date('Y-m-d'),
             'options'=>array(
                 'dateFormat' => 'yy-mm-dd',
@@ -69,12 +68,27 @@ function getIfExist($quantitiesMap, $key, $data){
                 'style'=>'height:20px;'
             ),
         )); ?>
-        <?php echo $form->error($model,'start_date'); ?>
-    </div>
+        <?php echo $form->error($model,'date'); ?>
 
-    <div class="row">
-        <?php echo $form->labelEx($model,'end_date'); ?>
-        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+            <?php
+
+                echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+
+            ?>
+
+    </div>
+    <?php $this->endWidget(); ?>
+    <?php $form=$this->beginWidget('CActiveForm', array(
+        'id'=>'purchase-form',
+        // Please note: When you enable ajax validation, make sure the corresponding
+        // controller action is handling ajax validation correctly.
+        // There is a call to performAjaxValidation() commented in generated controller code.
+        // See class documentation of CActiveForm for details on this.
+        'enableAjaxValidation'=>false,
+    )); ?>
+    <!--<div class="row">
+        <?php /*echo $form->labelEx($model,'end_date'); */?>
+        <?php /*$this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
             'attribute'=>'end_date',
 
@@ -87,9 +101,9 @@ function getIfExist($quantitiesMap, $key, $data){
             'htmlOptions'=>array(
                 'style'=>'height:20px;'
             ),
-        )); ?>
-        <?php echo $form->error($model,'end_date'); ?>
-    </div>
+        )); */?>
+        <?php /*echo $form->error($model,'end_date'); */?>
+    </div>-->
 
 
     <!--<div class="row">
@@ -155,6 +169,7 @@ function getIfExist($quantitiesMap, $key, $data){
             array(
                 'header' => 'date',
                 'name' => 'date',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
                     return CHtml::textField('date[]', $data->date, array('class'=>'id-field', 'readonly'=>'readonly'));
                 },
@@ -163,8 +178,8 @@ function getIfExist($quantitiesMap, $key, $data){
             array(
                 'header' => 'title',
                 'name' => 'item_title',
-                'headerHtmlOptions' => array('style' => 'width:40%;'),
-                'htmlOptions' => array('style' => 'width:40%;'),
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => '$data->BaseProduct->title',
                 /*'value' => function ($data) {
                     return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
@@ -178,6 +193,10 @@ function getIfExist($quantitiesMap, $key, $data){
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) use ($quantitiesMap) {
                     $sch_inv_kg = '';
+                    if($data->base_product_id == 264){
+                        //echo $data->InvHeader->schedule_inv;
+                        //echo "bpid-".$quantitiesMap['avgOrder'][$data->base_product_id];die;
+                    }
                     if (isset($quantitiesMap['avgOrder'][$data->base_product_id]) && isset($data->InvHeader->schedule_inv)){
                         $sch_inv = $quantitiesMap['avgOrder'][$data->base_product_id];
                         $sch_inv_type = $data->InvHeader->schedule_inv_type;
@@ -193,19 +212,27 @@ function getIfExist($quantitiesMap, $key, $data){
 
                     }
                     $data->schedule_inv = $sch_inv_kg;
+                    if(empty($data->schedule_inv)){
+                        $data->schedule_inv=0;
+                    }
                     return CHtml::textField('schedule_inv[]', $data->schedule_inv, array('class'=>'inv-input id-field', 'id'=>'sch-inv_'.$data->base_product_id, 'readonly'=>'readonly'));
                 },
             ),
+
             array(
-                'header' => 'Curr Inv',
+                'header' => 'Prev Day Inv',
                 'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;'),
-                'value' => function ($data) {
-                    return CHtml::textField('present_inv[]', $data->present_inv, array('class'=>'inv-input', 'id'=>'pres-inv_'.$data->base_product_id,  'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"prev-day-inv_{$data->base_product_id}"'),
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['prevDayInv'][$data->base_product_id]))
+                        return $quantitiesMap['prevDayInv'][$data->base_product_id];
+                    else
+                        return 0;
                 },
             ),
-
             array(
                 'header' => 'order_qty',
                 'type' => 'raw',
@@ -278,13 +305,30 @@ function getIfExist($quantitiesMap, $key, $data){
                     return CHtml::textField('extra_inv[]', $data->extra_inv, array('class'=>'inv-input id-field', 'id'=>'extra-inv_'.$data->base_product_id, 'readonly'=>'readonly' ));
                 },
             ),
-
+            array(
+                'header' => 'Curr Inv',
+                'type' => 'raw',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
+                'value' => function ($data) {
+                    return CHtml::textField('present_inv[]', $data->present_inv, array('class'=>'inv-input', 'id'=>'pres-inv_'.$data->base_product_id,  'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+            ),
             array(
                 'header' => 'wastage',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', ),
                 'value' => function ($data) {
                     return CHtml::textField('wastage[]', $data->wastage, array('class'=>'inv-input', 'id'=>'wastage_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'wastage_others',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', ),
+                'value' => function ($data) {
+                    return CHtml::textField('wastage_others[]', $data->wastage_others, array('class'=>'inv-input', 'id'=>'wastage-others_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
             ),
