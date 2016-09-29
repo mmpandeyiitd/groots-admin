@@ -44,7 +44,7 @@ if ($issuperadmin == 0) {
 </script>
 <!--particular delivery date download csv file-->
 <div class="particular_delivery_date_csv" style="align:right"; >
-    <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
+
     <?php
      $this->widget('zii.widgets.jui.CJuiDatePicker',array(
                     'name'=>'particular_delivery_date_csv_from',
@@ -97,6 +97,11 @@ if ($issuperadmin == 0) {
              <?php echo Yii::app()->user->getFlash('prod'); ?>
         </div>
         <?php endif; ?>
+    <?php if(Yii::app()->user->hasFlash('error')):?>
+        <div class="Csv" style="color:red;">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
 <!--<input name="cancelbutton" class="activebutton" value="Cancel Order" type="submit" 
 onclick='return confirm("Do you want to cancel");'/>
 <input  type="submit" name="sandbutton" class="activebutton" value="send CSV File" />
@@ -121,6 +126,7 @@ onclick='return confirm("Do you want to cancel");'/>
             <option value="">Select to Download</option>
             <option value="invoice">Invoice</option>
             <option value="dc">Delivery Challan</option>
+            <!--<option value="email-invoice">Send Email Invoice</option>-->
         </select>
     </div>
 
@@ -171,7 +177,7 @@ onclick='return confirm("Do you want to cancel");'/>
             'order_number',   
             array(
                 'header' => 'Billing name',
-                'name' => 'billing_name',
+                'name' => 'name',
                 'type' => 'raw',
                 'value'=> function($data){
                     return $data->name;

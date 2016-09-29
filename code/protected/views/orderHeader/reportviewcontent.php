@@ -317,7 +317,7 @@ foreach ($model as $value) {
                     Thank you for your business! We look forward to serving you again<br>
                     Contact email id: sales@gogroots.com <br>
                     Ordering Support: +91-11-3958-9893<br>
-                    Customer Support: +91-11-3958-8984<br>
+                    Customer Support: +91-11-3958-9894<br>
                     Sales Support: +91-11-3958-9895<br>
                     <br>
                     <?php echo $text;?><br>

@@ -206,6 +206,10 @@ class OrderHeaderController extends Controller {
 
         $productPrices = ProductPrice::model()->findAllByAttributes(array('base_product_id'=>$baseProductIds, 'effective_date'=>$orderHeader->delivery_date),array('select'=>'base_product_id, store_price, store_offer_price'));
 
+        if(empty($productPrices)){
+            Yii::app()->user->setFlash('error', 'Prices of the order delivery date are not available.');
+            $this->redirect(Yii::app()->request->urlReferrer);
+        }
         foreach ($productPrices as $productPrice){
             $baseProductIdPriceMap[$productPrice->base_product_id] = $productPrice;
         }
@@ -1099,6 +1103,20 @@ Sales: +91-11-3958-9895</span>
         ));
     }
 
+    /**
+     * Returns the data model based on the primary key given in the GET variable.
+     * If the data model is not found, an HTTP exception will be raised.
+     * @param integer $id the ID of the model to be loaded
+     * @return OrderHeader the loaded model
+     * @throws CHttpException
+     */
+    public function loadModel($id) {
+        $model = OrderHeader::model()->findByPk($id);
+        if ($model === null)
+            throw new CHttpException(404, 'The requested page does not exist.');
+        return $model;
+    }
+
     public function actionsales_by_retailer_detail() {
         $model = new OrderHeader('search');
 
@@ -1118,7 +1136,7 @@ Sales: +91-11-3958-9895</span>
  //print("<pre>");
 //die("here");
         $model = new OrderHeader('search');
-        
+
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);
@@ -1153,18 +1171,21 @@ Sales: +91-11-3958-9895</span>
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $pdfArray = array();
                 for ($i = 0; $i < $no_of_selectedIds; $i++) {
-                    array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
+                    $pdf = $this->actionReport($_POST['selectedIds'][$i], $type, true);
+                    if($type=='email-invoice'){
+                        array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$_POST['selectedIds'][$i]));
+                    }
+                    else{
+                        array_push($pdfArray, $pdf);
+                    }
                 }
-
-                $zipFileName=$type.".zip";
-                //$file_path=$_SERVER['DOCUMENT_ROOT'].'/Harshal/files/';
-//print_r($pdfArray);die;
-
-                $this->zipFilesAndDownload($pdfArray,$zipFileName);
-
-
-
-
+                if($type=='email-invoice'){
+                    //$this->sendMailToRetailer($pdfArray);
+                }
+                else{
+                    $zipFileName=$type.".zip";
+                    $this->zipFilesAndDownload($pdfArray,$zipFileName);
+                }
 
             }
         }
@@ -1184,7 +1205,7 @@ Sales: +91-11-3958-9895</span>
                     $command->execute();
                     $order_numberdata = $command->queryAll();
                     $order_number = $order_numberdata['0']['order_number'];
-                  
+
                     //$email= "kuldeep@canbrand.in";
                     if ($_POST['status1'] == 'Confirmed') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
@@ -1280,7 +1301,7 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-                    
+
                     if ($_POST['status1'] == 'Paid') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
@@ -1375,8 +1396,8 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-                    
-                    
+
+
                     if ($_POST['status1'] == 'Cancelled') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
@@ -1565,7 +1586,7 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-                    
+
                      if ($_POST['status1'] == 'Delivered') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email, 'invoice');
                         $modelOrderline = new OrderLine;
@@ -1747,27 +1768,13 @@ Sales: +91-11-3958-9895</span>
         }
            if(isset($_REQUEST['status']) && Yii::app()->session['sttus_sess'] != "")
            {
-              $model->setAttribute('status', $_REQUEST['status']); 
+              $model->setAttribute('status', $_REQUEST['status']);
               Yii::app()->session['sttus_sess'] = "";
            }
-         
+
         $this->render('admin', array(
             'model' => $model,
         ));
-    }
-
-    /**
-     * Returns the data model based on the primary key given in the GET variable.
-     * If the data model is not found, an HTTP exception will be raised.
-     * @param integer $id the ID of the model to be loaded
-     * @return OrderHeader the loaded model
-     * @throws CHttpException
-     */
-    public function loadModel($id) {
-        $model = OrderHeader::model()->findByPk($id);
-        if ($model === null)
-            throw new CHttpException(404, 'The requested page does not exist.');
-        return $model;
     }
 
     /**
@@ -1779,28 +1786,6 @@ Sales: +91-11-3958-9895</span>
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
-    }
-
-    public function actionReport($id, $type, $zip=false) {
-        // echo "hello";die;
-        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
-            ),array('order'=>'product_name ASC'));*/
-
-        $model = OrderLine::getOrderLinebyOrderId($id);
-        $modelOrder = $this->loadModel($id);
-        $store = Store::model()->findByAttributes(array('store_id' => 1));
-        $modelOrder->groots_address = $store->business_address;
-        $modelOrder->groots_city = $store->business_address_city;
-        $modelOrder->groots_state = $store->business_address_state;
-        $modelOrder->groots_country = $store->business_address_country;
-        $modelOrder->groots_pincode = $store->business_address_pincode;
-        $modelOrder->groots_authorized_name = $store->store_name;
-        $retailer = Retailer::model()->findByPk($modelOrder->user_id);
-        if($zip==true){
-            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
-        }
-        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
-
     }
 
     public function createPdf($model,$modelOrder,$retailer,$type,$zip ){
@@ -1830,7 +1815,7 @@ Sales: +91-11-3958-9895</span>
 //      $html2pdf->setModeDebug();
             //  $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            //echo $zip; die("here2"); 
+            //echo $zip; die("here2");
             if($zip==true){
                 return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
             }
@@ -1845,6 +1830,28 @@ Sales: +91-11-3958-9895</span>
             echo $e;
             exit;
         }
+    }
+
+    public function actionReport($id, $type, $zip=false) {
+        // echo "hello";die;
+        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
+            ),array('order'=>'product_name ASC'));*/
+
+        $model = OrderLine::getOrderLinebyOrderId($id);
+        $modelOrder = $this->loadModel($id);
+        $store = Store::model()->findByAttributes(array('store_id' => 1));
+        $modelOrder->groots_address = $store->business_address;
+        $modelOrder->groots_city = $store->business_address_city;
+        $modelOrder->groots_state = $store->business_address_state;
+        $modelOrder->groots_country = $store->business_address_country;
+        $modelOrder->groots_pincode = $store->business_address_pincode;
+        $modelOrder->groots_authorized_name = $store->store_name;
+        $retailer = Retailer::model()->findByPk($modelOrder->user_id);
+        if($zip==true){
+            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+        }
+        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+
     }
 
     public function actionReportnew($id, $status, $email, $type) {
@@ -1920,6 +1927,116 @@ Sales: +91-11-3958-9895</span>
 
         exit;
         //var_dump($zipName);
+    }
+
+    private function sendMailToRetailer($pdfArray){
+        foreach ($pdfArray as $each){
+            $pdf = $each['pdf'];
+            $order_id = $each['order_id'];
+
+            $connection = Yii::app()->secondaryDb;
+            $sql = "SELECT billing_email FROM order_header WHERE order_id ='" . $_POST['selectedIds'][$i] . "'";
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $emai_id = $command->queryAll();
+
+
+
+            $modelOrderline = new OrderLine;
+            $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
+            $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
+            $csv_filename = "feeds/order_csv/" . $csv_name;
+            $from_email = 'grootsadmin@groots.in';
+            $from_name = 'Groots Dashboard Admin';
+            $subject = 'Groots Buyer Account';
+            $urldata = Yii::app()->params['email_app_url'];
+            $emailurldata = Yii::app()->params['email_app_url1'];
+//                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
+//                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
+            $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Email Verification </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,600,300italic,700,700italic" rel="stylesheet" type="text/css">
+	</head>
+	<body style="margin: 0; padding: 0; font-family: sans-serif;">
+	 <table align="center"  cellpadding="0" border="0" cellspacing="0" width="600" style="border-collapse: collapse; display: block; border:0; background:#fff; ">
+    <tbody>
+    <tr style="display: block; ">
+      <td style="padding:0px; width: 150px; background-color: #444;" >
+        <a href="javascript:void(0);" style="display:block; height:63px; "><img src="' . $emailurldata . 'emailimage/logo.png" alt="" style="    width: 50px;
+    margin: 8px 20px;"></a>
+      </td>
+      <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
+        <span style="float:right;">+91-11-3958-8984</span>
+        <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="text-align:center;padding:20px 0; background:#fff url(' . $emailurldata . 'emailimage/bg-repeat.jpg) repeat-x;">
+        <img src="' . $emailurldata . 'emailimage/check-shadow.png" alt="call" width="100" style=" margin:20px auto;"> 
+      </td>
+    </tr>
+    <tr style="display: block;">
+      <td colspan="2" style="display: block; padding: 10px;border: 1px solid #f7f7f7;border-width: 1px 2px 0;">
+        <p style="font-size:20px;">
+          <strong>Hi ' . $buyername . '</strong>
+          <br> 
+          <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
+            Your order (' . $order_number . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in<br>
+                Thank you for choosing Groots!<br>
+           <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
+          </span>
+          <br>
+
+        <a href="' . $urldata . '">
+             <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
+            </a>
+            <br>
+<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
+Customer Support: +91-11-3958-8984<br>
+Sales: +91-11-3958-9895</span>
+        <br> <br> 
+      </p>
+     </td>          
+   </tr>
+    <tr style="display: block; margin-top:0px;background: #444; padding: 15px 0;">
+      <td colspan="2" style="width: 600px;">
+        <ul style="display:block; width:100%; list-style-type:none;overflow: hidden;margin: 0;padding: 10px 0;">
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-right:1px solid #676767;">Visit Website</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px;">Terms &amp; Conditions</a>
+          </li>
+          <li style="display:block; width:170px; float:left; text-align:center;">
+            <a href="http://www.gogroots.com/" style="display:block;color:#a9a9a9; text-transform:uppercase;text-decoration:none; font-size:14px; border-left:1px solid #676767;">Privacy Policy</a>
+          </li>
+        </ul>
+      </td> 
+    </tr>
+	</tbody></table>
+	</body>
+</html>';
+
+            $body_text = '';
+            $mailArray = array(
+                'to' => array(
+                    '0' => array(
+                        'email' => "$email",
+                    )
+                ),
+                'from' => $from_email,
+                'fromname' => $from_name,
+                'subject' => $subject,
+                'html' => $body_html,
+                'text' => $body_text,
+                'replyto' => $from_email,
+            );
+            $mailsend = new OrderLine();
+            $resp = $mailsend->sgSendMail($mailArray);
+        }
     }
 
 }

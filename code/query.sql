@@ -146,6 +146,8 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack
 
 ------------------------
 
+update store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
+
 
 
 

@@ -109,7 +109,7 @@ class OrderHeader extends CActiveRecord {
             // The following rule is used by search().
             array('store_id', 'safe', 'on' => 'search'),
             // @todo Please remove those attributes that should not be searched.
-            array('order_id,order_number, user_id,user_comment,created_date, payment_method, payment_status, billing_name, billing_phone, billing_email, billing_address, billing_state, billing_city, billing_pincode, shipping_name, shipping_phone, shipping_email, shipping_address, shipping_state, shipping_city, shipping_pincode, shipping_charges, total, total_payable_amount, total_paid_amount, discount_amt, coupon_code, payment_ref_id, payment_gateway_name, payment_source, order_source, timestamp, transaction_id, bank_transaction_id, transaction_time, payment_mod, bankname, status,order_type', 'safe', 'on' => 'search'),
+            array('order_id,order_number, user_id,user_comment,created_date, payment_method, payment_status, billing_name, billing_phone, billing_email, billing_address, billing_state, billing_city, billing_pincode, shipping_name, shipping_phone, shipping_email, shipping_address, shipping_state, shipping_city, shipping_pincode, shipping_charges, total, total_payable_amount, total_paid_amount, discount_amt, coupon_code, payment_ref_id, payment_gateway_name, payment_source, order_source, timestamp, transaction_id, bank_transaction_id, transaction_time, payment_mod, bankname, status,order_type, name', 'safe', 'on' => 'search'),
         );
     }
 
@@ -290,6 +290,7 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('transaction_time', $this->transaction_time, true);
         $criteria->compare('payment_mod', $this->payment_mod, true);
         $criteria->compare('bankname', $this->bankname, true);
+        $criteria->compare('r.name', $this->name, true);
        
         //$criteria->compare('cron_processed_flag', $this->cron_processed_flag, true);
 //        $criteria->compare('source_url', $this->source_url, true);

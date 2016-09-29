@@ -514,7 +514,7 @@ class OrderLine extends CActiveRecord
         $orderLines = '';
         if (is_numeric($orderId)) {
             $connection = Yii::app()->secondaryDb;
-            $sql = "SELECT ol.*, bp.title as product_name, bp.pack_size, bp.pack_unit  FROM `order_line` ol join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE `order_id`=$orderId order by bp.title asc";
+            $sql = "SELECT ol.*, bp.title as product_name, bp.pack_size, bp.pack_unit  FROM `order_line` ol join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE `order_id`=$orderId and ol.delivered_qty > 0 order by bp.title asc";
             $command = $connection->createCommand($sql);
             $command->execute();
             $orderLines = $command->queryAll();
