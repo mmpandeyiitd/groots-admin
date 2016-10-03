@@ -29,7 +29,7 @@ function getIfExist($quantitiesMap, $key, $data){
 <div class="form">
 
     <?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'purchase-form',
+        'id'=>'inv-date',
         // Please note: When you enable ajax validation, make sure the corresponding
         // controller action is handling ajax validation correctly.
         // There is a call to performAjaxValidation() commented in generated controller code.
@@ -37,20 +37,10 @@ function getIfExist($quantitiesMap, $key, $data){
         'enableAjaxValidation'=>false,
     )); ?>
 
-    <p class="note">Fields with <span class="required">*</span> are required.</p>
-
+    <!--<p class="note">Fields with <span class="required">*</span> are required.</p>-->
+-
     <?php echo $form->errorSummary($model->errors); ?>
 
-    <!--<div class="row" style="display: inline;">
-        <?php /*echo $form->labelEx($model,'source_warehouse_id'); */?>
-        <?php /*echo $form->dropDownList($model,
-            'source_warehouse_id',
-            CHtml::listData(Warehouse::model()->findAllByAttributes(array('status' => 1), array('select'=>'id,name', 'condition'=>'id !='.$w_id, 'order' => 'name')),'id','name'),
-            array('empty' => 'Select a warehouse', 'options'=>array($model->source_warehouse_id=>array('selected'=>'selected')))
-        );
-        */?>
-        <?php /*echo $form->error($model,'source_warehouse_id'); */?>
-    </div>-->
 
 
     <div class="row">
@@ -71,54 +61,93 @@ function getIfExist($quantitiesMap, $key, $data){
             ),
         )); ?>
         <?php echo $form->error($model,'date'); ?>
-    </div>
-
-
-    <!--<div class="row">
-        <?php /*echo $form->labelEx($model,'status'); */?>
-        <?php /*echo $form->dropDownList($model,'status',
-            CHtml::listData(TransferHeader::status(),'value', 'value'));
-
-        */?>
-        <?php /*echo $form->error($model,'status'); */?>
-    </div>
-
-    <div class="row">
-        <?php /*echo $form->label($model,'comment'); */?>
-        <?php /*echo $form->textArea($model,'comment', array('cols'=>200, 'rows'=>4, 'style'=>'width:400px;')); */?>
-        <?php /*echo $form->error($model,'comment'); */?>
-    </div>-->
-    <!--<div>
         <?php
-/*        echo CHtml::button("Add Items for Purchase", array("onclick" => "showAddItemBox()"));
-        */?>
+
+        echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+
+        ?>
     </div>
-    <div id="alpha-nav-div" style="display:none;">
-        <ul id="alphabetical-nav" style="list-style: none;">
-            <?php /*foreach ($otherItems as $item){
-                */?>
-                <li style="" >
+    <?php $this->endWidget();
 
-                    <?php /*echo CHtml::CheckBox('cb_'.$item['bp_id'],'', array (
-                        'value'=>'on',
-                        'class'=>'cb_item',
-                        'id' => 'cb_'.$item['bp_id'],
-                    )); */?>
+    $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'total-inv-grid',
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'dataProvider'=>$totalInvData,
+        'columns'=>array(
+            array(
+                'header' => 'Total Order',
+                'name' => 'total_order',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["total_order"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Total Schedule Inv',
+                'name' => 'schedule_inv',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["schedule_inv"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Total Prev Day Inv',
+                'name' => 'prev_day_inv',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["prev_day_inv"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Current Order Inv',
+                'name' => 'present_inv',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["present_inv"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Current Liquid Inv',
+                'name' => 'liquid_inv',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["liquid_inv"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Wastage',
+                'name' => 'wastage',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["wastage"]',
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Wastage Others',
+                'name' => 'wastage_others',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["wastage_others"]',
+                'type' => 'raw',
+            ),
+        ),
+    ));
 
-                    <span class="title" id="title_<?php /*echo $item['bp_id']; */?>"><?php /*echo $item['title']; */?><span>
+    ?>
 
-                </li>
-                <?php
-/*            }
-            */?>
 
-        </ul>
-        <?php
-/*        echo CHtml::button("Add", array("onclick" => "addItemToOrder()"));
-        */?>
-    </div>-->
 
     <?php
+     $form=$this->beginWidget('CActiveForm', array(
+        'id'=>'purchase-form',
+        // Please note: When you enable ajax validation, make sure the corresponding
+        // controller action is handling ajax validation correctly.
+        // There is a call to performAjaxValidation() commented in generated controller code.
+        // See class documentation of CActiveForm for details on this.
+        'enableAjaxValidation'=>false,
+    ));
+
+
 
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
@@ -130,7 +159,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'header' => 'id',
                 'name' => 'base_product_id[]',
                 'value' => function ($data) {
-                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field', 'readonly'=>'readonly'));
+                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field readOnlyInput', 'readonly'=>'readonly'));
                 },
                 'type' => 'raw',
             ),
@@ -143,29 +172,27 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),*/
             array(
-                'header' => 'item_title',
+                'header' => 'Title',
                 'name' => 'item_title',
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;'),
-                'value' => '$data->BaseProduct->title',
+                'value' => '$data->item_title',
                 /*'value' => function ($data) {
                     return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
                 },*/
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Schd Inv',
+                'header' => 'Schd Inv(+)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    $sch_inv_kg = '';
+                    $sch_inv_kg = 0;
                     if (isset($quantitiesMap['avgOrder'][$data->base_product_id]) && isset($data->schedule_inv)){
-                        $sch_inv = $quantitiesMap['avgOrder'][$data->base_product_id];
+                        $avgOrderInKg = $quantitiesMap['avgOrder'][$data->base_product_id];
                         $sch_inv_type = $data->schedule_inv_type;
                         $sch_inv_no = $data->schedule_inv;
-                        $avgOrderInKg = Utility::convertOrderToKg($sch_inv['qty'], $sch_inv['pack_size'], $sch_inv['pack_unit']);
-
                         if($sch_inv_type == 'days'){
                             $sch_inv_kg = $sch_inv_no * $avgOrderInKg;
                         }
@@ -175,23 +202,33 @@ function getIfExist($quantitiesMap, $key, $data){
 
                     }
                     $data->schedule_inv_absolute = $sch_inv_kg;
-                    return CHtml::textField('schedule_inv[]', $data->schedule_inv_absolute, array('class'=>'inv-input id-field', 'id'=>'sch-inv_'.$data->base_product_id,'readonly'=>'readonly'));
+                    return CHtml::textField('schedule_inv[]', $data->schedule_inv_absolute, array('class'=>'inv-input id-field readOnlyInput', 'id'=>'sch-inv_'.$data->base_product_id,'readonly'=>'readonly'));
                 },
             ),
+
             array(
-                'header' => 'Curr Inv',
+                'header' => 'Prev Day Inv(-)',
                 'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;'),
-                'value' => function ($data) {
-                    return CHtml::textField('present_inv[]', $data->present_inv, array('class'=>'inv-input', 'id'=>'pres-inv_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"prev-day-inv_{$data->base_product_id}"'),
+                'value'=>function($data) use ($quantitiesMap){
+                    /*if(isset($quantitiesMap['prevDayInv'][$data->base_product_id])){
+                        $data->prev_day_inv = $quantitiesMap['prevDayInv'][$data->base_product_id];
+                    }
+                    else{
+                        $data->prev_day_inv = 0;
+                    }*/
+                    $data->prev_day_inv = empty($quantitiesMap['prevDayInv'][$data->base_product_id]) ? 0 : $quantitiesMap['prevDayInv'][$data->base_product_id];
+                    return $data->prev_day_inv;
                 },
             ),
 
             array(
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
-                'header' => 'order_qty',
+                'header' => 'order(+)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"order_{$data->base_product_id}"'),
@@ -203,7 +240,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'transferIn_qty',
+                'header' => 'transferIn(-)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -217,7 +254,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'transferOut_qty',
+                'header' => 'transferOut(+)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -231,7 +268,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'purchase_qty',
+                'header' => 'purchase_qty(-)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -245,47 +282,83 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'Extra Inv',
+                'header' => 'Extra Inv(+)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) use ($quantitiesMap) {
                     $s_inv = $data->schedule_inv_absolute;
-                    $cur_inv = $data->present_inv;
+                    $prev_day_inv = $data->prev_day_inv;
                     $order_sum = getIfExist($quantitiesMap,'orderSum', $data);
                     $transfer_out = getIfExist($quantitiesMap,'transferOutSum', $data);
-                    $data->extra_inv_absolute =$data->extra_inv * ($order_sum-$cur_inv+$transfer_out+$s_inv)/100;
-                    return CHtml::textField('extra_inv[]', $data->extra_inv_absolute, array('class'=>'inv-input id-field', 'id'=>'extra-inv_'.$data->base_product_id, 'readonly'=>'readonly' ));
+                    $data->extra_inv_absolute =$data->extra_inv * ($order_sum-$prev_day_inv+$transfer_out+$s_inv)/100;
+                    if($data->extra_inv_absolute < 0){
+                        $data->extra_inv_absolute = 0;
+                    }
+                    return CHtml::textField('extra_inv[]', $data->extra_inv_absolute, array('class'=>'inv-input id-field readOnlyInput', 'id'=>'extra-inv_'.$data->base_product_id, 'readonly'=>'readonly' ));
                 },
             ),
-
             array(
-                'header' => 'wastage',
+                'header' => 'Order Inv(+)',
+                'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
-                    return CHtml::textField('wastage[]', $data->wastage, array('class'=>'inv-input', 'id'=>'wastage_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                    return CHtml::textField('present_inv[]', empty($data->present_inv) ? 0.00:$data->present_inv, array('class'=>'inv-input inputs', 'id'=>'pres-inv_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+            ),
+            array(
+                'header' => 'Liquid Inv(+)',
+                'type' => 'raw',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
+                'value' => function ($data) {
+                    return CHtml::textField('liquid_inv[]', empty($data->liquid_inv) ? 0.00:$data->liquid_inv, array('class'=>'inv-input inputs', 'id'=>'liquid-inv_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+            ),
+            array(
+                'header' => 'wastage(-)',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
+                'value' => function ($data) {
+                    return CHtml::textField('wastage[]',  empty($data->wastage) ? 0.00:$data->wastage, array('class'=>'inv-input inputs', 'id'=>'wastage_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
             ),
             array(
-                'header' => 'balance',
+                'header' => 'wastage_others(-)',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', ),
+                'value' => function ($data) {
+                    return CHtml::textField('wastage_others[]', empty($data->wastage_others) ? 0.00:$data->wastage_others, array('class'=>'inv-input inputs', 'id'=>'wastage-others_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'balance(=)',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"'),
                 'value' => function ($data)  use ($quantitiesMap) {
 
-                    $s_inv = $data->schedule_inv_absolute;
-                    $cur_inv = $data->present_inv;
+                    $s_inv = empty($data->schedule_inv_absolute) ? 0 : $data->schedule_inv_absolute ;
+                    $prev_day_inv =  empty($data->prev_day_inv) ? 0 : $data->prev_day_inv ;
+                    $cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
+                    $liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
                     $order_sum = getIfExist($quantitiesMap,'orderSum', $data);
                     $purchase = getIfExist($quantitiesMap,'purchaseSum', $data);
                     $trans_in = getIfExist($quantitiesMap,'transferInSum', $data);
                     $trans_out = getIfExist($quantitiesMap,'transferOutSum', $data);
 
-                    $extra_inv = $data->extra_inv_absolute;
-                    $wastage = $data->wastage;
-                    $balance = $s_inv-$cur_inv+$order_sum+$trans_out+$extra_inv+$wastage-$purchase-$trans_in;
+                    $extra_inv =  empty($data->extra_inv_absolute) ? 0 : $data->extra_inv_absolute ;
+                    $wastage = empty($data->wastage) ? 0 : $data->wastage ;
+                    $wastage_others = empty($data->wastage_others) ? 0 : $data->wastage_others ;
+                    $balance = ($s_inv+$order_sum+$trans_out+$extra_inv+$cur_inv+$liq_inv+$wastage+$wastage_others) - ($purchase+$trans_in+$prev_day_inv);
+                    $data->balance = $balance;
+                    if(empty($data->balance)){
+                        $data->balance = 0;
+                    }
                     return CHtml::label($balance, $data->balance,array('class'=>'title'));
                 },
                 'type' => 'raw',
@@ -297,7 +370,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'filterHtmlOptions'=>array('style'=>'width:0%; display:none'),
                 'htmlOptions'=>array('style'=>'width:0%; display:none'),
                 'value' => function ($data) {
-                    return CHtml::textField('inv_hd_id[]', $data->id);
+                    return CHtml::textField('inv_hd_id[]', $data->id, array('class' => 'readOnlyInput'));
                 },
             ),
 
@@ -316,6 +389,7 @@ function getIfExist($quantitiesMap, $key, $data){
     </div>-->
     <?php echo $form->hiddenField($model,'warehouse_id', array('value' => $w_id)); ?>
     <?php echo $form->hiddenField($model,'created_at'); ?>
+    <?php echo $form->hiddenField($model,'date', array('value' => $model->date)); ?>
 
 
     <div class="row buttons">
@@ -340,38 +414,60 @@ function getIfExist($quantitiesMap, $key, $data){
 
 <script type="text/javascript">
 
+
     $(document).ready(function() {
+
+        $('.inputs').keydown(function (e) {
+            if (e.which === 13) {
+                var index = $('.inputs').index(this);
+                if (e.shiftKey) {
+                    $('.inputs').eq(index - 1).focus();
+                }
+                else {
+                    $('.inputs').eq(index + 1).focus();
+                }
+                return false;
+            }
+        });
+
+        $('.readOnlyInput').keydown(function (e) {
+            if (e.which === 13) {
+                return false;
+            }
+        });
     });
 
-    function onInvChange(bp_id){
-        console.log('bp-id '+ bp_id);
-        var wastage = parseFloat($("#wastage_"+bp_id).val().trim());
+
+        function onInvChange(bp_id){
+        //console.log('bp-id '+ bp_id);
+        var wastage = parseFloat($("#wastage_"+bp_id).val().trim()) || 0;
+        var wastage_others = parseFloat($("#wastage-others_"+bp_id).val().trim());
+
         var presInv = parseFloat($("#pres-inv_"+bp_id).val().trim());
-        var schInv = parseFloat($("#sch-inv_"+bp_id).val().trim());
-        if(schInv!=null){
-            schInv=0;
-        }
+        var liquidInv = parseFloat($("#liquid-inv_"+bp_id).val().trim());
+        var schInv = parseFloat($("#sch-inv_"+bp_id).val().trim()) || 0;
+
         var extraInv = parseFloat($("#extra-inv_"+bp_id).val().trim());
         var order = parseFloat($("#order_"+bp_id).html().trim());
 
-        /*$('.order_'+bp_id).each(function () {
-         console.log
-         order = $(this).html().trim;
-         });*/
+        var prevDayInv = parseFloat($("#prev-day-inv_"+bp_id).html().trim());
         var tranferOut = parseFloat($("#transferOut_"+bp_id).html().trim());
         var transferIn = parseFloat($("#transferIn_"+bp_id).html().trim());
         var purchase = parseFloat($("#purchase_"+bp_id).html().trim());
         var balance = 0;
-        balance = schInv+order+tranferOut+wastage+extraInv-transferIn-presInv-purchase;
-        console.log('sch '+schInv);
+        balance = schInv+order+extraInv+tranferOut+presInv+liquidInv+wastage+wastage_others-transferIn-prevDayInv-purchase;
+        /*console.log('sch '+schInv);
+        console.log('prevDayInv '+prevDayInv);
         console.log('presInv '+presInv);
+        console.log('liquidInv '+liquidInv);
         console.log('wastage '+wastage);
+        console.log('wastage_others '+wastage_others);
         console.log('extraInv '+extraInv);
         console.log('order '+order);
         console.log('tranferOut '+tranferOut);
         console.log('transferIn '+transferIn);
         console.log('purchase '+purchase);
-        console.log('balance '+balance);
+        console.log('balance '+balance);*/
         $("#balance_"+bp_id).html(balance);
     }
 

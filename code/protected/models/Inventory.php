@@ -118,9 +118,68 @@ class Inventory extends CActiveRecord
         ));
     }
 
+    public static function getTotalInvOfDate($date){
+        $prevDay = Utility::getPrevDay($date);
+        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(wastage_others) as wastage_others from inventory where date = '" . $date . "' group by date";
+        $sql2 = "select sum(present_inv) as present_inv from inventory where date = '" . $prevDay . "' group by date";
+        $connection = Yii::app()->secondaryDb;
+        $command1 = $connection->createCommand($sql1);
+        $invArr = $command1->queryAll();
+        if(empty($invArr)){
+            $tmp = array();
+            $tmp['schedule_inv'] = 0;
+            $tmp['present_inv'] = 0;
+            $tmp['wastage'] = 0;
+            $tmp['liquid_inv'] = 0;
+            $tmp['wastage_others'] = 0;
 
+            $invArr = array();
+            array_push($invArr, $tmp);
+        }
+        //var_dump($invArr);die;
+        $command2 = $connection->createCommand($sql2);
+        $prevDayInv = $command2->queryAll();
+        if(empty($prevDayInv)){
+            $invArr[0]['prev_day_inv'] = 0;
+        }
+        else{
+            $invArr[0]['prev_day_inv'] = $prevDayInv[0]['present_inv'];
+        }
+        //var_dump($prevDayInv);die;
+        $invArr[0]['id'] = 1;
 
+        $invArr[0]['total_order'] = OrderHeader::getTotalOrderOfDate($date);
+        //var_dump($inventory);die;
+        return $invArr;
+    }
 
+    public static function getInventoryCalculationData($w_id, $date){
+        $quantitiesMap = array();
+        $prevDayInv = self::getPrevDayInvMap($date);
+        $orderSum = OrderLine::getDeliveredOrderSumByDate($w_id, $date);
+        $purchaseSum = PurchaseLine::getReceivedPurchaseSumByDate($w_id, $date);
+        $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
+        $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
+        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
+
+        $quantitiesMap['prevDayInv'] = $prevDayInv;
+        $quantitiesMap['orderSum'] = $orderSum;
+        $quantitiesMap['purchaseSum'] = $purchaseSum;
+        $quantitiesMap['transferInSum'] = $transferInSum;
+        $quantitiesMap['transferOutSum'] = $transferOutSum;
+        $quantitiesMap['avgOrder'] = $avgOrderByItem;
+        return $quantitiesMap;
+    }
+
+    public static function getPrevDayInvMap($today){
+        $invArr = array();
+        $prevDay = Utility::getPrevDay($today);
+        $invs = Inventory::model()->findAllByAttributes(array('date'=>$prevDay), array('select'=>'base_product_id, present_inv'));
+        foreach ($invs as $inv){
+            $invArr[$inv->base_product_id] = $inv->present_inv;
+        }
+        return $invArr;
+    }
     /**
      * Returns the static model of the specified AR class.
      * Please note that you should have this exact method in all your CActiveRecord descendants!

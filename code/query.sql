@@ -360,23 +360,45 @@ ALTER TABLE groots_orders.inventory_header ADD UNIQUE KEY `uk_inv_hd_1` (warehou
 
 #populate inventory one time
 
-insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join inventory_header ih on ih.base_product_id=bp.base_product_id;
+insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id;
 
 alter table groots_orders.inventory add column `wastage_others` decimal(10,2) DEFAULT NULL;
+alter table groots_orders.inventory add column `liquid_inv` decimal(10,2) DEFAULT null;
+
+alter table cb_dev_groots.warehouses add column default_source_warehouse_id int(11) unsigned DEFAULT NULL;
+ALTER  TABLE cb_dev_groots.warehouses add index fk_warehouses_1 (default_source_warehouse_id), add constraint fk_warehouses_1 foreign key (default_source_warehouse_id) REFERENCES cb_dev_groots.`warehouses`(id);
+update cb_dev_groots.warehouses set default_source_warehouse_id=2;
+
+ALTER  TABLE groots_orders.transfer_header add column transfer_type enum('regular', 'singular') NOT NULL DEFAULT 'singular';
+UPDATE groots_orders.transfer_header SET transfer_type='singular';
+
+ALTER  TABLE groots_orders.transfer_header add column transfer_category enum('primary', 'secondary') NOT NULL DEFAULT 'primary';
+
+
+
+alter table groots_orders.transfer_line drop column colour, drop column size, drop column grade, drop column diameter, drop column pack_size, drop column pack_unit, drop column weight, drop column weight_unit, drop column length, drop column length_unit, drop column unit_price, drop column price;
+
 
 rename table cb_dev_groots.users to cb_dev_groots.users1;
 update cb_dev_groots.users set email="admin@gogroots.com" where username='admin';
+
 
 #create auth items from rbac panels
 insert into users values (null, "warehouseEditor", md5("w@123"), "w@abc.com","", 0, 1, now(), now()), (null, "procurementEditor", md5("p@123"), "p@abc.com","", 0, 1, now(), now()), (null, "inventoryEditor", md5("w@123"), "i@abc.com","", 0, 1, now(), now()), (null, "transferEditor", md5("w@123"), "t@abc.com","", 0, 1, now(), now()), (null, "orderEditor", md5("w@123"), "o@abc.com","", 0, 1, now(), now()), (null, "purchaseEditor", md5("w@123"), "ps@abc.com","", 0, 1, now(), now()), (null, "orderViewer", md5("w@123"), "ov@abc.com","", 0, 1, now(), now()), (null, "inventoryViewer", md5("w@123"), "iv@abc.com","", 0, 1, now(), now());
 
 insert into users values (null, "transferViewer", md5("w@123"), "tv@abc.com","", 0, 1, now(), now()), (null, "purchaseViewer", md5("w@123"), "pv@abc.com","", 0, 1, now(), now());
+insert into users values (null, "procurementViewer", md5("w@123"), "procurev@abc.com","", 0, 1, now(), now());
+
 insert into profiles select id, username, username from users;
 
 insert into AuthAssignment(itemname, userid) values ('WarehouseEditor', 10), ('ProcurementEditor', 11), ('InventoryEditor', 12), ('OrderEditor',14), ('TransferEditor', 13), ('PurchaseEditor', 15), ('InventoryViewer', 17), ('OrderViewer', 16) ;
 
 insert into AuthAssignment(itemname, userid, bizrule) values ('TransferViewer', 18, "return $params['warehouse_id']==1;"), ('PurchaseViewer', 19, "return $params['warehouse_id']==1;") ;
 
+insert into AuthAssignment(itemname, userid, bizrule) values  ('ProcurementViewer', 20, "return $params['warehouse_id']==2;") ;
+
 update AuthAssignment set bizrule="return $params['warehouse_id']==1;" where userid in (10,12,13,14,15,16,17);
 
 insert into profiles select id,username, username from users where id>1;
+
+

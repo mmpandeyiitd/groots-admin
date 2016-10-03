@@ -27,7 +27,7 @@ class TransferHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,source_warehouse_id,dest_warehouse_id,status,delivery_date,comment,invoice_number,created_at', 'safe', 'on' => 'search,update'),
+            array('id,source_warehouse_id,dest_warehouse_id,status,delivery_date,comment,invoice_number,created_at,transfer_type, transfer_category', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -103,6 +103,31 @@ class TransferHeader extends CActiveRecord
         $connection = Yii::app()->secondaryDb;
         $status = Utility::get_enum_values($connection, self::tableName(), 'status' );
         return $status;
+    }
+
+    public static function getAllTransferCategories(){
+        $connection = Yii::app()->secondaryDb;
+        $transfer_category = Utility::get_enum_values($connection, self::tableName(), 'transfer_category' );
+        return $transfer_category;
+    }
+
+
+    public static function getTransferInCalculationData($w_id, $date){
+        $quantitiesMap = array();
+        $prevDayInv = Inventory::getPrevDayInvMap($date);
+        $orderSum = OrderLine::getOrderSumByDate($w_id, $date);
+        $purchaseSum = PurchaseLine::getFullfillablePurchaseSumByDate($w_id, $date);
+        $transferInSum = TransferLine::getNotRegularTransferInSumByDate($w_id,$date);
+        $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
+        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
+
+        $quantitiesMap['prevDayInv'] = $prevDayInv;
+        $quantitiesMap['orderSum'] = $orderSum;
+        $quantitiesMap['purchaseSum'] = $purchaseSum;
+        $quantitiesMap['transferInSum'] = $transferInSum;
+        $quantitiesMap['transferOutSum'] = $transferOutSum;
+        $quantitiesMap['avgOrder'] = $avgOrderByItem;
+        return $quantitiesMap;
     }
 
 }

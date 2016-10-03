@@ -8,10 +8,18 @@ $this->breadcrumbs=array(
 	'Manage',
 );
 
-$this->menu=array(
-	//array('label'=>'List Purchase', 'url'=>array('index')),
-	array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
-);
+if($showCreate){
+	$this->menu=array(
+		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
+	);
+}
+
+/*if($this->checkAccess('ProcurementEditor', array('warehouse_id'=>$w_id))){
+	$this->menu=array(
+		//array('label'=>'List Purchase', 'url'=>array('index')),
+		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
+	);
+}*/
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){

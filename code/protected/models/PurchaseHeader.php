@@ -69,6 +69,10 @@ class PurchaseHeader extends CActiveRecord
         // @todo Please modify the following code to remove attributes that should not be searched.
 
         $criteria = new CDbCriteria;
+        $criteria->compare('warehouse_id', $this->warehouse_id);
+        $criteria->compare('payment_method', $this->payment_method);
+        $criteria->compare('payment_status', $this->payment_status);
+        $criteria->compare('status', $this->status);
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));

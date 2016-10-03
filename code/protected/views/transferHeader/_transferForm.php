@@ -59,7 +59,7 @@ if($update == true) {
             array('empty' => 'Select a warehouse', 'disabled'=>$disabled, 'options'=>array($model->dest_warehouse_id =>array('selected'=>'selected')))
         );
         ?>
-        <?php echo $form->error($model,'source_warehouse_id'); ?>
+        <?php echo $form->error($model,'dest_warehouse_id'); ?>
     </div>
 
 
@@ -80,6 +80,15 @@ if($update == true) {
             ),
         )); ?>
         <?php echo $form->error($model,'delivery_date'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'transfer_category'); ?>
+        <?php echo $form->dropDownList($model,'transfer_category',
+            CHtml::listData(TransferHeader::getAllTransferCategories(),'value', 'value'));
+
+        ?>
+        <?php echo $form->error($model,'status'); ?>
     </div>
 
 
@@ -158,7 +167,7 @@ if($update == true) {
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input'));
+                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs'));
                 },
             ),
             array(
@@ -167,7 +176,7 @@ if($update == true) {
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return CHtml::textField('delivered_qty[]', $data->delivered_qty, array('class'=>'input'));
+                    return CHtml::textField('delivered_qty[]', $data->delivered_qty, array('class'=>'input inputs'));
                 },
             ),
             array(
@@ -175,7 +184,7 @@ if($update == true) {
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input'));
+                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input inputs'));
                 },
                 'type' => 'raw',
             ),
@@ -209,7 +218,7 @@ if($update == true) {
         <?php /*echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount')); */?>
         <?php /*echo $form->error($model,'total_payable_amount'); */?>
     </div>-->
-    <?php echo $form->hiddenField($model,'dest_warehouse_id', array('value' => $w_id)); ?>
+    <?php /*echo $form->hiddenField($model,'dest_warehouse_id', array('value' => $w_id)); */?>
     <?php echo $form->hiddenField($model,'created_at'); ?>
 
 
@@ -243,6 +252,24 @@ if($update == true) {
             includeNums: true,
             removeDisabled: true,
             allText: 'Complete Item list'
+        });
+        $('.inputs').keydown(function (e) {
+            if (e.which === 13) {
+                var index = $('.inputs').index(this);
+                if (e.shiftKey) {
+                    $('.inputs').eq(index - 1).focus();
+                }
+                else {
+                    $('.inputs').eq(index + 1).focus();
+                }
+                return false;
+            }
+        });
+
+        $('.readOnlyInput').keydown(function (e) {
+            if (e.which === 13) {
+                return false;
+            }
         });
 
     });

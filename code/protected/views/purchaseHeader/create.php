@@ -4,12 +4,12 @@
 
 
 $this->breadcrumbs=array(
-	'Purchase Headers'=>array('admin'),
+	'Purchase Headers'=>array('admin&w_id='.$w_id),
 	'Create',
 );
 
 $this->menu=array(
-	array('label'=>'List Purchases', 'url'=>array('admin&w_id=$w_id')),
+	array('label'=>'List Purchases', 'url'=>array('admin&w_id='.$w_id)),
 	//array('label'=>'Manage PurchaseHeader', 'url'=>array('admin')),
 );
 ?>

@@ -14,6 +14,21 @@
     else{
         $update = false;
     }
+$disableReceived = 'disabled';
+$disableProcured = 'disabled';
+if($this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
+    $disableProcured = false;
+    $disableReceived = 'disabled';
+}
+elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
+    $disableReceived = false;
+    $disableProcured = 'disabled';
+}
+elseif($this->checkAccess('admin')){
+    $disableReceived = false;
+    $disableProcured = false;
+}
+
 
 ?>
 
@@ -45,7 +60,7 @@
 
 <div class="row" >
     <?php echo $form->labelEx($model,'paid_amount'); ?>
-    <?php echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255)); ?>
+    <?php echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255, 'class'=>'inputs')); ?>
     <?php echo $form->error($model,'paid_amount'); ?>
 </div>
 
@@ -144,7 +159,7 @@
                 'header' => 'id',
                 'name' => 'base_product_id[]',
                 'value' => function ($data) {
-                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field', 'readonly'=>'readonly'));
+                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field readOnlyInput', 'readonly'=>'readonly'));
                 },
                 'type' => 'raw',
             ),
@@ -158,20 +173,20 @@
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Order Quantity',
+                'header' => 'Procured Quantity',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) {
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input'));
+                'value' => function ($data) use ($disableProcured) {
+                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'disabled'=> $disableProcured));
                 },
             ),
             array(
                 'header' => 'Received Quantity',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) {
-                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input'));
+                'value' => function ($data) use ($disableReceived) {
+                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input', 'disabled'=> $disableReceived));
                 },
                 'type' => 'raw',
             ),
@@ -179,8 +194,8 @@
                 'header' => 'Price',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) {
-                    return CHtml::textField('price[]', $data->price, array('class'=>'input price', 'id'=>'price_'.$data->base_product_id, 'onchange'=>'onPriceChange(
+                'value' => function ($data) use ($disableProcured) {
+                    return CHtml::textField('price[]', $data->price, array('class'=>'input price inputs', 'disabled'=> $disableProcured, 'id'=>'price_'.$data->base_product_id, 'onchange'=>'onPriceChange(
                     '.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
@@ -202,7 +217,7 @@
 
     <div class="order_bottomdetails" align="right">
         <?php echo $form->labelEx($model,'total_payable_amount'); ?>
-        <?php echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount')); ?>
+        <?php echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount', 'class'=>'inputs')); ?>
         <?php echo $form->error($model,'total_payable_amount'); ?>
     </div>
 <?php echo $form->hiddenField($model,'warehouse_id', array('value' => $w_id)); ?>
@@ -220,7 +235,7 @@
     ?>
 
 
-    <a href="index.php?r=purchaseHeader/admin" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+    <a href="index.php?r=purchaseHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
 
 </div>
 
@@ -239,6 +254,25 @@
             includeNums: true,
             removeDisabled: true,
             allText: 'Complete Item list'
+        });
+
+        $('.inputs').keydown(function (e) {
+            if (e.which === 13) {
+                var index = $('.inputs').index(this);
+                if (e.shiftKey) {
+                    $('.inputs').eq(index - 1).focus();
+                }
+                else {
+                    $('.inputs').eq(index + 1).focus();
+                }
+                return false;
+            }
+        });
+
+        $('.readOnlyInput').keydown(function (e) {
+            if (e.which === 13) {
+                return false;
+            }
         });
 
     });

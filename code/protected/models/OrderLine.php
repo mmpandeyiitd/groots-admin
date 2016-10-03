@@ -522,15 +522,29 @@ class OrderLine extends CActiveRecord
         return $orderLines;
     }
 
-    public static function getOrderSumByDate($w_id, $date){
+    public static function getDeliveredOrderSumByDate($w_id, $date){
         $connection = Yii::app()->secondaryDb;
-        $sql = "SELECT ol.base_product_id as id, SUM(ol.delivered_qty) as qty, bp.pack_size, bp.pack_unit  FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status != 'Cancelled' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
+        $sql = "SELECT ol.base_product_id as id, SUM(ol.delivered_qty) as qty, bp.pack_size, bp.pack_unit  FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status != 'Cancelled' and oh.status= 'Delivered' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
         $orderLines = array();
         foreach ($result as $item){
             $orderLines[$item['id']] = Utility::convertOrderToKg($item['qty'], $item['pack_size'], $item['pack_unit']);
+        }
+
+        return $orderLines;
+    }
+
+    public static function getOrderSumByDate($w_id, $date){
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT ol.base_product_id as bp_id, SUM(ol.product_qty * bp.pack_size_in_gm/1000) as qty  FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status != 'Cancelled' group by ol.base_product_id having qty > 0 order by bp.title asc";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        $orderLines = array();
+        foreach ($result as $item){
+            $orderLines[$item['bp_id']] = $item['qty'];
         }
 
         return $orderLines;

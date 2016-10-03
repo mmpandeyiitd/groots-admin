@@ -13,9 +13,12 @@ class InventoryHeader extends CActiveRecord
     public $end_date="";*/
     public $item_title="";
     public $date="";
+    public $prev_day_inv=0;
     public $present_inv=0;
+    public $liquid_inv=0;
     public $extra_inv_absolute=0;
     public $wastage = 0;
+    public $wastage_others = 0;
     public $balance = 0;
     public $schedule_inv_absolute=0;
     /**
@@ -48,6 +51,7 @@ class InventoryHeader extends CActiveRecord
         return array(
             'Warehouse' => array(self::BELONGS_TO, 'Warehouse', 'warehouse_id'),
             'BaseProduct' => array(self::BELONGS_TO,  'BaseProduct', 'base_product_id'),
+            //'Inventory' => array(self::HAS_ONE,  'Inventory', 'inv_id'),
         );
     }
 
@@ -87,34 +91,43 @@ class InventoryHeader extends CActiveRecord
 
     public function search() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-
+        if(empty($this->date)){
+            $this->date = date('Y-m-d');
+        }
         $criteria = new CDbCriteria;
-        $criteria->with = array(
+        $criteria->select = 't.*, bp.title as item_title, inv.present_inv, inv.wastage, inv.wastage_others, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
+        /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
-        );
-        $criteria->together = true;
-        $criteria->compare( 't1.title', $this->item_title, true );
-        $criteria->order = 't1.title asc';
+        );*/
+        $criteria->join = " Left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id  and inv.date ='".$this->date."') ";
+        $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
+        //$criteria->together = true;
+        $criteria->compare( 'bp.title', $this->item_title, true );
+
+        //$criteria->compare('i.date', $this->date, true);
+        $criteria->order = 'bp.title asc';
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort'=>array(
                 'attributes'=>array(
                     'item_title'=>array(
-                        'asc'=>'BaseProduct.title',
-                        'desc'=>'BaseProduct.title DESC',
+                        'asc'=>'bp.title',
+                        'desc'=>'bp.title DESC',
                     ),
                     '*',
                 ),
             ),
             'pagination' => array(
-                'pageSize' => 100,
+                'pageSize' => 50,
             ),
         ));
     }
 
 
-    public function searchNew() {
+
+
+    /*public function searchNew() {
         // @todo Please modify the following code to remove attributes that should not be searched.
         $issuperadmin = Yii::app()->session['is_super_admin'];
         if ($issuperadmin) {
@@ -139,7 +152,7 @@ class InventoryHeader extends CActiveRecord
             ),
 
         ));
-    }
+    }*/
 
 
     /**
@@ -169,8 +182,16 @@ class InventoryHeader extends CActiveRecord
         return $this->date;
     }
 
+    public function getPrevDayInv(){
+        return $this->prev_day_inv;
+    }
+
     public function getPresentInv(){
         return $this->present_inv;
+    }
+
+    public function getLiquidInv(){
+        return $this->liquid_inv;
     }
 
     public function getExtraInvAbsolute(){
@@ -179,6 +200,10 @@ class InventoryHeader extends CActiveRecord
 
     public function getWastage(){
         return $this->wastage;
+    }
+
+    public function getWastageOthers(){
+        return $this->wastage_others;
     }
 
     public function getBalance(){

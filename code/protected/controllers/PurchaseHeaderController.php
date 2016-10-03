@@ -67,6 +67,9 @@ class PurchaseHeaderController extends Controller
             if($w_id>0 && $this->checkAccessByData('PurchaseViewer', array('warehouse_id'=>$w_id))){
                 return true;
             }
+            if($w_id>0 && $this->checkAccessByData('ProcurementViewer', array('warehouse_id'=>$w_id))){
+                return true;
+            }
             elseif($this->checkAccess('SuperAdmin')){
                 return true;
             }
@@ -96,15 +99,17 @@ class PurchaseHeaderController extends Controller
 	public function actionCreate()
 	{
 	    //echo "<pre>";
-		$model=new PurchaseHeader('search');
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
-        if(!$this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
+
+        if(!$this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
+		$model=new PurchaseHeader('search');
+
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
@@ -164,7 +169,7 @@ class PurchaseHeaderController extends Controller
 			'model'=>$model,
             'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
-            'w_id' => $_GET['w_id'],
+            'w_id' => $w_id,
 		));
 	}
 
@@ -183,10 +188,13 @@ class PurchaseHeaderController extends Controller
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
-        if(!$this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+        /*if(!($this->checkAccess('ProcurementEditor', array('warehouse_id'=>$w_id)) || $this->checkAccess('PurchaseEditor',array('warehouse_id'=>$w_id)))){
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }*/
+        if(!($this->checkAccessByData(array('ProcurementEditor', 'PurchaseEditor'), array('warehouse_id'=>$w_id)))){
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
+
         $model=$this->loadModel($id);
         $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
@@ -306,10 +314,15 @@ class PurchaseHeaderController extends Controller
         $w_id = $_GET['w_id'];
 		if(isset($_GET['PurchaseHeader']))
 			$model->attributes=$_GET['PurchaseHeader'];
-
+        $model->warehouse_id=$w_id;
+        $showCreate = false;
+        if($w_id>0 && $this->checkAccessByData('ProcurementViewer', array('warehouse_id'=>$w_id))){
+            $showCreate = true;
+        }
 		$this->render('admin',array(
 			'model'=>$model,
             'w_id' => $w_id,
+            'showCreate'=>$showCreate,
         ));
 	}
 

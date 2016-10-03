@@ -97,4 +97,9 @@ class Utility
         $authItems = Yii::app()->session['auth_items'];
         return explode(',', $authItems);
     }
+
+    public static function getPrevDay($date){
+        $time = strtotime($date.' -1 days');
+        return date("Y-m-d", $time);
+    }
 }

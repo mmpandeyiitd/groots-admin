@@ -28,19 +28,41 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1>Manage Transfer Orders</h1>
+<br>
+	<h4>Auto Generate Transfer Order</h4>
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'transIn-date',
+	'action'=>Yii::app()->createUrl('//transferHeader/dailyTransfer',array("w_id"=>$w_id)),
+	'enableAjaxValidation'=>false,
+)); ?>
+<?php echo $form->errorSummary($model->errors); ?>
+	<div class="row">
+		<?php echo $form->labelEx($model, 'delivery_date'); ?>
+		<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+			'model'=>$model,
+			'attribute'=>'delivery_date',
+			'value'=>$model->delivery_date,
 
-<!--<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
+			'id'=>'date',
+			//'value'=> date('Y-m-d'),
+			'options'=>array(
+				'dateFormat' => 'yy-mm-dd',
+				'showAnim'=>'fold',
+			),
+			'htmlOptions'=>array(
+				'style'=>'height:20px;'
+			),
+		)); ?>
+		<?php echo $form->error($model,'date'); ?>
+		<?php
+
+		echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+
+		?>
+	</div>
+<?php $this->endWidget();?>
 
 
-<?php /*echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); */?>
-<div class="search-form" style="display:none">
-<?php /*$this->renderPartial('_search',array(
-	'model'=>$model,
-)); */?>
-</div>--><!-- search-form -->
 <h4>Transfer In</h4>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'transferIn-grid',
@@ -61,43 +83,43 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		),
 		array(
 			'header' => 'dest warehouse',
-			//'headerHtmlOptions' => array('style' => 'width:40%;'),
-			//'htmlOptions' => array('style' => 'width:40%;'),
+
 			'value' => function ($data) {
 				return CHtml::label($data->DestWarehouse->name, $data->DestWarehouse->name,array('class'=>'title'));
 			},
 			'type' => 'raw',
 		),
-		//'dest_warehouse_id',
-		//'status',
+		array(
+			'name' => 'transfer_type',
+			'value' => '$data->transfer_type',
+			'type' => 'raw',
+			'filter'=>CHtml::textField("TransferOut[status]", $transferOut->transfer_type),
+		),
+		array(
+			'name' => 'transfer_category',
+			'value' => '$data->transfer_category',
+			'type' => 'raw',
+			'filter'=>CHtml::textField("TransferOut[status]", $transferOut->transfer_category),
+		),
+
 		array(
 			'name' => 'status',
 			'value' => '$data->status',
 			'type' => 'raw',
 			'filter'=>CHtml::textField("TransferIn[status]", $transferIn->status),
 		),
-		//'delivery_date',
 		array(
 			'name' => 'delivery_date',
 			'type' => 'raw',
 			'value' => '$data->delivery_date',
 			'filter'=>CHtml::textField("TransferIn[delivery_date]", $transferIn->delivery_date),
 		),
-		//'comment',
 		array(
 			'name' => 'comment',
 			'value' => '$data->comment',
 			'type' => 'raw',
 			'filter'=>CHtml::textField("TransferIn[comment]", $transferIn->comment),
 		),
-		/*
-		'invoice_number',
-		'created_at',
-		'updated_at',
-		*/
-		/*array(
-			'class'=>'CButtonColumn',
-		),*/
 		'link' => array(
 			'header' => 'Update',
 			'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
@@ -137,8 +159,19 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 			},
 			'type' => 'raw',
 		),
-		//'dest_warehouse_id',
-		//'status',
+
+		array(
+			'name' => 'transfer_type',
+			'value' => '$data->transfer_type',
+			'type' => 'raw',
+			'filter'=>CHtml::textField("TransferOut[status]", $transferOut->transfer_type),
+		),
+		array(
+			'name' => 'transfer_category',
+			'value' => '$data->transfer_category',
+			'type' => 'raw',
+			'filter'=>CHtml::textField("TransferOut[status]", $transferOut->transfer_category),
+		),
 		array(
 			'name' => 'status',
 			'value' => '$data->status',

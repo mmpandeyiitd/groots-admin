@@ -9,11 +9,12 @@ $meunAuthItemMap = array(
     'product' => array('SuperAdmin'),
     'order' => array('SuperAdmin'),
     'dashboard' => array('SuperAdmin'),
-    'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer'),
+    'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'warehouseOrder' => array('OrderViewer'),
     'warehouseInventory' => array('InventoryViewer'),
     'warehouseTransfer' => array('TransferViewer'),
     'warehousePurchase' => array('PurchaseViewer'),
+    'warehouseProcurement' => array('ProcurementViewer'),
 );
 $isReportVisible = isMenuVisible($meunAuthItemMap['report']);
 $isCollectionVisible = isMenuVisible($meunAuthItemMap['collection']);
@@ -44,8 +45,8 @@ $collectionArr = array('label' => '<i class="fa fa-list"></i> Collection managem
 $buyerArr = array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' =>$isBuyerVisible);
 $categoryArr = array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => $isCategoryVisible);
 $productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => $isProductVisible);
-$regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('store/update&id=1'), 'visible' => false);
-$orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('orderHeader/admin'), 'visible' => $isOrderVisible);
+$regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('/store/update&id=1'), 'visible' => false);
+$orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('/orderHeader/admin'), 'visible' => $isOrderVisible);
 $dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => $isDashboardVisible);
 
 function generateOrderMenu($id, $meunAuthItemMap){
@@ -59,7 +60,7 @@ function generateOrderMenu($id, $meunAuthItemMap){
 
 function generateInventoryMenu($id, $meunAuthItemMap){
     if(isMenuVisible($meunAuthItemMap['warehouseInventory'], array('warehouse_id'=>$id))){
-        return array('label' => '<i ></i> Inventory', 'url' => array('/inventory/admin&w_id='.$id), 'visible' => true);
+        return array('label' => '<i ></i> Inventory', 'url' => array('/inventory/create&w_id='.$id), 'visible' => true);
     }
     else{
         return array();
@@ -84,6 +85,15 @@ function generateTransferMenu($id, $meunAuthItemMap){
     }
 }
 
+function generateProcurementMenu($id, $meunAuthItemMap){
+    if(isMenuVisible($meunAuthItemMap['warehouseProcurement'], array('warehouse_id'=>$id))){
+        return  array('label' => '<i ></i> Procurement', 'url' => array('/purchaseHeader/admin&w_id='.$id), 'visible' => true);
+    }
+    else{
+        return array();
+    }
+}
+
 
 function generateWarehouseItems($w_id, $meunAuthItemMap){
     $warehouseItems = array();
@@ -102,6 +112,10 @@ function generateWarehouseItems($w_id, $meunAuthItemMap){
     $transferItem = generateTransferMenu($w_id, $meunAuthItemMap);
     if(sizeof($transferItem) > 0){
         array_push($warehouseItems, $transferItem);
+    }
+    $procurementItem = generateProcurementMenu($w_id, $meunAuthItemMap);
+    if(sizeof($procurementItem) > 0){
+        array_push($warehouseItems, $procurementItem);
     }
     return $warehouseItems;
 }

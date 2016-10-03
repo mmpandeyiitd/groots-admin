@@ -72,11 +72,19 @@ class InventoryController extends Controller
         }
         if(!$this->checkAccessByData('InventoryEditor', array('warehouse_id'=>$w_id))){
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
-            Yii::app()->controller->redirect("index.php?r=inventory/admin&w_id=".$w_id);
+            Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
         }
         $inv_header = new InventoryHeader('search');
-        $date = date('Y-m-d');
+        //$date = date('Y-m-d');
         //$date = "2016-09-15";
+
+        if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
+            $date = $_POST['InventoryHeader']['date'];
+        }
+        else{
+            $date = date('Y-m-d');
+            //$date = "2016-09-15";
+        }
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;
         //$model->warehouse_id = $w_id;
@@ -87,17 +95,10 @@ class InventoryController extends Controller
         //$inventories = Inventory::model()->with('BaseProduct')->findAllByAttributes(array('warehouse_id'=>$w_id, 'date'=>$date),array('order'=> ' BaseProduct.title ASC'));
         //$dataProvider = $model->search();
         $dataProvider = $inv_header->search();
-        $orderSum = OrderLine::getOrderSumByDate($w_id, $date);
-        $purchaseSum = PurchaseLine::getPurchaseSumByDate($w_id, $date);
-        $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
-        $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
-        $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
-        $quantitiesMap = array();
-        $quantitiesMap['orderSum'] = $orderSum;
-        $quantitiesMap['purchaseSum'] = $purchaseSum;
-        $quantitiesMap['transferInSum'] = $transferInSum;
-        $quantitiesMap['transferOutSum'] = $transferOutSum;
-        $quantitiesMap['avgOrder'] = $avgOrderByItem;
+        $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
+
+        $totalInvData = Inventory::getTotalInvOfDate($date);
+        $totalInvDataProvider = new CArrayDataProvider($totalInvData);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -106,33 +107,45 @@ class InventoryController extends Controller
 		{
             $transaction = Yii::app()->db->beginTransaction();
             try {
+                $date = $_POST['InventoryHeader']['date'];
+                $warehouse_id = $_POST['InventoryHeader']['warehouse_id'];
                 foreach ($_POST['base_product_id'] as $key => $bp_id) {
-                    $date = $_POST['InventoryHeader']['date'];
                     $delivered_qty = trim($_POST['schedule_inv'][$key]);
                     $schedule_inv = trim($_POST['schedule_inv'][$key]);
-
-                    $inv = Inventory::model()->findAllByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date));
-                    if($inv==false){
-                        $inv = new Inventory();
-                        $inv->warehouse_id = $_POST['InventoryHeader']['warehouse_id'];;
-                        $inv->base_product_id = $bp_id;
-                        $inv->date = $date;
-                        $inv->inv_id = $_POST['inv_hd_id'][$key];
-                        $inv->created_at = date('Y-m-d');
+                    $present_inv = trim($_POST['present_inv'][$key]);
+                    $liquid_inv = trim($_POST['liquid_inv'][$key]);
+                    $wastage = trim($_POST['wastage'][$key]);
+                    $wastage_others = trim($_POST['wastage_others'][$key]);
+                    $extra_inv = trim($_POST['extra_inv'][$key]);
+                    if($present_inv > 0){
+                        /*echo "present_inv-".$present_inv;
+                        echo "present_inv-".$wastage;
+                        echo "present_inv-".$wastage_others;die;*/
+                        $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date));
+                        if($inv==false){
+                            $inv = new Inventory();
+                            $inv->warehouse_id = $warehouse_id;
+                            $inv->base_product_id = $bp_id;
+                            $inv->date = $date;
+                            $inv->inv_id = $_POST['inv_hd_id'][$key];
+                            $inv->created_at = date('Y-m-d');
+                        }
+                        if(isset($schedule_inv) && $schedule_inv>0){
+                            $inv->schedule_inv = $schedule_inv;
+                        }
+                        else{
+                            $inv->schedule_inv = 0;
+                        }
+                        $inv->present_inv = empty($present_inv) ? 0: $present_inv;
+                        $inv->liquid_inv = empty($liquid_inv) ? 0: $liquid_inv;
+                        $inv->wastage = empty($wastage) ? 0: $wastage;
+                        $inv->wastage_others = empty($wastage_others) ? 0: $wastage_others;
+                        $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
+                        $inv->save();
                     }
-                    if(isset($schedule_inv) && $schedule_inv>0){
-                        $inv->schedule_inv = $schedule_inv;
-                    }
-                    else{
-                        $inv->schedule_inv = 0;
-                    }
-                    $inv->present_inv = $_POST['present_inv'][$key];
-                    $inv->wastage = $_POST['wastage'][$key];
-                    $inv->extra_inv = $_POST['extra_inv'][$key];
-                    $inv->save();
                 }
                 $transaction->commit();
-                $this->redirect(array('admin','w_id'=>$w_id));
+                $this->redirect(array('create','w_id'=>$w_id));
 
             }catch (\Exception $e) {
                 $transaction->rollBack();
@@ -144,7 +157,7 @@ class InventoryController extends Controller
 		$this->render('create',array(
             'model'=>$inv_header,
             'dataProvider'=>$dataProvider,
-
+            'totalInvData' => $totalInvDataProvider,
             'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'quantitiesMap' => $quantitiesMap,
@@ -225,7 +238,7 @@ class InventoryController extends Controller
 		));
 	}
 
-	public function  actionAdmin(){
+	/*public function  actionAdmin(){
 	    //echo "<pre>";
         $model=new Inventory('search');
         $inv_header = new InventoryHeader('search');
@@ -314,7 +327,7 @@ class InventoryController extends Controller
             'w_id' => $_GET['w_id'],
             'quantitiesMap' => $quantitiesMap,
         ));
-    }
+    }*/
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
@@ -367,14 +380,5 @@ class InventoryController extends Controller
         }
     }
 
-    public function getPrevDayInv($today){
-        $invArr = array();
-        $time = strtotime($today.' -1 days');
-        $prevDay = date("Y-m-d", $time);
-        $invs = Inventory::model()->findAllByAttributes(array('date'=>$prevDay), array('select'=>'base_product_id, present_inv'));
-        foreach ($invs as $inv){
-            $invArr[$inv->base_product_id] = $inv->present_inv;
-        }
-        return $invArr;
-    }
+
 }
