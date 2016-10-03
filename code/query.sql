@@ -139,10 +139,16 @@ alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT
 
 --------------------------------------
 
+alter table cb_dev_groots.base_product ADD COLUMN pack_size_in_gm float DEFAULT 0 AFTER pack_unit;
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='gm';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='g';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='kg';
+update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='dozen';
 
 
 insert into cb_dev_groots.warehouses values(null, 'Azadpur, delhi', null, 'Azadpur, delhi', 'Delhi', 'Delhi', 'Azadpur', '110033', null, null,null,1,now(), now(),null);
 
+update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
 
   alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
 
