@@ -151,3 +151,45 @@ inner join cb_dev_groots.retailer as re
 on oh.user_id = re.id
 where oh.delivery_date >= '2016-09-01'
 group by oh.user_id;
+
+
+
+
+alter table cb_dev_groots.retailer add column collection_fulfilled boolean not null default false;
+-------------------------------------------------------------
+CREATE TABLE cb_dev_groots.collection_agent(
+id int(11) NOT NULL ,
+name varchar(255) NOT NULL,
+PRIMARY KEY( id )
+);
+
+
+---------------------------------------------
+alter table cb_dev_groots.retailer add column collection_frequency enum('daily', 'weekly', 'fortnight', 'monthly', '45-days') default 'daily',
+                                   add column due_date date default null ;
+
+
+-- select product_name , delivered_qty from groots_orders.order_line as ol
+-- inner join groots_orders.order_header as oh
+-- on ol.order_id = oh.order_id
+-- where oh.delivery_date >= '2016-09-01' and oh.delivery_date <= '2016-09-30' and oh.user_id in ('136');
+-- group by oh.delivery_date;
+
+
+
+-- select product_name , delivered_qty from groots_orders.order_line as ol
+-- inner join groots_orders.order_header as oh
+-- on ol.order_id = oh.order_id
+-- where oh.delivery_date >= '2016-09-16' and oh.delivery_date <= '2016-09-30' and oh.user_id in ('99');
+-- group by oh.delivery_date;
+
+------------------------------------------------------------------
+update cb_dev_groots.retailer set collection_frequency = 'monthly' where id in ('136');
+update cb_dev_groots.retailer set collection_frequency = 'weekly' where id in ('108','117','121','122','123','126','127','131','133','134','137','139','149','151','156','179');
+update cb_dev_groots.retailer set collection_frequency = 'fortnight' where id in ('99','101','135','138','140','152');
+
+
+  update cb_dev_groots.retailer set due_date = '2016-10-16' where collection_frequency = 'fortnight';
+update cb_dev_groots.retailer set due_date = '2016-11-01' where collection_frequency = 'monthly';
+  update cb_dev_groots.retailer set due_date = '2016-10-10' where collection_frequency = 'weekly';
+     update cb_dev_groots.retailer set due_date = '2016-10-05' where collection_frequency = 'daily';
