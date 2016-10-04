@@ -7,42 +7,81 @@ $base_url = Yii::app()->getBaseUrl(true);
  // 	array('target' => '_blank'));
 ?>
  <div>
- <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&download=true>Download</a>
+ <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&download=true>Download Daily Report</a>
+ <br>
+ <br>
+ <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&downloadPending=true>Download Back Date Reports</a>
+
 </div>
 
-<?php  
+<!-- <?php  
 	echo "<br>";
 	echo "<br>";
 	echo CHtml::submitButton('update',array('name' => 'update')); 
-?>
+
+?>	 -->
+
+<!-- <script type="text/javascript">
+	$(document).ready(function() {
+	$('.inputs').keydown(function (e) {
+            if (e.which === 13) {
+                var index = $('.inputs').index(this);
+                if(e.shiftKey){
+                    $('.inputs').eq(index-1).focus();
+                }
+                else{
+                    $('.inputs').eq(index+1).focus();
+                }
+                return false;
+            }
+        });
+
+	$('.readOnlyInput').keydown(function (e) {
+            if (e.which === 13) {
+                return false;
+            }
+        });
+});
+</script> -->
 
 <?php
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'id',
 		'dataProvider'=> $data,
 		'columns' => array(
+			'id',
 			'name',
-			'amount',
+			'payable_amount',
+			'todays_order_amount',
 			'warehouse',
 			
-			array(
-        		'header'=>'collected_amount',
-        		'value'=>'CHTML::textField("amount[]")',
-        		'type'=>'raw',
-        		'htmlOptions'=>array('width'=>'25px'),
-        	),
-
+			// array(
+   //      		'header'=>'payment_link',
+   //      		'class' => 'CLinkColumn',
+   //      		'label' => 'create_payment',
+   //      		'urlExpression' => 'http://admin.groots.localhost.com/index.php?r=Grootsledger/CreatePayment&retailerId=".$data["id"]',
+   //      	),
 			array(
         		'value'=> function($data){
-        			return CHTML::hiddenField("retailer_id[]",$data['id']);
+        			return CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 
+									'retailerId' => $data['id']),array('target'=>'_blank'));
         		},
-        		
-        		'type'=>'raw',
-        		'htmlOptions'=>array('width'=>'25px'),
+        		'header' => 'Payment Link',
+        		'type' => 'raw',
+        		'htmlOptions'=>array('width'=>'120px','target'=>"_blank"),
         	),
+			
+			// array(
+   //      		'value'=> function($data){
+   //      			return CHTML::hiddenField("retailer_id[]",$data['id']);
+   //      		},
+        		
+   //      		'type'=>'raw',
+   //      		'htmlOptions'=>array('width'=>'25px'),
+   //      	),
 		),
 	)
 );
-//var_dump();
+//var_dump($data); die();
 ?>
 </form>

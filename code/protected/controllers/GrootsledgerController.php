@@ -32,7 +32,7 @@ class GrootsledgerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','DailyCollection'),
+				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','dailyCollection'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -315,55 +315,58 @@ class GrootsledgerController extends Controller
 
     public function actiondailyCollection(){
       //echo "<pre>";
-      // $model = new Grootsledger('search');
-      // $model->unsetAttributes();
-      // if(isset($_GET['Grootsledger']))
-      // $model->attributes=$_GET['Grootsledger'];
+      // if(isset($_POST['update'])){
+      //     $retailerIds = $_POST['retailer_id'];
+      //     $payments = $_POST['amount'];
+          
+      //     foreach ($retailerIds as $key => $retailerId) {
+      //       $paymentAmount = $payments[$key];
+      //       $current_retailer = Retailer::model()->findByPk($retailerId );
+      //        if(isset($paymentAmount) and $paymentAmount > 0){
+      //         $current_retailer->total_payable_amount -= $paymentAmount;
+      //         $sql = "insert into groots_orders.retailer_payments(id, retailer_id, paid_amount, date, created_at) values($retailerId, $retailerId, $paymentAmount, CURDATE(), CURDATE())";
 
-      $retailer = new Retailer();
+      //       $connection = Yii::app()->secondaryDb;
+      //       $command = $connection->createCommand($sql);
+      //       $command->execute();
+      //       $current_retailer->save();
+      //       }
+      //     }
+      // }
+
+      $retailers = Retailer::todaysOrder();
       $dataprovider = array();
-      $cur_date = date('Y-m-d');
-      $retailers = Retailer::model()->findAllByAttributes(array('status' => 1,'due_date' => $cur_date,), array('condition'=> 'total_payable_amount > 0' , 'select'=>'id, name, total_payable_amount, allocated_warehouse_id' ));
+      //var_dump($retailers);die("here");
       foreach ($retailers as $rowinfo) {
         $tmp = array();
-        $tmp['id'] = $rowinfo->id;
-        $tmp['name'] = $rowinfo->name;
-        $tmp['amount'] = $rowinfo->total_payable_amount;
-        $tmp['warehouse'] = $rowinfo->warehouse_name->name;
+        $tmp['id'] = $rowinfo['id'];
+        $tmp['name'] = $rowinfo['retailer_name'];
+        $tmp['payable_amount'] = $rowinfo['amount'];
+        $tmp['warehouse'] = $rowinfo['warehouse_name'];
+        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         array_push($dataprovider, $tmp);
       }
       $dataprovider = new CArrayDataProvider($dataprovider, array(
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'warehouse','name',
+                            'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
       
-      if(isset($_POST['update'])){
-          $retailerIds = $_POST['retailer_id'];
-          $payments = $_POST['amount'];
-          
-          foreach ($retailerIds as $key => $retailerId) {
-            $paymentAmount = $payments[$key];
-             $current_retailer = Retailer::model()->findByAttributes(array('id' =>$retailerId ));
-            
-             if(isset($paymentAmount)){
-              $current_retailer->total_payable_amount-=$paymentAmount;
-              $current_retailer->save();
-            }
-          }
-      }
+      
 // die("here");
       if(isset($_GET['download']) && $_GET['download']==true){
         $model = new Grootsledger();
-      // $model->unsetAttributes();
-      // echo "<pre>";
-      // var_dump($model);die();
-      // if(isset($_GET['Grootsledger']))
-      // $model->attributes=$_GET['Grootsledger'];
-        ob_clean();
+      ob_clean();
           $model->downloadDailyCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+        if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
+      ob_clean();
+          Retailer::downloadBackDateCollectionCsv();
             ob_flush();
             exit();
         }
@@ -375,6 +378,34 @@ class GrootsledgerController extends Controller
       }
     }
        
+
+
+    // public function actionpendingCollection(){
+    //   $retailers = Retailer::pendingRetailers();
+    //   $dataprovider = array();
+    //   foreach($retailers as $rowinfo){
+    //     $tmp = array();
+    //     $tmp['id'] = $rowinfo['id'];
+    //     $tmp['name'] = $rowinfo['retailer_name'];
+    //     $tmp['payable_amount'] = $rowinfo['amount'];
+    //     $tmp['warehouse'] = $rowinfo['warehouse_name'];
+    //     $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+    //     array_push($dataprovider, $tmp);
+    //   }
+
+    //   $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+    //                 'sort'=>array(
+    //                     'attributes'=>array(
+    //                         'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
+    //                     ),
+    //                 ),'pagination'=>array('pageSize'=>100)));
+
+    //   $this->render('pendingCollection',array(
+    //       'data' => $dataprovider,
+    //       ));
+
+    // }
 
     public function actionAdmin()
     {

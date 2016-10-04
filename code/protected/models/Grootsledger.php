@@ -182,10 +182,19 @@ LEFT JOIN groots_ledger AS gl ON gl.order_id = oh.order_id";
 
 
     public static function downloadDailyCollectionCsv(){
-    	$sql = "select re.name, re.total_payable_amount, wa.name as warehouse_name
-    	from cb_dev_groots.retailer as re
-    	inner join cb_dev_groots.warehouses as wa
-    	on re.payment_warehouse_id = wa.id where (re.total_payable_amount > 0) and (re.status ='1') and (due_date = CURDATE());";
+    	$sql ="SELECT re.name as retailer_name, re.id as id, re.total_payable_amount as amount,
+                sum(oh.total_payable_amount) as todays_order, wa.name as warehouse_name
+                FROM cb_dev_groots.retailer as re
+                left join groots_orders.order_header as oh
+                on (oh.user_id = re.id 
+                    and oh.status != 'Delivered' 
+                    and oh.status != 'Cancelled' 
+                    and oh.delivery_date = CURDATE()
+                    )
+                left join cb_dev_groots.warehouses as wa
+                on re.allocated_warehouse_id = wa.id 
+                where re.status ='1' and re.total_payable_amount > 0 and re.due_date = CURDATE()
+                group by re.id";
     	$connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
