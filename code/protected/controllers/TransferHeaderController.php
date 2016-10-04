@@ -108,7 +108,7 @@ class TransferHeaderController extends Controller
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
-                'pageSize'=>50,
+                'pageSize'=>100,
             ),
         ));
 //print_r($_POST);die;
@@ -200,7 +200,7 @@ class TransferHeaderController extends Controller
 
         $dataProvider=new CArrayDataProvider($transferLinesArr, array(
             'pagination'=>array(
-                'pageSize'=>50,
+                'pageSize'=>100,
             ),
         ));
         // Uncomment the following line if AJAX validation is needed

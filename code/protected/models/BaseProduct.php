@@ -975,7 +975,7 @@ class BaseProduct extends CActiveRecord {
 
     public static function PopularItems(){
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
-        $popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' base_product_id in (264,310,606)'));
+        $popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' popularity in (1)'));
         $purchaseLineArr = array();
         foreach ($popularItems as $item){
             /*$tmp = array();

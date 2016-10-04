@@ -113,7 +113,7 @@ class PurchaseHeaderController extends Controller
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
-                'pageSize'=>50,
+                'pageSize'=>100,
             ),
         ));
 //print_r($_POST);die;
@@ -208,7 +208,7 @@ class PurchaseHeaderController extends Controller
 
         $dataProvider=new CArrayDataProvider($purchaseLinesArr, array(
             'pagination'=>array(
-                'pageSize'=>50,
+                'pageSize'=>100,
             ),
         ));
 		// Uncomment the following line if AJAX validation is needed

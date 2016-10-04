@@ -17,7 +17,7 @@ class OrderHeaderController extends Controller {
             'postOnly + delete', // we only allow deletion via POST request
         );
     }
-
+    /*
     protected function beforeAction($action) {
         $session = Yii::app()->session['user_id'];
         if ($session == '') {
@@ -1828,12 +1828,12 @@ Sales: +91-11-3958-9895</span>
      * @return OrderHeader the loaded model
      * @throws CHttpException
      */
-    public function loadModel($id) {
+    /*public function loadModel($id) {
         $model = OrderHeader::model()->findByPk($id);
         if ($model === null)
             throw new CHttpException(404, 'The requested page does not exist.');
         return $model;
-    }
+    }*/
 
     /**
      * Performs the AJAX validation.
@@ -1912,10 +1912,7 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
-    public function actionReport($id, $type, $zip=false) {
-        // echo "hello";die;
-        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
-            ),array('order'=>'product_name ASC'));*/
+    /*public function actionReport($id, $type, $zip=false) {
 
         $model = OrderLine::getOrderLinebyOrderId($id);
         $modelOrder = $this->loadModel($id);
@@ -1932,7 +1929,7 @@ Sales: +91-11-3958-9895</span>
         }
         $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
 
-    }
+    }*/
 
     public function actionReportnew($id, $status, $email, $type) {
         //  echo $status;die;

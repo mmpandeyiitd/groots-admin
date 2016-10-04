@@ -137,7 +137,7 @@ CREATE TABLE groots_orders.`retailer_payments` (
 
 alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT NULL DEFAULT 1;
 
---------------------------------------
+
 
 alter table cb_dev_groots.base_product ADD COLUMN pack_size_in_gm float DEFAULT 0 AFTER pack_unit;
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='gm';
@@ -145,12 +145,15 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='kg';
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack_unit='dozen';
 
+update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
+
+--------------------------------------
 
 insert into cb_dev_groots.warehouses values(null, 'Azadpur, delhi', null, 'Azadpur, delhi', 'Delhi', 'Delhi', 'Azadpur', '110033', null, null,null,1,now(), now(),null);
 
-update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
 
-  alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
+
+
 
 
 ALTER TABLE cb_dev_groots.base_product ADD COLUMN parent_id int(11) unsigned DEFAULT NULL , add index fk_base_prod_1 (parent_id), add CONSTRAINT fk_base_prod_1 foreign key (parent_id) REFERENCES cb_dev_groots.base_product(base_product_id);
@@ -254,7 +257,7 @@ CREATE TABLE groots_orders.`purchase_line` (
 ALTER TABLE groots_orders.order_line  MODIFY  COLUMN  `subscribed_product_id` int(11) UNSIGNED NOT NULL;
 ALTER TABLE groots_orders.order_line add INDEX fk_order_line_1 (order_id), add INDEX fk_order_line_2 (subscribed_product_id);
 ALTER TABLE groots_orders.order_line add CONSTRAINT fk_order_line_1 FOREIGN KEY (order_id) REFERENCES groots_orders.order_header(order_id);
-ALTER TABLE groots_orders.order_line add CONSTRAINT fk_order_line_2 FOREIGN KEY (subscribed_product_id) REFERENCES cb_dev_groots.subscribed_product(subscribed_product_id)
+ALTER TABLE groots_orders.order_line add CONSTRAINT fk_order_line_2 FOREIGN KEY (subscribed_product_id) REFERENCES cb_dev_groots.subscribed_product(subscribed_product_id);
 
 
 CREATE TABLE groots_orders.`transfer_header` (
@@ -307,9 +310,9 @@ CREATE TABLE groots_orders.`transfer_line` (
 ) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=latin1;
 
 
-ALTER TABLE base_product add COLUMN popularity SMALLINT DEFAULT 5;
+ALTER TABLE cb_dev_groots.base_product add COLUMN popularity SMALLINT DEFAULT 5;
 
-alter table purchase_header add column `paid_amount` decimal(10,2) DEFAULT NULL
+alter table groots_orders.purchase_header add column `paid_amount` decimal(10,2) DEFAULT NULL
 
 
 
@@ -362,8 +365,6 @@ ALTER TABLE groots_orders.inventory ADD UNIQUE KEY `uk_inv_1` (`inv_id`,`date`);
 ALTER TABLE groots_orders.inventory_header ADD UNIQUE KEY `uk_inv_hd_1` (warehouse_id, `base_product_id`);
 
 
-#alter table groots_orders.inventory_history add column transferIn decimal(10,2) DEFAULT NULL, add column transferOut decimal(10,2) DEFAULT NULL, add column order decimal(10,2) DEFAULT NULL, add column purchase decimal(10,2) DEFAULT NULL
-
 #populate inventory one time
 
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, '2016-09-14', now(), now() from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id;
@@ -386,25 +387,41 @@ alter table groots_orders.transfer_line drop column colour, drop column size, dr
 
 
 rename table cb_dev_groots.users to cb_dev_groots.users1;
+-----
+in protected folder
+php yiic migrate --migrationPath=user.migrations
+-------------
 update cb_dev_groots.users set email="admin@gogroots.com" where username='admin';
 
+---------------
+use cb_dev_groots
+install rbac module -http://www.yiilearning.com/yii-user-authetication-authorization-module-tutorial/
+
+-------------------------------
 
 #create auth items from rbac panels
-insert into users values (null, "warehouseEditor", md5("w@123"), "w@abc.com","", 0, 1, now(), now()), (null, "procurementEditor", md5("p@123"), "p@abc.com","", 0, 1, now(), now()), (null, "inventoryEditor", md5("w@123"), "i@abc.com","", 0, 1, now(), now()), (null, "transferEditor", md5("w@123"), "t@abc.com","", 0, 1, now(), now()), (null, "orderEditor", md5("w@123"), "o@abc.com","", 0, 1, now(), now()), (null, "purchaseEditor", md5("w@123"), "ps@abc.com","", 0, 1, now(), now()), (null, "orderViewer", md5("w@123"), "ov@abc.com","", 0, 1, now(), now()), (null, "inventoryViewer", md5("w@123"), "iv@abc.com","", 0, 1, now(), now());
-
-insert into users values (null, "transferViewer", md5("w@123"), "tv@abc.com","", 0, 1, now(), now()), (null, "purchaseViewer", md5("w@123"), "pv@abc.com","", 0, 1, now(), now());
-insert into users values (null, "procurementViewer", md5("w@123"), "procurev@abc.com","", 0, 1, now(), now());
-
-insert into profiles select id, username, username from users;
-
-insert into AuthAssignment(itemname, userid) values ('WarehouseEditor', 10), ('ProcurementEditor', 11), ('InventoryEditor', 12), ('OrderEditor',14), ('TransferEditor', 13), ('PurchaseEditor', 15), ('InventoryViewer', 17), ('OrderViewer', 16) ;
-
-insert into AuthAssignment(itemname, userid, bizrule) values ('TransferViewer', 18, "return $params['warehouse_id']==1;"), ('PurchaseViewer', 19, "return $params['warehouse_id']==1;") ;
-
-insert into AuthAssignment(itemname, userid, bizrule) values  ('ProcurementViewer', 20, "return $params['warehouse_id']==2;") ;
-
-update AuthAssignment set bizrule="return $params['warehouse_id']==1;" where userid in (10,12,13,14,15,16,17);
-
-insert into profiles select id,username, username from users where id>1;
+insert into cb_dev_groots.users values (null, "warehouseEditor", md5("w@123"), "w@abc.com","", 0, 1, now(), now()), (null, "procurementEditor", md5("p@123"), "p@abc.com","", 0, 1, now(), now()), (null, "inventoryEditor", md5("w@123"), "i@abc.com","", 0, 1, now(), now()), (null, "transferEditor", md5("w@123"), "t@abc.com","", 0, 1, now(), now()), (null, "orderEditor", md5("w@123"), "o@abc.com","", 0, 1, now(), now()), (null, "purchaseEditor", md5("w@123"), "ps@abc.com","", 0, 1, now(), now()), (null, "orderViewer", md5("w@123"), "ov@abc.com","", 0, 1, now(), now()), (null, "inventoryViewer", md5("w@123"), "iv@abc.com","", 0, 1, now(), now()), (null, "transferViewer", md5("w@123"), "tv@abc.com","", 0, 1, now(), now()), (null, "purchaseViewer", md5("w@123"), "pv@abc.com","", 0, 1, now(), now()), (null, "procurementViewer", md5("w@123"), "procurev@abc.com","", 0, 1, now(), now());
 
 
+insert into cb_dev_groots.users values (null, "warehouseEditorAzd", md5("w@123"), "wa@abc.com","", 0, 1, now(), now()), (null, "procurementEditorAzd", md5("pa@123"), "pa@abc.com","", 0, 1, now(), now()), (null, "inventoryEditorAzd", md5("w@123"), "ia@abc.com","", 0, 1, now(), now()), (null, "transferEditorAzd", md5("w@123"), "ta@abc.com","", 0, 1, now(), now()), (null, "orderEditorAzd", md5("w@123"), "oa@abc.com","", 0, 1, now(), now()), (null, "purchaseEditorAzd", md5("w@123"), "psa@abc.com","", 0, 1, now(), now()), (null, "orderViewerAzd", md5("w@123"), "ova@abc.com","", 0, 1, now(), now()), (null, "inventoryViewerAzd", md5("w@123"), "iva@abc.com","", 0, 1, now(), now()), (null, "transferViewerAzd", md5("w@123"), "tva@abc.com","", 0, 1, now(), now()), (null, "purchaseViewerAzd", md5("w@123"), "pva@abc.com","", 0, 1, now(), now()), (null, "procurementViewerAzd", md5("w@123"), "procureva@abc.com","", 0, 1, now(), now());
+
+
+
+insert into cb_dev_groots.profiles select id, username, username from cb_dev_groots.users where id>1;
+
+
+
+insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values ('WarehouseEditor', 2, "return $params['warehouse_id']==1;"), ('ProcurementEditor', 3, "return $params['warehouse_id']==1;"), ('InventoryEditor', 4, "return $params['warehouse_id']==1;"), ('TransferEditor', 5, "return $params['warehouse_id']==1;"),('OrderEditor',6, "return $params['warehouse_id']==1;"),  ('PurchaseEditor', 7,"return $params['warehouse_id']==1;"),('OrderViewer', 8,"return $params['warehouse_id']==1;") , ('InventoryViewer', 9,"return $params['warehouse_id']==1;"), ('TransferViewer', 10, "return $params['warehouse_id']==1;"), ('PurchaseViewer', 11, "return $params['warehouse_id']==1;"), ('ProcurementViewer', 12, "return $params['warehouse_id']==1;")  ;
+
+insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values ('WarehouseEditor', 13, "return $params['warehouse_id']==2;"), ('ProcurementEditor', 14, "return $params['warehouse_id']==2;"), ('InventoryEditor', 15, "return $params['warehouse_id']==2;"), ('TransferEditor', 16, "return $params['warehouse_id']==2;"),('OrderEditor',17, "return $params['warehouse_id']==2;"),  ('PurchaseEditor', 18,"return $params['warehouse_id']==2;"),('OrderViewer', 19,"return $params['warehouse_id']==2;") , ('InventoryViewer', 20,"return $params['warehouse_id']==2;"), ('TransferViewer', 21, "return $params['warehouse_id']==2;"), ('PurchaseViewer',22, "return $params['warehouse_id']==2;"), ('ProcurementViewer', 23, "return $params['warehouse_id']==2;")  ;
+
+
+---------------------------
+add product priority
+
+select distinct(base_product_id) from groots_orders.order_line ol join groots_orders.order_header oh on oh.order_id=ol.order_id where oh
+
+
+
+-----------------------------------
+alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
