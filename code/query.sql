@@ -146,30 +146,8 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack
 
 ------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+select re.name, oh.user_id, sum(oh.total_payable_amount) from groots_orders.order_header as oh 
+inner join cb_dev_groots.retailer as re
+on oh.user_id = re.id
+where oh.delivery_date >= '2016-09-01'
+group by oh.user_id;

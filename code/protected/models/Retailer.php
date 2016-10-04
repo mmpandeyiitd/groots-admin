@@ -78,6 +78,9 @@ class Retailer extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+            'warehouse_name' => array(self::BELONGS_TO, 'Warehouse', 'allocated_warehouse_id',
+            //'orders' => array(self::HAS_MANY, 'OrderHeader', 'user_id'),
+            )
         );
     }
 
@@ -386,6 +389,71 @@ class Retailer extends CActiveRecord {
 
     public function setOldAttributes($attrs) {
         $this->oldAttrs = $attrs;
+    }
+
+
+    public static function todaysOrder() {
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT re.name as retailer_name, re.id as id, re.total_payable_amount as amount, wa.name as warehouse_name, 
+                sum(oh.total_payable_amount) as todays_order
+                FROM cb_dev_groots.retailer as re
+                left join groots_orders.order_header as oh
+                on (oh.user_id = re.id 
+                    and oh.status != 'Delivered' 
+                    and oh.status != 'Cancelled' 
+                    and oh.delivery_date = CURDATE()
+                    )
+                left join cb_dev_groots.warehouses as wa
+                on re.allocated_warehouse_id = wa.id 
+                where re.status ='1' and re.total_payable_amount > 0 and re.due_date = CURDATE()
+                group by re.id";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $bsae_id = $command->queryAll();
+    }
+
+
+    public static function downloadBackDateCollectionCsv(){
+        $sql = "SELECT re.name as retailer_name, re.id as id, re.total_payable_amount as amount,
+                sum(oh.total_payable_amount) as todays_order, sum(rep.paid_amount) as last_payment
+                from cb_dev_groots.retailer as re
+                left join groots_orders.order_header as oh
+                on (oh.user_id = re.id
+                and oh.status != 'Delivered'
+                and oh.status != 'Cancelled'
+                and oh.delivery_date = CURDATE()
+                )
+                left join groots_orders.retailer_payments as rep
+                on (re.id = rep.retailer_id and rep.date = DATE_SUB(CURDATE(),INTERVAL 1 DAY))
+                where re.status = 1
+                group by re.id";
+
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        $fileName = date('Y-m-d')."backDAtecollection.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
     }
 
 }
