@@ -32,7 +32,7 @@ class GrootsledgerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment'),
+				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','dailyCollection'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -313,6 +313,100 @@ class GrootsledgerController extends Controller
         ));
     }
 
+    public function actiondailyCollection(){
+      //echo "<pre>";
+      // if(isset($_POST['update'])){
+      //     $retailerIds = $_POST['retailer_id'];
+      //     $payments = $_POST['amount'];
+          
+      //     foreach ($retailerIds as $key => $retailerId) {
+      //       $paymentAmount = $payments[$key];
+      //       $current_retailer = Retailer::model()->findByPk($retailerId );
+      //        if(isset($paymentAmount) and $paymentAmount > 0){
+      //         $current_retailer->total_payable_amount -= $paymentAmount;
+      //         $sql = "insert into groots_orders.retailer_payments(id, retailer_id, paid_amount, date, created_at) values($retailerId, $retailerId, $paymentAmount, CURDATE(), CURDATE())";
+
+      //       $connection = Yii::app()->secondaryDb;
+      //       $command = $connection->createCommand($sql);
+      //       $command->execute();
+      //       $current_retailer->save();
+      //       }
+      //     }
+      // }
+
+      $retailers = Retailer::todaysOrder();
+      $dataprovider = array();
+      //var_dump($retailers);die("here");
+      foreach ($retailers as $rowinfo) {
+        $tmp = array();
+        $tmp['id'] = $rowinfo['id'];
+        $tmp['name'] = $rowinfo['retailer_name'];
+        $tmp['payable_amount'] = $rowinfo['amount'];
+        $tmp['warehouse'] = $rowinfo['warehouse_name'];
+        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+        array_push($dataprovider, $tmp);
+      }
+      $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+      
+      
+// die("here");
+      if(isset($_GET['download']) && $_GET['download']==true){
+        $model = new Grootsledger();
+      ob_clean();
+          $model->downloadDailyCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+        if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
+      ob_clean();
+          Retailer::downloadBackDateCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+      else{
+       $this->render('dailyCollection',array(
+          'data' => $dataprovider,
+          ));
+      }
+    }
+       
+
+
+    // public function actionpendingCollection(){
+    //   $retailers = Retailer::pendingRetailers();
+    //   $dataprovider = array();
+    //   foreach($retailers as $rowinfo){
+    //     $tmp = array();
+    //     $tmp['id'] = $rowinfo['id'];
+    //     $tmp['name'] = $rowinfo['retailer_name'];
+    //     $tmp['payable_amount'] = $rowinfo['amount'];
+    //     $tmp['warehouse'] = $rowinfo['warehouse_name'];
+    //     $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+    //     array_push($dataprovider, $tmp);
+    //   }
+
+    //   $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+    //                 'sort'=>array(
+    //                     'attributes'=>array(
+    //                         'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
+    //                     ),
+    //                 ),'pagination'=>array('pageSize'=>100)));
+
+    //   $this->render('pendingCollection',array(
+    //       'data' => $dataprovider,
+    //       ));
+
+    // }
+
     public function actionAdmin()
     {
         //print("<pre>");
@@ -441,6 +535,12 @@ class GrootsledgerController extends Controller
 	 * @return Grootsledger the loaded model
 	 * @throws CHttpException
 	 */
+
+
+
+
+
+
 	public function loadModel($id)
 	{
 		$model=Grootsledger::model()->findByPk($id);

@@ -18,6 +18,13 @@ $this->breadcrumbs=array(
 <h1>Manage Groots Ledgers</h1>
 
 <?php
+
+    echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));
+    echo "<br>";
+    echo "<br>";
+    echo "<br>";
+    
+
     $this->widget('RetailerDropdown', array(
         'model'=>$model,
         'retailerId'=>$retailer->id,
@@ -48,6 +55,5 @@ if(!empty($data)) {
         ),
     ));
 }
-
 
 ?>
