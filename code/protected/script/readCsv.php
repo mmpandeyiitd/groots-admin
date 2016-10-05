@@ -2,7 +2,7 @@
 //$csv = dirname(__FILE__)./../files/Revenue-Final.csv;
 $file = fopen(dirname(__FILE__).'/../files/Revenue-Final.csv', "r");
 //$file = fopen('/home/ashu/Projects/Revenue-Final.csv', "r");
-echo "<pre>";
+//echo "<pre>";
 $count = 0;
 		$username = "root";
 		$password = "root";

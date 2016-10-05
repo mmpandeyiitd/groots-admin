@@ -121,6 +121,7 @@ onclick='return confirm("Do you want to cancel");'/>
             <option value="">Select to Download</option>
             <option value="invoice">Invoice</option>
             <option value="dc">Delivery Challan</option>
+             <option value="mi">Mail Invoices</option>
         </select>
     </div>
 

@@ -45,7 +45,8 @@ if ($result=mysql_query($sql))
         // echo $rowinfo['due_date'];
         // echo "         ";
         if($rowinfo['status'] == 1 && $yesterday == $date ){
-    		$query = "update cb_dev_groots.retailer set last_due_date = due_date , due_date = '".$date."'"." where id = '".$rowinfo['id']."';";
+    		$query = "update cb_dev_groots.retailer set payable_at_last_date = total_payable_amount ,
+                      last_due_date = due_date , due_date = '".$date."'"." where id = '".$rowinfo['id']."';";
     		mysql_query($query);
     	}
     }

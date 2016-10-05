@@ -1153,17 +1153,26 @@ Sales: +91-11-3958-9895</span>
                 $no_of_selectedIds = count($_POST['selectedIds']);
                 $pdfArray = array();
                 for ($i = 0; $i < $no_of_selectedIds; $i++) {
-                    array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
+                    if($type=='mi'){
+                        $pdf = $this->actionReport($_POST['selectedIds'][$i], $type, true);
+                        // print_r($pdf);die();
+                        array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$_POST['selectedIds'][$i]));
+                    }
+                    else{
+                        array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
+                    }
+                    
                 }
-
-                $zipFileName=$type.".zip";
+                if($type=='mi'){
+                    $this->sendInvoiceOverMail($pdfArray);
+                }
+                else{
+                    $zipFileName=$type.".zip";
                 //$file_path=$_SERVER['DOCUMENT_ROOT'].'/Harshal/files/';
 //print_r($pdfArray);die;
 
                 $this->zipFilesAndDownload($pdfArray,$zipFileName);
-
-
-
+                }
 
 
             }
@@ -1920,6 +1929,11 @@ Sales: +91-11-3958-9895</span>
 
         exit;
         //var_dump($zipName);
+    }
+
+     public function sendInvoiceOverMail($pdfArray){
+
+
     }
 
 }
