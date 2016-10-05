@@ -14,35 +14,6 @@ $base_url = Yii::app()->getBaseUrl(true);
 
 </div>
 
-<!-- <?php  
-	echo "<br>";
-	echo "<br>";
-	echo CHtml::submitButton('update',array('name' => 'update')); 
-
-?>	 -->
-
-<!-- <script type="text/javascript">
-	$(document).ready(function() {
-	$('.inputs').keydown(function (e) {
-            if (e.which === 13) {
-                var index = $('.inputs').index(this);
-                if(e.shiftKey){
-                    $('.inputs').eq(index-1).focus();
-                }
-                else{
-                    $('.inputs').eq(index+1).focus();
-                }
-                return false;
-            }
-        });
-
-	$('.readOnlyInput').keydown(function (e) {
-            if (e.which === 13) {
-                return false;
-            }
-        });
-});
-</script> -->
 
 <?php
 $this->widget('zii.widgets.grid.CGridView', array(
@@ -55,13 +26,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'todays_order_amount',
 			'warehouse',
 			
-			// array(
-   //      		'header'=>'payment_link',
-   //      		'class' => 'CLinkColumn',
-   //      		'label' => 'create_payment',
-   //      		'urlExpression' => 'http://admin.groots.localhost.com/index.php?r=Grootsledger/CreatePayment&retailerId=".$data["id"]',
-   //      	),
-			array(
+      			array(
         		'value'=> function($data){
         			return CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 
 									'retailerId' => $data['id']),array('target'=>'_blank'));
@@ -71,17 +36,31 @@ $this->widget('zii.widgets.grid.CGridView', array(
         		'htmlOptions'=>array('width'=>'120px','target'=>"_blank"),
         	),
 			
-			// array(
-   //      		'value'=> function($data){
-   //      			return CHTML::hiddenField("retailer_id[]",$data['id']);
-   //      		},
-        		
-   //      		'type'=>'raw',
-   //      		'htmlOptions'=>array('width'=>'25px'),
-   //      	),
 		),
 	)
 );
+
 //var_dump($data); die();
+?>
+<h1> Pending Collection </h1>
+
+<?php
+  //var_dump($data2);die();
+  $this->widget('zii.widgets.grid.CGridView', array(
+    'id'=>'prevDayPaymentUnfulfilled',
+    'dataProvider'=> $data2,
+    'columns' => array(
+      'id',
+      'retailer_name',
+      'payable_amount',
+      'todays_order',
+      'last_due_date',
+      'last_paid_on',
+       'last_paid_amount',
+      'warehouse',
+    ),
+  )
+);
+
 ?>
 </form>
