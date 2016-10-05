@@ -392,7 +392,7 @@ class Retailer extends CActiveRecord {
     }
 
 
-    public static function todaysOrder() {
+    public static function todaysCollection() {
         $connection = Yii::app()->secondaryDb;
         $sql = "SELECT re.name as retailer_name, re.id as id, re.total_payable_amount as amount, wa.name as warehouse_name, 
                 sum(oh.total_payable_amount) as todays_order
@@ -454,6 +454,38 @@ class Retailer extends CActiveRecord {
             fclose($fp);
         }
         ob_flush();
+    }
+
+    public static function yesterdayPendingCollection(){
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT re.name as retailer_name, re.id as id, re.total_payable_amount as amount,
+                sum(oh.total_payable_amount) as todays_order, wa.name as warehouse_name, rep.last_paid_amount, rep.last_paid_on, re.last_due_date
+                from cb_dev_groots.retailer as re
+                left join cb_dev_groots.warehouses as wa
+                on re.allocated_warehouse_id = wa.id
+                left join groots_orders.order_header as oh
+                on (oh.user_id = re.id
+                and oh.status != 'Delivered'
+                and oh.status != 'Cancelled'
+                and oh.delivery_date = CURDATE()
+                )
+                left join (
+                            select rep2.retailer_id, rep2.date as last_paid_on , 
+                                sum(paid_amount) as last_paid_amount 
+                            from groots_orders.retailer_payments as rep2 
+                            inner join (select retailer_id, max(date) as date 
+                                        from groots_orders.retailer_payments group by retailer_id
+                                        ) as rep1
+                            on(rep2.retailer_id = rep1.retailer_id and rep2.date = rep1.date)
+                            group by rep2.retailer_id, rep2.date
+                            ) as rep
+                on re.id = rep.retailer_id
+                where re.status = 1 and re.collection_fulfilled = false and re.due_date != CURDATE()
+                group by re.id";
+
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        return $bsae_id = $command->queryAll();
     }
 
 }

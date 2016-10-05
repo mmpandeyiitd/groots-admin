@@ -26,12 +26,7 @@ if ($result=mysql_query($sql))
                 $date = substr_replace($date, '16', 8, 2);
            
             else{
-                if($month == '12'){
-                $date = date('Y-m-d', strtotime($date.'+1 month'));
-            }
-                else{
-                $date = date('Y-m-d', strtotime($date.'+1 month'));
-            }
+            $date = date('Y-m-d', strtotime($date.'+1 month'));
             $date = substr_replace($date, '01', 8, 2);
             }
         }
@@ -45,12 +40,12 @@ if ($result=mysql_query($sql))
     	
         $yesterday = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime($yesterday.'-1 days'));
-        echo $date;
-        echo "   ";
-        echo $rowinfo['due_date'];
-        echo "         ";
+        // echo $date;
+        // echo "   ";
+        // echo $rowinfo['due_date'];
+        // echo "         ";
         if($rowinfo['status'] == 1 && $yesterday == $date ){
-    		$query = "update cb_dev_groots.retailer set due_date = '".$date."'"." where id = '".$rowinfo['id']."';";
+    		$query = "update cb_dev_groots.retailer set last_due_date = due_date , due_date = '".$date."'"." where id = '".$rowinfo['id']."';";
     		mysql_query($query);
     	}
     }
