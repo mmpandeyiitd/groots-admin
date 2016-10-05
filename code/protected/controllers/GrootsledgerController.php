@@ -230,6 +230,13 @@ class GrootsledgerController extends Controller
                 //print_r($retailerPayment);die;
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                    
+                    if($retailer-> $total_payable_amount == 0){
+                      $retailer->collection_fulfilled = true;
+                    }
+                    else{
+                      $retailer->collection_fulfilled = false; 
+                    }
                     $retailer->save();
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
@@ -314,28 +321,11 @@ class GrootsledgerController extends Controller
     }
 
     public function actiondailyCollection(){
-      //echo "<pre>";
-      // if(isset($_POST['update'])){
-      //     $retailerIds = $_POST['retailer_id'];
-      //     $payments = $_POST['amount'];
-          
-      //     foreach ($retailerIds as $key => $retailerId) {
-      //       $paymentAmount = $payments[$key];
-      //       $current_retailer = Retailer::model()->findByPk($retailerId );
-      //        if(isset($paymentAmount) and $paymentAmount > 0){
-      //         $current_retailer->total_payable_amount -= $paymentAmount;
-      //         $sql = "insert into groots_orders.retailer_payments(id, retailer_id, paid_amount, date, created_at) values($retailerId, $retailerId, $paymentAmount, CURDATE(), CURDATE())";
 
-      //       $connection = Yii::app()->secondaryDb;
-      //       $command = $connection->createCommand($sql);
-      //       $command->execute();
-      //       $current_retailer->save();
-      //       }
-      //     }
-      // }
-
-      $retailers = Retailer::todaysOrder();
+      $retailers = Retailer::todaysCollection();
       $dataprovider = array();
+      $dataprovider2 = array();
+      $pendingRetailer = Retailer::yesterdayPendingCollection();
       //var_dump($retailers);die("here");
       foreach ($retailers as $rowinfo) {
         $tmp = array();
@@ -350,10 +340,28 @@ class GrootsledgerController extends Controller
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
+                            'warehouse','name','payable_amount','todays_order_amount',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
-      
+      foreach ($pendingRetailer as $rowinfo) {
+        $tmp = array();
+        $tmp['id'] = $rowinfo['id'];
+        $tmp['retailer_name'] = $rowinfo['retailer_name'];
+        $tmp['warehouse'] = $rowinfo['warehouse_name'];
+        $tmp['payable_amount'] = $rowinfo['amount'];
+        $tmp['todays_order'] = $rowinfo['todays_order'];
+        $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
+        $tmp['last_due_date'] = $rowinfo['last_due_date'];
+        $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+        array_push($dataprovider2, $tmp);
+      }
+      $dataprovider2 = new CArrayDataProvider($dataprovider2, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'retailer_name','payable_amount','todays_order','last_payment',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
       
 // die("here");
       if(isset($_GET['download']) && $_GET['download']==true){
@@ -371,41 +379,13 @@ class GrootsledgerController extends Controller
             exit();
         }
 
-      else{
        $this->render('dailyCollection',array(
           'data' => $dataprovider,
+          'data2' => $dataprovider2,
           ));
       }
-    }
+
        
-
-
-    // public function actionpendingCollection(){
-    //   $retailers = Retailer::pendingRetailers();
-    //   $dataprovider = array();
-    //   foreach($retailers as $rowinfo){
-    //     $tmp = array();
-    //     $tmp['id'] = $rowinfo['id'];
-    //     $tmp['name'] = $rowinfo['retailer_name'];
-    //     $tmp['payable_amount'] = $rowinfo['amount'];
-    //     $tmp['warehouse'] = $rowinfo['warehouse_name'];
-    //     $tmp['todays_order_amount'] = $rowinfo['todays_order'];
-    //     array_push($dataprovider, $tmp);
-    //   }
-
-    //   $dataprovider = new CArrayDataProvider($dataprovider, array(
-
-    //                 'sort'=>array(
-    //                     'attributes'=>array(
-    //                         'warehouse','name','payable_amount', 'warehouse','todays_order_amount',
-    //                     ),
-    //                 ),'pagination'=>array('pageSize'=>100)));
-
-    //   $this->render('pendingCollection',array(
-    //       'data' => $dataprovider,
-    //       ));
-
-    // }
 
     public function actionAdmin()
     {
