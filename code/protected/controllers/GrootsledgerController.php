@@ -340,7 +340,7 @@ class GrootsledgerController extends Controller
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'warehouse','name','payable_amount','todays_order_amount',
+                            'warehouse','name','payable_amount','todays_order_amount','id',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
       foreach ($pendingRetailer as $rowinfo) {
@@ -359,7 +359,7 @@ class GrootsledgerController extends Controller
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'retailer_name','payable_amount','todays_order','last_payment',
+                            'retailer_name','payable_amount','todays_order','last_paid_on','last_paid_amount','last_due_date','id','warehouse',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
       
