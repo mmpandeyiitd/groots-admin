@@ -410,7 +410,7 @@ class GrootsledgerController extends Controller
 
 
             if($retailerId>0) {
-                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId),array('condition'=>'status != "Cancelled"' ,'order'=> 'delivery_date ASC'));
+                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
                 $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0', 'order'=> 'date ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $outstanding = $retailer->initial_payable_amount;
