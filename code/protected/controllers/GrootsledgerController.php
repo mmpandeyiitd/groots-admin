@@ -231,7 +231,7 @@ class GrootsledgerController extends Controller
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
                     
-                    if($retailer-> $total_payable_amount == 0){
+                    if($retailer->total_payable_amount == 0){
                       $retailer->collection_fulfilled = true;
                     }
                     else{
