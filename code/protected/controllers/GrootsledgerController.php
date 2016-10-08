@@ -352,13 +352,6 @@ class GrootsledgerController extends Controller
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         array_push($dataprovider, $tmp);
       }
-      $dataprovider = new CArrayDataProvider($dataprovider, array(
-
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'warehouse','name','payable_amount','todays_order_amount','id',
-                        ),
-                    ),'pagination'=>array('pageSize'=>100)));
       foreach ($pendingRetailer as $rowinfo) {
         $total_due_amount += $rowinfo['due_payable_amount'];
         $amount_to_be_collected += $rowinfo['total_payable_amount'];
