@@ -181,4 +181,27 @@ update cb_dev_groots.retailer set last_due_date = '2016-10-01' where collection_
 update cb_dev_groots.retailer set last_due_date = '2016-10-03' where collection_frequency = 'weekly';
 update cb_dev_groots.retailer set last_due_date = '2016-10-04' where collection_frequency = 'daily';
 
------------------------------------
+---------------------------
+select rep2.retailer_id, rep2.date , sum(paid_amount) 
+from groots_orders.retailer_payments as rep2 
+inner join (select retailer_id, max(date) as date 
+            from groots_orders.retailer_payments group by retailer_id
+            ) as rep1
+on(rep2.retailer_id = rep1.retailer_id and rep2.date = rep1.date)
+group by rep2.retailer_id, rep2.date;
+
+
+alter table cb_dev_groots.retailer add column last_due_payment decimal(10,2) not null;
+update cb_dev_groots.retailer set last_due_payment = total_payable_amount;
+---------------------------------------------------------
+alter table cb_dev_groots.retailer add column collection_agent_id int(11) not null;
+update cb_dev_groots.retailer set collection_agent_id = 1 where id in ('67','69','100','112','144','147','154','158','159','161','164','166','168','169','170','175','182','183','185','186','72','101','108','109','117','123','126','131','132','133','134','135','139','140','148','149','152','179');
+update cb_dev_groots.retailer set collection_agent_id = 2 where id in ('114','124','129','130','141','142','143','145','146','150','153','155','157','162','163','165','167','171','172','173','174','180','184','68','99','102','121','122','127','136','138','148','156');
+
+alter table cb_dev_groots.collection_agent add column warehouse_id int(11) not null;
+
+
+alter table cb_dev_groots.retailer change last_due_payment due_payable_amount decimal(10,2) not null;
+alter table cb_dev_groots.retailer modify due_payable_amount decimal(10,2) default 0;
+alter table cb_dev_groots.retailer modify collection_agent_id int(11) not null default 0;
+alter table cb_dev_groots.collection_agent add column status boolean not null default 1;
