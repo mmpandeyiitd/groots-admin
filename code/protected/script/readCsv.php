@@ -1,7 +1,5 @@
 <?php
-//$csv = dirname(__FILE__)./../files/Revenue-Final.csv;
 $file = fopen(dirname(__FILE__).'/../files/Revenue-Final.csv', "r");
-//$file = fopen('/home/ashu/Projects/Revenue-Final.csv', "r");
 echo "<pre>";
 $count = 0;
 		$username = "root";
@@ -22,7 +20,6 @@ while(! feof($file))
   		//print_r($dates); die;
   	}
   	if($count > 0){
-		//var_dump($row);
 		$sql1 = "update cb_dev_groots.retailer set initial_payable_amount = ".$row['2']." where id = ".$row['1'].";";
 		mysql_query($sql1);
 		$num = 3;
@@ -33,6 +30,9 @@ while(! feof($file))
 					 values (".$row['1'].", ".$paid_amount.", '".$cur_date."', '".$cur_date."');";
                 echo $sql2;
                 mysql_query($sql2);
+                $sql3 = "update cb_dev_groots.retailer set total_payable_amount = total_payable_amount-".$paid_amount." where id = ".$row['1'];
+                mysql_query($sql3);
+                echo $sql3;
             }
 
 			$num++;
