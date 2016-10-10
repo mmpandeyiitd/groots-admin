@@ -205,7 +205,13 @@ alter table cb_dev_groots.retailer change last_due_payment due_payable_amount de
 alter table cb_dev_groots.retailer modify due_payable_amount decimal(10,2) default 0;
 alter table cb_dev_groots.retailer modify collection_agent_id int(11) not null default 0;
 alter table cb_dev_groots.collection_agent add column status boolean not null default 1;
-
+---------------------------------------------------------------------------------
 
 
 update cb_dev_groots.warehouses set name = 'Basai, ggn' where id = 1;
+
+alter table cb_dev_groots.retailer add column collection_center_id int(11) not null default 0;
+
+insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Delhi','Delhi','Delhi','110030',NULL,NULL,NULL,'1',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL);
+update cb_dev_groots.retailer set collection_center_id = 1;
+update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
