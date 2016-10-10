@@ -347,7 +347,7 @@ class GrootsledgerController extends Controller
         $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
         $tmp['collection_agent'] = $rowinfo['collection_agent'];
         $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
-        //$tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
+        $tmp['collection_center'] = $rowinfo['collection_center'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         array_push($dataprovider, $tmp);
@@ -363,6 +363,7 @@ class GrootsledgerController extends Controller
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
         $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
         $tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
+        $tmp['collection_center'] = $rowinfo['collection_center'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
         $tmp['last_due_date'] = $rowinfo['last_due_date'];
@@ -373,7 +374,7 @@ class GrootsledgerController extends Controller
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','last_due_payment',
+                            'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','last_due_payment','collection_center',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
 
@@ -381,7 +382,7 @@ class GrootsledgerController extends Controller
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','last_due_payment',
+                            'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','last_due_payment','collection_center',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
       

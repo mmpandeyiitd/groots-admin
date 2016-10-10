@@ -142,9 +142,23 @@
             <?php echo $form->error($model, 'credit_limit'); ?>
         </div>
          <div class="row">
-            <?php echo $form->labelEx($model, 'collecttion_agent'); ?>
-            <?php echo $form->textField($model, 'collecttion_agent'); ?>
-            <?php echo $form->error($model, 'collecttion_agent'); ?>
+            <?php echo $form->labelEx($model, 'collection_agent'); ?>
+            <?php 
+            $agent = CollectionAgent::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($agent, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'collection_agent_id', $list, 
+                        array('empty' => 'Select an agent')); ?>
+            <?php echo $form->error($model, 'collection_agent'); ?>
+        </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'Warehouse'); ?>
+            <?php 
+            $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($warehouse, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list, 
+                        array('empty' => 'Select a warehouse','options'=>array("1"=>array('selected'=>false), ""=>array('selected'=>'selected')))); ?>
+            <?php echo $form->error($model, 'Warehouse'); ?>
         </div>
 
         

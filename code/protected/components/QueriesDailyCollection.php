@@ -2,16 +2,19 @@
 
 class QueriesDailyCollection{
 
-    public static function yesterdayPendingCollection(){
-        $connection = Yii::app()->secondaryDb;
-        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent, 
+    public static function yesterdayPendingCollectionQuery(){
+        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as                collection_agent, 
                 re.total_payable_amount as total_payable_amount,
-                sum(oh.total_payable_amount) as todays_order, re.due_payable_amount, wa.name as warehouse_name, rep.last_paid_amount, rep.last_paid_on, re.last_due_date
+                sum(oh.total_payable_amount) as todays_order, re.due_payable_amount, wa.name as warehouse_name,
+                wa2.name as collection_center,
+                 rep.last_paid_amount, rep.last_paid_on, re.last_due_date
                 from cb_dev_groots.retailer as re
+                left join cb_dev_groots.warehouses as wa2
+                on re.collection_center_id = wa2.id and wa2.status = 1
                 left join cb_dev_groots.collection_agent as ca
                 on re.collection_agent_id = ca.id and ca.status = 1
                 left join cb_dev_groots.warehouses as wa
-                on re.allocated_warehouse_id = wa.id
+                on re.allocated_warehouse_id = wa.id and wa.status = 1
                 left join groots_orders.order_header as oh
                 on (oh.user_id = re.id
                 and oh.status != 'Delivered'
@@ -29,42 +32,22 @@ class QueriesDailyCollection{
                             group by rep2.retailer_id, rep2.date
                             ) as rep
                 on re.id = rep.retailer_id 
-                where re.status = 1 and re.collection_fulfilled = false and re.due_date != CURDATE() and re.total_payable_amount>0
+                where re.status = 1 and re.collection_frequency != 'daily'
                 group by re.id";
+        return $sql;
+    }
 
+    public static function yesterdayPendingCollection(){
+        $connection = Yii::app()->secondaryDb;
+        $sql = self::yesterdayPendingCollectionQuery();
+        //echo $sql; die;
         $command = $connection->createCommand($sql);
         $command->execute();
         return $bsae_id = $command->queryAll();
     }
 
  public static function downloadBackDateCollectionCsv(){
-        $sql = "SELECT re.id as id, re.name as retailer_name, re.collection_frequency, ca.name as collection_agent, re.total_payable_amount as total_payable_amount,
-                sum(oh.total_payable_amount) as todays_order, rep.last_paid_amount, rep.last_paid_on, re.last_due_date, 
-                re.due_payable_amount, wa.name as warehouse_name
-                from cb_dev_groots.retailer as re
-                left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id and ca.staus = 1
-                left join cb_dev_groots.warehouses as wa
-                on re.allocated_warehouse_id = wa.id
-                left join groots_orders.order_header as oh
-                on (oh.user_id = re.id
-                and oh.status != 'Delivered'
-                and oh.status != 'Cancelled'
-                and oh.delivery_date = CURDATE()
-                )
-                left join (
-                            select rep2.retailer_id, rep2.date as last_paid_on , 
-                                sum(paid_amount) as last_paid_amount 
-                            from groots_orders.retailer_payments as rep2 
-                            inner join (select retailer_id, max(date) as date 
-                                        from groots_orders.retailer_payments where status =1 group by retailer_id
-                                        ) as rep1
-                            on(rep2.retailer_id = rep1.retailer_id and rep2.date = rep1.date and rep2.status=1)
-                            group by rep2.retailer_id, rep2.date
-                            ) as rep
-                on re.id = rep.retailer_id 
-                where re.status = 1 and re.collection_fulfilled = false and re.due_date != CURDATE() and re.total_payable_amount>0
-                group by re.id";
+        $sql = self::yesterdayPendingCollectionQuery();
 
 
         $connection = Yii::app()->secondaryDb;
@@ -95,12 +78,14 @@ class QueriesDailyCollection{
         ob_flush();
     }
 
- public static function todaysCollection() {
-        $connection = Yii::app()->secondaryDb;
-        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
+public static function todaysCollectionQuery(){
+    $sql =  "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
                 re.total_payable_amount as total_payable_amount, re.due_payable_amount,
-                sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name
+                sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name,
+                wa2.name as collection_center
                 FROM cb_dev_groots.retailer as re
+                left join cb_dev_groots.warehouses as wa2
+                on re.collection_center_id = wa2.id and wa2.status = 1
                 left join cb_dev_groots.collection_agent as ca
                 on re.collection_agent_id = ca.id and ca.status = 1
                 left join groots_orders.order_header as oh
@@ -111,8 +96,14 @@ class QueriesDailyCollection{
                     )
                 left join cb_dev_groots.warehouses as wa
                 on re.allocated_warehouse_id = wa.id 
-                where re.status ='1' and re.total_payable_amount > 0 and re.due_date = CURDATE()
+                where re.status ='1' and re.total_payable_amount > 0 and re.collection_frequency = 'daily'
                 group by re.id";
+    return $sql;
+}
+
+ public static function todaysCollection() {
+        $connection = Yii::app()->secondaryDb;
+        $sql = self::todaysCollectionQuery();
         $command = $connection->createCommand($sql);
         $command->execute();
         return $bsae_id = $command->queryAll();
@@ -120,22 +111,7 @@ class QueriesDailyCollection{
 
 
  public static function downloadDailyCollectionCsv(){
-        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
-                re.total_payable_amount as total_payable_amount, re.due_payable_amount,
-                sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name
-                FROM cb_dev_groots.retailer as re
-                left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id and ca.status = 1
-                left join groots_orders.order_header as oh
-                on (oh.user_id = re.id 
-                    and oh.status != 'Delivered' 
-                    and oh.status != 'Cancelled' 
-                    and oh.delivery_date = CURDATE()
-                    )
-                left join cb_dev_groots.warehouses as wa
-                on re.allocated_warehouse_id = wa.id 
-                where re.status ='1' and re.total_payable_amount > 0 and re.due_date = CURDATE()
-                group by re.id";
+        $sql = self::todaysCollectionQuery();
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -176,6 +152,8 @@ class QueriesDailyCollection{
     $command->execute();
     return $bsae_id = $command->queryAll();
  }
+
+ 
 
 }
 

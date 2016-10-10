@@ -35,6 +35,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'name',
       'collection_frequency',
       'collection_agent',
+      'collection_center',
 			'total_payable_amount',
 			'todays_order_amount',  
 			'warehouse',
@@ -105,12 +106,13 @@ $(document).ready(function() {
       'name',
       'collection_frequency',
       'collection_agent',
+      'collection_center',
       'total_payable_amount',
       'due_payable_amount',
-      'todays_order_amount',
+      //'todays_order_amount',
       'last_due_date',
-      'last_paid_on',
        'last_paid_amount',
+       'last_paid_on',
        array(
             'value' => function($data){
               return CHtml::textField('pending_collection[]', '' , array('class' => 'inputs',));
