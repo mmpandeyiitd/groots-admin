@@ -205,3 +205,7 @@ alter table cb_dev_groots.retailer change last_due_payment due_payable_amount de
 alter table cb_dev_groots.retailer modify due_payable_amount decimal(10,2) default 0;
 alter table cb_dev_groots.retailer modify collection_agent_id int(11) not null default 0;
 alter table cb_dev_groots.collection_agent add column status boolean not null default 1;
+
+
+
+update cb_dev_groots.warehouses set name = 'Basai, ggn' where id = 1;

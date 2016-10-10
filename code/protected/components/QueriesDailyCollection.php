@@ -9,7 +9,7 @@ class QueriesDailyCollection{
                 sum(oh.total_payable_amount) as todays_order, re.due_payable_amount, wa.name as warehouse_name, rep.last_paid_amount, rep.last_paid_on, re.last_due_date
                 from cb_dev_groots.retailer as re
                 left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id
+                on re.collection_agent_id = ca.id and ca.status = 1
                 left join cb_dev_groots.warehouses as wa
                 on re.allocated_warehouse_id = wa.id
                 left join groots_orders.order_header as oh
@@ -43,7 +43,7 @@ class QueriesDailyCollection{
                 re.due_payable_amount, wa.name as warehouse_name
                 from cb_dev_groots.retailer as re
                 left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id
+                on re.collection_agent_id = ca.id and ca.staus = 1
                 left join cb_dev_groots.warehouses as wa
                 on re.allocated_warehouse_id = wa.id
                 left join groots_orders.order_header as oh
@@ -102,7 +102,7 @@ class QueriesDailyCollection{
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name
                 FROM cb_dev_groots.retailer as re
                 left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id
+                on re.collection_agent_id = ca.id and ca.status = 1
                 left join groots_orders.order_header as oh
                 on (oh.user_id = re.id 
                     and oh.status != 'Delivered' 
@@ -125,7 +125,7 @@ class QueriesDailyCollection{
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name
                 FROM cb_dev_groots.retailer as re
                 left join cb_dev_groots.collection_agent as ca
-                on re.collection_agent_id = ca.id
+                on re.collection_agent_id = ca.id and ca.status = 1
                 left join groots_orders.order_header as oh
                 on (oh.user_id = re.id 
                     and oh.status != 'Delivered' 
