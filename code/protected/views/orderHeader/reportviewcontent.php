@@ -102,6 +102,11 @@ foreach ($model as $value) {
         $challanNoText = "DC No";
         $text = "This is the copy of delivery challan. Invoice will be sent to you after the delivery process is completed.";
     }
+    elseif($type == 'mi'){
+        $title = "Invoice Email";
+        $challanNoText = "Invoice No";
+        $text = "";
+    }
 
 
 ?>
