@@ -97,7 +97,7 @@ class RetailerController extends Controller {
      */
     public function actionCreate() {
        // echo '<pre>';print_r($_POST);die;
-        $model = new Retailer;
+        $model = new Retailer();
          
         // echo Yii::app()->session['premission_info']['module_info']['retialers'];die;
         // Uncomment the following line if AJAX validation is needed
