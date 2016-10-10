@@ -1136,7 +1136,7 @@ Sales: +91-11-3958-9895</span>
  //print("<pre>");
 //die("here");
         $model = new OrderHeader('search');
-
+        
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);
@@ -1176,8 +1176,9 @@ Sales: +91-11-3958-9895</span>
                         array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$_POST['selectedIds'][$i]));
                     }
                     else{
-                        array_push($pdfArray, $pdf);
+                        array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
                     }
+                    
                 }
                 if($type=='email-invoice'){
                     //$this->sendMailToRetailer($pdfArray);
@@ -1186,6 +1187,7 @@ Sales: +91-11-3958-9895</span>
                     $zipFileName=$type.".zip";
                     $this->zipFilesAndDownload($pdfArray,$zipFileName);
                 }
+
 
             }
         }
@@ -1205,7 +1207,7 @@ Sales: +91-11-3958-9895</span>
                     $command->execute();
                     $order_numberdata = $command->queryAll();
                     $order_number = $order_numberdata['0']['order_number'];
-
+                  
                     //$email= "kuldeep@canbrand.in";
                     if ($_POST['status1'] == 'Confirmed') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
@@ -1301,7 +1303,7 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-
+                    
                     if ($_POST['status1'] == 'Paid') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
@@ -1396,8 +1398,8 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-
-
+                    
+                    
                     if ($_POST['status1'] == 'Cancelled') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
                         $modelOrderline = new OrderLine;
@@ -1586,7 +1588,7 @@ Sales: +91-11-3958-9895</span>
                         $mailsend = new OrderLine();
                         $resp = $mailsend->sgSendMail($mailArray);
                     }
-
+                    
                      if ($_POST['status1'] == 'Delivered') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email, 'invoice');
                         $modelOrderline = new OrderLine;
@@ -1777,6 +1779,8 @@ Sales: +91-11-3958-9895</span>
         ));
     }
 
+
+
     /**
      * Performs the AJAX validation.
      * @param OrderHeader $model the model to be validated
@@ -1815,7 +1819,7 @@ Sales: +91-11-3958-9895</span>
 //      $html2pdf->setModeDebug();
             //  $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            //echo $zip; die("here2");
+            //echo $zip; die("here2"); 
             if($zip==true){
                 return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
             }
@@ -2039,4 +2043,9 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
+
+	public function sendInvoiceOverMail($pdfArray){
+
+
+    }
 }

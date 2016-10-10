@@ -321,60 +321,81 @@ class GrootsledgerController extends Controller
     }
 
     public function actiondailyCollection(){
+      // var_dump($_POST);
+      // die();
+      if(isset($_POST['update'])){
+        updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
+      }
 
-      $retailers = Retailer::todaysCollection();
+      if(isset($_POST['update2'])){
+          updatePending($_POST['pending_collection'],$_POST['pending_retailer_id']);
+      }
+      $retailers = QueriesDailyCollection::todaysCollection();
       $dataprovider = array();
       $dataprovider2 = array();
-      $pendingRetailer = Retailer::yesterdayPendingCollection();
-      //var_dump($retailers);die("here");
+      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection();
+      $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
+      $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
+      $total_due_amount = 0;
+      $amount_to_be_collected = 0;
       foreach ($retailers as $rowinfo) {
+        $amount_to_be_collected += $rowinfo['total_payable_amount'];
+        $total_due_amount += $rowinfo['total_payable_amount'];
         $tmp = array();
         $tmp['id'] = $rowinfo['id'];
         $tmp['name'] = $rowinfo['retailer_name'];
-        $tmp['payable_amount'] = $rowinfo['amount'];
+        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+        $tmp['collection_agent'] = $rowinfo['collection_agent'];
+        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
+        //$tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         array_push($dataprovider, $tmp);
       }
-      $dataprovider = new CArrayDataProvider($dataprovider, array(
-
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'warehouse','name','payable_amount','todays_order_amount','id',
-                        ),
-                    ),'pagination'=>array('pageSize'=>100)));
       foreach ($pendingRetailer as $rowinfo) {
+        $total_due_amount += $rowinfo['due_payable_amount'];
+        $amount_to_be_collected += $rowinfo['total_payable_amount'];
         $tmp = array();
         $tmp['id'] = $rowinfo['id'];
-        $tmp['retailer_name'] = $rowinfo['retailer_name'];
+        $tmp['name'] = $rowinfo['retailer_name'];
+        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+        $tmp['collection_agent'] = $rowinfo['collection_agent'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
-        $tmp['payable_amount'] = $rowinfo['amount'];
-        $tmp['todays_order'] = $rowinfo['todays_order'];
+        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
+        $tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
+        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
         $tmp['last_due_date'] = $rowinfo['last_due_date'];
         $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
         array_push($dataprovider2, $tmp);
       }
+      $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','last_due_payment',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+
       $dataprovider2 = new CArrayDataProvider($dataprovider2, array(
 
                     'sort'=>array(
                         'attributes'=>array(
-                            'retailer_name','payable_amount','todays_order','last_paid_on','last_paid_amount','last_due_date','id','warehouse',
+                            'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','last_due_payment',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
       
 // die("here");
       if(isset($_GET['download']) && $_GET['download']==true){
-        $model = new Grootsledger();
       ob_clean();
-          $model->downloadDailyCollectionCsv();
+          QueriesDailyCollection::downloadDailyCollectionCsv();
             ob_flush();
             exit();
         }
 
         if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
       ob_clean();
-          Retailer::downloadBackDateCollectionCsv();
+          QueriesDailyCollection::downloadBackDateCollectionCsv();
             ob_flush();
             exit();
         }
@@ -382,8 +403,11 @@ class GrootsledgerController extends Controller
        $this->render('dailyCollection',array(
           'data' => $dataprovider,
           'data2' => $dataprovider2,
+          'amount_to_be_collected' => $amount_to_be_collected,
+          'total_paid_yesterday' => $total_paid_yesterday,
+          'total_due_amount' => $total_due_amount,
           ));
-      }
+    }
 
        
 
@@ -554,4 +578,60 @@ class GrootsledgerController extends Controller
 
         return true;
     }
+
+    public static function updateDaily($retailerIds, $payments){
+      foreach ($retailerIds as $key => $retailerId) {
+          $paymentAmount = $payments[$key];
+          $current_retailer = Retailer::model()->findByPk($retailerId );
+          if(isset($paymentAmount) and $paymentAmount > 0){
+            $current_retailer->total_payable_amount -= $paymentAmount;
+            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
+                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
+            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->last_due_payment." where id = ".$retailerId.";";
+                   
+            if($current_retailer->total_payable_amount == 0){
+              $current_retailer->collection_fulfilled = true;
+            }
+            else 
+              $current_retailer->collection_fulfilled = false;
+
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $command2 = $connection->createCommand($sql2);
+            $command2->execute();
+            $command->execute();
+            //$current_retailer->save();
+          }
+
+        }
+    }
+
+    public static function updatePending($pendingPayments, $pendingRetailerIds){
+      foreach ($pendingRetailerIds as $key => $retailerId) {
+          $paymentAmount = $pendingPayments[$key];
+          $current_retailer = Retailer::model()->findByPk($retailerId );
+          if(isset($paymentAmount) and $paymentAmount > 0){
+            $current_retailer->total_payable_amount -= $paymentAmount;
+            $current_retailer->last_due_payment -= $paymentAmount;
+            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
+                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
+            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->last_due_payment." where id = ".$retailerId.";";
+                   
+            if($current_retailer->total_payable_amount == 0){
+              $current_retailer->collection_fulfilled = true;
+            }
+            else 
+              $current_retailer->collection_fulfilled = false;
+
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $command2 = $connection->createCommand($sql2);
+            $command2->execute();
+            $command->execute();
+            //$current_retailer->save();
+          }
+
+        }
+    }
+
 }

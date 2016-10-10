@@ -122,6 +122,7 @@ class OrderHeader extends CActiveRecord {
         return array(
                 //'OrderLine' => array(self::BELONGS_TO, 'OrderLine', 'order_id'),
                 // 'Store' => array(self::BELONGS_TO, 'Store', 'store_id'),
+                //'Retailer' => array(self::BELONGS_TO, 'Retailer', 'id'),
         );
     }
 
@@ -705,6 +706,8 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
     public function getGrootsAuthorizedName(){
         return $this->groots_authorized_name;
     }
+
+   
 
 }
 
