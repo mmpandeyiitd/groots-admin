@@ -78,24 +78,21 @@ class OrderHeaderController extends Controller {
         $retailerId = '';
         $retailer = '';
         $warehouses = '';
-        //print_r($_POST);
-        //print_r($_GET);
-        //die;
 
         if (isset($_POST['select-retailer'])) {
-
             $retailerId = $_POST['retailer-dd'];
-            if($retailerId>0) {
+            if($retailerId > 0 && self::checkCreditLimit($retailerId)) {
                 $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $warehouses = Warehouse::model()->findAll();
             }
-            //print_r($retailerProducts);die;
-            /*foreach ($retailerProducts as $retailerProduct) {
-           # code...
-            }*/
+            elseif(!self::checkCreditLimit($retailerId)){
+                Yii::app()->user->setFlash('error', 'Credit Limit Exceeded.');
+            }
+        
         }
         if (isset($_POST['create'])) {
+            echo "here3";
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 $retailerId = $_POST['retailerId'];
@@ -2047,5 +2044,14 @@ Sales: +91-11-3958-9895</span>
 	public function sendInvoiceOverMail($pdfArray){
 
 
+    }
+
+
+    public static function checkCreditLimit($retailerId){
+        $retailer = Retailer::model()->findByPk($retailerId);
+        if($retailer->total_payable_amount >= $retailer->credit_limit){
+             return false;
+        }
+        else return true ;
     }
 }

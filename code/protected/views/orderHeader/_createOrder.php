@@ -62,6 +62,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
     <?php endif; ?>
 
+    <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <div class="label label-error" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 
     <form name="create" method="post">
         <div class="orderDetail">
