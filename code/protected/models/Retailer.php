@@ -47,8 +47,8 @@ class Retailer extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name,email,password,mobile,address,pincode,city,state,allocated_warehouse_id', 'required'),
-            array('id, status,credit_limit', 'numerical', 'integerOnly' => true),
+            array('name,email,password,mobile,address,pincode,city,state,allocated_warehouse_id,collection_agent_id', 'required'),
+            array('id, status,credit_limit,', 'numerical', 'integerOnly' => true),
 
             array('min_order_price, shipping_charge', 'numerical'),
             array('name,collecttion_agent, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
@@ -121,6 +121,7 @@ class Retailer extends CActiveRecord {
             'settlement_days' => 'settlement_days',
             'shipping_charge'=>'shipping_charge',
             'min_order_price'=>'min_order_price',
+            'collection_agent_id' => 'collection_agent_id'
         );
     }
 
@@ -172,6 +173,7 @@ class Retailer extends CActiveRecord {
         $criteria->compare('owner_email', $this->owner_email, true);
         $criteria->compare('billing_email', $this->billing_email, true);
         $criteria->compare('settlement_days', $this->settlement_days, true);
+        $criteria->compare('collection_agent_id', $this->collection_agent_id, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
