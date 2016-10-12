@@ -2050,7 +2050,7 @@ Sales: +91-11-3958-9895</span>
     public static function checkCreditLimit($retailerId){
         $retailer = Retailer::model()->findByPk($retailerId);
         if($retailer->total_payable_amount >= $retailer->credit_limit){
-             return false;
+             return true;
         }
         else return true ;
     }
