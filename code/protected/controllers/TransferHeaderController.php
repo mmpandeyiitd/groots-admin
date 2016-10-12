@@ -369,7 +369,7 @@ class TransferHeaderController extends Controller
 	}
 
 	public function actionDailyTransfer(){
-        echo "<pre>";
+        //echo "<pre>";
         if(empty($_GET['w_id'])){
             Yii::app()->controller->redirect("index.php?r=user/profile");
         }
@@ -381,7 +381,7 @@ class TransferHeaderController extends Controller
         $date = $_POST['TransferHeader']['delivery_date'];
         //$date = $this->getDateForDailyTransfer();
         $orderLines = OrderLine::getOrderSumByDate($w_id, $date);
-        print_r($orderLines);
+        //print_r($orderLines);
         $invHeadMap = InventoryHeaderDao::getInventoryHeaderMapByBpId($w_id);
         $warehouse = Warehouse::model()->findByAttributes(array('id'=>$w_id), array('select'=>'default_source_warehouse_id'));
         $transferOrder = TransferHeader::model()->findByAttributes(array('delivery_date'=> $date, 'source_warehouse_id'=>$warehouse->default_source_warehouse_id , 'dest_warehouse_id'=>$w_id, 'transfer_type'=>'regular'));
@@ -429,20 +429,20 @@ class TransferHeaderController extends Controller
                 if($extra_inv_absolute < 0){
                     $extra_inv_absolute = 0;
                 }
-echo "sinv-".$s_inv."\n";
-                echo "ord-".$order_sum."\n";
+//echo "sinv-".$s_inv."\n";
+                /*echo "ord-".$order_sum."\n";
                 echo "tranout-".$trans_out."\n";
                 echo "extinv-".$extra_inv_absolute."\n";
                 echo "prvin-".$prev_day_inv."\n";
                 echo "purch-".$purchase."\n";
-                echo "transInother-".$transIn_other."\n";
+                echo "transInother-".$transIn_other."\n";*/
 
                 $trans_in = $s_inv+$order_sum+$trans_out+$extra_inv_absolute - ($purchase+$prev_day_inv+$transIn_other);
 
                 if(empty($trans_in) || $trans_in < 0) {
                     $trans_in = 0;
                 }
-                echo "transin-".$trans_in."\n";
+                //echo "transin-".$trans_in."\n";
                 if(isset($transferLineMap[$bp_id])){
                     $item = $transferLineMap[$bp_id];
                 }
@@ -454,7 +454,7 @@ echo "sinv-".$s_inv."\n";
                     $item->created_at = date('Y-m-d');
                 }
                 $item->order_qty = $trans_in;
-                var_dump($item);
+                //var_dump($item);
                 $item->save();
             }
             $transaction->commit();

@@ -146,6 +146,7 @@ class m110805_153437_installYiiUser extends CDbMigration
                 break;
         }//*/
 
+date_default_timezone_set("Asia/Kolkata");
         if (in_array('--interactive=0',$_SERVER['argv'])) {
             if (!$this->_model)
                 $this->_model = new User;

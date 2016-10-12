@@ -975,17 +975,35 @@ class BaseProduct extends CActiveRecord {
 
     public static function PopularItems(){
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
-        $popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' popularity in (1)'));
+        //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' popularity in (1)', 'order'=> 'title asc' ));
+        $connection = Yii::app()->secondaryDb;
+        $sqlLastDelDate = "select max(delivery_date) from transfer_header where transfer_type='regular'";
+        $command = $connection->createCommand($sqlLastDelDate);
+        $command->execute();
+        //var_dump($command);die;
+        $lastDelDate = $command->queryScalar();
+        if(empty($lastDelDate)){
+            $lastDelDate = date('Y-m-d');
+        }
+           // ->queryScalar();
+        //$date_prev = date('Y-m-d', strtotime($lastDelDate." -1 days"));
+
+        $sql = "SELECT bp.base_product_id,bp.title FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$lastDelDate."' and oh.status != 'Cancelled' group by ol.base_product_id";
+        //die($sql);
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+
         $purchaseLineArr = array();
-        foreach ($popularItems as $item){
+        foreach ($result as $item){
             /*$tmp = array();
             $tmp['bp_id'] = $item->base_product_id;
             $tmp['title'] = $item->title;
             array_push($purchaseLineArr, $tmp);*/
 
             $purchaseLine = new PurchaseLine();
-            $purchaseLine->base_product_id = $item->base_product_id;
-            $purchaseLine->title = $item->title;
+            $purchaseLine->base_product_id = $item['base_product_id'];
+            $purchaseLine->title = $item['title'];
             array_push($purchaseLineArr, $purchaseLine);
         }
         $otherItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title'));

@@ -252,7 +252,9 @@ onclick='return confirm("Do you want to cancel");'/>
                 'header' => 'Action',
                  'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
-                'value' => 'CHtml::button("Update",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"bckstatus"=>$data->status))."\'"))',
+                'value' => function($data) use ($w_id) {
+                     return CHtml::button("Update",array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"w_id"=>$w_id, "bckstatus"=>$data->status))."'"));
+                },
             ),
                
             'link1' => array(
@@ -261,9 +263,9 @@ onclick='return confirm("Do you want to cancel");'/>
                 'type' => 'raw',
                 'htmlOptions' => array('class' => 'redview'),
                // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',
-             'value'=> 'CHtml::link("INVOICE", array("OrderHeader/report", "id"=>$data->order_id, "type"=>"invoice"),array("target"=>"_blank"))',
-                
-                
+             'value'=> function($data) use ($w_id) {
+                 return CHtml::link("INVOICE", array("OrderHeader/report", "id"=>$data->order_id, "w_id"=>$w_id, "type"=>"invoice"),array("target"=>"_blank"));
+             },
                 ),
             'link2' => array(
                 'header' => 'Delivery Challan',
@@ -271,9 +273,9 @@ onclick='return confirm("Do you want to cancel");'/>
                 'type' => 'raw',
                 'htmlOptions' => array('class' => 'redview'),
                 // 'value' => 'CHtml::button(" CREATE INVOICE",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("OrderHeader/report",array("id"=>$data->order_id))."\'"),array("target"=>"_blank"))',
-                'value'=> 'CHtml::link("DC", array("OrderHeader/report", "id"=>$data->order_id, "type"=>"dc"),array("target"=>"_blank"))',
-
-
+                'value'=> function($data) use ($w_id) {
+                    return CHtml::link("DC", array("OrderHeader/report", "id"=>$data->order_id, "w_id"=>$w_id, "type"=>"dc"),array("target"=>"_blank"));
+                },
             ),
         /* 'link1' => array(
           'header' => 'Dispatch',

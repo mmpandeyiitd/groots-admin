@@ -189,4 +189,6 @@ update cb_dev_groots.base_product set popularity=1 where base_product_id in (sel
 
 
 -----------------------------------
+insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date) values ("vendor1", now(), now()), ("vendor2", now(), now());
+
 alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
