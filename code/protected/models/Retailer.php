@@ -51,7 +51,7 @@ class Retailer extends CActiveRecord {
             array('id, status,credit_limit,', 'numerical', 'integerOnly' => true),
 
             array('min_order_price, shipping_charge', 'numerical'),
-            array('name,collecttion_agent, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
+            array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
             array('state,retailer_code,VAT_number,contact_person1', 'length', 'max' => 150),
             array('VAT_number', 'length', 'min' => 11, 'max' => 11),

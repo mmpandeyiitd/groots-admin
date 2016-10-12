@@ -14,6 +14,7 @@ echo "Total Due Payable Amount = ".$total_due_amount;
 <h1> Daily Collection </h1>
 <?php 
 $base_url = Yii::app()->getBaseUrl(true);
+//echo $base_url;
 //die;
 ?>
 
@@ -22,7 +23,7 @@ $base_url = Yii::app()->getBaseUrl(true);
  <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&download=true>Download Daily Report</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
- <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&downloadPending=true>Download Back Date Reports</a>
+ <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&downloadPending=true>Download Non Daily Reports</a>
 </div>
 
 
@@ -37,8 +38,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
       'collection_agent',
       'collection_center',
 			'total_payable_amount',
-			'todays_order_amount',  
-			'warehouse',
+			'todays_order_amount', 
+      'yesterday_payment_received', 
+			//'warehouse',
           array(
             'value' => function($data){
               return CHtml::textField('collected_amount[]', '' , array('class' => 'inputs',));
@@ -94,9 +96,9 @@ $(document).ready(function() {
 });
 </script>
 <br><br>
-<h1> Pending Collection </h1>
+<h1> Non Daily Collection </h1>
 
-<div align = "right"><?php echo CHtml::submitButton('UPDATE PENDING', array('name'=>'update2')); ?> </div>
+<div align = "right"><?php echo CHtml::submitButton('UPDATE NON DAILY', array('name'=>'update2')); ?> </div>
 <?php
   $this->widget('zii.widgets.grid.CGridView', array(
     'id'=>'prevDayPaymentUnfulfilled',
@@ -114,7 +116,7 @@ $(document).ready(function() {
        'last_paid_amount',
        'last_paid_on',
        array(
-            'value' => function($data){
+            'value' => function($data2){
               return CHtml::textField('pending_collection[]', '' , array('class' => 'inputs',));
             },
             'header' => 'collection',
