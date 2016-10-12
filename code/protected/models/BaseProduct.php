@@ -988,7 +988,7 @@ class BaseProduct extends CActiveRecord {
            // ->queryScalar();
         //$date_prev = date('Y-m-d', strtotime($lastDelDate." -1 days"));
 
-        $sql = "SELECT bp.base_product_id,bp.title FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$lastDelDate."' and oh.status != 'Cancelled' group by ol.base_product_id";
+        $sql = "SELECT bp.base_product_id,bp.title FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$lastDelDate."' and oh.status != 'Cancelled' group by ol.base_product_id order by title asc";
         //die($sql);
         $command = $connection->createCommand($sql);
         $command->execute();

@@ -14,19 +14,19 @@
     else{
         $update = false;
     }
-$disableReceived = 'disabled';
-$disableProcured = 'disabled';
+$readOnlyReceived = 'readonly';
+$readOnlyProcured = 'readonly';
 if($this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
-    $disableProcured = false;
-    $disableReceived = 'disabled';
+    $readOnlyProcured = false;
+    $readOnlyReceived = 'readonly';
 }
 elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
-    $disableReceived = false;
-    $disableProcured = 'disabled';
+    $readOnlyReceived = false;
+    $readOnlyProcured = 'readonly';
 }
 elseif($this->checkAccess('admin')){
-    $disableReceived = false;
-    $disableProcured = false;
+    $readOnlyReceived = false;
+    $readOnlyProcured = false;
 }
 
 
@@ -177,16 +177,16 @@ elseif($this->checkAccess('admin')){
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($disableProcured) {
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'disabled'=> $disableProcured));
+                'value' => function ($data) use ($readOnlyProcured) {
+                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured));
                 },
             ),
             array(
                 'header' => 'Received Quantity',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($disableReceived) {
-                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input', 'disabled'=> $disableReceived));
+                'value' => function ($data) use ($readOnlyReceived) {
+                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input', 'readonly'=> $readOnlyReceived));
                 },
                 'type' => 'raw',
             ),
@@ -194,8 +194,8 @@ elseif($this->checkAccess('admin')){
                 'header' => 'Price',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($disableProcured) {
-                    return CHtml::textField('price[]', $data->price, array('class'=>'input price inputs', 'disabled'=> $disableProcured, 'id'=>'price_'.$data->base_product_id, 'onchange'=>'onPriceChange(
+                'value' => function ($data) use ($readOnlyProcured) {
+                    return CHtml::textField('price[]', $data->price, array('class'=>'input price inputs', 'readonly'=> $readOnlyProcured, 'id'=>'price_'.$data->base_product_id, 'onchange'=>'onPriceChange(
                     '.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
