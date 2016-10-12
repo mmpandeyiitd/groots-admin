@@ -1,5 +1,5 @@
 <?php
-// change the following paths if necessary
+//change the following paths if necessary
 $yii=dirname(__FILE__).'/framework/yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';
 $constants=dirname(__FILE__).'/protected/config/constants.php';
@@ -15,3 +15,5 @@ require_once($constants);
 require_once($utility);
 
 Yii::createWebApplication($config)->run();
+//include_once(dirname(__FILE__).'/protected/script/readBackendData.php');
+?>

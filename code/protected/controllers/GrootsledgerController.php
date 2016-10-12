@@ -32,7 +32,7 @@ class GrootsledgerController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment'),
+				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','dailyCollection','totalpayable'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -230,6 +230,13 @@ class GrootsledgerController extends Controller
                 //print_r($retailerPayment);die;
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                    
+                    if($retailer->total_payable_amount == 0){
+                      $retailer->collection_fulfilled = true;
+                    }
+                    else{
+                      $retailer->collection_fulfilled = false; 
+                    }
                     $retailer->save();
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
@@ -313,6 +320,99 @@ class GrootsledgerController extends Controller
         ));
     }
 
+    public function actiondailyCollection(){
+      // var_dump($_POST);
+      // die();
+      if(isset($_POST['update'])){
+        self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
+      }
+
+      if(isset($_POST['update2'])){
+          self::updatePending($_POST['pending_collection'],$_POST['pending_retailer_id']);
+      }
+      $retailers = QueriesDailyCollection::todaysCollection();
+      $dataprovider = array();
+      $dataprovider2 = array();
+      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection();
+      $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
+      $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
+      $total_due_amount = 0;
+      $amount_to_be_collected = 0;
+      foreach ($retailers as $rowinfo) {
+        $amount_to_be_collected += $rowinfo['total_payable_amount'];
+        $total_due_amount += $rowinfo['total_payable_amount'];
+        $tmp = array();
+        $tmp['yesterday_payment_received'] = $rowinfo['last_paid_amount'];
+        $tmp['id'] = $rowinfo['id'];
+        $tmp['name'] = $rowinfo['retailer_name'];
+        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+        $tmp['collection_agent'] = $rowinfo['collection_agent'];
+        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
+        $tmp['collection_center'] = $rowinfo['collection_center'];
+        $tmp['warehouse'] = $rowinfo['warehouse_name'];
+        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+        array_push($dataprovider, $tmp);
+      }
+      foreach ($pendingRetailer as $rowinfo) {
+        $total_due_amount += $rowinfo['due_payable_amount'];
+        $amount_to_be_collected += $rowinfo['total_payable_amount'];
+        $tmp = array();
+        $tmp['id'] = $rowinfo['id'];
+        $tmp['name'] = $rowinfo['retailer_name'];
+        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+        $tmp['collection_agent'] = $rowinfo['collection_agent'];
+        $tmp['warehouse'] = $rowinfo['warehouse_name'];
+        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
+        $tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
+        $tmp['collection_center'] = $rowinfo['collection_center'];
+        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+        $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
+        $tmp['last_due_date'] = $rowinfo['last_due_date'];
+        $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+        array_push($dataprovider2, $tmp);
+      }
+      $dataprovider = new CArrayDataProvider($dataprovider, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','due_payable_amount','collection_center',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+
+      $dataprovider2 = new CArrayDataProvider($dataprovider2, array(
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','due_payable_amount','collection_center',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+      
+// die("here");
+      if(isset($_GET['download']) && $_GET['download']==true){
+      ob_clean();
+          QueriesDailyCollection::downloadDailyCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+        if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
+      ob_clean();
+          QueriesDailyCollection::downloadBackDateCollectionCsv();
+            ob_flush();
+            exit();
+        }
+
+       $this->render('dailyCollection',array(
+          'data' => $dataprovider,
+          'data2' => $dataprovider2,
+          'amount_to_be_collected' => $amount_to_be_collected,
+          'total_paid_yesterday' => $total_paid_yesterday,
+          'total_due_amount' => $total_due_amount,
+          ));
+    }
+
+       
+
     public function actionAdmin()
     {
         //print("<pre>");
@@ -328,7 +428,7 @@ class GrootsledgerController extends Controller
         if(!isset($retailerId) || empty($retailerId) ){
             if(isset($_GET['retailerId'])){
                 $retailerId = $_GET['retailerId'];
-            }
+            } 
         }
 //echo $retailerId;die;
 //print_r($_POST);die;
@@ -336,8 +436,8 @@ class GrootsledgerController extends Controller
 
 
             if($retailerId>0) {
-                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId),array('condition'=>'status != "Cancelled"' ,'order'=> 'delivery_date ASC'));
-                $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0', 'order'=> 'date ASC'));
+                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
+                $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $outstanding = $retailer->initial_payable_amount;
                 foreach ($retailerOrders as $order){
@@ -441,6 +541,12 @@ class GrootsledgerController extends Controller
 	 * @return Grootsledger the loaded model
 	 * @throws CHttpException
 	 */
+
+
+
+
+
+
 	public function loadModel($id)
 	{
 		$model=Grootsledger::model()->findByPk($id);
@@ -477,4 +583,87 @@ class GrootsledgerController extends Controller
     protected function beforeAction() {
         return parent::beforeAction();
     }
+
+    public static function updateDaily($retailerIds, $payments){
+      foreach ($retailerIds as $key => $retailerId) {
+          $paymentAmount = $payments[$key];
+          $current_retailer = Retailer::model()->findByPk($retailerId );
+          if(isset($paymentAmount) and $paymentAmount > 0){
+            $current_retailer->total_payable_amount -= $paymentAmount;
+            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
+                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
+            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
+                   
+            if($current_retailer->total_payable_amount == 0){
+              $current_retailer->collection_fulfilled = true;
+            }
+            else 
+              $current_retailer->collection_fulfilled = false;
+
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $command2 = $connection->createCommand($sql2);
+            $command2->execute();
+            $command->execute();
+            //$current_retailer->save();
+          }
+
+        }
+    }
+
+    public static function updatePending($pendingPayments, $pendingRetailerIds){
+      foreach ($pendingRetailerIds as $key => $retailerId) {
+          $paymentAmount = $pendingPayments[$key];
+          $current_retailer = Retailer::model()->findByPk($retailerId );
+          if(isset($paymentAmount) and $paymentAmount > 0){
+            $current_retailer->total_payable_amount -= $paymentAmount;
+            $current_retailer->due_payable_amount -= $paymentAmount;
+            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
+                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
+            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
+                   
+            if($current_retailer->total_payable_amount == 0){
+              $current_retailer->collection_fulfilled = true;
+            }
+            else 
+              $current_retailer->collection_fulfilled = false;
+
+            $connection = Yii::app()->secondaryDb;
+            $command = $connection->createCommand($sql);
+            $command2 = $connection->createCommand($sql2);
+            $command2->execute();
+            $command->execute();
+            //$current_retailer->save();
+          }
+
+        }
+    }
+
+    public function actiontotalpayable(){
+      $retailer= Retailer::model()->findAll();
+      //var_dump($retailer);
+        foreach ($retailer as $current_retailer) {
+        $retailerId = $current_retailer->id;
+          if($retailerId>0) {
+                        $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
+                        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
+            $outstanding = $current_retailer->initial_payable_amount;
+            foreach ($retailerOrders as $order) {
+              $outstanding += $order->total_payable_amount;
+            }
+            foreach ($retailerPayments as $payment){
+              $outstanding -= $payment->paid_amount;
+            }
+            echo "total_payable_amount----outstanding";
+            echo "<br>";
+            echo $current_retailer->total_payable_amount."-----------------------------".$outstanding;
+            echo "<br>";
+            echo "<br>";
+            if($current_retailer->total_payable_amount != $outstanding)
+            $current_retailer->total_payable_amount = $outstanding;
+            
+            $current_retailer->save();
+          }
+        }
+  }
 }

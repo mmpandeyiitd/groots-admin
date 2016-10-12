@@ -1,5 +1,5 @@
 
-insert into cb_dev_groots.warehouses values(null, 'Azadpur, delhi', null, 'Azadpur, delhi', 'Delhi', 'Delhi', 'Azadpur', '110033', null, null,null,1,now(), now(),null);
+insert into cb_dev_groots.warehouses values(2, 'Azadpur, delhi', null, 'Azadpur, delhi', 'Delhi', 'Delhi', 'Azadpur', '110033', null, null,null,1,now(), now(),null);
 
 
 

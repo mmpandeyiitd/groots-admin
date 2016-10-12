@@ -147,7 +147,75 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack
 
 update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
 
+--------------
+collection
+alter table cb_dev_groots.retailer add column collection_fulfilled boolean not null default false;
+
+CREATE TABLE cb_dev_groots.collection_agent(
+id int(11) NOT NULL ,
+name varchar(255) NOT NULL,
+PRIMARY KEY( id )
+);
+
+
+alter table cb_dev_groots.retailer add column collection_frequency enum('daily', 'weekly', 'fortnight', 'monthly', '45-days') default 'daily',
+ add column due_date date default null ;
+
+
+
+update cb_dev_groots.retailer set collection_frequency = 'monthly' where id in ('136');
+update cb_dev_groots.retailer set collection_frequency = 'weekly' where id in ('108','117','121','122','123','126','127','131','133','134','137','139','149','151','156','179');
+update cb_dev_groots.retailer set collection_frequency = 'fortnight' where id in ('99','101','135','138','140','152');
+
+
+update cb_dev_groots.retailer set due_date = '2016-10-16' where collection_frequency = 'fortnight';
+update cb_dev_groots.retailer set due_date = '2016-11-01' where collection_frequency = 'monthly';
+update cb_dev_groots.retailer set due_date = '2016-10-10' where collection_frequency = 'weekly';
+update cb_dev_groots.retailer set due_date = '2016-10-05' where collection_frequency = 'daily';
+
+
+insert into cb_dev_groots.collection_agent values (1,'Trilok');
+insert into cb_dev_groots.collection_agent values (2,'Ranveer');
+
+
+alter table cb_dev_groots.retailer add column last_due_date date default null;
+update cb_dev_groots.retailer set last_due_date = '2016-10-01' where collection_frequency = 'fortnight';
+update cb_dev_groots.retailer set last_due_date = '2016-10-01' where collection_frequency = 'monthly';
+update cb_dev_groots.retailer set last_due_date = '2016-10-03' where collection_frequency = 'weekly';
+update cb_dev_groots.retailer set last_due_date = '2016-10-04' where collection_frequency = 'daily';
+
+
+
+
+alter table cb_dev_groots.retailer add column last_due_payment decimal(10,2) DEFAULT null;
+update cb_dev_groots.retailer set last_due_payment = total_payable_amount;
+---------------------------------------------------------
+alter table cb_dev_groots.retailer add column collection_agent_id int(11) DEFAULT null;
+update cb_dev_groots.retailer set collection_agent_id = 1 where id in ('67','69','100','112','144','147','154','158','159','161','164','166','168','169','170','175','182','183','185','186','72','101','108','109','117','123','126','131','132','133','134','135','139','140','148','149','152','179');
+update cb_dev_groots.retailer set collection_agent_id = 2 where id in ('114','124','129','130','141','142','143','145','146','150','153','155','157','162','163','165','167','171','172','173','174','180','184','68','99','102','121','122','127','136','138','148','156');
+
+alter table cb_dev_groots.collection_agent add column warehouse_id int(11) not null;
+
+
+alter table cb_dev_groots.retailer change last_due_payment due_payable_amount decimal(10,2) not null;
+alter table cb_dev_groots.retailer modify due_payable_amount decimal(10,2) default 0;
+alter table cb_dev_groots.retailer modify collection_agent_id int(11) not null default 0;
+alter table cb_dev_groots.collection_agent add column status boolean not null default 1;
+---------------------------------------------------------------------------------
+
+
+update cb_dev_groots.warehouses set name = 'Basai, ggn' where id = 1;
+
+alter table cb_dev_groots.retailer add column collection_center_id int(11) not null default 0;
+
+insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Delhi','Delhi','Delhi','110030',NULL,NULL,NULL,'1',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 2);
+update cb_dev_groots.retailer set collection_center_id = 1;
+update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
+
+
 --------------------------------------
+warehouse
+
 run warehouse.sql
 in protected folder
 php yiic migrate --migrationPath=user.migrations

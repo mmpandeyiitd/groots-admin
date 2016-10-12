@@ -410,7 +410,7 @@ class OrderLine extends CActiveRecord
     $json_string        = array();
     foreach ($mailArray['to'] as $to)
     {
-    if($to['email']=="grootsadmin@gmail.com")
+        if($to['email']=="grootsadmin@gmail.com")
         {
             continue;
         }

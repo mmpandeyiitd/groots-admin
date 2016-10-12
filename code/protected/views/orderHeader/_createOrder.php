@@ -62,6 +62,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
     <?php endif; ?>
 
+    <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <div class="label label-error" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 
     <form name="create" method="post">
         <div class="orderDetail">
@@ -283,8 +289,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
                     </h3>
 
-                    <h3><b>Shipping Charge:</b><i class="fa fa-inr"></i><span id="shippingChargeDisplay">
-
+                    <h3><b>Shipping Charge:</b><i class="fa fa-inr"></i><span >
+                    <input type="text" style="width:80px;"  name="shippingCharge" class="inputs" id="shippingCharge" onchange ="calculateTotalAmount()" value="<?php echo $retailer->shipping_charge; ?>">
                         </span>
 
                     </h3>
@@ -311,9 +317,9 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     <input type="hidden" id="retailerId" name="retailerId" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->id; ?>" >
                     <input type="hidden" id="selectDelvDate" name="selectDelvDate" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $delivery_date; ?>" >
                     <input type="hidden" id="minOrder" name="minOrder" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->min_order_price; ?>" >
-                    <input type="hidden" id="shipping" name="shipping" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->shipping_charge; ?>" >
+                   
                     <input type="hidden" id="finalAmount" name="finalAmount" placeholder="0" class="form-control" style="width:120px;" value="" >
-                    <input type="hidden" id="shippingCharge" name="shippingCharge" placeholder="0" class="form-control" style="width:120px;" value="" >
+                    <input type="hidden" id="shippingOriginal" name="" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->shipping_charge; ?>" > 
                     <input type="hidden" id="discountCharge" name="discountCharge" placeholder="0" class="form-control" style="width:120px;" value="" >
                     <input type="hidden" id="sumAmount" name="sumAmount" placeholder="0" class="form-control" style="width:120px;" value="" >
                 </div>
@@ -486,8 +492,11 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     function calculateTotalAmount() {
         /*var num = parseFloat($(this).val());
         var cleanNum = num.toFixed(2);*/
+        console.log("here");
 
-        var shipping = Number($("#shipping").val());
+        var shipping = Number($("#shippingCharge").val());
+        var originalShipping = Number($("#shippingOriginal").val());
+
         //var discount = $("#discount").val();
         var minOrder = Number($("#minOrder").val());
 
@@ -498,21 +507,23 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
             sumAmount += Number($(this).val());
         });
+        if(shipping == originalShipping){
+            if(sumAmount < minOrder){
+                finalAmount = sumAmount + shipping;
 
-        if(sumAmount < minOrder){
-            finalAmount = sumAmount + shipping;
-
+            }
+            else{
+                finalAmount = sumAmount;
+                shipping = 0;
+            }
         }
         else{
-            finalAmount = sumAmount;
-            shipping = 0;
+            finalAmount = sumAmount + shipping;
         }
 
         shipping = shipping.toFixed(2);
         sumAmount = sumAmount.toFixed(2);
         finalAmount = finalAmount.toFixed(2);
-        $("#shippingCharge").val(shipping);
-        $("#shippingChargeDisplay").html(shipping);
         $("#sumAmount").val(sumAmount);
         $("#sumAmountDisplay").html(sumAmount);
         $("#finalAmount").val(finalAmount);
