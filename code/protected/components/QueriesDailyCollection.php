@@ -22,7 +22,7 @@ class QueriesDailyCollection{
                 and oh.delivery_date = CURDATE()
                 )
                 left join (
-                            select rep2.retailer_id, rep2.date as last_paid_on , 
+                            select rep2.retailer_id, rep2.date as last_paid_on,
                                 sum(paid_amount) as last_paid_amount 
                             from groots_orders.retailer_payments as rep2 
                             inner join (select retailer_id, max(date) as date 
@@ -31,7 +31,7 @@ class QueriesDailyCollection{
                             on(rep2.retailer_id = rep1.retailer_id and rep2.date = rep1.date and rep2.status=1)
                             group by rep2.retailer_id, rep2.date
                             ) as rep
-                on re.id = rep.retailer_id 
+                on re.id = rep.retailer_id
                 where re.status = 1 and re.collection_frequency != 'daily'
                 group by re.id";
         return $sql;
@@ -82,7 +82,7 @@ public static function todaysCollectionQuery(){
     $sql =  "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
                 re.total_payable_amount as total_payable_amount, re.due_payable_amount,
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name,
-                wa2.name as collection_center
+                wa2.name as collection_center, sum(rep.paid_amount) as last_paid_amount
                 FROM cb_dev_groots.retailer as re
                 left join cb_dev_groots.warehouses as wa2
                 on re.collection_center_id = wa2.id and wa2.status = 1
@@ -96,6 +96,8 @@ public static function todaysCollectionQuery(){
                     )
                 left join cb_dev_groots.warehouses as wa
                 on re.allocated_warehouse_id = wa.id 
+                left join groots_orders.retailer_payments as rep 
+                on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
                 where re.status ='1' and re.total_payable_amount > 0 and re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;
