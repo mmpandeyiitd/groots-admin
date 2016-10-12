@@ -16,17 +16,17 @@
     }
 $readOnlyReceived = 'readonly';
 $readOnlyProcured = 'readonly';
-if($this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
+if($this->checkAccess('SuperAdmin')){
+    $readOnlyReceived = false;
+    $readOnlyProcured = false;
+}
+elseif($this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
     $readOnlyProcured = false;
     $readOnlyReceived = 'readonly';
 }
 elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
     $readOnlyReceived = false;
     $readOnlyProcured = 'readonly';
-}
-elseif($this->checkAccess('admin')){
-    $readOnlyReceived = false;
-    $readOnlyProcured = false;
 }
 
 
@@ -186,7 +186,7 @@ elseif($this->checkAccess('admin')){
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($readOnlyReceived) {
-                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input', 'readonly'=> $readOnlyReceived));
+                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input received-inputs', 'readonly'=> $readOnlyReceived));
                 },
                 'type' => 'raw',
             ),
@@ -264,6 +264,19 @@ elseif($this->checkAccess('admin')){
                 }
                 else {
                     $('.inputs').eq(index + 1).focus();
+                }
+                return false;
+            }
+        });
+
+        $('.received-inputs').keydown(function (e) {
+            if (e.which === 13) {
+                var index = $('.received-inputs').index(this);
+                if (e.shiftKey) {
+                    $('.received-inputs').eq(index - 1).focus();
+                }
+                else {
+                    $('.received-inputs').eq(index + 1).focus();
                 }
                 return false;
             }
