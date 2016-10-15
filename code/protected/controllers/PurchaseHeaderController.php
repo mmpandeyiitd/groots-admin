@@ -111,6 +111,7 @@ class PurchaseHeaderController extends Controller
 		$model=new PurchaseHeader('search');
 
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        //print_r($popularItems);die;
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>100,

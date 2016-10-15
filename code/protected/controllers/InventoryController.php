@@ -83,7 +83,7 @@ class InventoryController extends Controller
         }
         else{
             $date = date('Y-m-d');
-            //$date = "2016-09-15";
+            $date = "2016-10-10";
         }
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;

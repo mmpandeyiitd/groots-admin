@@ -255,6 +255,10 @@ insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values ('War
 update cb_dev_groots.base_product set popularity=1 where base_product_id in (select distinct(base_product_id) from groots_orders.order_line ol join groots_orders.order_header oh on oh.order_id=ol.order_id where oh.status="Delivered" GROUP BY ol.base_product_id having count(*) > 50)
 
 
+-------------
+copy parent items from test db to production
+update base_product set status=0  where title like "% G2 %";
+
 
 -----------------------------------
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date) values ("vendor1", now(), now()), ("vendor2", now(), now());

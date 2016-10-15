@@ -141,9 +141,24 @@ if($update == true) {
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'rowCssClassExpression' => '"parent-id_".$data->parent_id;',
+        'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         //'filter'=>$model,
-        'columns'=>array(
+        'columns'=>array(array(
+            'header' => 'show child',
+            'value' => function($data){
+
+                if($data->parent_id == 0){
+                    return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")"));
+                }
+                else{
+                    return "";
+                }
+
+            },
+            'type' => 'raw',
+        ),
             array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
@@ -253,6 +268,11 @@ if($update == true) {
             removeDisabled: true,
             allText: 'Complete Item list'
         });
+        onStartUp();
+
+    });
+
+    function onStartUp(){
         $('.inputs').keydown(function (e) {
             if (e.which === 13) {
                 var index = $('.inputs').index(this);
@@ -271,8 +291,13 @@ if($update == true) {
                 return false;
             }
         });
+    }
 
-    });
+    function toggleChild(bp_id){
+        $(".parent-id_"+bp_id).each(function ( ){
+            $(this).toggle();
+        })
+    }
 
     function showAddItemBox(){
         console.log("button clicked");
@@ -313,6 +338,7 @@ if($update == true) {
             }
         });
         $("#alpha-nav-div").css('display', 'none');
+        onStartUp();
     }
 
     function onPriceChange($bp_id) {

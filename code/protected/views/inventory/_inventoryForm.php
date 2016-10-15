@@ -152,9 +152,27 @@ function getIfExist($quantitiesMap, $key, $data){
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'rowCssClassExpression' => '"parent-id_".$data->parent_id;',
+        'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         'filter'=>$model,
         'columns'=>array(
+            array(
+                'header' => 'show child',
+                /*'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),*/
+                'value' => function($data){
+
+                    if($data->parent_id == 0){
+                        return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")"));
+                    }
+                    else{
+                        return "";
+                    }
+                        
+                },
+                'type' => 'raw',
+            ),
             array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
@@ -416,7 +434,11 @@ function getIfExist($quantitiesMap, $key, $data){
 
 
     $(document).ready(function() {
+        onStartUp();
 
+    });
+
+    function onStartUp(){
         $('.inputs').keydown(function (e) {
             if (e.which === 13) {
                 var index = $('.inputs').index(this);
@@ -435,10 +457,15 @@ function getIfExist($quantitiesMap, $key, $data){
                 return false;
             }
         });
-    });
+    }
 
+    function toggleChild(bp_id){
+        $(".parent-id_"+bp_id).each(function ( ){
+            $(this).toggle();
+        })
+    }
 
-        function onInvChange(bp_id){
+    function onInvChange(bp_id){
         //console.log('bp-id '+ bp_id);
         var wastage = parseFloat($("#wastage_"+bp_id).val().trim()) || 0;
         var wastage_others = parseFloat($("#wastage-others_"+bp_id).val().trim());

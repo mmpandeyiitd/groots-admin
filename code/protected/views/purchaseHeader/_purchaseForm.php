@@ -152,9 +152,25 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'rowCssClassExpression' => '"parent-id_".$data->parent_id;',
+        'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         //'filter'=>$model,
         'columns'=>array(
+            array(
+                'header' => 'show child',
+                'value' => function($data){
+
+                    if($data->BaseProduct->parent_id == 0){
+                        return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")"));
+                    }
+                    else{
+                        return "";
+                    }
+
+                },
+                'type' => 'raw',
+            ),
             array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
@@ -247,6 +263,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 <script type="text/javascript">
 
     $(document).ready(function() {
+
         $('#alphabetical-nav').listnav({
             initLetter: 'A',
             includeOther: true,
@@ -255,6 +272,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             removeDisabled: true,
             allText: 'Complete Item list'
         });
+
+        onStartUp();
+    });
+
+    function onStartUp(){
+
 
         $('.inputs').keydown(function (e) {
             if (e.which === 13) {
@@ -288,7 +311,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             }
         });
 
-    });
+    }
+
+    function toggleChild(bp_id){
+        $(".parent-id_"+bp_id).each(function ( ){
+            $(this).toggle();
+        })
+    }
 
     function showAddItemBox(){
         console.log("button clicked");
@@ -298,17 +327,16 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     function addItemToOrder(){
         console.log("addItemToOrder");
         $(".cb_item").each(function(){
-            console.log("each fun");
             if($(this).prop('checked')==true){
                 var prodId = $(this).attr('id').split("_")[1];
                 var title =$('#title_'+prodId).html().split("<span>")[0];
-                console.log(prodId+title);
+                //console.log(prodId+title);
                 lastRow = $('.table tbody>tr:last');
                 row = $('.table tbody>tr:last').prev('tr').clone();
                 var i = 0;
                 row.find('td').each (function() {
                     if(i==0){
-                        console.log("here123");
+                        //console.log("here123");
                         $(this).find("input").val(prodId);
                     }
                     else if(i==1) {
@@ -329,6 +357,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             }
         });
         $("#alpha-nav-div").css('display', 'none');
+        onStartUp();
     }
     
     function onPriceChange($bp_id) {

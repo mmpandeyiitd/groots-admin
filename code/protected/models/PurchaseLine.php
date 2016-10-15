@@ -11,6 +11,7 @@
 class PurchaseLine extends CActiveRecord
 {
     public $title='';
+    public $parent_id='';
     public $delivered_qty='';
 
     /**
@@ -124,6 +125,10 @@ class PurchaseLine extends CActiveRecord
 
     public function getDeliveredQty(){
         return $this->delivered_qty;
+    }
+
+    public function getParentId(){
+        return $this->parent_id;
     }
 
 }

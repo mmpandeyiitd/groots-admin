@@ -973,7 +973,7 @@ class BaseProduct extends CActiveRecord {
     }
 
 
-    public static function PopularItems(){
+    public static function  PopularItems(){
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' popularity in (1)', 'order'=> 'title asc' ));
         $connection = Yii::app()->secondaryDb;
@@ -988,12 +988,23 @@ class BaseProduct extends CActiveRecord {
            // ->queryScalar();
         //$date_prev = date('Y-m-d', strtotime($lastDelDate." -1 days"));
 
-        $sql = "SELECT bp.base_product_id,bp.title FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$lastDelDate."' and oh.status != 'Cancelled' group by ol.base_product_id order by title asc";
+        $sql = "SELECT bp.base_product_id,bp.title,bp.parent_id FROM `order_line` ol join order_header oh on oh.order_id=ol.order_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id where oh.delivery_date >= '".$lastDelDate."' and oh.status != 'Cancelled' group by ol.base_product_id order by title asc";
         //die($sql);
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
-
+        $bp_ids = array();
+        foreach ($result as $item){
+            if( $item['parent_id'] > 0){
+               // array_push($bp_ids, $item['parent_id']);
+            }
+            array_push($bp_ids, $item['base_product_id']);
+        }
+        $sql = "SELECT bp.base_product_id,bp.title,bp.parent_id from cb_dev_groots.base_product bp left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where bp.base_product_id in (".implode(",", $bp_ids).") group by bp.base_product_id order by pcm.category_id desc, title asc";
+        echo implode(",", $bp_ids);die;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
         $purchaseLineArr = array();
         foreach ($result as $item){
             /*$tmp = array();
@@ -1004,14 +1015,16 @@ class BaseProduct extends CActiveRecord {
             $purchaseLine = new PurchaseLine();
             $purchaseLine->base_product_id = $item['base_product_id'];
             $purchaseLine->title = $item['title'];
+            $purchaseLine->parent_id = $item['parent_id'];
             array_push($purchaseLineArr, $purchaseLine);
         }
-        $otherItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title'));
+        $otherItems = BaseProduct::model()->findAllByAttributes(array('status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title,parent_id'));
         $otherItemArray = array();
         foreach ($otherItems as $item){
             $tmp = array();
             $tmp['bp_id'] = $item->base_product_id;
             $tmp['title'] = $item->title;
+            $tmp['parent_id'] = $item->parent_id;
             array_push($otherItemArray, $tmp);
         }
 

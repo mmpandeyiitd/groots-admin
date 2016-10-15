@@ -21,6 +21,7 @@ class InventoryHeader extends CActiveRecord
     public $wastage_others = 0;
     public $balance = 0;
     public $schedule_inv_absolute=0;
+    public $parent_id='';
     /**
      * @return string the associated database table name
      */
@@ -38,7 +39,7 @@ class InventoryHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,warehouse_id,base_product_id,schedule_inv,schedule_inv_type,extra_inv,extra_inv_type,created_at,item_title,date', 'safe', 'on' => 'search,update'),
+            array('id,warehouse_id,base_product_id,schedule_inv,schedule_inv_type,extra_inv,extra_inv_type,created_at,item_title,date,parent_id', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -95,7 +96,7 @@ class InventoryHeader extends CActiveRecord
             $this->date = date('Y-m-d');
         }
         $criteria = new CDbCriteria;
-        $criteria->select = 't.*, bp.title as item_title, inv.present_inv, inv.wastage, inv.wastage_others, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
+        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, inv.present_inv, inv.wastage, inv.wastage_others, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
@@ -212,6 +213,10 @@ class InventoryHeader extends CActiveRecord
 
     public function getScheduleInvAbsolute(){
         return $this->schedule_inv_absolute;
+    }
+
+    public function getParentId(){
+        return $this->parent_id;
     }
 
 
