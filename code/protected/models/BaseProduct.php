@@ -993,29 +993,37 @@ class BaseProduct extends CActiveRecord {
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
-        $bp_ids = array();
+        $parent_id = array();
         foreach ($result as $item){
             if( $item['parent_id'] > 0){
-               // array_push($bp_ids, $item['parent_id']);
+               array_push($parent_id, $item['parent_id']);
             }
-            array_push($bp_ids, $item['base_product_id']);
         }
-        $sql = "SELECT bp.base_product_id,bp.title,bp.parent_id from cb_dev_groots.base_product bp left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where bp.base_product_id in (".implode(",", $bp_ids).") group by bp.base_product_id order by pcm.category_id desc, title asc";
-        echo implode(",", $bp_ids);die;
+        $sqlParent = "SELECT bp.base_product_id,bp.title,bp.parent_id from cb_dev_groots.base_product bp left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where bp.base_product_id in (".implode(",", $parent_id).") group by bp.base_product_id order by title asc";
+        //echo implode(",", $bp_ids);die;
         $command = $connection->createCommand($sql);
         $command->execute();
-        $result = $command->queryAll();
-        $purchaseLineArr = array();
-        foreach ($result as $item){
-            /*$tmp = array();
-            $tmp['bp_id'] = $item->base_product_id;
-            $tmp['title'] = $item->title;
-            array_push($purchaseLineArr, $tmp);*/
-
+        $resultParent = $command->queryAll();
+        $parentIdMap = array();
+        foreach ($resultParent as $item){
             $purchaseLine = new PurchaseLine();
             $purchaseLine->base_product_id = $item['base_product_id'];
             $purchaseLine->title = $item['title'];
             $purchaseLine->parent_id = $item['parent_id'];
+            $parentIdMap['base_product_id'] = $purchaseLine;
+        }
+
+        $purchaseLineArr = array();
+        foreach ($result as $item){
+            $purchaseLine = new PurchaseLine();
+            $purchaseLine->base_product_id = $item['base_product_id'];
+            $purchaseLine->title = $item['title'];
+            $purchaseLine->parent_id = $item['parent_id'];
+
+            if($item['parent_id'] > 0 && isset($parentIdMap[$item['parent_id']])){
+                array_push($purchaseLineArr, $parentIdMap[$item['parent_id']]);
+                uneset($parentIdMap[$item['parent_id']]);
+            }
             array_push($purchaseLineArr, $purchaseLine);
         }
         $otherItems = BaseProduct::model()->findAllByAttributes(array('status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title,parent_id'));

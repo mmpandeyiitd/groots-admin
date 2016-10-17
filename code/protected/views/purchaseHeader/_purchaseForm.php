@@ -152,7 +152,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '"parent-id_".$data->parent_id;',
+        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id :  "parent parent-id_".$data->parent_id',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         //'filter'=>$model,

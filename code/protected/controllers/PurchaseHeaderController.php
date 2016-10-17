@@ -114,7 +114,7 @@ class PurchaseHeaderController extends Controller
         //print_r($popularItems);die;
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
-                'pageSize'=>100,
+                'pageSize'=>300,
             ),
         ));
 //print_r($_POST);die;

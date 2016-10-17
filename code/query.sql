@@ -259,6 +259,8 @@ update cb_dev_groots.base_product set popularity=1 where base_product_id in (sel
 copy parent items from test db to production
 update base_product set status=0  where title like "% G2 %";
 
+update  product_category_mapping pcm join  base_product bp  on bp.parent_id=pcm.base_product_id join product_category_mapping pcm2 on bp.base_product_id=pcm2.base_product_id  set pcm.category_id=pcm2.category_id;
+
 
 -----------------------------------
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date) values ("vendor1", now(), now()), ("vendor2", now(), now());
