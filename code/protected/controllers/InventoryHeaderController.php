@@ -32,7 +32,7 @@ class InventoryHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update','editInventory'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -170,4 +170,46 @@ class InventoryHeaderController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+	public function actionEditInventory(){
+		
+		$w_id = '';
+		if(isset($_GET['w_id']))
+			$w_id = $_GET['w_id'];
+		//echo $w_id; die;
+
+		$inv_header = new InventoryHeader('search');
+		if(isset($_GET['InventoryHeader'])){
+			$inv_header->attributes = $_GET['InventoryHeader'];
+		}
+		$inv_header->warehouse_id = $w_id;
+		if(isset($_POST['update'])){
+			// var_dump($_POST);
+			// var_dump($_GET); die;
+			self::onUpdateInventory($_POST);
+		}
+		$dataProvider = $inv_header->search();
+        $this->render('editInventory',
+        	array(
+        		'data'=>$dataProvider,
+        		'model'=>$inv_header));
+	}
+
+	public static function onUpdateInventory($post){
+		$id = $post['id'];
+		$sch_inv = $post['schedule_inv'];
+		$sch_inv_type = $post['schedule_inv_type'];
+		$ext_inv = $post['extra_inv'];
+		$ext_inv_type = $post['extra_inv_type'];
+
+		foreach ($id as $key => $cur_id) {
+			$cur_inv = InventoryHeader::model()->findByPk($cur_id);
+			$cur_inv->schedule_inv = $sch_inv[$key];
+	        $cur_inv->schedule_inv_type = $sch_inv_type[$key];
+	        $cur_inv->extra_inv = $ext_inv[$key];
+	        $cur_inv->extra_inv_type = $ext_inv_type[$key];	
+	        $cur_inv->save();
+		}
+	}
 }
+	
