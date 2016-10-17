@@ -974,6 +974,7 @@ class BaseProduct extends CActiveRecord {
 
 
     public static function  PopularItems(){
+        //echo "<pre>";
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null, 'popularity'=>1,'status'=>1));
         //$popularItems = BaseProduct::model()->findAllByAttributes(array('parent_id'=>null,'status'=>1), array('condition'=> ' popularity in (1)', 'order'=> 'title asc' ));
         $connection = Yii::app()->secondaryDb;
@@ -1000,8 +1001,8 @@ class BaseProduct extends CActiveRecord {
             }
         }
         $sqlParent = "SELECT bp.base_product_id,bp.title,bp.parent_id from cb_dev_groots.base_product bp left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where bp.base_product_id in (".implode(",", $parent_id).") group by bp.base_product_id order by title asc";
-        //echo implode(",", $bp_ids);die;
-        $command = $connection->createCommand($sql);
+        //echo $sqlParent;die;
+        $command = $connection->createCommand($sqlParent);
         $command->execute();
         $resultParent = $command->queryAll();
         $parentIdMap = array();
@@ -1010,7 +1011,7 @@ class BaseProduct extends CActiveRecord {
             $purchaseLine->base_product_id = $item['base_product_id'];
             $purchaseLine->title = $item['title'];
             $purchaseLine->parent_id = $item['parent_id'];
-            $parentIdMap['base_product_id'] = $purchaseLine;
+            $parentIdMap[$item['base_product_id']] = $purchaseLine;
         }
 
         $purchaseLineArr = array();
@@ -1022,11 +1023,12 @@ class BaseProduct extends CActiveRecord {
 
             if($item['parent_id'] > 0 && isset($parentIdMap[$item['parent_id']])){
                 array_push($purchaseLineArr, $parentIdMap[$item['parent_id']]);
-                uneset($parentIdMap[$item['parent_id']]);
+                unset($parentIdMap[$item['parent_id']]);
             }
             array_push($purchaseLineArr, $purchaseLine);
         }
-        $otherItems = BaseProduct::model()->findAllByAttributes(array('status'=>1), array('condition'=> 'popularity >= 1', 'select'=>'base_product_id,title,parent_id'));
+        //print_r($parentIdMap);die;
+        $otherItems = BaseProduct::model()->findAllByAttributes(array('status'=>1), array( 'select'=>'base_product_id,title,parent_id', 'order'=>'title asc'));
         $otherItemArray = array();
         foreach ($otherItems as $item){
             $tmp = array();

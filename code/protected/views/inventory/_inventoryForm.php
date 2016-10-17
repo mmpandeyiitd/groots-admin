@@ -152,7 +152,7 @@ function getIfExist($quantitiesMap, $key, $data){
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '"parent-id_".$data->parent_id;',
+        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id :  "parent parent-id_".$data->parent_id',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         'filter'=>$model,
@@ -201,7 +201,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Schd Inv(+)',
+                'header' => 'Schd Inv()',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -225,7 +225,7 @@ function getIfExist($quantitiesMap, $key, $data){
             ),
 
             array(
-                'header' => 'Prev Day Inv(-)',
+                'header' => 'Prev Day Inv()',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -300,7 +300,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'Extra Inv(+)',
+                'header' => 'Extra Inv()',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -317,7 +317,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'Order Inv(+)',
+                'header' => 'Order Inv(-)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -326,7 +326,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'Liquid Inv(+)',
+                'header' => 'Liquid Inv(-)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -360,8 +360,8 @@ function getIfExist($quantitiesMap, $key, $data){
                 'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"'),
                 'value' => function ($data)  use ($quantitiesMap) {
 
-                    $s_inv = empty($data->schedule_inv_absolute) ? 0 : $data->schedule_inv_absolute ;
-                    $prev_day_inv =  empty($data->prev_day_inv) ? 0 : $data->prev_day_inv ;
+                    //$s_inv = empty($data->schedule_inv_absolute) ? 0 : $data->schedule_inv_absolute ;
+                    //$prev_day_inv =  empty($data->prev_day_inv) ? 0 : $data->prev_day_inv ;
                     $cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
                     $liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
                     $order_sum = getIfExist($quantitiesMap,'orderSum', $data);
@@ -369,10 +369,10 @@ function getIfExist($quantitiesMap, $key, $data){
                     $trans_in = getIfExist($quantitiesMap,'transferInSum', $data);
                     $trans_out = getIfExist($quantitiesMap,'transferOutSum', $data);
 
-                    $extra_inv =  empty($data->extra_inv_absolute) ? 0 : $data->extra_inv_absolute ;
+                    //$extra_inv =  empty($data->extra_inv_absolute) ? 0 : $data->extra_inv_absolute ;
                     $wastage = empty($data->wastage) ? 0 : $data->wastage ;
                     $wastage_others = empty($data->wastage_others) ? 0 : $data->wastage_others ;
-                    $balance = ($s_inv+$order_sum+$trans_out+$extra_inv+$cur_inv+$liq_inv+$wastage+$wastage_others) - ($purchase+$trans_in+$prev_day_inv);
+                    $balance =    $purchase+$trans_in -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$wastage+$wastage_others);
                     $data->balance = $balance;
                     if(empty($data->balance)){
                         $data->balance = 0;

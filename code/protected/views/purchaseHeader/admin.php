@@ -61,6 +61,7 @@ $('.search-form form').submit(function(){
 			},
 			'type' => 'raw',
 		),
+		'delivery_date',
 		'payment_method',
 		'payment_status',
 		'status',

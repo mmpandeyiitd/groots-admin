@@ -315,6 +315,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
     function toggleChild(bp_id){
         $(".parent-id_"+bp_id).each(function ( ){
+            console.log("in child");
             $(this).toggle();
         })
     }

@@ -2260,3 +2260,7 @@ nav.vertical li.ex1:hover > ul{
     opacity:1;
     /*transform: translateX(0px);*/
 }
+
+#purchase-header-grid .child {
+    display:none;
+}

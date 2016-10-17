@@ -95,6 +95,7 @@ class InventoryController extends Controller
         //$inventories = Inventory::model()->with('BaseProduct')->findAllByAttributes(array('warehouse_id'=>$w_id, 'date'=>$date),array('order'=> ' BaseProduct.title ASC'));
         //$dataProvider = $model->search();
         $dataProvider = $inv_header->search();
+        //var_dump($dataProvider); die;
         $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
 
         $totalInvData = Inventory::getTotalInvOfDate($date);

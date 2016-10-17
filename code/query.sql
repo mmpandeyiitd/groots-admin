@@ -256,10 +256,18 @@ update cb_dev_groots.base_product set popularity=1 where base_product_id in (sel
 
 
 -------------
-copy parent items from test db to production
+//copy parent items from test db to production, or upload csv
 update base_product set status=0  where title like "% G2 %";
 
+// optional, if category of parent not submitted by csv
 update  product_category_mapping pcm join  base_product bp  on bp.parent_id=pcm.base_product_id join product_category_mapping pcm2 on bp.base_product_id=pcm2.base_product_id  set pcm.category_id=pcm2.category_id;
+
+//copy parent item to inventory
+select max(base_product_id) from inventory_header;
+insert into groots_orders.inventory_header select null, 1, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product where base_product_id > ;
+
+select max(base_product_id) from inventory;
+insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now(),0,0 from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id where base_product_id > ;
 
 
 -----------------------------------
