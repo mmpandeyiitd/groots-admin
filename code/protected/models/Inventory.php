@@ -37,7 +37,7 @@ class Inventory extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,inv_id,warehouse_id,base_product_id,schedule_inv,present_inv,wastage,extra_inv,inv_change_type,inv_change_id,inv_change_quantity,date,created_at,item_title', 'safe', 'on' => 'search,update'),
+            array('id,inv_id,warehouse_id,base_product_id,schedule_inv,present_inv,wastage,extra_inv,inv_change_type,inv_change_id,inv_change_quantity,liquid_inv,liquidation_wastage,date,created_at,item_title', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -120,7 +120,7 @@ class Inventory extends CActiveRecord
 
     public static function getTotalInvOfDate($date){
         $prevDay = Utility::getPrevDay($date);
-        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(wastage_others) as wastage_others from inventory where date = '" . $date . "' group by date";
+        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(liquidation_wastage) as liquidation_wastage from inventory where date = '" . $date . "' group by date";
         $sql2 = "select sum(present_inv) as present_inv from inventory where date = '" . $prevDay . "' group by date";
         $connection = Yii::app()->secondaryDb;
         $command1 = $connection->createCommand($sql1);
@@ -131,7 +131,7 @@ class Inventory extends CActiveRecord
             $tmp['present_inv'] = 0;
             $tmp['wastage'] = 0;
             $tmp['liquid_inv'] = 0;
-            $tmp['wastage_others'] = 0;
+            $tmp['liquidation_wastage'] = 0;
 
             $invArr = array();
             array_push($invArr, $tmp);

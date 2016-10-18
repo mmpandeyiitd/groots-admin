@@ -115,6 +115,14 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
+                'header' => 'liquidation_wastage',
+                'name' => 'liquidation_wastage',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => '$data["liquidation_wastage"]',
+                'type' => 'raw',
+            ),
+            array(
                 'header' => 'Wastage',
                 'name' => 'wastage',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
@@ -122,14 +130,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'value' => '$data["wastage"]',
                 'type' => 'raw',
             ),
-            array(
-                'header' => 'Wastage Others',
-                'name' => 'wastage_others',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["wastage_others"]',
-                'type' => 'raw',
-            ),
+
         ),
     ));
 
@@ -335,6 +336,15 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
+                'header' => 'liquidation_wastage(-)',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', ),
+                'value' => function ($data) {
+                    return CHtml::textField('liquidation_wastage[]', empty($data->liquidation_wastage) ? 0.00:$data->liquidation_wastage, array('class'=>'inv-input inputs', 'id'=>'wastage-others_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
+                },
+                'type' => 'raw',
+            ),
+            array(
                 'header' => 'wastage(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -343,15 +353,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
                 'type' => 'raw',
             ),
-            array(
-                'header' => 'wastage_others(-)',
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', ),
-                'value' => function ($data) {
-                    return CHtml::textField('wastage_others[]', empty($data->wastage_others) ? 0.00:$data->wastage_others, array('class'=>'inv-input inputs', 'id'=>'wastage-others_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.')'));
-                },
-                'type' => 'raw',
-            ),
+
             array(
                 'header' => 'balance(=)',
                 'class'=>'DataColumn',
@@ -371,7 +373,7 @@ function getIfExist($quantitiesMap, $key, $data){
 
                     //$extra_inv =  empty($data->extra_inv_absolute) ? 0 : $data->extra_inv_absolute ;
                     $wastage = empty($data->wastage) ? 0 : $data->wastage ;
-                    $wastage_others = empty($data->wastage_others) ? 0 : $data->wastage_others ;
+                    $wastage_others = empty($data->liquidation_wastage) ? 0 : $data->liquidation_wastage ;
                     $balance =    $purchase+$trans_in -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$wastage+$wastage_others);
                     $data->balance = $balance;
                     if(empty($data->balance)){

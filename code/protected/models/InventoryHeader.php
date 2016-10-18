@@ -18,7 +18,7 @@ class InventoryHeader extends CActiveRecord
     public $liquid_inv=0;
     public $extra_inv_absolute=0;
     public $wastage = 0;
-    public $wastage_others = 0;
+    public $liquidation_wastage = 0;
     public $balance = 0;
     public $schedule_inv_absolute=0;
     public $parent_id='';
@@ -96,7 +96,7 @@ class InventoryHeader extends CActiveRecord
             $this->date = date('Y-m-d');
         }
         $criteria = new CDbCriteria;
-        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, inv.present_inv, inv.wastage, inv.wastage_others, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
+        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, inv.present_inv, inv.wastage, inv.liquidation_wastage, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
@@ -120,7 +120,7 @@ class InventoryHeader extends CActiveRecord
                 ),
             ),
             'pagination' => array(
-                'pageSize' => 50,
+                'pageSize' => 150,
             ),
         ));
     }
@@ -203,8 +203,8 @@ class InventoryHeader extends CActiveRecord
         return $this->wastage;
     }
 
-    public function getWastageOthers(){
-        return $this->wastage_others;
+    public function getLiquidationWastage(){
+        return $this->liquidation_wastage;
     }
 
     public function getBalance(){

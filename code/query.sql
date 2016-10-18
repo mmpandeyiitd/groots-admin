@@ -255,6 +255,9 @@ insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values ('War
 update cb_dev_groots.base_product set popularity=1 where base_product_id in (select distinct(base_product_id) from groots_orders.order_line ol join groots_orders.order_header oh on oh.order_id=ol.order_id where oh.status="Delivered" GROUP BY ol.base_product_id having count(*) > 50)
 
 
+alter table groots_orders.inventory change column wastage_others `liquidation_wastage` decimal(10,2) DEFAULT NULL;
+
+
 -------------
 //copy parent items from test db to production, or upload csv
 update base_product set status=0  where title like "% G2 %";
