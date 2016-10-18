@@ -74,16 +74,9 @@ function getIfExist($quantitiesMap, $key, $data){
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'dataProvider'=>$totalInvData,
         'columns'=>array(
+
             array(
-                'header' => 'Total Order',
-                'name' => 'total_order',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["total_order"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Total Schedule Inv',
+                'header' => 'Schd Inv',
                 'name' => 'schedule_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
@@ -91,7 +84,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Total Prev Day Inv',
+                'header' => 'Prev Day Inv',
                 'name' => 'prev_day_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
@@ -99,7 +92,46 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Current Order Inv',
+                'header' => 'Order',
+                'name' => 'total_order',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => function ($data) use ($quantitiesMap) {
+                    return $quantitiesMap['totalOrder'];
+                },
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Transfer-In',
+                'name' => 'total_order',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => function ($data) use ($quantitiesMap) {
+                    return $quantitiesMap['totalTransferIn'];
+                },
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Transfer-Out',
+                'name' => 'total_order',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => function ($data) use ($quantitiesMap) {
+                    return $quantitiesMap['totalTransferOut'];
+                },
+                'type' => 'raw',
+            ),array(
+                'header' => 'Purchase',
+                'name' => 'total_order',
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => function ($data) use ($quantitiesMap) {
+                    return $quantitiesMap['totalPurchase'];
+                },
+                'type' => 'raw',
+            ),
+            array(
+                'header' => 'Order Inv',
                 'name' => 'present_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
@@ -107,7 +139,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'Current Liquid Inv',
+                'header' => 'Liquid Inv',
                 'name' => 'liquid_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
@@ -115,8 +147,8 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'liquidation_wastage',
-                'name' => 'liquidation_wastage',
+                'header' => 'Liquid wastage',
+                'name' => 'liquid_wastage',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => '$data["liquidation_wastage"]',
@@ -259,7 +291,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'transferIn(-)',
+                'header' => 'Transfer-In(-)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -273,7 +305,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'transferOut(+)',
+                'header' => 'Transfer-Out(+)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -287,7 +319,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'purchase_qty(-)',
+                'header' => 'Purchase(-)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -336,7 +368,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'liquidation_wastage(-)',
+                'header' => 'Liquid Wastage(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', ),
                 'value' => function ($data) {
@@ -345,7 +377,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'wastage(-)',
+                'header' => 'Wastage(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
@@ -355,7 +387,7 @@ function getIfExist($quantitiesMap, $key, $data){
             ),
 
             array(
-                'header' => 'balance(=)',
+                'header' => 'Balance(=)',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
