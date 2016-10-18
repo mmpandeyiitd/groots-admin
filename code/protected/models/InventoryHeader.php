@@ -218,7 +218,16 @@ class InventoryHeader extends CActiveRecord
     public function getParentId(){
         return $this->parent_id;
     }
-
+    public static function extraInvType(){
+        $connection = Yii::app()->secondaryDb;
+        $extraInvTypes = Utility::get_enum_values($connection, self::tableName(), 'extra_inv_type' );
+        return $extraInvTypes;
+    }
+    public static function scheduleInvType(){
+        $connection = Yii::app()->secondaryDb;
+        $scheduleInvTypes = Utility::get_enum_values($connection, self::tableName(), 'schedule_inv_type' );
+        return $scheduleInvTypes;
+    }
 
 
 }
