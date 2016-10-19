@@ -83,6 +83,15 @@ $model_admin_data = new RetailerProductQuotation();
 // $data1 = $model_admin_data->admin_retailer_id($_REQUEST['id']);
 //  echo '<pre>';print_r($data1);die;
 ?>
+<br>
+<form name = 'uploadPrices' method = 'POST' enctype="multipart/form-data" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=subscribedProduct/admin&id='.$_GET['id']?>">
+<div style= "float:center">
+<?php echo CHtml::fileField('uploadedFile' , ''); ?> 
+<?php echo CHtml::submitButton('upload File', ''); ?>
+</div>
+</form>
+<br>
+
 <?php
 $form = $this->beginWidget('CActiveForm', array(
     'enableAjaxValidation' => true,

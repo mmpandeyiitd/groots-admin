@@ -67,6 +67,14 @@ function getIfExist($quantitiesMap, $key, $data){
 
         ?>
     </div>
+
+    <div class = "row" style="float:right">
+    <?php 
+    $url = Yii::app()->controller->createUrl("Inventory/downloadWastageReport",array('w_id' => $w_id));
+    echo CHtml::button('Download Report', array('onclick' => "onClickDownloadReport('".$url."')")); 
+    ?>
+    </div>
+
     <?php $this->endWidget();
 
     $this->widget('zii.widgets.grid.CGridView', array(
@@ -499,7 +507,15 @@ function getIfExist($quantitiesMap, $key, $data){
         console.log('balance '+balance);*/
         $("#balance_"+bp_id).html(balance);
     }
-
+    
+    function onClickDownloadReport(url){
+        //document.location.href
+        var date = $("#date").val().trim();
+        url = url + "&date="+date;
+        //window.location.assign(url);
+        console.log(url);
+        window.open(url, '_blank');
+    }
 
 
 </script>
