@@ -147,7 +147,7 @@ class Inventory extends CActiveRecord
         }
         //var_dump($prevDayInv);die;
         $invArr[0]['id'] = 1;
-
+        $invArr[0]['balance'] = 10;
         //$invArr[0]['total_order'] = OrderHeader::getTotalOrderOfDate($date);
         //var_dump($inventory);die;
         return $invArr;

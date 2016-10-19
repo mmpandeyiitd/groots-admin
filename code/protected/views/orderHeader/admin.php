@@ -55,10 +55,10 @@ if ($issuperadmin == 0) {
     }
 </script>
 <!--particular delivery date download csv file-->
-<div class="particular_delivery_date_csv" style="align:right"; >
+<!--<div class="particular_delivery_date_csv" style="align:right"; >
 
     <?php
-     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+/*     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
                     'name'=>'particular_delivery_date_csv_from',
                     'id'=>'particular_delivery_date_csv_from',
                      'options'=>array(
@@ -70,11 +70,11 @@ if ($issuperadmin == 0) {
                         'style'=>'height:20px;'
                                 ),
                         )); 
-                    ?>
+                    */?>
                 
                 <label>To</label>
                <?php
-                $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+/*                $this->widget('zii.widgets.jui.CJuiDatePicker',array(
                         'name'=>'particular_delivery_date_csv_to',
                         'id'=>'particular_delivery_date_csv_to',
                         'options'=>array(
@@ -89,9 +89,9 @@ if ($issuperadmin == 0) {
                         'style'=>'height:20px;'
                                 ),
                         )); 
-                ?>    
+                */?>
                 <input name="filter" class="button_new" type="submit" value="Filter" />
-</div>
+</div>-->
 <div class="search-form" style="display:none">
 
     <?php
@@ -100,7 +100,7 @@ if ($issuperadmin == 0) {
     ));
     ?>
 </div><!-- search-form -->
-<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/admin';?>">
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/admin&w_id='.$w_id;?>">
 
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
 <?php if(Yii::app()->user->hasFlash('success')):?>
