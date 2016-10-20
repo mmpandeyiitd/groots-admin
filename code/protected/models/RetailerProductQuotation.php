@@ -31,11 +31,12 @@ class RetailerProductQuotation extends CActiveRecord {
         // will receive user inputs.
         return array(
             array('retailer_id, subscribed_product_id, status', 'required'),
-            array('retailer_id, subscribed_product_id, effective_price, discount_per, status', 'numerical', 'integerOnly' => true),
+            array('retailer_id, subscribed_product_id, discount_per, status', 'numerical', 'integerOnly' => true),
+            array('effective_price' , 'numerical', 'integerOnly' => false),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
             array('base_product_id,title,', 'safe', 'on' => 'search'),
-            array('id, retailer_id, subscribed_product_id, effective_price, discount_per, status,', 'safe', 'on' => 'search'),
+            array('id, retailer_id, subscribed_product_id, effective_price, discount_per, status', 'safe', 'on' => 'search'),
         );
     }
 

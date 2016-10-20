@@ -83,11 +83,29 @@ $model_admin_data = new RetailerProductQuotation();
 // $data1 = $model_admin_data->admin_retailer_id($_REQUEST['id']);
 //  echo '<pre>';print_r($data1);die;
 ?>
+
+<form method = "POST" enctype="multipart/form-data" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=subscribedProduct/admin&id='.$_GET['id']?>">
+<div style= "float: left;">
+<?php if (Yii::app()->user->hasFlash('errorUpload')): ?><div class="flash-error label label-important" style="margin-left: 15px;"  >
+<?php echo Yii::app()->user->getFlash('errorUpload'); ?></div><?php endif; ?>
+<?php
+echo '<br>';
+echo '<br>';
+echo '<br>';
+echo CHtml::fileField('uploadedFile' , ''); echo '<br>';?> 
+<?php echo CHtml::submitButton('upload File', ''); ?>
+</div>
+</form>
+
+
 <?php
 $form = $this->beginWidget('CActiveForm', array(
     'enableAjaxValidation' => true,
         ));
 ?>
+
+
+
 <?php
 //$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
 $pageSize = 10;
@@ -178,6 +196,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
 ));
 ?>
 <?php $this->endWidget(); ?>
+
+
+
 <script>
     $(document).on('keyup', '.eft_price input', function () {
         var ele = $(this).closest('tr').find('.dis_price input')[0];
