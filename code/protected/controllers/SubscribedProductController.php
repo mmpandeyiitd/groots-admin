@@ -221,7 +221,7 @@ class SubscribedProductController extends Controller {
          else {
             $file = fopen( $_FILES['uploadedFile']['tmp_name'], "rb");
             self::uploadPrices($retailer_id, $file);
-            Yii::app()->user->setFlash('success', 'Prices Uploading Successfull');
+            Yii::app()->user->setFlash('success', 'Price Uploading Successfull');
             Yii::app()->controller->redirect("index.php?r=subscribedProduct/admin&id=".$retailer_id);
             }
       }
@@ -504,7 +504,7 @@ class SubscribedProductController extends Controller {
                         $resultDate = $command->queryAll();
                         $query = '';
                         if($row[$priceIndex] != ''){
-                                $query = 'update cb_dev_groots.retailer_product_quotation_log set effective_price = '."'".$row[$priceIndex]."'".', action = '."'".'UPDATE'."'".' where  retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'";
+                                $query = 'update cb_dev_groots.retailer_product_quotation_log set effective_price = '."'".$row[$priceIndex]."'".', action = '."'".'UPDATE'."'".' where  retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".'and status = 1';
                              }
                         else {
                         $query = 'insert into cb_dev_groots.retailer_product_quotation_log (action, retailer_id , subscribed_product_id, effective_price, status, date) values('."'".'INSERT'."'".', '."'".$retailer_id."'".', '."'".$row[$productIdIndex]."'".', '."'".$row[$priceIndex]."'".', '."'".'1'."'".', '."'".$row[$dateIndex]."')";
