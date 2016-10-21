@@ -208,3 +208,6 @@ alter table cb_dev_groots.retailer add column collection_center_id int(11) not n
 insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Delhi','Delhi','Delhi','110030',NULL,NULL,NULL,'1',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL);
 update cb_dev_groots.retailer set collection_center_id = 1;
 update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
+
+---------------------------------------------------------------------
+alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;

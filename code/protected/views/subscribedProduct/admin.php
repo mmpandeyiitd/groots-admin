@@ -1,5 +1,5 @@
 <?php
-#......Menu & Action Visibility.....#
+
 $visible_dropdownmenu = FALSE;
 $visible_action_edit = FALSE;
 if (array_key_exists('brand', Yii::app()->session['premission_info']['module_info'])) {
@@ -85,9 +85,7 @@ $model_admin_data = new RetailerProductQuotation();
 ?>
 
 <form method = "POST" enctype="multipart/form-data" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=subscribedProduct/admin&id='.$_GET['id']?>">
-<div style= "float: left;">
-<?php if (Yii::app()->user->hasFlash('errorUpload')): ?><div class="flash-error label label-important" style="margin-left: 15px;"  >
-<?php echo Yii::app()->user->getFlash('errorUpload'); ?></div><?php endif; ?>
+<div style= "float: right;">
 <?php
 echo '<br>';
 echo '<br>';
