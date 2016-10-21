@@ -211,3 +211,5 @@ update cb_dev_groots.retailer set collection_center_id = 3 where collection_freq
 
 ---------------------------------------------------------------------
 alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
+--------------------------------------------------------
+alter table cb_dev_groots.retailer_product_quotation_log modify column effective_price decimal(10,2) not null default 0;

@@ -221,7 +221,7 @@ class SubscribedProductController extends Controller {
          else {
             $file = fopen( $_FILES['uploadedFile']['tmp_name'], "rb");
             self::uploadPrices($retailer_id, $file);
-            Yii::app()->user->setFlash('success', 'Prices Upload Successfully');
+            Yii::app()->user->setFlash('success', 'Prices Uploading Successfull');
             Yii::app()->controller->redirect("index.php?r=subscribedProduct/admin&id=".$retailer_id);
             }
       }
@@ -492,27 +492,25 @@ class SubscribedProductController extends Controller {
                    // echo 'here in else <br>';
                     $retailerProductQuotation = RetailerProductQuotation::model()->findByAttributes(array('retailer_id' => $retailer_id, 'subscribed_product_id' => $row[$productIdIndex], 'status' => 1));
                     // var_dump($retailerProductQuotation);
-                    if($retailerProductQuotation != null){
+                    if($retailerProductQuotation != null && $row[$priceIndex] != ''){
                         $retailerProductQuotation['effective_price'] = $row[$priceIndex];
                         $retailerProductQuotation['created_at'] = date("Y-m-d H:i:s");
                         $retailerProductQuotation->save();
                        // print_r($retailerProductQuotation->getErrors());
                         $connection = Yii::app()->secondaryDb;
-                        $sql ='select date from cb_dev_groots.retailer_product_quotation_log where retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".'and date = '."'".$row[$dateIndex]."'";
+                        $sql ='select date from cb_dev_groots.retailer_product_quotation_log where retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".'and date = '."'".$row[$dateIndex]."'".'and status = 1';
                         $command = $connection->createCommand($sql);
                         $command->execute();
                         $resultDate = $command->queryAll();
                         $query = '';
                         if($row[$priceIndex] != ''){
-                            if(sizeof($resultDate) > 0){
-                                $query = 'update cb_dev_groots.retailer_product_quotation_log set effective_price = '."'".$row[$priceIndex]."'".', action = '."'".'UPDATE'."'".' where  retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".' and status = 1';
+                                $query = 'update cb_dev_groots.retailer_product_quotation_log set effective_price = '."'".$row[$priceIndex]."'".', action = '."'".'UPDATE'."'".' where  retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'";
                              }
                         else {
                         $query = 'insert into cb_dev_groots.retailer_product_quotation_log (action, retailer_id , subscribed_product_id, effective_price, status, date) values('."'".'INSERT'."'".', '."'".$retailer_id."'".', '."'".$row[$productIdIndex]."'".', '."'".$row[$priceIndex]."'".', '."'".'1'."'".', '."'".$row[$dateIndex]."')";
                             }
                         $command = $connection->createCommand($query);
                         $command->execute();
-                        }
                     }       
                 }
             $index = true;

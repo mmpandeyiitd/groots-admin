@@ -1,4 +1,5 @@
 <?php
+#......Menu & Action Visibility.....#
 
 $visible_dropdownmenu = FALSE;
 $visible_action_edit = FALSE;
