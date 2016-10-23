@@ -97,7 +97,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    $data['balance'] += $quantitiesMap['totalPurchase'];
                     return $quantitiesMap['totalPurchase'];
                 },
                 'type' => 'raw',
@@ -108,8 +107,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    $data['balance'] += $quantitiesMap['totalTransferIn'];
-                    //die($data['balance']);
                     return $quantitiesMap['totalTransferIn'];
                 },
                 'type' => 'raw',
@@ -120,8 +117,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    //die($data['balance']);
-                    $data['balance'] -= $quantitiesMap['totalOrder'];
                     return $data['balance'];
                     //return $quantitiesMap['totalOrder'];
                 },
@@ -134,7 +129,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    $data['balance'] -= $quantitiesMap['totalTransferOut'];
                     return $quantitiesMap['totalTransferOut'];
                 },
                 'type' => 'raw',
@@ -145,7 +139,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    $data['balance'] -= $data['present_inv'];
                     return $data['present_inv'];
                 },
                 'type' => 'raw',
@@ -156,7 +149,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    $data['balance'] -= $data['liquid_inv'];
                     return $data['liquid_inv'];
                 },
                 'type' => 'raw',
@@ -167,7 +159,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data)  {
-                    $data['balance'] -= $data['liquidation_wastage'];
                     return $data['liquidation_wastage'];
                 },
                 'type' => 'raw',
@@ -178,7 +169,6 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data)  {
-                    $data['balance'] -= $data['wastage'];
                     return $data['wastage'];
                 },
                 'type' => 'raw',
@@ -188,8 +178,9 @@ $balance = 0;
                 'name' => 'balance',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data)  {
-                    return $data['balance'];
+                'value' => function ($data) use ($quantitiesMap) {
+                    $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $data['liquidation_wastage'] - $data['wastage'];
+                    return $balance;
                 },
                 'type' => 'raw',
             ),
