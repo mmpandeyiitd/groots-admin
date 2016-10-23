@@ -80,7 +80,7 @@ $balance = 0;
                 'name' => 'schedule_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["schedule_inv"]',
+                'value' => 'round($data["schedule_inv"], 2)',
                 'type' => 'raw',
             ),
             array(
@@ -88,7 +88,7 @@ $balance = 0;
                 'name' => 'prev_day_inv',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["prev_day_inv"]',
+                'value' => 'round($data["prev_day_inv"], 2)',
                 'type' => 'raw',
             ),
             array(
@@ -97,7 +97,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    return $quantitiesMap['totalPurchase'];
+                    return round($quantitiesMap['totalPurchase'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -107,7 +107,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    return $quantitiesMap['totalTransferIn'];
+                    return round($quantitiesMap['totalTransferIn'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -117,8 +117,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    return $data['balance'];
-                    //return $quantitiesMap['totalOrder'];
+                    return round($quantitiesMap['totalOrder'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -129,7 +128,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
-                    return $quantitiesMap['totalTransferOut'];
+                    return round($quantitiesMap['totalTransferOut'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -139,7 +138,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return $data['present_inv'];
+                    return round($data['present_inv'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -149,7 +148,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) {
-                    return $data['liquid_inv'];
+                    return round($data['liquid_inv'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -159,7 +158,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data)  {
-                    return $data['liquidation_wastage'];
+                    return round($data['liquidation_wastage'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -169,7 +168,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data)  {
-                    return $data['wastage'];
+                    return round($data['wastage'], 2);
                 },
                 'type' => 'raw',
             ),
@@ -180,7 +179,7 @@ $balance = 0;
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($quantitiesMap) {
                     $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $data['liquidation_wastage'] - $data['wastage'];
-                    return $balance;
+                    return round($balance, 2);
                 },
                 'type' => 'raw',
             ),
