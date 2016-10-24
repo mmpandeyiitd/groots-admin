@@ -513,7 +513,7 @@ function getIfExist($quantitiesMap, $key, $data){
         var date = $("#date").val().trim();
         url = url + "&date="+date;
         //window.location.assign(url);
-        console.log(url);
+        //console.log(url);
         window.open(url, '_blank');
     }
 
