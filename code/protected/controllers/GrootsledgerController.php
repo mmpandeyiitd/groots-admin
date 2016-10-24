@@ -227,7 +227,6 @@ class GrootsledgerController extends Controller
                 //$retailerPayment->load($_POST['RetailerPayment']);
                 $retailerPayment->attributes = $_POST['RetailerPayment'];
                 $retailerPayment->created_at = date('Y-m-d');
-                //print_r($retailerPayment);die;
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
                     
@@ -457,6 +456,8 @@ class GrootsledgerController extends Controller
                     $tmp['id'] = $payment->id;
                     $tmp['date'] = substr($payment->date, 0,10);
                     $tmp['type'] = "Payment";
+                    $tmp['payment_type'] = $payment->payment_type;
+                    $tmp['cheque_no'] = $payment->cheque_no;
                     $tmp['invoiceAmount'] = '';
                     $tmp['paymentAmount'] = $payment->paid_amount;
                     $tmp['update_url'] = 'Grootsledger/UpdatePayment';
