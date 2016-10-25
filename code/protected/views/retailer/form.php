@@ -139,8 +139,22 @@
         </div>
          <div class="row">
             <?php echo $form->labelEx($model, 'collecttion_agent'); ?>
-            <?php echo $form->textField($model, 'collecttion_agent'); ?>
+            <?php 
+            $agent = CollectionAgent::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($agent, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'collection_agent_id', $list, 
+                        array('options'=>array($model['collection_agent_id']=>array('selected'=>true)))); ?>
             <?php echo $form->error($model, 'collecttion_agent'); ?>
+        </div>
+         <div class="row">
+            <?php echo $form->labelEx($model, 'Warehouse'); ?>
+            <?php 
+            //var_dump($model);die;
+            $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($warehouse, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list, 
+                        array('options'=>array($model['allocated_warehouse_id']=>array('selected'=>true)))); ?>
+            <?php echo $form->error($model, 'Warehouse'); ?>
         </div>
 
         <div class=" buttons">
