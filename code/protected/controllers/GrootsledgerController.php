@@ -287,7 +287,7 @@ class GrootsledgerController extends Controller
                 if ($retailerPayment->save()) {
 
                     $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
-                    if($intial_status != $retailerPayment->status)
+                    if($intial_status != $retailerPayment->status && $retailerPayment->status == '0')
                       $retailer->total_payable_amount -=$retailerPayment->paid_amount;
                     else {
                     $retailer->total_payable_amount += $paid_amount;
