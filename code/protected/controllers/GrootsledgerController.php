@@ -227,7 +227,6 @@ class GrootsledgerController extends Controller
                 //$retailerPayment->load($_POST['RetailerPayment']);
                 $retailerPayment->attributes = $_POST['RetailerPayment'];
                 $retailerPayment->created_at = date('Y-m-d');
-                //print_r($retailerPayment);die;
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
                     
@@ -273,10 +272,12 @@ class GrootsledgerController extends Controller
                 $retailerPayment = RetailerPayment::model()->findByPk($_POST['RetailerPayment']['id']);
                 $paid_amount = $retailerPayment->paid_amount;
                 //$retailerPayment->load($_POST['RetailerPayment']);
+                $intial_status = $retailerPayment->status;
                 $retailerPayment->attributes = $_POST['RetailerPayment'];
                 //var_dump(Yii::app()->request());die;
                 //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
                 //print_r($retailerPayment);die;
+
                 $retailerPayment->paid_amount = $_POST['RetailerPayment']['paid_amount'];
                 $retailerPayment->date = $_POST['RetailerPayment']['date'];
                 $retailerPayment->payment_type = $_POST['RetailerPayment']['payment_type'];
@@ -286,8 +287,12 @@ class GrootsledgerController extends Controller
                 if ($retailerPayment->save()) {
 
                     $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+                    if($intial_status != $retailerPayment->status && $retailerPayment->status == '0')
+                      $retailer->total_payable_amount -=$retailerPayment->paid_amount;
+                    else {
                     $retailer->total_payable_amount += $paid_amount;
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                  }
                     $retailer->save();
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
@@ -457,6 +462,8 @@ class GrootsledgerController extends Controller
                     $tmp['id'] = $payment->id;
                     $tmp['date'] = substr($payment->date, 0,10);
                     $tmp['type'] = "Payment";
+                    $tmp['payment_type'] = $payment->payment_type;
+                    $tmp['cheque_no'] = $payment->cheque_no;
                     $tmp['invoiceAmount'] = '';
                     $tmp['paymentAmount'] = $payment->paid_amount;
                     $tmp['update_url'] = 'Grootsledger/UpdatePayment';

@@ -30,7 +30,7 @@ $this->breadcrumbs=array(
         'retailerId'=>$retailer->id,
     ));
 
-
+//var_dump($data);die;
 if(isset($retailer->id)) {
     echo CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 'retailerId' => $retailer->id));
 }
@@ -43,6 +43,21 @@ if(!empty($data)) {
             'id',
             'date',
             'type',
+            array(
+                'header' => 'payment_type',
+                'value' => function($data){
+                    if(isset($data['payment_type'])){
+                    if($data['payment_type'] == trim('Cheque') && $data['cheque_no'] != null)
+                        return $data['payment_type'].' : '.$data['cheque_no'];
+                    else 
+                        return $data['payment_type'];
+                }
+                else 
+                   return '';
+           }
+
+                ),
+            //'payment_type',
             'invoiceAmount',
             'paymentAmount',
             'outstanding',

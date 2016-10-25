@@ -134,6 +134,7 @@ class OrderHeaderController extends Controller {
                     }
                 }
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
+                if($orderHeader->status == 'Delivered')
                 $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 $retailer->save();
                 $transaction->commit();
@@ -191,6 +192,7 @@ class OrderHeaderController extends Controller {
         $orderLine = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $orderHeader = $this->loadModel($id);
         $orderAmount = $orderHeader->total_payable_amount;
+        $initialStatus = $orderHeader->status;
 
         $retailerId = $orderHeader->user_id;
         $baseProductIds = array();
@@ -287,8 +289,15 @@ class OrderHeaderController extends Controller {
 
                 }
                 Yii::app()->user->setFlash('success', 'Order Updated Successfully.');
+                if($initialStatus != 'Delivered' && $orderHeader->status == 'Delivered'){
+                    $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                }
+                if($initialStatus== 'Delivered' && $orderHeader->status != 'Delivered')
                 $retailer->total_payable_amount -= $orderAmount;
-                $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                if($initialStatus == $orderHeader->status){
+                    $retailer->total_payable_amount -= $orderAmount;
+                    $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                }
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
