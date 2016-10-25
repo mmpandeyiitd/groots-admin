@@ -12,6 +12,8 @@ class TransferLine extends CActiveRecord
 {
 
     public $title='';
+
+    public $parent_id='';
     /**
      * @return string the associated database table name
      */
@@ -129,6 +131,10 @@ class TransferLine extends CActiveRecord
 
     public function getTitle(){
         return $this->title;
+    }
+
+    public function getParentId(){
+        return $this->parent_id;
     }
 
 }

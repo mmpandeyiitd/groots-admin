@@ -118,7 +118,7 @@ class InventoryController extends Controller
                     $wastage = trim($_POST['wastage'][$key]);
                     $liquidation_wastage = trim($_POST['liquidation_wastage'][$key]);
                     $extra_inv = trim($_POST['extra_inv'][$key]);
-                    if($present_inv > 0){
+                    if(true){
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
                         echo "present_inv-".$wastage_others;die;*/

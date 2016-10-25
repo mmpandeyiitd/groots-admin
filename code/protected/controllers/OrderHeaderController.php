@@ -166,7 +166,7 @@ class OrderHeaderController extends Controller {
                 $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 $retailer->save();
                 $transaction->commit();
-                $this->redirect(array('OrderHeader/admin'));
+                $this->redirect(array('OrderHeader/admin&w_id='.$w_id));
             } catch (\Exception $e) {
                 $transaction->rollBack();
                 Yii::app()->user->setFlash('error', 'Order Creation failed.');
