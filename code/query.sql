@@ -293,3 +293,7 @@ create trigger order_header_update after update on groots_orders.order_header fo
 
 create trigger order_header_delete after delete on groots_orders.order_header for each row
   update groots_orders.order_header_log set created_at = NOW() and action = 'DELETE';
+
+
+alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') not null default 'Cash';
+

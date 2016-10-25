@@ -77,7 +77,7 @@
     </div>
 
     <div class="row">
-        <?php echo $form->label($model,'cheque_no'); ?>
+        <?php echo $form->label($model,'cheque_no/Debit_note_no'); ?>
         <?php echo $form->textField($model,'cheque_no'); ?>
         <?php echo $form->error($model,'cheque_no'); ?>
     </div>

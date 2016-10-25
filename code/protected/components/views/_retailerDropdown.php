@@ -26,7 +26,7 @@ $form=$this->beginWidget('CActiveForm', array(
 	}
 	    echo $form->dropDownList($model,
 	      'user_id',
-	      CHtml::listData(Retailer::model()->findAll(array('select'=>'id,name','order' => 'name')),'id','name'),
+	      CHtml::listData(Retailer::model()->findAll(array('select'=>'id,name','order' => 'name', 'condition' => 'status != 0')),'id','name'),
 	      array('empty' => 'Select a retailer', 'name' => 'retailer-dd', 'disabled'=>$disabled, 'options'=>array($retailerId=>array('selected'=>'selected')))
 	    );
 	?>
