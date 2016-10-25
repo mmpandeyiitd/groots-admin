@@ -492,7 +492,7 @@ class SubscribedProductController extends Controller {
                    // echo 'here in else <br>';
                     $retailerProductQuotation = RetailerProductQuotation::model()->findByAttributes(array('retailer_id' => $retailer_id, 'subscribed_product_id' => $row[$productIdIndex], 'status' => 1));
                     // var_dump($retailerProductQuotation);
-                    if($retailerProductQuotation != null && $row[$priceIndex] != ''){
+                    if($retailerProductQuotation != null && $row[$priceIndex] != '' && is_numeric($row[$priceIndex])){
                         $retailerProductQuotation['effective_price'] = $row[$priceIndex];
                         $retailerProductQuotation['created_at'] = date("Y-m-d H:i:s");
                         $retailerProductQuotation->save();
