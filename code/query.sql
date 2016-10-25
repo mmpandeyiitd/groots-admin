@@ -209,7 +209,7 @@ insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Del
 update cb_dev_groots.retailer set collection_center_id = 1;
 update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
 ------------------------------------------------------------------------------------------
-CREATE TABLE `order_header_log` (
+CREATE TABLE groots_orders.`order_header_log` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `order_id` int(10) NOT NULL,
   `order_number` varchar(255) NOT NULL,
@@ -262,10 +262,11 @@ CREATE TABLE `order_header_log` (
   KEY `ohl_order_2` (`user_id`),
   KEY `ohl_order_3` (`warehouse_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1468 DEFAULT CHARSET=latin1;
-alter table order_header_log add column created_at datetime not null default NOW();
-alter table order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
 
-create trigger order_header_insert after insert on groots_orders.order_header for each row
+alter table groots_orders.order_header_log add column created_at datetime  default null;
+alter table groots_orders.order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
+
+create trigger groots_orders.order_header_insert after insert on groots_orders.order_header for each row
   insert into groots_orders.order_header_log values(NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,
                                       NEW.payment_status ,NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,
                                       NEW.billing_state ,NEW.billing_city ,NEW.billing_pincode ,NEW.shipping_name ,NEW.shipping_phone ,
@@ -278,7 +279,7 @@ create trigger order_header_insert after insert on groots_orders.order_header fo
                                       NEW.shipping_address_id ,NEW.warehouse_id ,NOW(), 'INSERT');
 
 
-create trigger order_header_update after update on groots_orders.order_header for each row
+create trigger groots_orders.order_header_update after update on groots_orders.order_header for each row
   insert into groots_orders.order_header_log values(
                                      NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,
                                       NEW.payment_status ,NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,
@@ -291,5 +292,5 @@ create trigger order_header_update after update on groots_orders.order_header fo
                                       NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
                                       NEW.shipping_address_id ,NEW.warehouse_id ,NOW() ,'UPDATE');
 
-create trigger order_header_delete after delete on groots_orders.order_header for each row
+create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
   update groots_orders.order_header_log set created_at = NOW() and action = 'DELETE';
