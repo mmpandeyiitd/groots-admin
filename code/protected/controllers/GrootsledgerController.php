@@ -331,7 +331,7 @@ class GrootsledgerController extends Controller
       if(isset($_POST['update'])){
         self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
       }
-
+      //die('here');
       if(isset($_POST['update2'])){
           self::updatePending($_POST['pending_collection'],$_POST['pending_retailer_id']);
       }
@@ -421,13 +421,19 @@ class GrootsledgerController extends Controller
     public function actionAdmin()
     {
         //print("<pre>");
+        //die('here');
         $retailer= new Retailer();
         $model = new OrderHeader();
         $retailerOrders ='';
         $retailerPayments = '';
+        $hidden_retailer_id = '';
         $dataprovider = array();
         if(isset($_POST['retailer-dd'])){
             $retailerId = $_POST['retailer-dd'];
+        }
+       // var_dump($_POST);
+        if(isset($_POST['hidden_retailer_id']) && !empty($_POST['hidden_retailer_id'])){
+          $hidden_retailer_id = $_POST['hidden_retailer_id'];
         }
 
         if(!isset($retailerId) || empty($retailerId) ){
@@ -469,8 +475,13 @@ class GrootsledgerController extends Controller
                     $tmp['update_url'] = 'Grootsledger/UpdatePayment';
                     array_push($dataprovider, $tmp);
                 }
-                $dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
-                //print_r($dataprovider);die;
+                foreach ($dataprovider as $key => $value) {
+                  $type[$key] = $value['type'];
+                  $date[$key] = $value['date'];
+                }
+                //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
+                array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
+                //var_dump($dataprovider);die;
                 foreach ($dataprovider as $key=>$data){
                     if($data['type'] == 'Order'){
                         $outstanding += $data['invoiceAmount'];
@@ -478,14 +489,14 @@ class GrootsledgerController extends Controller
                     elseif($data['type'] == 'Payment'){
                         $outstanding -= $data['paymentAmount'];
                     }
-                    $data['outstanding'] = $outstanding;
+                    $data['outstanding'] = number_format((float)$outstanding,2, '.','');
                     $dataprovider[$key] = $data;
                 }
                 $dataprovider = new CArrayDataProvider($dataprovider, array(
                     'id'=>'id',
                     'sort'=>array(
                         'attributes'=>array(
-                            'date desc',
+                            'type',
                         ),
                     ),
                     'pagination'=>array(
@@ -505,12 +516,11 @@ class GrootsledgerController extends Controller
 
 
 
-
         $this->render('list',array(
            'model'=>$model,
             'retailer' => $retailer,
             'data' => $dataprovider,
-
+            'hidden_retailer_id' => $hidden_retailer_id,
         ));
     }
 
