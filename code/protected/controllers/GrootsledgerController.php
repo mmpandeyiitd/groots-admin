@@ -425,13 +425,9 @@ class GrootsledgerController extends Controller
         $model = new OrderHeader();
         $retailerOrders ='';
         $retailerPayments = '';
-        $hidden_retailer_id = '';
         $dataprovider = array();
         if(isset($_POST['retailer-dd'])){
             $retailerId = $_POST['retailer-dd'];
-        }
-        if(isset($_POST['hidden_retailer_id']) && !empty($_POST['hidden_retailer_id'])){
-          $hidden_retailer_id = $_POST['hidden_retailer_id'];
         }
 
         if(!isset($retailerId) || empty($retailerId) ){
@@ -512,7 +508,6 @@ class GrootsledgerController extends Controller
            'model'=>$model,
             'retailer' => $retailer,
             'data' => $dataprovider,
-            'hidden_retailer_id' => $hidden_retailer_id,
         ));
     }
 
