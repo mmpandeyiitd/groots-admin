@@ -421,7 +421,6 @@ class GrootsledgerController extends Controller
     public function actionAdmin()
     {
         //print("<pre>");
-        //die('here');
         $retailer= new Retailer();
         $model = new OrderHeader();
         $retailerOrders ='';
@@ -431,7 +430,6 @@ class GrootsledgerController extends Controller
         if(isset($_POST['retailer-dd'])){
             $retailerId = $_POST['retailer-dd'];
         }
-       // var_dump($_POST);
         if(isset($_POST['hidden_retailer_id']) && !empty($_POST['hidden_retailer_id'])){
           $hidden_retailer_id = $_POST['hidden_retailer_id'];
         }
@@ -481,7 +479,6 @@ class GrootsledgerController extends Controller
                 }
                 //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
                 array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
-                //var_dump($dataprovider);die;
                 foreach ($dataprovider as $key=>$data){
                     if($data['type'] == 'Order'){
                         $outstanding += $data['invoiceAmount'];
@@ -494,11 +491,6 @@ class GrootsledgerController extends Controller
                 }
                 $dataprovider = new CArrayDataProvider($dataprovider, array(
                     'id'=>'id',
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'type',
-                        ),
-                    ),
                     'pagination'=>array(
                         'pageSize'=>500,
                     ),
