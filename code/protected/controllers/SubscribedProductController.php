@@ -208,11 +208,23 @@ class SubscribedProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-        // echo '<pre>'; print_r($_POST);die;
         if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }
+        $retailer_id = $_GET['id'];
+        if(isset($_FILES) && !empty($_FILES)){
+         if( $_FILES['uploadedFile']['error'] >0){
+             Yii::app()->user->setFlash('error', 'File Uploading Unsuccessful, Please try again...'); 
+             Yii::app()->controller->redirect("index.php?r=subscribedProduct/admin&id=".$retailer_id);
+            }
+         else {
+            $file = fopen( $_FILES['uploadedFile']['tmp_name'], "rb");
+            self::uploadPrices($retailer_id, $file);
+            Yii::app()->user->setFlash('success', 'Price Uploading Successfull');
+            Yii::app()->controller->redirect("index.php?r=subscribedProduct/admin&id=".$retailer_id);
+            }
+      }
         $no_of_Deletedataarray = 1;
         $model = new SubscribedProduct;
         $model_grid = new RetailerproductquotationGridview('search');
@@ -333,8 +345,9 @@ class SubscribedProductController extends Controller {
         ));
     }
 
+
     public function actionlistallproduct() {
-        // echo '<pre>';print_r($_POST);die;
+        //echo '<pre>';//print_r($_POST);die;
         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -344,7 +357,6 @@ class SubscribedProductController extends Controller {
 
         $model = new SubscribedProduct('search');
         $model->unsetAttributes(); // clear any default values
-
         if (isset($_POST['downloadbutton'])) {
 
             if (isset($_POST['selectedIds'])) {
@@ -454,4 +466,54 @@ class SubscribedProductController extends Controller {
         return true;
     }
 
+
+    public function  uploadPrices($retailer_id, $file){
+        $index = false; 
+        $productIdIndex = 0;
+        $priceIndex = 0;
+        $dateIndex = 0;
+        $retailerProductQuotation = array();
+        while(! feof($file)){
+            $row = fgetcsv($file);
+            if($index == false){
+                for($i= 0 ; $i < sizeof($row) ; $i++) {
+                    if(trim($row[$i]) == 'Subscribed Product ID'){
+                        $productIdIndex = $i;
+                    }
+                    elseif(trim($row[$i])== 'Price(Store Offer Price)'){
+                        $priceIndex = $i;
+                    }
+                    elseif(trim($row[$i]) == 'Effective Price Date'){
+                        $dateIndex = $i;
+                    }
+                }
+            }
+            else{
+                   // echo 'here in else <br>';
+                    $retailerProductQuotation = RetailerProductQuotation::model()->findByAttributes(array('retailer_id' => $retailer_id, 'subscribed_product_id' => $row[$productIdIndex], 'status' => 1));
+                    // var_dump($retailerProductQuotation);
+                    if($retailerProductQuotation != null && $row[$priceIndex] != '' && is_numeric($row[$priceIndex])){
+                        $retailerProductQuotation['effective_price'] = $row[$priceIndex];
+                        $retailerProductQuotation['created_at'] = date("Y-m-d H:i:s");
+                        $retailerProductQuotation->save();
+                       // print_r($retailerProductQuotation->getErrors());
+                        $connection = Yii::app()->secondaryDb;
+                        $sql ='select date from cb_dev_groots.retailer_product_quotation_log where retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".'and date = '."'".$row[$dateIndex]."'".'and status = 1';
+                        $command = $connection->createCommand($sql);
+                        $command->execute();
+                        $resultDate = $command->queryAll();
+                        $query = '';
+                        if($row[$priceIndex] != ''){
+                                $query = 'update cb_dev_groots.retailer_product_quotation_log set effective_price = '."'".$row[$priceIndex]."'".', action = '."'".'UPDATE'."'".' where  retailer_id = '."'".$retailer_id."'".' and subscribed_product_id = '."'".$row[$productIdIndex]."'".'and status = 1';
+                             }
+                        else {
+                        $query = 'insert into cb_dev_groots.retailer_product_quotation_log (action, retailer_id , subscribed_product_id, effective_price, status, date) values('."'".'INSERT'."'".', '."'".$retailer_id."'".', '."'".$row[$productIdIndex]."'".', '."'".$row[$priceIndex]."'".', '."'".'1'."'".', '."'".$row[$dateIndex]."')";
+                            }
+                        $command = $connection->createCommand($query);
+                        $command->execute();
+                    }       
+                }
+            $index = true;
+        }
+    }
 }

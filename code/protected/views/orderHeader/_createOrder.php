@@ -174,6 +174,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             $isEffectivePrice = 0;
                         }
                     ?>
+
                     <tr>
                         <div class="dynamic_content row_<?php echo $_retailerProduct->base_product_id; ?>">
                             <div class="clearfix"></div>
@@ -417,9 +418,9 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
         if(data){
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
-                if($('#isEffectivePrice_'+k).val()==0){
+                //if($('#isEffectivePrice_'+k).val()==0){
                     $("#unitPrice_"+k).html(v);
-                }
+                //}
             });
             populateAllAmountFields();
             calculateTotalAmount();
