@@ -47,7 +47,7 @@ if(!empty($data)) {
                 'header' => 'payment_type',
                 'value' => function($data){
                     if(isset($data['payment_type'])){
-                    if($data['payment_type'] == trim('Cheque') && $data['cheque_no'] != null)
+                    if($data['payment_type'] == trim('Cheque')  || $data['payment_type'] == trim('Debit Note') && $data['cheque_no'] != null)
                         return $data['payment_type'].' : '.$data['cheque_no'];
                     else 
                         return $data['payment_type'];
