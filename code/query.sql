@@ -298,3 +298,5 @@ create trigger groots_orders.order_header_delete after delete on groots_orders.o
 
 alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') not null default 'Cash';
 
+alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
+
