@@ -1964,12 +1964,14 @@ Sales: +91-11-3958-9895</span>
 
 
     public function actionProductPricesByRetailerAndDate(){
+        //echo "<pre>";
         $effectiveDate = $_GET['date'];
         $retailerId =  $_GET['retailerId'];
         $productPrices = ProductPrice::getRetailerSubscribedProductPricesByDate($retailerId, $effectiveDate);
+        $effective_prices = self::getEffectivePrice($retailerId, $effectiveDate);
         $sProdIdPriceArray = array();
         foreach ($productPrices as $productPrice){
-            $effective_prices = self::getEffectivePrice($retailerId, $effectiveDate);
+            
             $effectivePriceSet = (isset($effective_prices[$productPrice['base_product_id']]) && $effective_prices[$productPrice['base_product_id']] > 0);
 
             $sProdIdPriceArray[$productPrice['base_product_id']] = ( $effectivePriceSet ? $effective_prices[$productPrice['base_product_id']] : $productPrice['store_offer_price']);
@@ -2147,12 +2149,15 @@ Sales: +91-11-3958-9895</span>
     public function getEffectivePrice($r_id, $d_date){
         $indexedResult = array();
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select sp.base_product_id,  rpq.effective_price from cb_dev_groots.retailer_product_quotation_log as rpq left join cb_dev_groots.subscribed_product as sp on rpq.subscribed_product_id = sp.subscribed_product_id'.' where rpq.retailer_id = '."'".$r_id."'".' and rpq.date = '."'".$d_date."'".'and rpq.status = 1';
+        $sql = "select sp.base_product_id,  rpq.effective_price from cb_dev_groots.retailer_product_quotation_log as rpq left join cb_dev_groots.subscribed_product as sp on rpq.subscribed_product_id = sp.subscribed_product_id where rpq.retailer_id = ".$r_id." and (rpq.date <= '".$d_date."' or rpq.date is null) and rpq.status = 1 order by rpq.date desc, id desc";
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
         foreach ($result as $key => $cur_entry) {
-            $indexedResult[$cur_entry['base_product_id']] = $cur_entry['effective_price'];
+            if(!isset($indexedResult[$cur_entry['base_product_id']])){
+                $indexedResult[$cur_entry['base_product_id']] = $cur_entry['effective_price'];
+            }
+            
         }
         return $indexedResult;
     }
