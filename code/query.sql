@@ -212,6 +212,98 @@ insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Del
 update cb_dev_groots.retailer set collection_center_id = 1;
 update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
 
+------------------------------------------------------------------------------------------
+CREATE TABLE groots_orders.`order_header_log` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `order_id` int(10) NOT NULL,
+  `order_number` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `created_date` datetime DEFAULT NULL,
+  `payment_method` enum('cod','paytm','tpsl','prepay','tbd','paas','pay later','pay \r\n\r\nnow','operator billing','payu') DEFAULT NULL,
+  `payment_status` enum('pending','paid','cod','partial_paid','success','failed','duplicate') DEFAULT NULL,
+  `billing_name` varchar(255) DEFAULT NULL,
+  `billing_phone` varchar(15) DEFAULT NULL,
+  `billing_email` varchar(256) DEFAULT NULL,
+  `billing_address` text,
+  `billing_state` varchar(100) DEFAULT NULL,
+  `billing_city` varchar(100) DEFAULT NULL,
+  `billing_pincode` varchar(11) DEFAULT NULL,
+  `shipping_name` varchar(256) DEFAULT NULL,
+  `shipping_phone` varchar(15) DEFAULT NULL,
+  `shipping_email` varchar(256) DEFAULT NULL,
+  `shipping_address` text,
+  `shipping_state` varchar(100) DEFAULT NULL,
+  `shipping_city` varchar(100) DEFAULT NULL,
+  `shipping_pincode` varchar(11) DEFAULT NULL,
+  `shipping_charges` decimal(10,2) DEFAULT NULL,
+  `tax` decimal(10,2) DEFAULT NULL,
+  `total` decimal(10,2) DEFAULT NULL,
+  `total_payable_amount` decimal(10,2) DEFAULT NULL,
+  `total_paid_amount` decimal(10,2) DEFAULT NULL,
+  `discount_amt` decimal(10,2) DEFAULT NULL,
+  `coupon_code` varchar(20) DEFAULT NULL,
+  `payment_ref_id` varchar(30) DEFAULT NULL,
+  `payment_gateway_name` varchar(100) DEFAULT NULL,
+  `payment_type` varchar(100) DEFAULT NULL,
+  `payment_source` varchar(15) DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `transaction_id` varchar(50) DEFAULT NULL,
+  `bank_transaction_id` varchar(50) DEFAULT NULL,
+  `transaction_time` datetime DEFAULT NULL,
+  `payment_mod` varchar(50) DEFAULT NULL,
+  `bankname` varchar(50) DEFAULT NULL,
+  `status` enum('Pending','completed','failed','Out for Delivery','readytoship','shipped','returned','fulfillable','ReturnedRequested','ReturnedComplete','Confirmed','Processing','Cancelled','Packaging','Delivered','Paid') DEFAULT 'Pending',
+  `delivery_date` datetime NOT NULL,
+  `user_comment` text,
+  `order_type` varchar(150) DEFAULT NULL,
+  `invoice_number` varchar(255) DEFAULT NULL,
+  `agent_name` varchar(155) DEFAULT NULL,
+  `billing_address_id` int(10) DEFAULT NULL,
+  `shipping_address_id` int(10) DEFAULT NULL,
+  `warehouse_id` int(11) unsigned NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `ohl_order_1` (`order_id`),
+  KEY `ohl_order_2` (`user_id`),
+  KEY `ohl_order_3` (`warehouse_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1468 DEFAULT CHARSET=latin1;
+
+alter table groots_orders.order_header_log add column created_at datetime  default null;
+alter table groots_orders.order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
+
+create trigger groots_orders.order_header_insert after insert on groots_orders.order_header for each row
+  insert into groots_orders.order_header_log values(NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,
+                                      NEW.payment_status ,NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,
+                                      NEW.billing_state ,NEW.billing_city ,NEW.billing_pincode ,NEW.shipping_name ,NEW.shipping_phone ,
+                                      NEW.shipping_email ,NEW.shipping_address ,NEW.shipping_state ,NEW.shipping_city ,NEW.shipping_pincode ,
+                                      NEW.shipping_charges ,NEW.tax ,NEW.total ,NEW.total_payable_amount ,NEW.total_paid_amount ,
+                                      NEW.discount_amt ,NEW.coupon_code ,NEW.payment_ref_id ,NEW.payment_gateway_name ,
+                                      NEW.payment_type ,NEW.payment_source ,NEW.timestamp ,NEW.transaction_id ,NEW.bank_transaction_id ,
+                                      NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
+                                      NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
+                                      NEW.shipping_address_id ,NEW.warehouse_id ,NOW(), 'INSERT');
+
+
+create trigger groots_orders.order_header_update after update on groots_orders.order_header for each row
+  insert into groots_orders.order_header_log values(
+                                     NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,
+                                      NEW.payment_status ,NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,
+                                      NEW.billing_state ,NEW.billing_city ,NEW.billing_pincode ,NEW.shipping_name ,NEW.shipping_phone ,
+                                      NEW.shipping_email ,NEW.shipping_address ,NEW.shipping_state ,NEW.shipping_city ,NEW.shipping_pincode ,
+                                      NEW.shipping_charges ,NEW.tax ,NEW.total ,NEW.total_payable_amount ,NEW.total_paid_amount ,
+                                      NEW.discount_amt ,NEW.coupon_code ,NEW.payment_ref_id ,NEW.payment_gateway_name ,
+                                      NEW.payment_type ,NEW.payment_source ,NEW.timestamp ,NEW.transaction_id ,NEW.bank_transaction_id ,
+                                      NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
+                                      NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
+                                      NEW.shipping_address_id ,NEW.warehouse_id ,NOW() ,'UPDATE');
+
+create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
+  update groots_orders.order_header_log set created_at = NOW() and action = 'DELETE';
+
+
+alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') not null default 'Cash';
+
+alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
+
 
 --------------------------------------
 warehouse

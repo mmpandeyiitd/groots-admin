@@ -30,7 +30,10 @@ class RetailerPayment extends CActiveRecord
     public function rules() {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
-        return array(array('retailer_id,paid_amount,date,payment_type', 'required'),);
+        return array(array('retailer_id,paid_amount,date,payment_type', 'required'),
+                    //array('cheque_no, status', 'integerOnly' => true),
+                     array('retailer_id, paid_amount ,date, payment_type, cheque_no, comment, created_at, updated_at, status', 'safe'),
+                     );
     }
 
     /**

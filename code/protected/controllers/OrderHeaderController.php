@@ -163,6 +163,7 @@ class OrderHeaderController extends Controller {
                     }
                 }
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
+                if($orderHeader->status == 'Delivered')
                 $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 $retailer->save();
                 $transaction->commit();
@@ -225,10 +226,10 @@ class OrderHeaderController extends Controller {
         $retailer = '';
         $warehouses = '';
         $itemArray = '';
-
         $orderLine = OrderLine::model()->findAllByAttributes(array('order_id' => $id));
         $orderHeader = $this->loadModel($id);
         $orderAmount = $orderHeader->total_payable_amount;
+        $initialStatus = $orderHeader->status;
 
         $retailerId = $orderHeader->user_id;
         $baseProductIds = array();
@@ -247,8 +248,13 @@ class OrderHeaderController extends Controller {
         foreach ($productPrices as $productPrice){
             $baseProductIdPriceMap[$productPrice->base_product_id] = $productPrice;
         }
-
+        $dateOnly = new DateTime($orderHeader->delivery_date);
+        $dateOnly = $dateOnly->format('Y-m-d');
+        $resultEffectivePrice = self::getEffectivePrice($retailerId, $dateOnly);
         foreach ($retailerProducts as $key=>$product){
+            if(isset($resultEffectivePrice[$product->base_product_id]) && $resultEffectivePrice[$product->base_product_id]>0){
+                    $product->effective_price = $resultEffectivePrice[$product->base_product_id];
+                }
             $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
             $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
             $retailerProducts[$key] = $product;
@@ -320,8 +326,15 @@ class OrderHeaderController extends Controller {
 
                 }
                 Yii::app()->user->setFlash('success', 'Order Updated Successfully.');
+                if($initialStatus != 'Delivered' && $orderHeader->status == 'Delivered'){
+                    $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                }
+                if($initialStatus== 'Delivered' && $orderHeader->status != 'Delivered')
                 $retailer->total_payable_amount -= $orderAmount;
-                $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                if($initialStatus == $orderHeader->status){
+                    $retailer->total_payable_amount -= $orderAmount;
+                    $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                }
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
@@ -1956,7 +1969,10 @@ Sales: +91-11-3958-9895</span>
         $productPrices = ProductPrice::getRetailerSubscribedProductPricesByDate($retailerId, $effectiveDate);
         $sProdIdPriceArray = array();
         foreach ($productPrices as $productPrice){
-            $sProdIdPriceArray[$productPrice['base_product_id']] = $productPrice['store_offer_price'];
+            $effective_prices = self::getEffectivePrice($retailerId, $effectiveDate);
+            $effectivePriceSet = (isset($effective_prices[$productPrice['base_product_id']]) && $effective_prices[$productPrice['base_product_id']] > 0);
+
+            $sProdIdPriceArray[$productPrice['base_product_id']] = ( $effectivePriceSet ? $effective_prices[$productPrice['base_product_id']] : $productPrice['store_offer_price']);
         }
         echo json_encode($sProdIdPriceArray);
 
@@ -2126,5 +2142,18 @@ Sales: +91-11-3958-9895</span>
              return true;
         }
         else return true ;
+    }
+
+    public function getEffectivePrice($r_id, $d_date){
+        $indexedResult = array();
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select sp.base_product_id,  rpq.effective_price from cb_dev_groots.retailer_product_quotation_log as rpq left join cb_dev_groots.subscribed_product as sp on rpq.subscribed_product_id = sp.subscribed_product_id'.' where rpq.retailer_id = '."'".$r_id."'".' and rpq.date = '."'".$d_date."'".'and rpq.status = 1';
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        foreach ($result as $key => $cur_entry) {
+            $indexedResult[$cur_entry['base_product_id']] = $cur_entry['effective_price'];
+        }
+        return $indexedResult;
     }
 }
