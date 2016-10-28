@@ -388,7 +388,6 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
             console.log("not changed");
         }
 
-
         var retailerId = Number($("#retailerId").val());
         console.log("retailerId"+retailerId);
         var data = {"date":newDate, "retailerId":retailerId};
@@ -399,8 +398,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                 'cache': false,
                 'method': "POST",
                 'data': data,
-
                 'success': function (data) {
+                    console.log("here1");
                     setProductPrices(data);
                     $("#selectDelvDate").val(newDate);
                 },
@@ -416,6 +415,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     function setProductPrices(data) {
         console.log(data);
         if(data){
+            <?php var_dump($data);?>
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
                 //if($('#isEffectivePrice_'+k).val()==0){
