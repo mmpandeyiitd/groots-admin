@@ -310,6 +310,10 @@ alter table groots_orders.retailer_payments modify column payment_type enum('Cas
 
 alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
 
+update cb_dev_groots.retailer_product_quotation_log set date=created_at;
+
+alter table cb_dev_groots.retailer_product_quotation_log modify column `effective_price` double DEFAULT NULL;
+
 
 
 CREATE TABLE `retailer_payments_log` (
