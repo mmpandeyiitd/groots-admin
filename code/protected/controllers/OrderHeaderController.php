@@ -382,7 +382,7 @@ class OrderHeaderController extends Controller {
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -407,9 +407,9 @@ class OrderHeaderController extends Controller {
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -478,7 +478,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -503,9 +503,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -575,7 +575,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -600,9 +600,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -674,7 +674,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -700,9 +700,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -774,7 +774,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -799,9 +799,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1246,7 +1246,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1270,9 +1270,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1341,7 +1341,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1365,9 +1365,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1437,7 +1437,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1461,9 +1461,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1531,7 +1531,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1555,9 +1555,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1628,7 +1628,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1653,9 +1653,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1988,7 +1988,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -2013,9 +2013,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
