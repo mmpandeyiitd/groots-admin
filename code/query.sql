@@ -308,7 +308,15 @@ create trigger groots_orders.order_header_delete after delete on groots_orders.o
 
 alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') not null default 'Cash';
 
-CREATE TABLE `retailer_payments_log` (
+alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
+
+update cb_dev_groots.retailer_product_quotation_log set date=created_at;
+
+alter table cb_dev_groots.retailer_product_quotation_log modify column `effective_price` double DEFAULT NULL;
+
+
+
+CREATE TABLE groots_orders.`retailer_payments_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `retailer_payment_id` int(11) NOT NULL,
   `retailer_id` int(11) NOT NULL,
@@ -346,7 +354,7 @@ create trigger groots_orders.retailer_payments_delete after delete on groots_ord
                                                     OLD.comment ,OLD.created_at ,OLD.updated_at ,OLD.status,'DELETE');
 
 
-CREATE TABLE `retailer_log` (
+CREATE TABLE cb_dev_groots.`retailer_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `action` enum('INSERT', 'UPDATE', 'DELETE') not null,
   `retailer_id` int(11) NOT NULL,
