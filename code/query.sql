@@ -316,7 +316,7 @@ alter table cb_dev_groots.retailer_product_quotation_log modify column `effectiv
 
 
 
-CREATE TABLE `retailer_payments_log` (
+CREATE TABLE groots_orders.`retailer_payments_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `retailer_payment_id` int(11) NOT NULL,
   `retailer_id` int(11) NOT NULL,
@@ -354,7 +354,7 @@ create trigger groots_orders.retailer_payments_delete after delete on groots_ord
                                                     OLD.comment ,OLD.created_at ,OLD.updated_at ,OLD.status,'DELETE');
 
 
-CREATE TABLE `retailer_log` (
+CREATE TABLE cb_dev_groots.`retailer_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `action` enum('INSERT', 'UPDATE', 'DELETE') not null,
   `retailer_id` int(11) NOT NULL,
