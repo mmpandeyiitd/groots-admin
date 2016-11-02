@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','onClickDownloadProcurementReport'),
+				'actions'=>array('create','update', 'admin','downloadProcurementReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -328,18 +328,43 @@ class PurchaseHeaderController extends Controller
 	}
 
 
-    public function onClickDownloadProcurementReport(){
+    public function actionDownloadProcurementReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $purchase_ids = PurchaseHeader::model()->findAllByAttributes(array('warehouse_id' => $w_id, 'created_at' => '$date' , 'status' => 'received'));
-        var_dump($purchase_ids); die;
-        $ids_string = '';
-        foreach ($purchase_ids as $key => $purchase_id) {
-            $ids_string += $purchase_id[$key]['id']; 
+        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) from groots_orders.purchase_line as pl
+                left join groots_orders.purchase_header as ph
+                on ph.id = pl.purchase_id
+                left join cb_dev_groots.base_product as bp 
+                on bp.base_product_id = pl.base_product_id
+                where ph.delivery_date = '."'".$date."'".'and warehouse_id = '.$w_id.' and ph.status = '."'pending'".'
+                group by pl.base_product_id';
+        echo $sql;
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        $fileName = $date."procurement_report";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
         }
-        var_dump($purchase_ids);
-
-
+        ob_flush();
     }
 
 	/**
