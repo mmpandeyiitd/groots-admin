@@ -320,10 +320,10 @@ foreach ($model as $value) {
 
                 <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
                     Thank you for your business! We look forward to serving you again<br>
-                    Contact email id: sales@gogroots.com <br>
-                    Ordering Support: +91-11-3958-9893<br>
-                    Customer Support: +91-11-3958-9894<br>
-                    Sales Support: +91-11-3958-9895<br>
+                    Contact email id: <?php echo SALES_SUPPORT_EMAIL;?> <br>
+                    Ordering Support: <?php echo ORDER_SUPPORT_NO;?><br>
+                    Customer Support: <?php echo CUSTOMER_SUPPORT_NO;?><br>
+                    Sales Support: <?php echo SALES_SUPPORT_NO;?><br>
                     <br>
                     <?php echo $text;?><br>
                     All disputes are subject to the jurisdiction of the courts of Delhi.

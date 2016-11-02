@@ -84,6 +84,10 @@ define('BANNER_IMG_PATH','catbanners/');
 
 define('ORDER_NUMBER_PREFIX','GRT');
 define('INVOICE_TEXT','GFV');
+define('SALES_SUPPORT_EMAIL','sales@gogroots.com');
+define('ORDER_SUPPORT_NO','011-395-89893');
+define('SALES_SUPPORT_NO','011-395-89894');
+define('CUSTOMER_SUPPORT_NO','011-395-89892');
 
 
 
