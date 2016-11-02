@@ -7,7 +7,8 @@ echo "Total Payable Amount = ".$amount_to_be_collected;
 echo "<br>";
 echo "Total Amount Paid Yesterday = ".$total_paid_yesterday;
 echo "<br>";
-echo "Total Due Payable Amount = ".$total_due_amount;
+echo "Total Due Payable Amount = ".$total_due_amount.'<br>';
+echo "Total Due Payable Amount Yesterday = ".$due_payable_amount_yesterday;
 ?>
 
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection';?>">

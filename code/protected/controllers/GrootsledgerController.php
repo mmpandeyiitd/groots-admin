@@ -1,4 +1,4 @@
-<?php
+a<?php
 
 class GrootsledgerController extends Controller
 {
@@ -229,8 +229,11 @@ class GrootsledgerController extends Controller
                 $retailerPayment->created_at = date('Y-m-d');
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
-                    
-                    if($retailer->total_payable_amount == 0){
+                    if($retailer->due_payable_amount < 0){
+                       $retailer->due_payable_amount = 0;
+                    }
+
+                    if($retailer->due_payable_amount == 0){
                       $retailer->collection_fulfilled = true;
                     }
                     else{
@@ -406,13 +409,14 @@ class GrootsledgerController extends Controller
             ob_flush();
             exit();
         }
-
+        $due_payable_amount_yesterday = self::get_due_payable_amount_yesterday();
        $this->render('dailyCollection',array(
           'data' => $dataprovider,
           'data2' => $dataprovider2,
           'amount_to_be_collected' => $amount_to_be_collected,
           'total_paid_yesterday' => $total_paid_yesterday,
           'total_due_amount' => $total_due_amount,
+          'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
           ));
     }
 
@@ -591,11 +595,17 @@ class GrootsledgerController extends Controller
           $current_retailer = Retailer::model()->findByPk($retailerId );
           if(isset($paymentAmount) and $paymentAmount > 0){
             $current_retailer->total_payable_amount -= $paymentAmount;
+            $current_retailer->due_payable_amount -= $paymentAmount;
+              
+              if($retailer->due_payable_amount < 0){
+                       $current_retailer->due_payable_amount = 0;
+                    }
+
             $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
                     values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
             $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
                    
-            if($current_retailer->total_payable_amount == 0){
+            if($current_retailer->due_payable_amount == 0){
               $current_retailer->collection_fulfilled = true;
             }
             else 
@@ -623,7 +633,7 @@ class GrootsledgerController extends Controller
                     values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
             $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
                    
-            if($current_retailer->total_payable_amount == 0){
+            if($current_retailer->due_payable_amount == 0){
               $current_retailer->collection_fulfilled = true;
             }
             else 
@@ -666,5 +676,15 @@ class GrootsledgerController extends Controller
             $current_retailer->save();
           }
         }
+  }
+
+  public function get_due_payable_amount_yesterday(){
+    $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
+    echo $sql;
+    $connection = Yii::app()->secondaryDb;
+    $command = $connection->createCommand($sql);
+    $command->execute();
+    $result = $command->queryAll();
+    return $result[0]['due_payable_amount'];
   }
 }

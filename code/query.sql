@@ -433,3 +433,13 @@ create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.r
                                           OLD.collection_frequency ,OLD.due_date ,OLD.last_due_date ,OLD.due_payable_amount ,OLD.collection_agent_id ,
                                           OLD.collection_center_id);
 
+create table cb_dev_groots.collection_log(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`due_payable_amount` decimal(10,2) default 0.00,
+`total_payable_amount` decimal(10,2) default NULL,
+`date` date not null,
+`created_at` datetime not null,
+`updated_at` timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+`updated_by` int(11) not null default 1,
+PRIMARY KEY(`id`)
+)

@@ -47,9 +47,16 @@ if ($result=mysql_query($sql))
             // echo $rowinfo['due_date'];
             // echo "         ";
             if ($rowinfo['status'] == 1 ){
-                $query = "update cb_dev_groots.retailer set last_due_date = due_date , due_date = '" . $date . "'" . " where id = '" . $rowinfo['id'] . "';";
+                $query = "update cb_dev_groots.retailer set due_payable_amount = total_payable_amount ,
+                      last_due_date = due_date , due_date = '".$date."'"." where id = '".$rowinfo['id']."';";
                 mysql_query($query);
-                echo $query."\n";
+                $query2 = "select sum(due_payable_amount) as total_payable_amount , sum(total_payable_amount) as due_payable_amount from cb_dev_groots.retailer;";
+                $amounts = mysql_query($query2);
+                $amounts = mysql_fetch_array($amounts);
+                $total_payable_amount = $amounts['total_payable_amount'];
+                $due_payable_amount = $amount['due_payable_amount'];
+                $query3 = 'insert into cb_dev_groots.collection_log values( NULL, '.$due_payable_amount.', '.$total_payable_amount.', NOW(), NOW(), NULL , 1);';
+                mysql_query($query3);
             }
         }
 
