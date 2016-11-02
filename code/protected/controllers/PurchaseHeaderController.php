@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin'),
+				'actions'=>array('create','update', 'admin','onClickDownloadProcurementReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -326,6 +326,21 @@ class PurchaseHeaderController extends Controller
             'showCreate'=>$showCreate,
         ));
 	}
+
+
+    public function onClickDownloadProcurementReport(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
+        $purchase_ids = PurchaseHeader::model()->findAllByAttributes(array('warehouse_id' => $w_id, 'created_at' => '$date' , 'status' => 'received'));
+        var_dump($purchase_ids); die;
+        $ids_string = '';
+        foreach ($purchase_ids as $key => $purchase_id) {
+            $ids_string += $purchase_id[$key]['id']; 
+        }
+        var_dump($purchase_ids);
+
+
+    }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
