@@ -217,9 +217,15 @@ class OrderHeaderController extends Controller {
         foreach ($retailerProducts as $key=>$product){
             if(isset($resultEffectivePrice[$product->base_product_id]) && $resultEffectivePrice[$product->base_product_id]>0){
                     $product->effective_price = $resultEffectivePrice[$product->base_product_id];
-                }
-            $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
-            $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
+            }
+            if(isset($baseProductIdPriceMap[$product->base_product_id]))  {
+                $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
+                $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
+            }
+            else{
+                $product->store_price = 0;
+                $product->store_offer_price = 0;
+            }
             $retailerProducts[$key] = $product;
         }
 
