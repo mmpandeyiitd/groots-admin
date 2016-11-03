@@ -331,14 +331,13 @@ class PurchaseHeaderController extends Controller
     public function actionDownloadProcurementReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) from groots_orders.purchase_line as pl
+        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) as order_qty from groots_orders.purchase_line as pl
                 left join groots_orders.purchase_header as ph
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
-                where ph.delivery_date = '."'".$date."'".'and warehouse_id = '.$w_id.' and ph.status = '."'pending'".'
+                where ph.delivery_date = '."'".$date."'".'and warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
                 group by pl.base_product_id';
-        echo $sql;
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
