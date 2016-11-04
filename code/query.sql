@@ -451,3 +451,8 @@ create table cb_dev_groots.collection_log(
 `updated_by` int(11) not null default 1,
 PRIMARY KEY(`id`)
 )
+
+alter table groots_orders.order_header modify column `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_line add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer modify column created_date datetime not null default NOW();
+alter table cb_dev_groots.retailer add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
