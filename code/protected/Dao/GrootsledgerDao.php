@@ -16,21 +16,29 @@ class GrootsledgerDao{
         //print_r($retailer->getErrors());die;
 	}
 
+    public function saveCreatePayment($retailer, $post_payment ,$retailerPayment){
+        $retailerPayment->attributes = $post_payment;
+        $retailerPayment->created_at = date('Y-m-d');
+        if ($retailerPayment->save()) {
+            self::savePayment($retailer, $retailerPayment->paid_amount);
+        }
+    }
+
     public static function saveUpdatePayment($post){
-        $retailerPayment = RetailerPayment::model()->findByPk($post['RetailerPayment']['id']);
+        $retailerPayment = RetailerPayment::model()->findByPk($post['id']);
         $paid_amount = $retailerPayment->paid_amount;
         //$retailerPayment->load($post['RetailerPayment']);
         $intial_status = $retailerPayment->status;
-        $retailerPayment->attributes = $post['RetailerPayment'];
+        $retailerPayment->attributes = $post;
         //var_dump(Yii::app()->request());die;
         //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
         //print_r($retailerPayment);die;
-        $retailerPayment->paid_amount = $post['RetailerPayment']['paid_amount'];
-        $retailerPayment->date = $post['RetailerPayment']['date'];
-        $retailerPayment->payment_type = $post['RetailerPayment']['payment_type'];
-        $retailerPayment->cheque_no = $post['RetailerPayment']['cheque_no'];
-        $retailerPayment->status = $post['RetailerPayment']['status'];
-        $retailerPayment->comment = $post['RetailerPayment']['comment'];
+        $retailerPayment->paid_amount = $post['paid_amount'];
+        $retailerPayment->date = $post['date'];
+        $retailerPayment->payment_type = $post['payment_type'];
+        $retailerPayment->cheque_no = $post['cheque_no'];
+        $retailerPayment->status = $post['status'];
+        $retailerPayment->comment = $post['comment'];
         if ($retailerPayment->save()) {
 
         $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
@@ -42,7 +50,8 @@ class GrootsledgerDao{
         else{
           $retailer->collection_fulfilled = ($retailer->due_payable_amount <= 0);
         }
-        $retailer->save();
         }
+        return $retailerPayment;
+    }
 }
 ?>
