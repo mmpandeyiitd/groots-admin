@@ -174,6 +174,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             $isEffectivePrice = 0;
                         }
                     ?>
+
                     <tr>
                         <div class="dynamic_content row_<?php echo $_retailerProduct->base_product_id; ?>">
                             <div class="clearfix"></div>
@@ -193,7 +194,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                                                            value="<?php if (isset($orderLine[$_retailerProduct->base_product_id])) {
                                                                echo $orderLine[$_retailerProduct->base_product_id]['delivered_qty'];
                                                            } ?> "
-                                                           onchange="populateAmountField(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" readonly="readonly">
+                                                           onchange="populateAmountField(<?php echo $_retailerProduct->base_product_id . ",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" readonly="readonly">
                             </td>
 
                             <td style="width: 12%; align="center" >
@@ -219,7 +220,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                                 <input type="text" style="width:80px;" class="inputs" name="quantityInKg" class="quantityInKg inputs"
                                    id="quantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
                                    value="<?php echo $totalQuantity ?>"
-                                   onchange="onQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'".",'".$updateAmountField."'" ; ?>)" >
+                                   onchange="onQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'".",'".$updateAmountField."'" ; ?>)" >
 
                             </td>
                             <?php
@@ -242,7 +243,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                             <input type="text" style="width:80px;"  name="delvQuantityInKg" class="delvQuantityInKg inputs"
                                    id="delvQuantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
                                    value="<?php echo $delvQuantityInKg ?>"
-                                   onchange="onDelvQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $unitPrice.",". $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
+                                   onchange="onDelvQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
 
                             </td>
                                 <?php
@@ -387,7 +388,6 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
             console.log("not changed");
         }
 
-
         var retailerId = Number($("#retailerId").val());
         console.log("retailerId"+retailerId);
         var data = {"date":newDate, "retailerId":retailerId};
@@ -398,8 +398,8 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                 'cache': false,
                 'method': "POST",
                 'data': data,
-
                 'success': function (data) {
+                    console.log("here1");
                     setProductPrices(data);
                     $("#selectDelvDate").val(newDate);
                 },
@@ -415,11 +415,12 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
     function setProductPrices(data) {
         console.log(data);
         if(data){
+            <?php var_dump($data);?>
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
-                if($('#isEffectivePrice_'+k).val()==0){
+                //if($('#isEffectivePrice_'+k).val()==0){
                     $("#unitPrice_"+k).html(v);
-                }
+                //}
             });
             populateAllAmountFields();
             calculateTotalAmount();
@@ -430,7 +431,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
         }
     }
 
-    function onQuanityInputChange(prodId, unitPrice, packSize, packUnit, updateAmountField){
+    function onQuanityInputChange(prodId, packSize, packUnit, updateAmountField){
         var quantityInKg = $("#quantityInKg_" + prodId).val();
 
         if(packUnit=="g"){
@@ -444,19 +445,20 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
         //console.log(updateAmountField);
         if(updateAmountField=='true'){
             $("#delvQuantityInKg_" + prodId).val(quantityInKg);
-            populateAmountField(quantityInKg, prodId, unitPrice, packSize, packUnit);
+            populateAmountField(quantityInKg, prodId, packSize, packUnit);
         }
 
 
     }
 
-    function onDelvQuanityInputChange(prodId, unitPrice, packSize, packUnit){
+    function onDelvQuanityInputChange(prodId, packSize, packUnit){
         var quantityInKg = $("#delvQuantityInKg_" + prodId).val();
-        populateAmountField(quantityInKg, prodId, unitPrice, packSize, packUnit);
+        populateAmountField(quantityInKg, prodId, packSize, packUnit);
     }
 
-    function populateAmountField(quantityInKg, prodId, unitPrice, packSize, packUnit) {
+    function populateAmountField(quantityInKg, prodId, packSize, packUnit) {
         var quantityInPacks;
+        var unitPrice = Number($("#unitPrice_" + prodId).html());
         if(packUnit=="g"){
             quantityInPacks = quantityInKg*1000/packSize;
         }

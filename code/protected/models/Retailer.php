@@ -67,7 +67,7 @@ class Retailer extends CActiveRecord {
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id',
+            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id',
              'safe', 'on' => 'search'),
         );
     }
@@ -174,6 +174,8 @@ class Retailer extends CActiveRecord {
         $criteria->compare('billing_email', $this->billing_email, true);
         $criteria->compare('settlement_days', $this->settlement_days, true);
         $criteria->compare('collection_agent_id', $this->collection_agent_id, true);
+        $criteria->compare('total_payable_amount', $this->total_payable_amount, true);
+        $criteria->compare('allocated_warehouse_id', $this->allocated_warehouse_id, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,

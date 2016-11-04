@@ -147,8 +147,8 @@ class Inventory extends CActiveRecord
         }
         //var_dump($prevDayInv);die;
         $invArr[0]['id'] = 1;
-
-        $invArr[0]['total_order'] = OrderHeader::getTotalOrderOfDate($date);
+        $invArr[0]['balance'] = 0;
+        //$invArr[0]['total_order'] = OrderHeader::getTotalOrderOfDate($date);
         //var_dump($inventory);die;
         return $invArr;
     }
@@ -162,12 +162,39 @@ class Inventory extends CActiveRecord
         $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
         $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
 
+        $totalPurchase = 0;
+        $totalOrder = 0;
+        $totalTransferIn = 0;
+        $totalTransferOut = 0;
+
+        foreach ($purchaseSum as $purchase){
+            $totalPurchase += $purchase;
+        }
+
+        foreach ($orderSum as $order){
+            $totalOrder += $order;
+        }
+
+        foreach ($transferInSum as $transferIn){
+            $totalTransferIn += $transferIn;
+        }
+
+        foreach ($transferOutSum as $transferOut){
+            $totalTransferOut += $transferOut;
+        }
+
         $quantitiesMap['prevDayInv'] = $prevDayInv;
         $quantitiesMap['orderSum'] = $orderSum;
         $quantitiesMap['purchaseSum'] = $purchaseSum;
         $quantitiesMap['transferInSum'] = $transferInSum;
         $quantitiesMap['transferOutSum'] = $transferOutSum;
         $quantitiesMap['avgOrder'] = $avgOrderByItem;
+
+        $quantitiesMap['totalPurchase'] = $totalPurchase;
+        $quantitiesMap['totalOrder'] = $totalOrder;
+        $quantitiesMap['totalTransferIn'] = $totalTransferIn;
+        $quantitiesMap['totalTransferOut'] = $totalTransferOut;
+
         return $quantitiesMap;
     }
 

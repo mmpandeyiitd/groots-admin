@@ -76,71 +76,127 @@ function getIfExist($quantitiesMap, $key, $data){
     </div>
 
     <?php $this->endWidget();
+$balance = 0;
 
-    $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'total-inv-grid',
-        'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'dataProvider'=>$totalInvData,
-        'columns'=>array(
-            array(
-                'header' => 'Total Order',
-                'name' => 'total_order',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["total_order"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Total Schedule Inv',
-                'name' => 'schedule_inv',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["schedule_inv"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Total Prev Day Inv',
-                'name' => 'prev_day_inv',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["prev_day_inv"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Current Order Inv',
-                'name' => 'present_inv',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["present_inv"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Current Liquid Inv',
-                'name' => 'liquid_inv',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["liquid_inv"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'liquidation_wastage',
-                'name' => 'liquidation_wastage',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["liquidation_wastage"]',
-                'type' => 'raw',
-            ),
-            array(
-                'header' => 'Wastage',
-                'name' => 'wastage',
-                'headerHtmlOptions' => array('style' => 'width:15%;'),
-                'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => '$data["wastage"]',
-                'type' => 'raw',
-            ),
+    if(!$editOnly){
+        $this->widget('zii.widgets.grid.CGridView', array(
+            'id'=>'total-inv-grid',
+            'itemsCssClass' => 'table table-striped table-bordered table-hover',
+            'dataProvider'=>$totalInvData,
+            'columns'=>array(
 
-        ),
-    ));
+                array(
+                    'header' => 'Schd Inv',
+                    'name' => 'schedule_inv',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => 'round($data["schedule_inv"], 2)',
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Prev Day Inv',
+                    'name' => 'prev_day_inv',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => 'round($data["prev_day_inv"], 2)',
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Purchase(+)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalPurchase'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Transfer-In(+)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalTransferIn'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Order(-)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalOrder'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+
+                array(
+                    'header' => 'Transfer-Out(-)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalTransferOut'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Order Inv(-)',
+                    'name' => 'present_inv',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) {
+                        return round($data['present_inv'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Liquid Inv(-)',
+                    'name' => 'liquid_inv',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) {
+                        return round($data['liquid_inv'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Liquid wastage(-)',
+                    'name' => 'liquid_wastage',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data)  {
+                        return round($data['liquidation_wastage'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Wastage(-)',
+                    'name' => 'wastage',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data)  {
+                        return round($data['wastage'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Balance',
+                    'name' => 'balance',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) use ($quantitiesMap) {
+                        $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $data['liquidation_wastage'] - $data['wastage'];
+                        return round($balance, 2);
+                    },
+                    'type' => 'raw',
+                ),
+
+            ),
+        ));
+    }
 
     ?>
 
@@ -214,6 +270,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
+                'visible' => !$editOnly,
                 'value' => function ($data) use ($quantitiesMap) {
                     $sch_inv_kg = 0;
                     if (isset($quantitiesMap['avgOrder'][$data->base_product_id]) && isset($data->schedule_inv)){
@@ -240,6 +297,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"prev-day-inv_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
                 'value'=>function($data) use ($quantitiesMap){
                     /*if(isset($quantitiesMap['prevDayInv'][$data->base_product_id])){
                         $data->prev_day_inv = $quantitiesMap['prevDayInv'][$data->base_product_id];
@@ -251,56 +309,14 @@ function getIfExist($quantitiesMap, $key, $data){
                     return $data->prev_day_inv;
                 },
             ),
-
             array(
-                'class'=>'DataColumn',
-                'evaluateHtmlOptions'=>true,
-                'header' => 'order(+)',
-                'type' => 'raw',
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"order_{$data->base_product_id}"'),
-                'value'=>function($data) use ($quantitiesMap){
-                    if(isset($quantitiesMap['orderSum'][$data->base_product_id]))
-                        return $quantitiesMap['orderSum'][$data->base_product_id];
-                    else
-                        return 0;
-                },
-            ),
-            array(
-                'header' => 'transferIn(-)',
-                'type' => 'raw',
-                'class'=>'DataColumn',
-                'evaluateHtmlOptions'=>true,
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferIn_{$data->base_product_id}"'),
-                'value'=>function($data) use ($quantitiesMap){
-                    if(isset($quantitiesMap['transferInSum'][$data->base_product_id]))
-                        return $quantitiesMap['transferInSum'][$data->base_product_id];
-                    else
-                        return 0;
-                },
-            ),
-            array(
-                'header' => 'transferOut(+)',
-                'type' => 'raw',
-                'class'=>'DataColumn',
-                'evaluateHtmlOptions'=>true,
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
-                'value'=>function($data) use ($quantitiesMap){
-                    if(isset($quantitiesMap['transferOutSum'][$data->base_product_id]))
-                        return $quantitiesMap['transferOutSum'][$data->base_product_id];
-                    else
-                        return 0;
-                },
-            ),
-            array(
-                'header' => 'purchase_qty(-)',
+                'header' => 'Purchase(+)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"purchase_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
                 'value'=>function($data) use ($quantitiesMap){
                     if(isset($quantitiesMap['purchaseSum'][$data->base_product_id]))
                         return $quantitiesMap['purchaseSum'][$data->base_product_id];
@@ -309,10 +325,58 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
+                'header' => 'Transfer-In(+)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferIn_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['transferInSum'][$data->base_product_id]))
+                        return $quantitiesMap['transferInSum'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+            array(
+                'header' => 'order(-)',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'type' => 'raw',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"order_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['orderSum'][$data->base_product_id]))
+                        return $quantitiesMap['orderSum'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+
+            array(
+                'header' => 'Transfer-Out(-)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['transferOutSum'][$data->base_product_id]))
+                        return $quantitiesMap['transferOutSum'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+
+            array(
                 'header' => 'Extra Inv()',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
+                'visible' => !$editOnly,
                 'value' => function ($data) use ($quantitiesMap) {
                     $s_inv = $data->schedule_inv_absolute;
                     $prev_day_inv = $data->prev_day_inv;
@@ -344,7 +408,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 },
             ),
             array(
-                'header' => 'liquidation_wastage(-)',
+                'header' => 'Liquid Wastage(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', ),
                 'value' => function ($data) {
@@ -353,7 +417,7 @@ function getIfExist($quantitiesMap, $key, $data){
                 'type' => 'raw',
             ),
             array(
-                'header' => 'wastage(-)',
+                'header' => 'Wastage(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
@@ -363,11 +427,12 @@ function getIfExist($quantitiesMap, $key, $data){
             ),
 
             array(
-                'header' => 'balance(=)',
+                'header' => 'Balance(=)',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"'),
+                'visible' => !$editOnly,
                 'value' => function ($data)  use ($quantitiesMap) {
 
                     //$s_inv = empty($data->schedule_inv_absolute) ? 0 : $data->schedule_inv_absolute ;

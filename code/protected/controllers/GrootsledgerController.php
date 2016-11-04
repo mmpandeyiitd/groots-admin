@@ -227,7 +227,6 @@ class GrootsledgerController extends Controller
                 //$retailerPayment->load($_POST['RetailerPayment']);
                 $retailerPayment->attributes = $_POST['RetailerPayment'];
                 $retailerPayment->created_at = date('Y-m-d');
-                //print_r($retailerPayment);die;
                 if ($retailerPayment->save()) {
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
                     
@@ -273,10 +272,12 @@ class GrootsledgerController extends Controller
                 $retailerPayment = RetailerPayment::model()->findByPk($_POST['RetailerPayment']['id']);
                 $paid_amount = $retailerPayment->paid_amount;
                 //$retailerPayment->load($_POST['RetailerPayment']);
+                $intial_status = $retailerPayment->status;
                 $retailerPayment->attributes = $_POST['RetailerPayment'];
                 //var_dump(Yii::app()->request());die;
                 //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
                 //print_r($retailerPayment);die;
+
                 $retailerPayment->paid_amount = $_POST['RetailerPayment']['paid_amount'];
                 $retailerPayment->date = $_POST['RetailerPayment']['date'];
                 $retailerPayment->payment_type = $_POST['RetailerPayment']['payment_type'];
@@ -286,8 +287,12 @@ class GrootsledgerController extends Controller
                 if ($retailerPayment->save()) {
 
                     $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+                    if($intial_status != $retailerPayment->status && $retailerPayment->status == '0')
+                      $retailer->total_payable_amount -=$retailerPayment->paid_amount;
+                    else {
                     $retailer->total_payable_amount += $paid_amount;
                     $retailer->total_payable_amount -= $retailerPayment->paid_amount;
+                  }
                     $retailer->save();
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
@@ -326,7 +331,7 @@ class GrootsledgerController extends Controller
       if(isset($_POST['update'])){
         self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
       }
-
+      //die('here');
       if(isset($_POST['update2'])){
           self::updatePending($_POST['pending_collection'],$_POST['pending_retailer_id']);
       }
@@ -457,13 +462,19 @@ class GrootsledgerController extends Controller
                     $tmp['id'] = $payment->id;
                     $tmp['date'] = substr($payment->date, 0,10);
                     $tmp['type'] = "Payment";
+                    $tmp['payment_type'] = $payment->payment_type;
+                    $tmp['cheque_no'] = $payment->cheque_no;
                     $tmp['invoiceAmount'] = '';
                     $tmp['paymentAmount'] = $payment->paid_amount;
                     $tmp['update_url'] = 'Grootsledger/UpdatePayment';
                     array_push($dataprovider, $tmp);
                 }
-                $dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
-                //print_r($dataprovider);die;
+                foreach ($dataprovider as $key => $value) {
+                  $type[$key] = $value['type'];
+                  $date[$key] = $value['date'];
+                }
+                //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
+                array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
                 foreach ($dataprovider as $key=>$data){
                     if($data['type'] == 'Order'){
                         $outstanding += $data['invoiceAmount'];
@@ -471,16 +482,11 @@ class GrootsledgerController extends Controller
                     elseif($data['type'] == 'Payment'){
                         $outstanding -= $data['paymentAmount'];
                     }
-                    $data['outstanding'] = $outstanding;
+                    $data['outstanding'] = number_format((float)$outstanding,2, '.','');
                     $dataprovider[$key] = $data;
                 }
                 $dataprovider = new CArrayDataProvider($dataprovider, array(
                     'id'=>'id',
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'date desc',
-                        ),
-                    ),
                     'pagination'=>array(
                         'pageSize'=>500,
                     ),
@@ -498,12 +504,10 @@ class GrootsledgerController extends Controller
 
 
 
-
         $this->render('list',array(
            'model'=>$model,
             'retailer' => $retailer,
             'data' => $dataprovider,
-
         ));
     }
 
