@@ -336,34 +336,40 @@ class PurchaseHeaderController extends Controller
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
-                where ph.delivery_date = '."'".$date."'".'and warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
+                where ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
                 group by pl.base_product_id';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
-        $fileName = $date."procurement_report";
-        ob_clean();
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Cache-Control: private', false);
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment;filename=' . $fileName);
-
-        if (isset($dataArray['0'])) {
-            $fp = fopen('php://output', 'w');
-            $columnstring = implode(',', array_keys($dataArray['0']));
-            $updatecolumn = str_replace('_', ' ', $columnstring);
-
-            $updatecolumn = explode(',', $updatecolumn);
-            fputcsv($fp, $updatecolumn);
-            foreach ($dataArray AS $values) {
-                fputcsv($fp, $values);
-            }
-            fclose($fp);
+        if(!isset($dataArray) || empty($dataArray)){
+            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
-        ob_flush();
+        else{
+            $fileName = $date."procurement_report";
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+
+            if (isset($dataArray['0'])) {
+                $fp = fopen('php://output', 'w');
+                $columnstring = implode(',', array_keys($dataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($dataArray AS $values) {
+                    fputcsv($fp, $values);
+                }
+                fclose($fp);
+            }
+            ob_flush();
+        }
     }
 
 	/**

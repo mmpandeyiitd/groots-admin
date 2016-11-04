@@ -8,6 +8,7 @@ $this->breadcrumbs=array(
 	'Manage',
 );
 
+
 if($showCreate){
 	$this->menu=array(
 		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
@@ -34,6 +35,13 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+        <div class="Csv" style="color:red;">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 <h1>Manage Purchases</h1>
 
 
