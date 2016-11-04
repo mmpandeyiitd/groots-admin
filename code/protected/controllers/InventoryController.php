@@ -75,7 +75,7 @@ class InventoryController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
         }
-        if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>$w_id))){
+        if($this->checkAccess('SuperAdmin')){
             $editOnly = false;
         }
 
