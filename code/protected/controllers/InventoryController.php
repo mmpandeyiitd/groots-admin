@@ -70,10 +70,15 @@ class InventoryController extends Controller
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
+        $editOnly = true;
         if(!$this->checkAccessByData('InventoryEditor', array('warehouse_id'=>$w_id))){
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
         }
+        if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>$w_id))){
+            $editOnly = false;
+        }
+
         $inv_header = new InventoryHeader('search');
         //$date = date('Y-m-d');
         //$date = "2016-09-15";
@@ -162,6 +167,7 @@ class InventoryController extends Controller
             'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'quantitiesMap' => $quantitiesMap,
+            'editOnly' => $editOnly,
 		));
 	}
 
