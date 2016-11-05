@@ -39,6 +39,13 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
 //echo "<pre>";
 //print_r($orderline_detail[0]['min_order_price']);die;
+$setShippingCharge = '';
+if(isset($update)){
+    $setShippingCharge = $initialShippingCharge;
+}
+else{
+    $setShippingCharge = (empty($retailer->shipping_charge)) ? 0: $retailer->shipping_charge;
+}
 ?>
 <div class="form">
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
@@ -291,7 +298,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
                     </h3>
 
                     <h3><b>Shipping Charge:</b><i class="fa fa-inr"></i><span >
-                    <input type="text" style="width:80px;"  name="shippingCharge" class="inputs" id="shippingCharge" onchange ="calculateTotalAmount()" value="<?php echo $retailer->shipping_charge; ?>">
+                    <input type="text" style="width:80px;"  name="shippingCharge" class="inputs" id="shippingCharge" onchange ="calculateTotalAmount()" value="<?php echo $setShippingCharge; ?>">
                         </span>
 
                     </h3>

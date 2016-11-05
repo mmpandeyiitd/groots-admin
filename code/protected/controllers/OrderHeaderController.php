@@ -105,7 +105,7 @@ class OrderHeaderController extends Controller {
                 if(isset($_POST['comment']) && !empty($_POST['comment'])){
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if(isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])){
+                if(isset($_POST['shippingCharge'])){
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if(isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])){
@@ -182,8 +182,6 @@ class OrderHeaderController extends Controller {
 
 
     public  function  actionUpdate($id){
-//print("<pre>");
-//        print_r($_POST);die;
         $retailerProducts = '';
         $retailerId = '';
         $retailer = '';
@@ -193,7 +191,7 @@ class OrderHeaderController extends Controller {
         $orderHeader = $this->loadModel($id);
         $orderAmount = $orderHeader->total_payable_amount;
         $initialStatus = $orderHeader->status;
-
+        $initialShippingCharge = $orderHeader->shipping_charges;
         $retailerId = $orderHeader->user_id;
         $baseProductIds = array();
         $baseProductIdPriceMap = array();
@@ -201,7 +199,6 @@ class OrderHeaderController extends Controller {
         foreach ($retailerProducts as $product){
             array_push($baseProductIds, $product->base_product_id);
         }
-
         $productPrices = ProductPrice::model()->findAllByAttributes(array('base_product_id'=>$baseProductIds, 'effective_date'=>$orderHeader->delivery_date),array('select'=>'base_product_id, store_price, store_offer_price'));
 
         if(empty($productPrices)){
@@ -235,12 +232,7 @@ class OrderHeaderController extends Controller {
         foreach ($orderLine as $item){
             $itemArray[$item->base_product_id] = $item;
         }
-
         if (isset($_POST['update'])) {
-            //print("<pre>");
-            //print_r($_POST);die;
-            //print_r($_POST);die;
-            //print_r($_POST);die;
             $transaction = Yii::app()->db->beginTransaction();
             try {
 
@@ -248,7 +240,7 @@ class OrderHeaderController extends Controller {
                 if (isset($_POST['comment']) && !empty($_POST['comment'])) {
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if (isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])) {
+                if (isset($_POST['shippingCharge'])) {
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if (isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])) {
@@ -290,7 +282,6 @@ class OrderHeaderController extends Controller {
 
                     }
                     if($key ==3){
-                        //print_r($orderLine);die;
                     }
 
                 }
@@ -323,6 +314,7 @@ class OrderHeaderController extends Controller {
             'retailer' => $retailer,
             'retailerId' => $retailerId,
             'warehouses' => $warehouses,
+            'initialShippingCharge' => $initialShippingCharge,
         ));
 
 

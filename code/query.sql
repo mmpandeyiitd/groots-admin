@@ -339,19 +339,19 @@ create trigger groots_orders.retailer_payments_insert after insert on groots_ord
   insert into groots_orders.retailer_payments_log values(
                                                     NULL ,NEW.id ,NEW.retailer_id ,
                                                     NEW.paid_amount ,NEW.date ,NEW.payment_type ,NEW.cheque_no ,
-                                                    NEW.comment ,NEW.created_at ,NEW.updated_at ,NEW.status,'INSERT');
+                                                    NEW.comment ,NEW.created_at ,CURRENT_TIMESTAMP ,NEW.status,'INSERT');
 
 create trigger groots_orders.retailer_payments_update after update on groots_orders.retailer_payments for each row 
   insert into groots_orders.retailer_payments_log values(
                                                     NULL ,NEW.id ,NEW.retailer_id ,
                                                     NEW.paid_amount ,NEW.date ,NEW.payment_type ,NEW.cheque_no ,
-                                                    NEW.comment ,NEW.created_at ,NEW.updated_at ,NEW.status,'UPDATE');
+                                                    NEW.comment ,NEW.created_at ,CURRENT_TIMESTAMP ,NEW.status,'UPDATE');
 
 create trigger groots_orders.retailer_payments_delete after delete on groots_orders.retailer_payments for each row 
   insert into groots_orders.retailer_payments_log values(
                                                     NULL ,OLD.id ,OLD.retailer_id ,
                                                     OLD.paid_amount ,OLD.date ,OLD.payment_type ,OLD.cheque_no ,
-                                                    OLD.comment ,OLD.created_at ,OLD.updated_at ,OLD.status,'DELETE');
+                                                    OLD.comment ,OLD.created_at ,CURRENT_TIMESTAMP ,OLD.status,'DELETE');
 
 
 CREATE TABLE cb_dev_groots.`retailer_log` (
@@ -441,3 +441,26 @@ create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.r
                                           OLD.collection_frequency ,OLD.due_date ,OLD.last_due_date ,OLD.due_payable_amount ,OLD.collection_agent_id ,
                                           OLD.collection_center_id);
 
+create table cb_dev_groots.collection_log(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`due_payable_amount` decimal(10,2) default 0.00,
+`total_payable_amount` decimal(10,2) default NULL,
+`date` date not null,
+`created_at` datetime not null,
+`updated_at` timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+`updated_by` int(11) not null default 1,
+PRIMARY KEY(`id`)
+)
+
+alter table groots_orders.order_header modify column `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_line add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer modify column created_date datetime not null default CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+alter table groots_orders.order_header_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.groots_ledger modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_log modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.category modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.collecttion_agent add column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer_product_quotation modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;

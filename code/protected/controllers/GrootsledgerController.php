@@ -217,31 +217,18 @@ class GrootsledgerController extends Controller
     public function actionCreatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
+      $retailerPayment = new RetailerPayment();
         $retailerId = $_GET['retailerId'];
-        $retailer = Retailer::model()->findByPk($retailerId);
-        $retailerPayment = new RetailerPayment();
+         $retailer = Retailer::model()->findByPk($retailerId);
         if(isset($_POST['create'])){
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 //$retailerPayment = new RetailerPayment();
                 //$retailerPayment->load($_POST['RetailerPayment']);
-                $retailerPayment->attributes = $_POST['RetailerPayment'];
-                $retailerPayment->created_at = date('Y-m-d');
-                if ($retailerPayment->save()) {
-                    $retailer->total_payable_amount -= $retailerPayment->paid_amount;
-                    
-                    if($retailer->total_payable_amount == 0){
-                      $retailer->collection_fulfilled = true;
-                    }
-                    else{
-                      $retailer->collection_fulfilled = false; 
-                    }
-                    $retailer->save();
+                    GrootsledgerDao::saveCreatePayment($retailer, $_POST['RetailerPayment'], $retailerPayment);
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
                     $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
-                } else
-                    Yii::app()->user->setFlash('error', 'Payment could not be saved');
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
@@ -269,36 +256,10 @@ class GrootsledgerController extends Controller
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 //$retailerPayment = new RetailerPayment();
-                $retailerPayment = RetailerPayment::model()->findByPk($_POST['RetailerPayment']['id']);
-                $paid_amount = $retailerPayment->paid_amount;
-                //$retailerPayment->load($_POST['RetailerPayment']);
-                $intial_status = $retailerPayment->status;
-                $retailerPayment->attributes = $_POST['RetailerPayment'];
-                //var_dump(Yii::app()->request());die;
-                //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
-                //print_r($retailerPayment);die;
-
-                $retailerPayment->paid_amount = $_POST['RetailerPayment']['paid_amount'];
-                $retailerPayment->date = $_POST['RetailerPayment']['date'];
-                $retailerPayment->payment_type = $_POST['RetailerPayment']['payment_type'];
-                $retailerPayment->cheque_no = $_POST['RetailerPayment']['cheque_no'];
-                $retailerPayment->status = $_POST['RetailerPayment']['status'];
-                $retailerPayment->comment = $_POST['RetailerPayment']['comment'];
-                if ($retailerPayment->save()) {
-
-                    $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
-                    if($intial_status != $retailerPayment->status && $retailerPayment->status == '0')
-                      $retailer->total_payable_amount -=$retailerPayment->paid_amount;
-                    else {
-                    $retailer->total_payable_amount += $paid_amount;
-                    $retailer->total_payable_amount -= $retailerPayment->paid_amount;
-                  }
-                    $retailer->save();
+                $retailerPayment = GrootsledgerDao::saveUpdatePayment($_POST['RetailerPayment']);
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
                     $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
-                } else
-                    Yii::app()->user->setFlash('error', 'Payment could not be saved');
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
@@ -333,7 +294,7 @@ class GrootsledgerController extends Controller
       }
       //die('here');
       if(isset($_POST['update2'])){
-          self::updatePending($_POST['pending_collection'],$_POST['pending_retailer_id']);
+          self::updateDaily($_POST['pending_retailer_id'],$_POST['pending_collection']);
       }
       $retailers = QueriesDailyCollection::todaysCollection();
       $dataprovider = array();
@@ -406,13 +367,14 @@ class GrootsledgerController extends Controller
             ob_flush();
             exit();
         }
-
+        $due_payable_amount_yesterday = self::get_due_payable_amount_yesterday();
        $this->render('dailyCollection',array(
           'data' => $dataprovider,
           'data2' => $dataprovider2,
           'amount_to_be_collected' => $amount_to_be_collected,
           'total_paid_yesterday' => $total_paid_yesterday,
           'total_due_amount' => $total_due_amount,
+          'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
           ));
     }
 
@@ -587,58 +549,17 @@ class GrootsledgerController extends Controller
 
     public static function updateDaily($retailerIds, $payments){
       foreach ($retailerIds as $key => $retailerId) {
-          $paymentAmount = $payments[$key];
-          $current_retailer = Retailer::model()->findByPk($retailerId );
+        $retailerPayment = new RetailerPayment();
+         $retailer = Retailer::model()->findByPk($retailerId);
+         $paymentAmount = $payments[$key];
           if(isset($paymentAmount) and $paymentAmount > 0){
-            $current_retailer->total_payable_amount -= $paymentAmount;
-            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
-                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
-            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
-                   
-            if($current_retailer->total_payable_amount == 0){
-              $current_retailer->collection_fulfilled = true;
-            }
-            else 
-              $current_retailer->collection_fulfilled = false;
-
-            $connection = Yii::app()->secondaryDb;
-            $command = $connection->createCommand($sql);
-            $command2 = $connection->createCommand($sql2);
-            $command2->execute();
-            $command->execute();
-            //$current_retailer->save();
+            $paymentValues= array('retailer_id' => $retailerId, 'paid_amount' => $paymentAmount , 'date' => date('Y-m-d'));
+            GrootsledgerDao::saveCreatePayment($retailer, $paymentValues, $retailerPayment);
           }
 
         }
     }
 
-    public static function updatePending($pendingPayments, $pendingRetailerIds){
-      foreach ($pendingRetailerIds as $key => $retailerId) {
-          $paymentAmount = $pendingPayments[$key];
-          $current_retailer = Retailer::model()->findByPk($retailerId );
-          if(isset($paymentAmount) and $paymentAmount > 0){
-            $current_retailer->total_payable_amount -= $paymentAmount;
-            $current_retailer->due_payable_amount -= $paymentAmount;
-            $sql = "insert into groots_orders.retailer_payments(retailer_id, paid_amount, date, created_at)
-                    values($retailerId, $paymentAmount, CURDATE(), CURDATE())";
-            $sql2 = "update cb_dev_groots.retailer set total_payable_amount = ".$current_retailer->total_payable_amount.",due_payable_amount = ".$current_retailer->due_payable_amount." where id = ".$retailerId.";";
-                   
-            if($current_retailer->total_payable_amount == 0){
-              $current_retailer->collection_fulfilled = true;
-            }
-            else 
-              $current_retailer->collection_fulfilled = false;
-
-            $connection = Yii::app()->secondaryDb;
-            $command = $connection->createCommand($sql);
-            $command2 = $connection->createCommand($sql2);
-            $command2->execute();
-            $command->execute();
-            //$current_retailer->save();
-          }
-
-        }
-    }
 
     public function actiontotalpayable(){
       $retailer= Retailer::model()->findAll();
@@ -666,5 +587,31 @@ class GrootsledgerController extends Controller
             $current_retailer->save();
           }
         }
+  }
+
+  public function get_due_payable_amount_yesterday(){
+    $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
+    echo $sql;
+    $connection = Yii::app()->secondaryDb;
+    $command = $connection->createCommand($sql);
+    $command->execute();
+    $result = $command->queryAll();
+    if(isset($ressult) && !empty($result)){
+      return $result[0]['due_payable_amount'];
+    }
+    else return 0;
+  }
+  public static function savePayment($retailer, $paid_amount){
+    $retailer->total_payable_amount -= $paid_amount;
+    $retailer->due_payable_amount -= $paid_amount;
+        if($retailer->due_payable_amount <= 0){
+            $retailer->due_payable_amount = 0;
+            $retailer->collection_fulfilled = true;
+        }
+        else{
+          $retailer->collection_fulfilled = false; 
+        }
+        $retailer->save();
+       //var_dump($retailer->getErrors());die;
   }
 }
