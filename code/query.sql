@@ -454,13 +454,15 @@ PRIMARY KEY(`id`)
 
 alter table groots_orders.order_header modify column `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table groots_orders.order_line add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table cb_dev_groots.retailer modify column created_date datetime not null default CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer modify column created_date datetime  default null;
 alter table cb_dev_groots.retailer add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 
-alter table groots_orders.order_header_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
 alter table groots_orders.groots_ledger modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table groots_orders.order_log modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table cb_dev_groots.category modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+/*alter table cb_dev_groots.category modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table cb_dev_groots.collecttion_agent add column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;*/
 alter table cb_dev_groots.retailer_product_quotation modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer_product_quotation_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
