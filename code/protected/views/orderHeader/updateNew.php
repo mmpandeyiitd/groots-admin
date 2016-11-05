@@ -31,7 +31,7 @@
 
 
         <?php
-         $this->renderPartial('_createOrder', array('model'=>$model, 'orderLine'=>$orderLine, 'retailerProducts'=> $retailerProducts, 'retailerId'=>$retailerId, 'retailer'=>$retailer, 'warehouses'=>$warehouses,'update'=>true));
+         $this->renderPartial('_createOrder', array('model'=>$model, 'orderLine'=>$orderLine, 'retailerProducts'=> $retailerProducts, 'retailerId'=>$retailerId, 'retailer'=>$retailer, 'warehouses'=>$warehouses,'initialShippingCharge' => $initialShippingCharge,'update'=>true));
 
         ?>
 

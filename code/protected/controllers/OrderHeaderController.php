@@ -193,7 +193,7 @@ class OrderHeaderController extends Controller {
         $orderHeader = $this->loadModel($id);
         $orderAmount = $orderHeader->total_payable_amount;
         $initialStatus = $orderHeader->status;
-
+        $initialShippingCharge = $orderHeader->shipping_charges;
         $retailerId = $orderHeader->user_id;
         $baseProductIds = array();
         $baseProductIdPriceMap = array();
@@ -323,6 +323,7 @@ class OrderHeaderController extends Controller {
             'retailer' => $retailer,
             'retailerId' => $retailerId,
             'warehouses' => $warehouses,
+            'initialShippingCharge' => $initialShippingCharge,
         ));
 
 
