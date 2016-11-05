@@ -459,8 +459,9 @@ alter table cb_dev_groots.retailer add column updated_at timestamp  NOT NULL DEF
 
 alter table groots_orders.order_header_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table groots_orders.groots_ledger modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table groots_orders.order_log modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_logs modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table cb_dev_groots.category modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-alter table cb_dev_groots.collecttion_agent add column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.collection_agent add column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table cb_dev_groots.retailer_product_quotation modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.users modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
