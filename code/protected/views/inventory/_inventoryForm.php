@@ -209,7 +209,8 @@ $balance = 0;
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id :  "parent parent-id_".$data->parent_id',
+        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id." item_".$data->parent_id :  "parent parent-id_".$data->parent_id." item_".$data->base_product_id',
+        'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
         'filter'=>$model,
@@ -252,6 +253,14 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;'),
                 'value' => '$data->item_title',
+                'value' => function($data){
+                    if($data->parent_id > 0){
+                        return $data->item_title;
+                    }
+                    else {
+                        return $data->item_title." (unsorted)";
+                    }
+                },
                 /*'value' => function ($data) {
                     return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
                 },*/
@@ -524,6 +533,9 @@ $balance = 0;
                 return false;
             }
         });
+
+        createItemTotalRow();
+        updateItemTotalRow();
     }
 
     function toggleChild(bp_id){
@@ -563,6 +575,102 @@ $balance = 0;
         console.log('purchase '+purchase);
         console.log('balance '+balance);*/
         $("#balance_"+bp_id).html(balance);
+    }
+
+    function createItemTotalRow() {
+        $(".parent").each( function () {
+
+
+            var parent_id = $(this).attr('id').split("_")[1];
+            var lastChild;
+
+            var totalSchdInv = 0;
+            var totalPrevDayInv = 0;
+            var totalPurchase = 0;
+            var totalTransfIn= 0;
+            var totaltransfOut = 0;
+            var totalOrder = 0;
+            var totalExtraInv = 0;
+            var totalOrderInv = 0;
+            var totalLiqInv = 0;
+            var totalLiqWastage = 0;
+            var totalWastage = 0;
+            var totalBalance = 0;
+
+
+            $(".item_"+parent_id).each( function() {
+                var bp_id = $(this).attr('id').split("_")[1];
+
+                totalWastage += parseFloat($("#wastage_"+bp_id).val().trim());
+                totalLiqWastage += parseFloat($("#wastage-others_"+bp_id).val().trim());
+
+                totalOrderInv += parseFloat($("#pres-inv_"+bp_id).val().trim());
+                totalLiqInv += parseFloat($("#liquid-inv_"+bp_id).val().trim());
+                totalSchdInv += parseFloat($("#sch-inv_"+bp_id).val().trim());
+
+                totalExtraInv += parseFloat($("#extra-inv_"+bp_id).val().trim());
+                totalOrder += parseFloat($("#order_"+bp_id).html().trim());
+
+                totalPrevDayInv += parseFloat($("#prev-day-inv_"+bp_id).html().trim());
+                totaltransfOut += parseFloat($("#transferOut_"+bp_id).html().trim());
+                totalTransfIn += parseFloat($("#transferIn_"+bp_id).html().trim());
+                totalPurchase += parseFloat($("#purchase_"+bp_id).html().trim());
+                totalBalance += parseFloat($("#balance_"+bp_id).html().trim());
+
+                lastChild = this;
+
+            });
+            var clone =  $(this).clone();
+            clone.removeClass("parent item"+parent_id);
+            clone.removeAttr('id');
+            clone.addClass("total").attr('id', 'total_'+parent_id);
+            clone.insertAfter(lastChild);
+
+            clone.find("#sch-inv_"+parent_id).val(totalSchdInv);
+            clone.find("#sch-inv_"+parent_id).removeAttr('id').attr('id', 'total-sch-inv_'+parent_id);
+
+            clone.find("#prev-day-inv_"+parent_id).html(totalPrevDayInv);
+            clone.find("#prev-day-inv_"+parent_id).removeAttr('id').attr('id', 'total-prev-day-inv_'+parent_id);
+
+            clone.find("#purchase_"+parent_id).html(totalPurchase);
+            clone.find("#purchase_"+parent_id).removeAttr('id').attr('id', 'total-purchase_'+parent_id);
+
+            clone.find("#transferIn_"+parent_id).html(totalTransfIn);
+            clone.find("#transferIn_"+parent_id).removeAttr('id').attr('id', 'total-transferIn_'+parent_id);
+
+            clone.find("#transferOut_"+parent_id).html(totaltransfOut);
+            clone.find("#transferOut_"+parent_id).removeAttr('id').attr('id', 'total-transferOut_'+parent_id);
+
+            clone.find("#order_"+parent_id).html(totalOrder);
+            clone.find("#order_"+parent_id).removeAttr('id').attr('id', 'total-order_'+parent_id);
+
+            clone.find("#extra-inv_"+parent_id).val(totalExtraInv);
+            clone.find("#extra-inv_"+parent_id).removeAttr('id').attr('id', 'total-extra-inv_'+parent_id);
+
+            clone.find("#pres-inv_"+parent_id).val(totalOrderInv);
+            clone.find("#pres-inv_"+parent_id).removeAttr('id').attr('id', 'total-pres-inv_'+parent_id);
+
+            clone.find("#liquid-inv_"+parent_id).val(totalLiqInv);
+            clone.find("#liquid-inv_"+parent_id).removeAttr('id').attr('id', 'total-liquid-inv_'+parent_id);
+
+            clone.find("#wastage-others_"+parent_id).val(totalLiqWastage);
+            clone.find("#wastage-others_"+parent_id).removeAttr('id').attr('id', 'total-wastage-others_'+parent_id);
+
+            clone.find("#wastage_"+parent_id).val(totalWastage);
+            clone.find("#wastage_"+parent_id).removeAttr('id').attr('id', 'total-wastage_'+parent_id);
+
+            clone.find("#balance_"+parent_id).html(totalBalance);
+            clone.find("#balance_"+parent_id).removeAttr('id').attr('id', 'total-balance_'+parent_id);
+
+
+
+
+
+        });
+    }
+
+    function updateItemTotalRow() {
+
     }
 
 
