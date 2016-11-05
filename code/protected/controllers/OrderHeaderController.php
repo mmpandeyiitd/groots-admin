@@ -124,7 +124,6 @@ class OrderHeaderController extends Controller {
                         $orderLine->order_id = $orderHeader->order_id;
                         $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
                         $orderLine->base_product_id = $_POST['base_product_id'][$key];
-                        $orderLine->shipping_charges = $orderHeader->shipping_charges;
                         $orderLine->product_qty = $quantity;
                         $orderLine->delivered_qty = $quantity;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
@@ -183,8 +182,6 @@ class OrderHeaderController extends Controller {
 
 
     public  function  actionUpdate($id){
-//print("<pre>");
-//        print_r($_POST);die;
         $retailerProducts = '';
         $retailerId = '';
         $retailer = '';
@@ -202,7 +199,6 @@ class OrderHeaderController extends Controller {
         foreach ($retailerProducts as $product){
             array_push($baseProductIds, $product->base_product_id);
         }
-
         $productPrices = ProductPrice::model()->findAllByAttributes(array('base_product_id'=>$baseProductIds, 'effective_date'=>$orderHeader->delivery_date),array('select'=>'base_product_id, store_price, store_offer_price'));
 
         if(empty($productPrices)){
@@ -236,12 +232,7 @@ class OrderHeaderController extends Controller {
         foreach ($orderLine as $item){
             $itemArray[$item->base_product_id] = $item;
         }
-
         if (isset($_POST['update'])) {
-            //print("<pre>");
-            //print_r($_POST);die;
-            //print_r($_POST);die;
-            //print_r($_POST);die;
             $transaction = Yii::app()->db->beginTransaction();
             try {
 
@@ -278,7 +269,6 @@ class OrderHeaderController extends Controller {
 
                         $orderLine->product_qty = $orderQt;
                         $orderLine->delivered_qty = $quantity;
-                        $orderLine->shipping_charges = $orderHeader->shipping_charges;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
                         $orderLine->price = $_POST['amount'][$key];
                         $orderLine->store_id = 1;
@@ -292,7 +282,6 @@ class OrderHeaderController extends Controller {
 
                     }
                     if($key ==3){
-                        //print_r($orderLine);die;
                     }
 
                 }
