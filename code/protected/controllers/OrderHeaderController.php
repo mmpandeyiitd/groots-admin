@@ -105,7 +105,7 @@ class OrderHeaderController extends Controller {
                 if(isset($_POST['comment']) && !empty($_POST['comment'])){
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if(isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])){
+                if(isset($_POST['shippingCharge'])){
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if(isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])){
@@ -124,6 +124,7 @@ class OrderHeaderController extends Controller {
                         $orderLine->order_id = $orderHeader->order_id;
                         $orderLine->subscribed_product_id = $_POST['subscribed_product_id'][$key];
                         $orderLine->base_product_id = $_POST['base_product_id'][$key];
+                        $orderLine->shipping_charges = $orderHeader->shipping_charges;
                         $orderLine->product_qty = $quantity;
                         $orderLine->delivered_qty = $quantity;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
@@ -248,7 +249,7 @@ class OrderHeaderController extends Controller {
                 if (isset($_POST['comment']) && !empty($_POST['comment'])) {
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if (isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])) {
+                if (isset($_POST['shippingCharge'])) {
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if (isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])) {
@@ -277,6 +278,7 @@ class OrderHeaderController extends Controller {
 
                         $orderLine->product_qty = $orderQt;
                         $orderLine->delivered_qty = $quantity;
+                        $orderLine->shipping_charges = $orderHeader->shipping_charges;
                         $orderLine->unit_price = $_POST['store_offer_price'][$key];
                         $orderLine->price = $_POST['amount'][$key];
                         $orderLine->store_id = 1;
