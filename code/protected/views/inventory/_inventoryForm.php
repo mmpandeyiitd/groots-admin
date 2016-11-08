@@ -435,8 +435,8 @@ $balance = 0;
                 'header' => 'Balance(=)',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
-                'headerHtmlOptions' => array('style' => 'width:40%;'),
-                'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"'),
+                'headerHtmlOptions' => array('style' => 'width:40%;', 'class' => 'balance'),
+                'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"', 'class' => 'balance'),
                 'visible' => !$editOnly,
                 'value' => function ($data)  use ($quantitiesMap) {
 

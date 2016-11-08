@@ -16,17 +16,25 @@
     }
 $readOnlyReceived = 'readonly';
 $readOnlyProcured = 'readonly';
+$visibleReceived = false;
+$visibleProcured = false;
 if($this->checkAccess('SuperAdmin')){
     $readOnlyReceived = false;
     $readOnlyProcured = false;
+    $visibleReceived = true;
+    $visibleProcured = true;
 }
 elseif($this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id))){
     $readOnlyProcured = false;
     $readOnlyReceived = 'readonly';
+    $visibleReceived = false;
+    $visibleProcured = true;
 }
 elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id))){
     $readOnlyReceived = false;
     $readOnlyProcured = 'readonly';
+    $visibleReceived = true;
+    $visibleProcured = false;
 }
 
 
@@ -191,6 +199,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             array(
                 'header' => 'Procured Quantity',
                 'type' => 'raw',
+                'visible' => $visibleProcured,
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'value' => function ($data) use ($readOnlyProcured) {
@@ -201,12 +210,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'header' => 'Received Quantity',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
+                'visible' => $visibleReceived,
                 'value' => function ($data) use ($readOnlyReceived) {
                     return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input received-inputs', 'readonly'=> $readOnlyReceived));
                 },
                 'type' => 'raw',
             ),
-            array(
+            /*array(
                 'header' => 'Price',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
@@ -215,7 +225,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                     '.$data->base_product_id.')'));
                 },
                 'type' => 'raw',
-            ),
+            ),*/
 
             /*
             'delivery_date',
@@ -231,11 +241,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 ?>
 
-    <div class="order_bottomdetails" align="right">
-        <?php echo $form->labelEx($model,'total_payable_amount'); ?>
-        <?php echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount', 'class'=>'inputs')); ?>
-        <?php echo $form->error($model,'total_payable_amount'); ?>
-    </div>
+    <!--<div class="order_bottomdetails" align="right">
+        <?php /*echo $form->labelEx($model,'total_payable_amount'); */?>
+        <?php /*echo $form->textField($model,'total_payable_amount',array('size'=>60,'maxlength'=>255, 'id'=>'sumAmount', 'class'=>'inputs')); */?>
+        <?php /*echo $form->error($model,'total_payable_amount'); */?>
+    </div>-->
 <?php echo $form->hiddenField($model,'warehouse_id', array('value' => $w_id)); ?>
 <?php echo $form->hiddenField($model,'created_at'); ?>
 
@@ -361,7 +371,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         onStartUp();
     }
     
-    function onPriceChange($bp_id) {
+    /*function onPriceChange($bp_id) {
         updateTotalAmount()
     }
     function  updateTotalAmount() {
@@ -370,6 +380,6 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             sumAmount += Number($(this).val());
         });
         $("#sumAmount").val(sumAmount);
-    }
+    }*/
 
 </script>
