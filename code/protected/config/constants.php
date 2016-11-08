@@ -85,6 +85,7 @@ define('BANNER_IMG_PATH','catbanners/');
 define('ORDER_NUMBER_PREFIX','GRT');
 define('INVOICE_TEXT','GFV');
 define('SCHD_INV_AVG_DAYS',7);
+define('DUMP_FOLDER_LOC', dirname(__FILE__) . '/../../../../dump/');
 
 
   

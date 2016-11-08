@@ -35,6 +35,11 @@ $('.search-form form').submit(function(){
 	'action'=>Yii::app()->createUrl('//transferHeader/dailyTransfer',array("w_id"=>$w_id)),
 	'enableAjaxValidation'=>false,
 )); ?>
+<div align = 'right'>
+<?php
+echo CHtml::button('Download Report', array('submit' => array('transferHeader/downloadTransferReport')))
+?>
+</div>
 <?php echo $form->errorSummary($model->errors); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model, 'delivery_date'); ?>
