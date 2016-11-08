@@ -51,6 +51,7 @@ class GrootsledgerDao{
           $retailer->collection_fulfilled = ($retailer->due_payable_amount <= 0);
         }
         }
+        $retailer->save();
         return $retailerPayment;
     }
 }
