@@ -349,6 +349,8 @@ update cb_dev_groots.base_product set popularity=1 where base_product_id in (sel
 
 alter table groots_orders.inventory change column wastage_others `liquidation_wastage` decimal(10,2) DEFAULT NULL;
 
+alter table groots_orders.purchase_header add column `purchase_type` enum('regular','singular') NOT NULL DEFAULT 'singular';
+alter table groots_orders.purchase_line add column `tobe_procured_qty`  decimal(10,2) DEFAULT NULL AFTER length_unit;
 
 -------------
 //copy parent items from test db to production, or upload csv

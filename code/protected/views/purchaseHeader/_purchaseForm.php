@@ -197,6 +197,16 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'type' => 'raw',
             ),
             array(
+                'header' => 'To Be Procured Qty',
+                'type' => 'raw',
+                'visible' => $visibleProcured,
+                'headerHtmlOptions' => array('style' => 'width:15%;'),
+                'htmlOptions' => array('style' => 'width:15%;'),
+                'value' => function ($data) use ($readOnlyProcured) {
+                    return CHtml::label($data->tobe_procured_qty, $data->tobe_procured_qty);
+                },
+            ),
+            array(
                 'header' => 'Procured Quantity',
                 'type' => 'raw',
                 'visible' => $visibleProcured,

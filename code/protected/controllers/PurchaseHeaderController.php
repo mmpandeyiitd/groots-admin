@@ -348,6 +348,57 @@ class PurchaseHeaderController extends Controller
         ));
 	}
 
+    public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
+        $purchaseOrder = PurchaseHeader::model()->findByAttributes(array('delivery_date' => $date, 'warehouse_id' =>$w_id, 'purchase_type' => 'regular', 'status' => 'pending'));
+
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+
+            if (empty($purchaseOrder)) {
+                $purchaseOrder = new PurchaseHeader();
+                $purchaseOrder->warehouse_id = $w_id;
+                $purchaseOrder->vendor_id = 1;
+                $purchaseOrder->delivery_date = $date;
+                $purchaseOrder->status = 'pending';
+                $purchaseOrder->comment = 'system generated';
+                $purchaseOrder->created_at = date('Y-m-d');
+                $purchaseOrder->purchase_type = "regular";
+            }
+            $purchaseOrder->save();
+            $purchaseLineMap = self::getPurchaseLineMap($purchaseOrder->id);
+            foreach ($purchaseOrderMap as $bp_id => $qty) {
+                if (isset($purchaseLineMap[$bp_id])) {
+                    $item = $purchaseLineMap[$bp_id];
+                } else {
+                    $item = new PurchaseLine();
+                    $item->purchase_id = $purchaseOrder->id;
+                    $item->base_product_id = $bp_id;
+                    $item->status = 'pending';
+                    $item->created_at = date('Y-m-d');
+                }
+                $item->tobe_procured_qty = $qty;
+                $item->order_qty = 0;
+                //var_dump($item);
+                $item->save();
+            }
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+            throw $e;
+            Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+        }
+    }
+
+    private static function getPurchaseLineMap($purchase_id){
+        $itemArr = array();
+        $items = PurchaseLine::model()->findAllByAttributes(array('purchase_id'=>$purchase_id));
+        foreach ($items as $item){
+            $itemArr[$item->base_product_id] = $item;
+        }
+        return $itemArr;
+    }
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
