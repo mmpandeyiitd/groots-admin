@@ -435,9 +435,10 @@ $balance = 0;
                 'header' => 'Balance(=)',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
-                'headerHtmlOptions' => array('style' => 'width:40%;', 'class' => 'balance'),
-                'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"', 'class' => 'balance'),
                 'visible' => !$editOnly,
+                'headerHtmlOptions' => array('style' => 'width:40%;'),
+                'htmlOptions' => array('style' => 'width:40%;', 'id'=> '"balance_{$data->base_product_id}"'),
+
                 'value' => function ($data)  use ($quantitiesMap) {
 
                     //$s_inv = empty($data->schedule_inv_absolute) ? 0 : $data->schedule_inv_absolute ;

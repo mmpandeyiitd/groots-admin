@@ -85,6 +85,8 @@ define('BANNER_IMG_PATH','catbanners/');
 define('ORDER_NUMBER_PREFIX','GRT');
 define('INVOICE_TEXT','GFV');
 define('SCHD_INV_AVG_DAYS',7);
+define('SOURCE_WH_ID',2);
+define('HD_OFFICE_WH_ID',3);
 
 
   

@@ -380,16 +380,30 @@ class TransferHeaderController extends Controller
         }
         $date = $_POST['TransferHeader']['delivery_date'];
         //$date = $this->getDateForDailyTransfer();
+
+        if($w_id==SOURCE_WH_ID) {
+            $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=>'id'));
+            foreach ($warehouses as $warehouse){
+                if($warehouse->id != $w_id && $w_id != HD_OFFICE_WH_ID){
+                    updateDailyTransferOrder($warehouse->id, $date);
+                }
+            }
+        }
+        $this->updateDailyTransferOrder($w_id, $date);
+
+    }
+
+    public function updateDailyTransferOrder($w_id, $date){
         $orderLines = OrderLine::getOrderSumByDate($w_id, $date);
         //print_r($orderLines);
         $invHeadMap = InventoryHeaderDao::getInventoryHeaderMapByBpId($w_id);
-        $warehouse = Warehouse::model()->findByAttributes(array('id'=>$w_id), array('select'=>'default_source_warehouse_id'));
-        $transferOrder = TransferHeader::model()->findByAttributes(array('delivery_date'=> $date, 'source_warehouse_id'=>$warehouse->default_source_warehouse_id , 'dest_warehouse_id'=>$w_id, 'transfer_type'=>'regular'));
+        $warehouse = Warehouse::model()->findByAttributes(array('id' => $w_id), array('select' => 'default_source_warehouse_id'));
+        $transferOrder = TransferHeader::model()->findByAttributes(array('delivery_date' => $date, 'source_warehouse_id' => $warehouse->default_source_warehouse_id, 'dest_warehouse_id' => $w_id, 'transfer_type' => 'regular'));
         $quantitiesMap = TransferHeader::getTransferInCalculationData($w_id, $date);
         $transaction = Yii::app()->db->beginTransaction();
         try {
 
-            if(empty($transferOrder)){
+            if (empty($transferOrder)) {
                 $transferOrder = new TransferHeader();
                 $transferOrder->source_warehouse_id = $warehouse->default_source_warehouse_id;
                 $transferOrder->dest_warehouse_id = $w_id;
@@ -401,52 +415,43 @@ class TransferHeaderController extends Controller
             }
             $transferOrder->save();
             $transferLineMap = $this->getTransferLineMap($transferOrder->id);
-            foreach ($orderLines as $bp_id => $qty){
+            foreach ($orderLines as $bp_id => $qty) {
 
                 $s_inv = 0;
-                if (isset($quantitiesMap['avgOrder'][$bp_id]) && isset($invHeadMap[$bp_id])){
+                if (isset($quantitiesMap['avgOrder'][$bp_id]) && isset($invHeadMap[$bp_id])) {
                     $avgOrderInKg = $quantitiesMap['avgOrder'][$bp_id];
                     $sch_inv_type = $invHeadMap[$bp_id]->schedule_inv_type;
                     $sch_inv_no = $invHeadMap[$bp_id]->schedule_inv;
-                    if($sch_inv_type == 'days'){
+                    if ($sch_inv_type == 'days') {
                         $s_inv = $sch_inv_no * $avgOrderInKg;
-                    }
-                    elseif($sch_inv_type == 'percents'){
-                        $s_inv = $sch_inv_no * $avgOrderInKg/100;
+                    } elseif ($sch_inv_type == 'percents') {
+                        $s_inv = $sch_inv_no * $avgOrderInKg / 100;
                     }
 
                 }
-                $prev_day_inv = empty($quantitiesMap['prevDayInv'][$bp_id]) ? 0 : $quantitiesMap['prevDayInv'][$bp_id] ;
-                
+                $prev_day_inv = empty($quantitiesMap['prevDayInv'][$bp_id]) ? 0 : $quantitiesMap['prevDayInv'][$bp_id];
+
                 //$cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
                 //$liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
-                $order_sum = empty($quantitiesMap['orderSum'][$bp_id]) ? 0 : $quantitiesMap['orderSum'][$bp_id] ;
-                $purchase = empty($quantitiesMap['purchaseSum'][$bp_id]) ? 0 : $quantitiesMap['purchaseSum'][$bp_id] ;
-                $transIn_other = empty($quantitiesMap['transferInSum'][$bp_id]) ? 0 : $quantitiesMap['transferInSum'][$bp_id] ;
-                $trans_out = empty($quantitiesMap['transferOutSum'][$bp_id]) ? 0 : $quantitiesMap['transferOutSum'][$bp_id] ;
+                $order_sum = empty($quantitiesMap['orderSum'][$bp_id]) ? 0 : $quantitiesMap['orderSum'][$bp_id];
+                $purchase = empty($quantitiesMap['purchaseSum'][$bp_id]) ? 0 : $quantitiesMap['purchaseSum'][$bp_id];
+                $transIn_other = empty($quantitiesMap['transferInSum'][$bp_id]) ? 0 : $quantitiesMap['transferInSum'][$bp_id];
+                $trans_out = empty($quantitiesMap['transferOutSum'][$bp_id]) ? 0 : $quantitiesMap['transferOutSum'][$bp_id];
 
-                $extra_inv_absolute =$invHeadMap[$bp_id]->extra_inv * ($order_sum-$prev_day_inv+$trans_out+$s_inv)/100;
-                if($extra_inv_absolute < 0){
+                $extra_inv_absolute = $invHeadMap[$bp_id]->extra_inv * ($order_sum - $prev_day_inv + $trans_out + $s_inv) / 100;
+                if ($extra_inv_absolute < 0) {
                     $extra_inv_absolute = 0;
                 }
-//echo "sinv-".$s_inv."\n";
-                /*echo "ord-".$order_sum."\n";
-                echo "tranout-".$trans_out."\n";
-                echo "extinv-".$extra_inv_absolute."\n";
-                echo "prvin-".$prev_day_inv."\n";
-                echo "purch-".$purchase."\n";
-                echo "transInother-".$transIn_other."\n";*/
 
-                $trans_in = $s_inv+$order_sum+$trans_out+$extra_inv_absolute - ($purchase+$prev_day_inv+$transIn_other);
+                $trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
 
-                if(empty($trans_in) || $trans_in < 0) {
+                if (empty($trans_in) || $trans_in < 0) {
                     $trans_in = 0;
                 }
                 //echo "transin-".$trans_in."\n";
-                if(isset($transferLineMap[$bp_id])){
+                if (isset($transferLineMap[$bp_id])) {
                     $item = $transferLineMap[$bp_id];
-                }
-                else{
+                } else {
                     $item = new TransferLine();
                     $item->transfer_id = $transferOrder->id;
                     $item->base_product_id = $bp_id;
@@ -459,13 +464,12 @@ class TransferHeaderController extends Controller
             }
             $transaction->commit();
             Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $transaction->rollBack();
             Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
             throw $e;
             Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
         }
-
     }
 
     private function getTransferLineMap($transfer_id){
