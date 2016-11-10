@@ -265,7 +265,7 @@ CREATE TABLE groots_orders.`order_header_log` (
   KEY `ohl_order_1` (`order_id`),
   KEY `ohl_order_2` (`user_id`),
   KEY `ohl_order_3` (`warehouse_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1468 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 alter table groots_orders.order_header_log add column created_at datetime  default null;
 alter table groots_orders.order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
@@ -368,7 +368,7 @@ insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_
 
 
 -----------------------------------
-insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date) values ("vendor1", now(), now()), ("vendor2", now(), now());
+
 
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
 

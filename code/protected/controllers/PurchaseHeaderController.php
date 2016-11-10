@@ -1,5 +1,5 @@
 <?php
-
+//Yii::import('application.Dao.TransferDao', true) ;
 class PurchaseHeaderController extends Controller
 {
 	/**
@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin'),
+				'actions'=>array('create','update', 'admin','dailyProcurement'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -399,7 +399,27 @@ class PurchaseHeaderController extends Controller
         return $itemArr;
     }
 
-	/**
+    public function actionDailyProcurement(){
+        //echo "<pre>";
+        if(empty($_GET['w_id'])){
+            Yii::app()->controller->redirect("index.php?r=user/profile");
+        }
+        $w_id = $_GET['w_id'];
+
+        if(empty($_POST['delivery_date'])){
+            //Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+            $this->redirect(Yii::app()->request->urlReferrer);
+        }
+        $date = $_POST['delivery_date'];
+        //$date = $this->getDateForDailyTransfer();
+
+        TransferDao::createTransfer($w_id, $date);
+
+        Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+    }
+
+
+    /**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded

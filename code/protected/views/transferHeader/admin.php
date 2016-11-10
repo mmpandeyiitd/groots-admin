@@ -39,8 +39,8 @@ $('.search-form form').submit(function(){
 	<div class="row">
 		<?php echo $form->labelEx($model, 'delivery_date'); ?>
 		<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
-			'model'=>$model,
-			'attribute'=>'delivery_date',
+			//'model'=>$model,
+			'name'=>'delivery_date',
 			'value'=>$model->delivery_date,
 
 			'id'=>'date',

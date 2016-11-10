@@ -48,7 +48,7 @@ CREATE TABLE cb_dev_groots.`vendors` (
   PRIMARY KEY (`id`),
   KEY `fk_vendor_1` (`allocated_warehouse_id`),
   CONSTRAINT `fk_vendor_1` FOREIGN KEY (`allocated_warehouse_id`) REFERENCES `warehouses` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 CREATE TABLE groots_orders.`purchase_header` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -99,7 +99,7 @@ CREATE TABLE groots_orders.`purchase_line` (
   INDEX fk_purchase_line_2 (base_product_id),
   CONSTRAINT fk_purchase_line_1 FOREIGN KEY (purchase_id) REFERENCES groots_orders.purchase_header(id),
   CONSTRAINT fk_purchase_line_2 FOREIGN KEY (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id)
-) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
 
@@ -157,7 +157,7 @@ CREATE TABLE groots_orders.`transfer_line` (
   INDEX fk_tranfer_line_2 (base_product_id),
   CONSTRAINT fk_tranfer_line_1 FOREIGN KEY (transfer_id) REFERENCES groots_orders.transfer_header(id),
   CONSTRAINT fk_tranfer_line_2 FOREIGN KEY (base_product_id) REFERENCES cb_dev_groots.base_product(base_product_id)
-) ENGINE=InnoDB AUTO_INCREMENT=237 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
 ALTER TABLE cb_dev_groots.base_product add COLUMN popularity SMALLINT DEFAULT 5;
@@ -207,6 +207,7 @@ CREATE TABLE groots_orders.`inventory` (
 alter table groots_orders.inventory modify column `inv_change_id` int(11) default NULL;
 
 insert into groots_orders.inventory_header select null, 1, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product;
+insert into groots_orders.inventory_header select null, 2, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product;
 
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now() from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id;
 
