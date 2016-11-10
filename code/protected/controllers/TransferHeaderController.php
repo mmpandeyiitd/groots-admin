@@ -423,14 +423,7 @@ class TransferHeaderController extends Controller
         ob_flush();
     }
 
-    private function getTransferLineMap($transfer_id){
-        $itemArr = array();
-        $items = TransferLine::model()->findAllByAttributes(array('transfer_id'=>$transfer_id));
-        foreach ($items as $item){
-            $itemArr[$item->base_product_id] = $item;
-        }
-        return $itemArr;
-    }
+
 
     private function getDateForDailyTransfer(){
 
