@@ -88,7 +88,7 @@ class PurchaseLine extends CActiveRecord
         $result = $command->queryAll();
         $orderLines = array();
         foreach ($result as $item){
-            $orderLines[$item['id']] = Utility::convertOrderToKg($item['qty'], $item['pack_size'], $item['pack_unit']);
+            $orderLines[$item['id']] = $item['qty'];
         }
 
         return $orderLines;
@@ -103,7 +103,7 @@ class PurchaseLine extends CActiveRecord
         $result = $command->queryAll();
         $orderLines = array();
         foreach ($result as $item){
-            $orderLines[$item['id']] = Utility::convertOrderToKg($item['qty'], $item['pack_size'], $item['pack_unit']);
+            $orderLines[$item['id']] = $item['qty'];
         }
 
         return $orderLines;
