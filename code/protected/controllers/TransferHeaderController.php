@@ -33,7 +33,7 @@ class TransferHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin', 'dailyTransfer'),
+				'actions'=>array('create','update','admin', 'dailyTransfer', 'downloadTransferReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -389,7 +389,39 @@ class TransferHeaderController extends Controller
     }
 
 
+    public function actionDownloadTransferReport(){
+        $sql = 'select tl.base_product_id, bp.title, th.source_warehouse_id , th.dest_warehouse_id, th.delivery_date,  tl.order_qty, tl.delivered_qty, tl.received_qty from groots_orders.transfer_header as th
+            left join groots_orders.transfer_line as tl
+            on th.id = tl.transfer_id
+            left join cb_dev_groots.base_product as bp
+            on bp.base_product_id = tl.base_product_id
+            where tl.order_qty is not null and tl.order_qty > 0  and ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status = "received" and tl.status = "Confirmed"';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        $fileName = date('Y-m-d')."tranfer_report.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
 
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
 
 
 
