@@ -170,13 +170,12 @@ class InventoryHeaderController extends Controller
 			Yii::app()->end();
 		}
 	}
-	
+
 	public function actionEditInventory(){
 		
 		$w_id = '';
 		if(isset($_GET['w_id']))
 			$w_id = $_GET['w_id'];
-		//echo $w_id; die;
 
 		$inv_header = new InventoryHeader('search');
 		if(isset($_GET['InventoryHeader'])){
@@ -184,8 +183,6 @@ class InventoryHeaderController extends Controller
 		}
 		$inv_header->warehouse_id = $w_id;
 		if(isset($_POST['update'])){
-			// var_dump($_POST);
-			// var_dump($_GET); die;
 			self::onUpdateInventory($_POST);
 		}
 		$dataProvider = $inv_header->search();

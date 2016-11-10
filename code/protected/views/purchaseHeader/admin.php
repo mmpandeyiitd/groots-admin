@@ -42,7 +42,40 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
+<?php if(Yii::app()->user->hasFlash('error')):?>
+        <div class="Csv" style="color:red;">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 <h1>Manage Purchases</h1>
+
+<div class="row">
+       
+    <?php
+    echo '<br>';
+    echo 'Select Date    ';
+    $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+    'name'=>'date',
+    // additional javascript options for the date picker plugin
+    'options'=>array(
+    	'dateFormat' => 'yy-mm-dd',
+        'showAnim'=>'fold',
+    ),
+    'htmlOptions'=>array(
+        'style'=>'height:20px;'
+    ),
+)); ?>
+         
+</div>
+
+
+<div class = "row" style="float:right">
+    <?php 
+    $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadProcurementReport",array('w_id' => $w_id));
+    echo CHtml::button('Download Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
+    ?>
+    </div>
 
 <?php if($procurementAccess){
 	?>
@@ -131,3 +164,18 @@ $('.search-form form').submit(function(){
 		),
 	),
 )); ?>
+
+<script type="text/javascript">
+
+	function onClickDownloadProcurementReport(url){
+        //document.location.href
+        var date = $("#date").val().trim();
+        url = url + "&date="+date;
+        //window.location.assign(url);
+        //console.log(url);
+        window.open(url, '_blank');
+    }
+
+
+
+</script>
