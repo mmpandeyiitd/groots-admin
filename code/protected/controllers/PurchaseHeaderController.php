@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadProcurementReport'),
+				'actions'=>array('create','update', 'admin','downloadProcurementReport', 'dailyProcurement'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -134,22 +134,33 @@ class PurchaseHeaderController extends Controller
 
                 if($model->total_payable_amount > 0 && $model->save()){
 
-                    foreach ($_POST['price'] as $key => $price) {
-                        if ($price > 0) {
-                            $purchaseLine = new PurchaseLine();
-                            $purchaseLine->purchase_id = $model->id;
-                            $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
-                            if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
-                                $purchaseLine->order_qty = $_POST['order_qty'][$key];
+                    if(isset($_POST['order_qty'])){
+                        foreach ($_POST['order_qty'] as $key => $quantity) {
+                            if ($quantity > 0) {
+                                $purchaseLine = new PurchaseLine();
+                                $purchaseLine->purchase_id = $model->id;
+                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                    $purchaseLine->order_qty = $quantity;
+                                }
+                                $purchaseLine->created_at = date("y-m-d H:i:s");
+                                $purchaseLine->save();
                             }
-                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                $purchaseLine->received_qty = $_POST['received_qty'][$key];
+                        }
+                    }
+                    if(isset($_POST['received_qty'])){
+                        foreach ($_POST['received_qty'] as $key => $quantity) {
+                            if ($quantity > 0) {
+                                $purchaseLine = new PurchaseLine();
+                                $purchaseLine->purchase_id = $model->id;
+                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                    $purchaseLine->received_qty = $quantity;
+                                }
+                                $purchaseLine->created_at = date("y-m-d H:i:s");
+                                $purchaseLine->save();
                             }
-
-                            //$purchaseLine->unit_price = $_POST['store_offer_price'][$key];
-                            $purchaseLine->price = $price;
-                            $purchaseLine->created_at = date("y-m-d H:i:s");
-                            $purchaseLine->save();
+                
                         }
                     }
                     $transaction->commit();
@@ -222,13 +233,12 @@ class PurchaseHeaderController extends Controller
                 $model->attributes = $_POST['PurchaseHeader'];
 
                 if ($model->save()) {
-                    foreach ($_POST['price'] as $key => $price) {
-                        //$orderQt = $_POST['product_qty'][$key];
-                        if ($price > 0 ) {
-                            if(isset($purchaseLineMap[$_POST['base_product_id'][$key]])){
+                    if(isset($_POST['order_qty'])){
+                        foreach ($_POST['order_qty'] as $key => $quantity) {
+
+                            if (isset($purchaseLineMap[$_POST['base_product_id'][$key]])) {
                                 $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
-                            }
-                            else{
+                            } else {
                                 $purchaseLine = new PurchaseLine();
                                 $purchaseLine->purchase_id = $model->id;
                                 $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
@@ -236,26 +246,36 @@ class PurchaseHeaderController extends Controller
 
                             }
 
-                            if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
-                                $purchaseLine->order_qty = $_POST['order_qty'][$key];
+                            if (isset($_POST['order_qty'][$key]) ) {
+                                $purchaseLine->order_qty = $quantity;
                             }
-
-                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                $purchaseLine->received_qty = $_POST['received_qty'][$key];
-                            }
-
-                            $purchaseLine->price = $price;
 
                             $purchaseLine->save();
-                        }
-                        else{
-                            if(isset($purchaseLineMap[$_POST['base_product_id'][$key]])){
-                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
-                                $purchaseLine->deleteByPk($purchaseLine->id);
-                            }
 
                         }
                     }
+                    if(isset($_POST['received_qty'])){
+                        foreach ($_POST['received_qty'] as $key => $quantity) {
+
+                            if (isset($purchaseLineMap[$_POST['base_product_id'][$key]])) {
+                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
+                            } else {
+                                $purchaseLine = new PurchaseLine();
+                                $purchaseLine->purchase_id = $model->id;
+                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                $purchaseLine->created_at = date("y-m-d H:i:s");
+
+                            }
+
+                            if (isset($_POST['received_qty'][$key]) ) {
+                                $purchaseLine->received_qty = $quantity;
+                            }
+
+                            $purchaseLine->save();
+
+                        }
+                    }
+
                     $transaction->commit();
                     $this->redirect(array('admin','w_id'=>$model->warehouse_id));
                 }
@@ -371,6 +391,78 @@ class PurchaseHeaderController extends Controller
             ob_flush();
         }
     }
+
+
+public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
+        $purchaseOrder = PurchaseHeader::model()->findByAttributes(array('delivery_date' => $date, 'warehouse_id' =>$w_id, 'purchase_type' => 'regular', 'status' => 'pending'));
+
+        $transaction = Yii::app()->db->beginTransaction();
+        try {
+
+            if (empty($purchaseOrder)) {
+                $purchaseOrder = new PurchaseHeader();
+                $purchaseOrder->warehouse_id = $w_id;
+                $purchaseOrder->vendor_id = 1;
+                $purchaseOrder->delivery_date = $date;
+                $purchaseOrder->status = 'pending';
+                $purchaseOrder->comment = 'system generated';
+                $purchaseOrder->created_at = date('Y-m-d');
+                $purchaseOrder->purchase_type = "regular";
+            }
+            $purchaseOrder->save();
+            $purchaseLineMap = self::getPurchaseLineMap($purchaseOrder->id);
+            foreach ($purchaseOrderMap as $bp_id => $qty) {
+                if (isset($purchaseLineMap[$bp_id])) {
+                    $item = $purchaseLineMap[$bp_id];
+                } else {
+                    $item = new PurchaseLine();
+                    $item->purchase_id = $purchaseOrder->id;
+                    $item->base_product_id = $bp_id;
+                    $item->status = 'pending';
+                    $item->created_at = date('Y-m-d');
+                }
+                $item->tobe_procured_qty = $qty;
+                $item->order_qty = 0;
+                //var_dump($item);
+                $item->save();
+            }
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+            throw $e;
+            Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+        }
+    }
+
+    private static function getPurchaseLineMap($purchase_id){
+        $itemArr = array();
+        $items = PurchaseLine::model()->findAllByAttributes(array('purchase_id'=>$purchase_id));
+        foreach ($items as $item){
+            $itemArr[$item->base_product_id] = $item;
+        }
+        return $itemArr;
+    }
+
+    public function actionDailyProcurement(){
+        //echo "<pre>";
+        if(empty($_GET['w_id'])){
+            Yii::app()->controller->redirect("index.php?r=user/profile");
+        }
+        $w_id = $_GET['w_id'];
+
+        if(empty($_POST['delivery_date'])){
+            //Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+            $this->redirect(Yii::app()->request->urlReferrer);
+        }
+        $date = $_POST['delivery_date'];
+        //$date = $this->getDateForDailyTransfer();
+
+        TransferDao::createTransfer($w_id, $date);
+
+        Yii::app()->controller->redirect(Yii::app()->request->urlReferrer);
+    }
+
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

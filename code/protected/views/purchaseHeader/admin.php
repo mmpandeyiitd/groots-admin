@@ -8,11 +8,17 @@ $this->breadcrumbs=array(
 	'Manage',
 );
 
-
 if($showCreate){
 	$this->menu=array(
 		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
 	);
+}
+
+if($w_id==SOURCE_WH_ID && ($this->checkAccess('SuperAdmin') || $this->checkAccessByData('ProcurementEditor', array('warehouse_id'=>$w_id) ) )){
+	$procurementAccess = true;
+}
+else{
+	$procurementAccess = false;
 }
 
 /*if($this->checkAccess('ProcurementEditor', array('warehouse_id'=>$w_id))){
@@ -44,7 +50,6 @@ $('.search-form form').submit(function(){
 
 <h1>Manage Purchases</h1>
 
-
 <div class="row">
        
     <?php
@@ -71,6 +76,47 @@ $('.search-form form').submit(function(){
     echo CHtml::button('Download Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
     ?>
     </div>
+
+<?php if($procurementAccess){
+	?>
+
+	<br>
+	<h4>Auto Generate Procurement Order</h4>
+
+	<?php
+		$form=$this->beginWidget('CActiveForm', array(
+		'id'=>'procurement-date',
+		'action'=>Yii::app()->createUrl('//purchaseHeader/dailyProcurement',array("w_id"=>$w_id)),
+		'enableAjaxValidation'=>false,
+	));
+		echo $form->errorSummary($model->errors);
+	?>
+	<div class="row">
+		<?php echo $form->labelEx($model, 'delivery_date');
+		 $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+			//'model'=>$model,
+			'name'=>'delivery_date',
+			'value'=>$model->delivery_date,
+
+			'id'=>'date',
+			//'value'=> date('Y-m-d'),
+			'options'=>array(
+				'dateFormat' => 'yy-mm-dd',
+				'showAnim'=>'fold',
+			),
+			'htmlOptions'=>array(
+				'style'=>'height:20px;'
+			),
+		));
+		echo $form->error($model,'date');
+
+		echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+
+		?>
+	</div>
+	<?php $this->endWidget();?>
+<?php } ?>
+
 <?php /*echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); */?><!--
 <div class="search-form" style="display:none">
 <?php /*$this->renderPartial('_search',array(

@@ -75,7 +75,7 @@ class InventoryController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
         }
-        if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>$w_id))){
+        if($this->checkAccess('SuperAdmin')){
             $editOnly = false;
         }
 
@@ -116,7 +116,7 @@ class InventoryController extends Controller
                 $date = $_POST['InventoryHeader']['date'];
                 $warehouse_id = $_POST['InventoryHeader']['warehouse_id'];
                 foreach ($_POST['base_product_id'] as $key => $bp_id) {
-                    $delivered_qty = trim($_POST['schedule_inv'][$key]);
+                    //$delivered_qty = trim($_POST['schedule_inv'][$key]);
                     $schedule_inv = trim($_POST['schedule_inv'][$key]);
                     $present_inv = trim($_POST['present_inv'][$key]);
                     $liquid_inv = trim($_POST['liquid_inv'][$key]);

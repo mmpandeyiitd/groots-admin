@@ -154,6 +154,7 @@ class Inventory extends CActiveRecord
     }
 
     public static function getInventoryCalculationData($w_id, $date){
+        //echo "<pre>";
         $quantitiesMap = array();
         $prevDayInv = self::getPrevDayInvMap($date);
         $orderSum = OrderLine::getDeliveredOrderSumByDate($w_id, $date);
@@ -161,7 +162,7 @@ class Inventory extends CActiveRecord
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
         $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
         $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
-
+//print_r($transferOutSum);die;
         $totalPurchase = 0;
         $totalOrder = 0;
         $totalTransferIn = 0;
