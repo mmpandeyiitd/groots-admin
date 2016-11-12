@@ -32,7 +32,7 @@ class InventoryController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin'),
+				'actions'=>array('create','update','admin','downloadWastageReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -171,6 +171,43 @@ class InventoryController extends Controller
 		));
 	}
 
+    public function actionDownloadWastageReport(){
+        //var_dump($_GET); echo "ehll"; die;
+
+
+        echo "<pre>";
+        $date = $_GET['date'];
+        $w_id = $_GET['w_id'];
+        $select = "bp.title, i.present_inv, i.wastage, i.liquid_inv, i.liquidation_wastage";
+        // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
+        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where warehouse_id = '.$w_id.' and date = '."'".$date."'";
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        $fileName = $date." wastageReport.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.

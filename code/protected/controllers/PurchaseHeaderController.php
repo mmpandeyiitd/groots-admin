@@ -1,5 +1,5 @@
 <?php
-//Yii::import('application.Dao.TransferDao', true) ;
+
 class PurchaseHeaderController extends Controller
 {
 	/**
@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','dailyProcurement'),
+				'actions'=>array('create','update', 'admin','downloadProcurementReport', 'dailyProcurement'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -177,10 +177,9 @@ class PurchaseHeaderController extends Controller
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
                                 $purchaseLine->save();
                             }
+                
                         }
                     }
-
-
                     $transaction->commit();
                     $this->redirect(array('admin','w_id'=>$model->warehouse_id));
                 }
@@ -380,7 +379,53 @@ class PurchaseHeaderController extends Controller
         ));
 	}
 
-    public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
+
+    public function actionDownloadProcurementReport(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
+        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) as order_qty from groots_orders.purchase_line as pl
+                left join groots_orders.purchase_header as ph
+                on ph.id = pl.purchase_id
+                left join cb_dev_groots.base_product as bp 
+                on bp.base_product_id = pl.base_product_id
+                where ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
+                group by pl.base_product_id';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        if(!isset($dataArray) || empty($dataArray)){
+            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
+        else{
+            $fileName = $date."procurement_report";
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+
+            if (isset($dataArray['0'])) {
+                $fp = fopen('php://output', 'w');
+                $columnstring = implode(',', array_keys($dataArray['0']));
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                fputcsv($fp, $updatecolumn);
+                foreach ($dataArray AS $values) {
+                    fputcsv($fp, $values);
+                }
+                fclose($fp);
+            }
+            ob_flush();
+        }
+    }
+
+
+public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         $purchaseOrder = PurchaseHeader::model()->findByAttributes(array('delivery_date' => $date, 'warehouse_id' =>$w_id, 'purchase_type' => 'regular', 'status' => 'pending'));
 
         $transaction = Yii::app()->db->beginTransaction();
@@ -451,7 +496,7 @@ class PurchaseHeaderController extends Controller
     }
 
 
-    /**
+	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
