@@ -98,7 +98,7 @@ class PurchaseHeaderController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    //echo "<pre>";
+	    echo "<pre>";
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -108,15 +108,32 @@ class PurchaseHeaderController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
+        $purchaseLineMap = array();
 		$model=new PurchaseHeader('search');
-
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        //print_r($popularItems);die;
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>300,
             ),
         ));
+
+
+        $inv_header = new InventoryHeader('search');
+        if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
+            $date = $_POST['InventoryHeader']['date'];
+        }
+        else{
+            $date = date('Y-m-d');
+            $date = "2016-10-10";
+        }
+        $inv_header->date = $date;
+        $inv_header->warehouse_id = $w_id;
+        //$model->warehouse_id = $w_id;
+        if(isset($_GET['InventoryHeader'])) {
+            $inv_header->attributes = $_GET['InventoryHeader'];
+        }
+
+        $dataProvider = $inv_header->search();
 //print_r($_POST);die;
         //print_r($otherItems);die;
 
@@ -132,7 +149,7 @@ class PurchaseHeaderController extends Controller
                 $model->created_at = date('Y-m-d');
                 //print_r($model);die;
 
-                if($model->total_payable_amount > 0 && $model->save()){
+                if($model->save()){
 
                     if(isset($_POST['order_qty'])){
                         foreach ($_POST['order_qty'] as $key => $quantity) {
@@ -180,6 +197,8 @@ class PurchaseHeaderController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
+            'inv_header'=>$inv_header,
+            'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
             'w_id' => $w_id,
@@ -224,6 +243,18 @@ class PurchaseHeaderController extends Controller
                 'pageSize'=>100,
             ),
         ));
+
+
+        $inv_header = new InventoryHeader('search');
+        $inv_header->warehouse_id = $w_id;
+
+        if(isset($_GET['InventoryHeader'])) {
+            $inv_header->attributes = $_GET['InventoryHeader'];
+        }
+
+        $dataProvider = $inv_header->search();
+
+
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -293,7 +324,8 @@ class PurchaseHeaderController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
-            'purchaseLines'=> $purchaseLines,
+            'inv_header'=>$inv_header,
+            'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],

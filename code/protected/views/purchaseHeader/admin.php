@@ -111,6 +111,18 @@ $('.search-form form').submit(function(){
 		'delivery_date',
 		'payment_method',
 		'payment_status',
+		array(
+			'name' => 'purchase_type',
+			'value' => '$data->purchase_type',
+			'type' => 'raw',
+			//'filter'=>CHtml::textField("TransferOut[status]", $transferOut->transfer_type),
+		),
+		array(
+			'name' => 'comment',
+			'value' => '$data->comment',
+			'type' => 'raw',
+			//'filter'=>CHtml::textField("TransferIn[comment]", $transferIn->comment),
+		),
 		'status',
 		/*
 		'delivery_date',

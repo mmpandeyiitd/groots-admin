@@ -353,6 +353,9 @@ alter table groots_orders.purchase_header add column `purchase_type` enum('regul
 alter table groots_orders.purchase_line add column `tobe_procured_qty`  decimal(10,2) DEFAULT NULL AFTER length_unit;
 
 -------------
+create parent item (to store total data) and unsorted grade item from bulk product create  (do not forget to fill category_id and parent_id field)
+download upload price update file and and update parent_id for each grade
+
 //copy parent items from test db to production, or upload csv
 update base_product set status=0  where title like "% G2 %";
 
@@ -365,8 +368,27 @@ insert into groots_orders.inventory_header select null, 1, base_product_id, 2, '
 
 select max(base_product_id) from inventory;
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now(),0,0 from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id where base_product_id > ;
+--------------------------
+//delete category mapping of unavailable products
+delete pcm from product_category_mapping pcm join base_product bp on bp.base_product_id=pcm.base_product_id where bp.base_product_id is null;
+//update category of items whose category is set to 1
+update product_category_mapping set category_id=3 where category_id=1;
+//update category of some fruits which have category = 3 instead of 4 from bulk update
 
+alter table cb_dev_groots.base_product add column grade  varchar(100) DEFAULT NULL;
+alter table cb_dev_groots.base_product add column priority int(11) DEFAULT NULL;
+update base_product set grade='Unsorted' where base_product_id > 1717;
+update base_product set priority=1  where base_product_id > 1717;
+update base_product set grade='Parent' where base_product_id>=1560 and base_product_id <=1717;
+update base_product set priority=99  where base_product_id>=1560 and base_product_id <=1717;
+update base_product set grade='A', priority=11 where title like "%(GA)%";
+update base_product set grade='B', priority=12 where title like "%(GB)%";
+update base_product set grade='C', priority=13 where title like "%(GC)%";
+update base_product set grade='D', priority=14 where title like "%(GD)%";
 
+alter table cb_dev_groots.base_product add column title_new varchar(255) default null;
+update cb_dev_groots.base_product bp join base_product bp1 on bp.parent_id=bp1.base_product_id set bp.title_new=bp1.title where bp.parent_id > 0;
+update cb_dev_groots.base_product bp set bp.title_new=bp.title where bp.parent_id is null;
 -----------------------------------
 
 

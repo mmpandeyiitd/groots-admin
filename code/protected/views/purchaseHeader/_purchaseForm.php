@@ -124,53 +124,55 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     <?php echo $form->label($model,'comment'); ?>
     <?php echo $form->textArea($model,'comment', array('cols'=>200, 'rows'=>4, 'style'=>'width:400px;')); ?>
     <?php echo $form->error($model,'comment'); ?>
-</div>
+<!--</div>
     <div>
         <?php
-        echo CHtml::button("Add Items for Purchase", array("onclick" => "showAddItemBox()"));
-        ?>
+/*        echo CHtml::button("Add Items for Purchase", array("onclick" => "showAddItemBox()"));
+        */?>
     </div>
 <div id="alpha-nav-div" style="display:none;">
     <ul id="alphabetical-nav" style="list-style: none;">
-        <?php foreach ($otherItems as $item){
-          ?>
+        <?php /*foreach ($otherItems as $item){
+          */?>
             <li style="" >
 
-                <?php echo CHtml::CheckBox('cb_'.$item['bp_id'],'', array (
+                <?php /*echo CHtml::CheckBox('cb_'.$item['bp_id'],'', array (
                         'value'=>'on',
                         'class'=>'cb_item',
                         'id' => 'cb_'.$item['bp_id'],
-                    )); ?>
+                    )); */?>
 
-                <span class="title" id="title_<?php echo $item['bp_id']; ?>"><?php echo $item['title']; ?><span>
+                <span class="title" id="title_<?php /*echo $item['bp_id']; */?>"><?php /*echo $item['title']; */?><span>
 
             </li>
         <?php
-        }
-        ?>
+/*        }
+        */?>
 
     </ul>
     <?php
-    echo CHtml::button("Add", array("onclick" => "addItemToOrder()"));
-    ?>
-</div>
+/*    echo CHtml::button("Add", array("onclick" => "addItemToOrder()"));
+    */?>
+</div>-->
 
 <?php
 
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id :  "parent parent-id_".$data->parent_id',
+        'rowCssClassExpression' => '$data->getCssClass()',
+        'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
-        //'filter'=>$model,
+        //'filter'=>$inv_header,
         'columns'=>array(
             array(
                 'header' => 'show child',
+                'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
                 'value' => function($data){
 
-                    if($data->BaseProduct->parent_id == 0){
-                        return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")"));
+                    if($data->parent_id == 0){
+                        return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
                     }
                     else{
                         return "";
@@ -183,17 +185,27 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'header' => 'id',
                 'name' => 'base_product_id[]',
                 'value' => function ($data) {
-                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field readOnlyInput', 'readonly'=>'readonly'));
+                    return CHtml::textField('base_product_id[]', $data->base_product_id, array('class'=>'id-field readOnlyInput', 'readonly'=>'readonly', 'id'=>'base-product-id_'.$data->base_product_id));
                 },
                 'type' => 'raw',
             ),
             array(
-                'header' => 'title',
+                'header' => 'Grade',
+                'name' => 'grade',
+                'headerHtmlOptions' => array(),
+                'htmlOptions' => array('style' => 'width:40%;', 'id' => 'grade'),
+                'value' => '$data->grade',
+            ),
+            array(
+                'header' => 'Title',
+                'name' => 'item_title',
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
-                'htmlOptions' => array('style' => 'width:40%;'),
-                'value' => function ($data) {
+                'htmlOptions' => array('style' => 'width:40%;', 'id' => 'title'),
+                'value' => '$data->item_title',
+
+                /*'value' => function ($data) {
                     return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
-                },
+                },*/
                 'type' => 'raw',
             ),
             array(
@@ -202,8 +214,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'visible' => $visibleProcured,
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($readOnlyProcured) {
-                    return CHtml::label($data->tobe_procured_qty, $data->tobe_procured_qty);
+                'value' => function ($data) use ($readOnlyProcured, $purchaseLineMap) {
+                    if(isset($purchaseLineMap[$data->base_product_id])){
+                        $data->tobe_procured_qty = $purchaseLineMap[$data->base_product_id]['tobe_procured_qty'];
+                    }
+                    return CHtml::label($data->tobe_procured_qty, $data->tobe_procured_qty, array('id'=>'tobe-procured_'.$data->base_product_id));
                 },
             ),
             array(
@@ -212,8 +227,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'visible' => $visibleProcured,
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($readOnlyProcured) {
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured));
+                'value' => function ($data) use ($readOnlyProcured, $purchaseLineMap) {
+                    if(isset($purchaseLineMap[$data->base_product_id])){
+                        $data->order_qty = $purchaseLineMap[$data->base_product_id]['order_qty'];
+                    }
+                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured, 'id'=>'order_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
             ),
             array(
@@ -221,8 +239,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'visible' => $visibleReceived,
-                'value' => function ($data) use ($readOnlyReceived) {
-                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input received-inputs', 'readonly'=> $readOnlyReceived));
+                'value' => function ($data) use ($readOnlyReceived, $purchaseLineMap) {
+                    if(isset($purchaseLineMap[$data->base_product_id])){
+                        $data->received_qty = $purchaseLineMap[$data->base_product_id]['received_qty'];
+                    }
+                    return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input received-inputs', 'readonly'=> $readOnlyReceived, 'id'=>'received_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
                 'type' => 'raw',
             ),
@@ -284,14 +305,14 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
     $(document).ready(function() {
 
-        $('#alphabetical-nav').listnav({
+        /*$('#alphabetical-nav').listnav({
             initLetter: 'A',
             includeOther: true,
             filterSelector: '.title',
             includeNums: true,
             removeDisabled: true,
             allText: 'Complete Item list'
-        });
+        });*/
 
         onStartUp();
     });
@@ -330,14 +351,54 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 return false;
             }
         });
+        createItemTotalRow();
 
     }
 
     function toggleChild(bp_id){
         $(".parent-id_"+bp_id).each(function ( ){
-            console.log("in child");
-            $(this).toggle();
+            if(!$(this).hasClass("unsorted")){
+                console.log("reached toggle");
+                $(this).toggle();
+            }
+
         })
+    }
+
+    function createItemTotalRow() {
+        $(".parent").each( function () {
+
+
+            var parent_id = $(this).attr('id').split("_")[1];
+            updateItemTotalRow(parent_id);
+
+            $(this).find("input[type=text] ").each(function(){
+                $(this).attr('readonly', 'readonly');
+            });
+
+
+        });
+    }
+
+    function updateItemTotalRow(parent_id) {
+
+        var totalTobeProcured = 0;
+        var totalOrder = 0;
+        var totalReceived = 0;
+        console.log(parent_id);
+        $(".item_"+parent_id).each( function() {
+            var bp_id = $(this).attr('id').split("_")[1];
+
+            if (bp_id==parent_id) return;
+            totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
+            totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
+            totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+        });
+        console.log(totalOrder);
+        $("#tobe-procured_"+parent_id).html(totalTobeProcured);
+        $("#order_"+parent_id).val(totalOrder);
+        $("#received_"+parent_id).val(totalReceived);
+
     }
 
     function showAddItemBox(){

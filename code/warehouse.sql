@@ -200,7 +200,7 @@ CREATE TABLE groots_orders.`inventory` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   INDEX fk_inv_hist_1 (inv_id),
-  CONSTRAINT fk_inv_hist_1 FOREIGN KEY (inv_id) REFERENCES groots_orders.inventory(id)
+  CONSTRAINT fk_inv_hist_1 FOREIGN KEY (inv_id) REFERENCES groots_orders.inventory_header(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 

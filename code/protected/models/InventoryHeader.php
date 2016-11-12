@@ -12,7 +12,9 @@ class InventoryHeader extends CActiveRecord
     /*public $start_date="";
     public $end_date="";*/
     public $item_title="";
+    public $grade="";
     public $date="";
+    public $vendor_id;
     public $prev_day_inv=0;
     public $present_inv=0;
     public $liquid_inv=0;
@@ -22,6 +24,9 @@ class InventoryHeader extends CActiveRecord
     public $balance = 0;
     public $schedule_inv_absolute=0;
     public $parent_id='';
+    public $tobe_procured_qty;
+    public $order_qty;
+    public $received_qty;
     /**
      * @return string the associated database table name
      */
@@ -96,17 +101,19 @@ class InventoryHeader extends CActiveRecord
             $this->date = date('Y-m-d');
         }
         $criteria = new CDbCriteria;
-        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, inv.present_inv, inv.wastage, inv.liquidation_wastage, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
+        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, inv.present_inv, inv.wastage, inv.liquidation_wastage, inv.extra_inv as extra_inv_absolute, inv.liquid_inv';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
         $criteria->join = " Left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id  and inv.date ='".$this->date."') ";
         $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
         $criteria->compare( 'bp.title', $this->item_title, true );
+        $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
 
         //$criteria->compare('i.date', $this->date, true);
-        $criteria->order = 'bp.title asc';
+        $criteria->order = 'pcm.category_id asc, bp.title_new asc, bp.priority asc';
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -218,6 +225,41 @@ class InventoryHeader extends CActiveRecord
     public function getParentId(){
         return $this->parent_id;
     }
+
+    public function getTobeProcuredQty(){
+        return $this->tobe_procured_qty;
+    }
+
+    public function getOrderQty(){
+        return $this->order_qty;
+    }
+
+    public function getReceivedQty(){
+        return $this->received_qty;
+    }
+
+    public function getVendorId(){
+        return $this->vendor_id;
+    }
+
+    public function getGrade(){
+        return $this->grade;
+    }
+
+    public function getCssClass(){
+        $class = '';
+        if($this->parent_id > 0){
+            if($this->grade=='Unsorted'){
+                $class .= " unsorted ";
+            }
+            $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
+        }
+        else{
+            $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
+        }
+        return $class;
+    }
+
     public static function extraInvType(){
         $connection = Yii::app()->secondaryDb;
         $extraInvTypes = Utility::get_enum_values($connection, self::tableName(), 'extra_inv_type' );

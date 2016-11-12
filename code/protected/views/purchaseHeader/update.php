@@ -20,7 +20,7 @@ $this->menu=array(
 
 <?php $this->renderPartial('_purchaseForm', array(
 	'model'=>$model,
-	'purchaseLines'=> $purchaseLines,
+	'purchaseLineMap'=> $purchaseLineMap,
 	'dataProvider'=>$dataProvider,
 	'otherItems'=> $otherItems,
 	'w_id'=>$w_id,

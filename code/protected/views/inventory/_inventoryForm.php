@@ -72,7 +72,7 @@ $balance = 0;
 
     if(!$editOnly){
         $this->widget('zii.widgets.grid.CGridView', array(
-            'id'=>'total-inv-grid',
+            'id'=>'inv-grid',
             'itemsCssClass' => 'table table-striped table-bordered table-hover',
             'dataProvider'=>$totalInvData,
             'columns'=>array(
@@ -209,7 +209,9 @@ $balance = 0;
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id." item_".$data->parent_id :  "parent parent-id_".$data->parent_id." item_".$data->base_product_id',
+        //'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id." item_".$data->parent_id :  "parent parent-id_".$data->parent_id." item_".$data->base_product_id',
+        'rowCssClassExpression' => '$data->getCssClass()',
+
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
@@ -248,19 +250,20 @@ $balance = 0;
                 'type' => 'raw',
             ),*/
             array(
+                'header' => 'Grade',
+                'name' => 'grade',
+                'headerHtmlOptions' => array(),
+                'htmlOptions' => array('style' => 'width:40%;', 'id' => 'grade'),
+                'value' => '$data->grade',
+            ),
+
+            array(
                 'header' => 'Title',
                 'name' => 'item_title',
                 'headerHtmlOptions' => array('style' => 'width:40%;'),
                 'htmlOptions' => array('style' => 'width:40%;', 'id' => 'title'),
                 'value' => '$data->item_title',
-                'value' => function($data){
-                    if($data->parent_id > 0){
-                        return $data->item_title;
-                    }
-                    else {
-                        return $data->item_title." (unsorted)";
-                    }
-                },
+
                 /*'value' => function ($data) {
                     return CHtml::label($data->BaseProduct->title, $data->BaseProduct->title,array('class'=>'title'));
                 },*/
@@ -540,12 +543,16 @@ $balance = 0;
         });
 
         createItemTotalRow();
-        updateItemTotalRow();
+        //updateItemTotalRow();
     }
 
     function toggleChild(bp_id){
         $(".parent-id_"+bp_id).each(function ( ){
-            $(this).toggle();
+            if(!$(this).hasClass("unsorted")){
+                console.log("reached toggle");
+                $(this).toggle();
+            }
+
         })
     }
 
@@ -597,8 +604,8 @@ $balance = 0;
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            var lastChild;
-
+            updateItemTotalRow(parent_id);
+/*
             var totalSchdInv = 0;
             var totalPrevDayInv = 0;
             var totalPurchase = 0;
@@ -620,7 +627,7 @@ $balance = 0;
 
             $(".item_"+parent_id).each( function() {
                 var bp_id = $(this).attr('id').split("_")[1];
-
+                if (bp_id==parent_id) return;
                 totalSchdInv += parseFloat($("#sch-inv_"+bp_id).val().trim());
                 totalExtraInv += parseFloat($("#extra-inv_"+bp_id).val().trim());
                 totalWastage += parseFloat($("#wastage_"+bp_id).val().trim());
@@ -636,62 +643,38 @@ $balance = 0;
                     totalPurchase += parseFloat($("#purchase_"+bp_id).html().trim());
                     totalBalance += parseFloat($("#balance_"+bp_id).html().trim());
                 }
-                lastChild = this;
 
             });
-            var clone =  $(this).clone();
-            clone.removeClass("parent item_"+parent_id);
-            clone.removeAttr('id');
-            clone.addClass("total").attr('id', 'total_'+parent_id);
-            clone.insertAfter(lastChild);
 
             if(!editOnly){
-                clone.find("#prev-day-inv_"+parent_id).html(totalPrevDayInv);
-                clone.find("#prev-day-inv_"+parent_id).removeAttr('id').attr('id', 'total-prev-day-inv_'+parent_id);
+                $("#prev-day-inv_"+parent_id).html(totalPrevDayInv);
 
-                clone.find("#purchase_"+parent_id).html(totalPurchase);
-                clone.find("#purchase_"+parent_id).removeAttr('id').attr('id', 'total-purchase_'+parent_id);
+                $("#purchase_"+parent_id).html(totalPurchase);
 
-                clone.find("#transferIn_"+parent_id).html(totalTransfIn);
-                clone.find("#transferIn_"+parent_id).removeAttr('id').attr('id', 'total-transferIn_'+parent_id);
+                $("#transferIn_"+parent_id).html(totalTransfIn);
 
-                clone.find("#transferOut_"+parent_id).html(totaltransfOut);
-                clone.find("#transferOut_"+parent_id).removeAttr('id').attr('id', 'total-transferOut_'+parent_id);
+                $("#transferOut_"+parent_id).html(totaltransfOut);
 
-                clone.find("#order_"+parent_id).html(totalOrder);
-                clone.find("#order_"+parent_id).removeAttr('id').attr('id', 'total-order_'+parent_id);
+                $("#order_"+parent_id).html(totalOrder);
 
-                clone.find("#balance_"+parent_id).html(totalBalance);
-                clone.find("#balance_"+parent_id).removeAttr('id').attr('id', 'total-balance_'+parent_id);
+                $("#balance_"+parent_id).html(totalBalance);
             }
 
-            clone.find("#extra-inv_"+parent_id).val(totalExtraInv);
-            clone.find("#extra-inv_"+parent_id).removeAttr('id').attr('id', 'total-extra-inv_'+parent_id);
+            $("#extra-inv_"+parent_id).val(totalExtraInv);
 
-            clone.find("#sch-inv_"+parent_id).val(totalSchdInv);
-            clone.find("#sch-inv_"+parent_id).removeAttr('id').attr('id', 'total-sch-inv_'+parent_id);
+            $("#sch-inv_"+parent_id).val(totalSchdInv);
 
-            clone.find("#pres-inv_"+parent_id).val(totalOrderInv);
-            clone.find("#pres-inv_"+parent_id).removeAttr('id').attr('id', 'total-pres-inv_'+parent_id);
+            $("#pres-inv_"+parent_id).val(totalOrderInv);
 
-            clone.find("#liquid-inv_"+parent_id).val(totalLiqInv);
-            clone.find("#liquid-inv_"+parent_id).removeAttr('id').attr('id', 'total-liquid-inv_'+parent_id);
+            $("#liquid-inv_"+parent_id).val(totalLiqInv);
 
-            clone.find("#wastage-others_"+parent_id).val(totalLiqWastage);
-            clone.find("#wastage-others_"+parent_id).removeAttr('id').attr('id', 'total-wastage-others_'+parent_id);
+            $("#wastage-others_"+parent_id).val(totalLiqWastage);
 
-            clone.find("#wastage_"+parent_id).val(totalWastage);
-            clone.find("#wastage_"+parent_id).removeAttr('id').attr('id', 'total-wastage_'+parent_id);
+            $("#wastage_"+parent_id).val(totalWastage);
+*/
 
-
-
-            var title = clone.find("#title").html().split("(unsorted)")[0]+" (Total)";
-
-            clone.find("#title").html(title);
-            clone.find("#base-product-id_"+parent_id).val("Total");
-            clone.find(".expand-bt").html("");
-            clone.find("input").each(function(){
-               $(this).attr('disabled', 'disabled');
+            $(this).find("input[type=text] ").each(function(){
+               $(this).attr('readonly', 'readonly');
             });
         });
     }
@@ -719,7 +702,7 @@ $balance = 0;
 
         $(".item_"+parent_id).each( function() {
             var bp_id = $(this).attr('id').split("_")[1];
-
+            if (bp_id==parent_id) return;
             totalSchdInv += parseFloat($("#sch-inv_"+bp_id).val().trim());
             totalExtraInv += parseFloat($("#extra-inv_"+bp_id).val().trim());
             totalWastage += parseFloat($("#wastage_"+bp_id).val().trim());
@@ -742,20 +725,20 @@ $balance = 0;
 
         if(!editOnly){
 
-            $("#total-prev-day-inv_"+parent_id).html(totalPrevDayInv);
-            $("#total-purchase_"+parent_id).html(totalPurchase);
-            $("#total-transferIn_"+parent_id).html(totalTransfIn);
-            $("#total-transferOut_"+parent_id).html(totaltransfOut);
-            $("#total-order_"+parent_id).html(totalOrder);
+            $("#prev-day-inv_"+parent_id).html(totalPrevDayInv);
+            $("#purchase_"+parent_id).html(totalPurchase);
+            $("#transferIn_"+parent_id).html(totalTransfIn);
+            $("#transferOut_"+parent_id).html(totaltransfOut);
+            $("#order_"+parent_id).html(totalOrder);
 
-            $("#total-balance_"+parent_id).html(totalBalance);
+            $("#balance_"+parent_id).html(totalBalance);
         }
-        $("#total-sch-inv_"+parent_id).val(totalSchdInv);
-        $("#total-extra-inv_"+parent_id).val(totalExtraInv);
-        $("#total-pres-inv_"+parent_id).val(totalOrderInv);
-        $("#total-liquid-inv_"+parent_id).val(totalLiqInv);
-        $("#total-wastage-others_"+parent_id).val(totalLiqWastage);
-        $("#total-wastage_"+parent_id).val(totalWastage);
+        $("#sch-inv_"+parent_id).val(totalSchdInv);
+        $("#extra-inv_"+parent_id).val(totalExtraInv);
+        $("#pres-inv_"+parent_id).val(totalOrderInv);
+        $("#liquid-inv_"+parent_id).val(totalLiqInv);
+        $("#wastage-others_"+parent_id).val(totalLiqWastage);
+        $("#wastage_"+parent_id).val(totalWastage);
 
     }
 

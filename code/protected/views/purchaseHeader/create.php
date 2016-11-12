@@ -17,6 +17,6 @@ $this->menu=array(
 <h1>Create Purchases</h1>
 
 <?php //$this->renderPartial('_form', array('model'=>$model)); ?>
-<?php $this->renderPartial('_purchaseForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'otherItems'=>$otherItems, 'w_id'=>$w_id)); ?>
+<?php $this->renderPartial('_purchaseForm', array('model'=>$model, 'inv_header'=>$inv_header, 'dataProvider'=>$dataProvider, 'otherItems'=>$otherItems, 'w_id'=>$w_id, 'purchaseLineMap'=>$purchaseLineMap)); ?>
 
 
