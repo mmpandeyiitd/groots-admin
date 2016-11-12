@@ -98,7 +98,7 @@ class PurchaseHeaderController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    echo "<pre>";
+	    //echo "<pre>";
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -108,7 +108,7 @@ class PurchaseHeaderController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
-        $purchaseLineMap = array();
+
 		$model=new PurchaseHeader('search');
         list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
@@ -117,16 +117,9 @@ class PurchaseHeaderController extends Controller
             ),
         ));
 
-
+        $purchaseLineMap = array();
         $inv_header = new InventoryHeader('search');
-        if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
-            $date = $_POST['InventoryHeader']['date'];
-        }
-        else{
-            $date = date('Y-m-d');
-            $date = "2016-10-10";
-        }
-        $inv_header->date = $date;
+
         $inv_header->warehouse_id = $w_id;
         //$model->warehouse_id = $w_id;
         if(isset($_GET['InventoryHeader'])) {

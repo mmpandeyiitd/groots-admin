@@ -112,6 +112,15 @@ class TransferHeaderController extends Controller
                 'pageSize'=>100,
             ),
         ));
+
+        $transferLineMap = array();
+        $inv_header = new InventoryHeader('search');
+        $inv_header->warehouse_id = $w_id;
+        if(isset($_GET['InventoryHeader'])) {
+            $inv_header->attributes = $_GET['InventoryHeader'];
+        }
+
+        $dataProvider = $inv_header->search();
 //print_r($_POST);die;
         //print_r($otherItems);die;
 
@@ -165,6 +174,8 @@ class TransferHeaderController extends Controller
 
         $this->render('create',array(
             'model'=>$model,
+            'inv_header'=>$inv_header,
+            'transferLineMap'=> $transferLineMap,
             'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
@@ -204,6 +215,17 @@ class TransferHeaderController extends Controller
                 'pageSize'=>100,
             ),
         ));
+
+        $inv_header = new InventoryHeader('search');
+        $inv_header->warehouse_id = $w_id;
+
+        if(isset($_GET['InventoryHeader'])) {
+            $inv_header->attributes = $_GET['InventoryHeader'];
+        }
+
+        $dataProvider = $inv_header->search();
+
+
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -274,7 +296,8 @@ class TransferHeaderController extends Controller
 
         $this->render('update',array(
             'model'=>$model,
-            'transferLines'=> $transferLines,
+            'inv_header'=>$inv_header,
+            'transferLineMap'=> $transferLineMap,
             'dataProvider'=>$dataProvider,
             'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],

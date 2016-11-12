@@ -26,6 +26,7 @@ class InventoryHeader extends CActiveRecord
     public $parent_id='';
     public $tobe_procured_qty;
     public $order_qty;
+    public $delivered_qty;
     public $received_qty;
     /**
      * @return string the associated database table name
@@ -232,6 +233,10 @@ class InventoryHeader extends CActiveRecord
 
     public function getOrderQty(){
         return $this->order_qty;
+    }
+
+    public function getDeliveredQty(){
+        return $this->delivered_qty;
     }
 
     public function getReceivedQty(){

@@ -164,7 +164,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
         'afterAjaxUpdate' => 'onStartUp',
         'dataProvider'=>$dataProvider,
-        //'filter'=>$inv_header,
+        'filter'=>$inv_header,
         'columns'=>array(
             array(
                 'header' => 'show child',

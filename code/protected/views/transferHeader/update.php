@@ -20,7 +20,8 @@ $this->menu=array(
 
 <?php $this->renderPartial('_transferForm', array(
 	'model'=>$model,
-	'purchaseLines'=> $transferLines,
+	'inv_header'=> $inv_header,
+	'transferLineMap'=> $transferLineMap,
 	'dataProvider'=>$dataProvider,
 	'otherItems'=> $otherItems,
 	'w_id'=>$w_id,
