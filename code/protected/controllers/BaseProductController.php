@@ -1253,8 +1253,8 @@ class BaseProductController extends Controller {
                 $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id');
 
                 if ($model->action == 'update') {
-                    $requiredFields = array('Subscribed Product ID');
-                    $defaultFields[] = 'Subscribed Product ID';
+                    $requiredFields = array('Base Product ID');
+                    $defaultFields[] = 'Base Product ID';
                 }
                 if (($handle = fopen("$fileName", "r")) !== FALSE) {
                     $logDir = "log/";
@@ -1289,16 +1289,16 @@ class BaseProductController extends Controller {
                             } else {
 
                                 $row = array();
-                                if (isset($cols['Subscribed Product ID'])) {
+                                if (isset($cols['Base Product ID'])) {
                                     try {
-                                        if (trim($data[$cols['Subscribed Product ID']]) == null) {
+                                        if (trim($data[$cols['Base Product ID']]) == null) {
                                             fwrite($handle1, "\nRow : " . $i . " Base product id is empty.");
                                             continue;
                                         }
-                                        $model1 = $this->loadModel(trim($data[$cols['Subscribed Product ID']]));
+                                        $model1 = $this->loadModel(trim($data[$cols['Base Product ID']]));
                                         // echo'<pre>';  print_r($model1);die;
                                     } catch (Exception $e) {
-                                        fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Subscribed Product ID']]} does not exist.");
+                                        fwrite($handle1, "\nRow : " . $i . " Base product {$data[$cols['Base Product ID']]} does not exist.");
 
                                         continue;
                                     }
@@ -1314,6 +1314,8 @@ class BaseProductController extends Controller {
                                 }
                                 if (isset($cols['base_product_id']))
                                     $baseid = str_replace("’", "'", trim($data[$cols['base_product_id']]));
+                                if (isset($cols['Base Product ID']))
+                                    $baseidUpdate = str_replace("’", "'", trim($data[$cols['Base Product ID']]));
                                 if (isset($cols['title']))
                                     $row['title'] = str_replace("’", "'", trim($data[$cols['title']]));
                                 if (isset($cols['Pack Size']))
@@ -1400,10 +1402,10 @@ class BaseProductController extends Controller {
                                     //  }
                                     if ($cat_flag == 1) {
                                         $cateogryarray[] = $categories;
-                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price baseid1'.$baseidUpdate);
                                     }
                                     if ($categories == '') {
-                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price');
+                                        Yii::app()->user->setFlash('error', 'There seems to be an error in the product data you have created. Please see that none of the following fields are blank: Title, Category id, Pack size, Pack unit, Store price, Store offer price baseid2'.$baseidUpdate);
                                     }
                                 }
 
@@ -1590,8 +1592,8 @@ class BaseProductController extends Controller {
                                     }
                                 } else if ($model1->action == 'update') {
                                     $model1->save();
-                                    if (isset($cols['Subscribed Product ID']))
-                                        $bp = trim($data[$cols['Subscribed Product ID']]);
+                                    if (isset($cols['Base Product ID']))
+                                        $bp = trim($data[$cols['Base Product ID']]);
                                     $connection = Yii::app()->db;
                                     $sql = "SELECT * from subscribed_product where base_product_id='" . $bp . "'";
                                     $command = $connection->createCommand($sql);
@@ -1802,34 +1804,36 @@ class BaseProductController extends Controller {
                                     $categories = '';
                                     //  is_numeric($data[$cols['categoryIds'])
                                     //$categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                    $categories = trim($data[$cols['categoryId']]);
 
-                                    $category_obj = new Category();
-                                    if ($categories != '') {
-                                        if (isset($categories) && !empty($categories)) {
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT DISTINCT category_id
+                                }
+
+                                $categories = trim($data[$cols['categoryId']]);
+
+                                $category_obj = new Category();
+                                if ($categories != '') {
+                                    if (isset($categories) && !empty($categories)) {
+                                        $connection = Yii::app()->db;
+                                        $sql = "SELECT DISTINCT category_id
                                         FROM `category`
                                         WHERE category_id =$categories
                                         AND is_deleted = 0";
-                                            $catinfo = '';
-                                            $command = $connection->createCommand($sql);
-                                            $catinfo = $command->queryAll();
-                                            $catIds = array();
-                                            if (isset($catinfo) && !empty($catinfo)) {
+                                        $catinfo = '';
+                                        $command = $connection->createCommand($sql);
+                                        $catinfo = $command->queryAll();
+                                        $catIds = array();
+                                        if (isset($catinfo) && !empty($catinfo)) {
 //                                                foreach ($catinfo as $cat) {
 //                                                    $catIds[] = $cat['category_id'];
 //                                                }
-                                                $catIds[] = $categories;
+                                            $catIds[] = $categories;
 
-                                                $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
-                                                //$catDiff = array_diff($categories, $catIds);
-                                                if (!empty($catDiff)) {
+                                            $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
+                                            //$catDiff = array_diff($categories, $catIds);
+                                            if (!empty($catDiff)) {
 
-                                                    Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
+                                                Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
 
-                                                    break;
-                                                }
+                                                break;
                                             }
                                         }
                                     }
