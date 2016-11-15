@@ -101,7 +101,6 @@ class OrderHeader extends CActiveRecord {
             array('transaction_id, bank_transaction_id, payment_mod, bankname', 'length', 'max' => 50),
             array('shipping_phone', 'length', 'max' => 10),
             array('shipping_phone', 'length', 'min' => 10),
-            array('status', 'length', 'max' => 9),
 //            array('cron_processed_flag', 'length', 'max' => 1),
 //            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
