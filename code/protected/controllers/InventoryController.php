@@ -178,7 +178,7 @@ class InventoryController extends Controller
         echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage";
+        $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage, i.balance";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
         $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where date = '."'".$date."'";
         $connection = Yii::app()->secondaryDb;
@@ -448,7 +448,7 @@ class InventoryController extends Controller
             $w_name = $value['name'];
             $row[$w_name.'_wastage'] = $value['wastage'];
             $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
-            $row[$w_name.'_balance'] = 0;
+            $row[$w_name.'_balance'] = $value['balance'];
             if(!array_key_exists($value['base_product_id'], $tempArray)){
                 $row['title'] = $value['title'];
             }
