@@ -71,7 +71,7 @@ function getIfExist($quantitiesMap, $key, $data){
     <div class = "row" style="float:right">
     <?php 
     $url = Yii::app()->controller->createUrl("Inventory/downloadWastageReport",array('w_id' => $w_id));
-    echo CHtml::button('Download Report', array('onclick' => "onClickDownloadReport('".$url."')")); 
+    echo CHtml::button('Download Wastage Report', array('onclick' => "onClickDownloadReport('".$url."')")); 
     ?>
     </div>
 

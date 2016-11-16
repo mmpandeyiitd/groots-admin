@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadProcurementReport', 'dailyProcurement'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -373,7 +373,7 @@ class PurchaseHeaderController extends Controller
 	}
 
 
-    public function actionDownloadProcurementReport(){
+    public function actionDownloadReconciliationReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
         $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) as order_qty from groots_orders.purchase_line as pl
@@ -381,7 +381,7 @@ class PurchaseHeaderController extends Controller
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
-                where ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
+                where ( pl.order_qty != pl.received_qty or pl.order_qty is null or pl.received_qty is null) and ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
                 group by pl.base_product_id';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
@@ -392,7 +392,7 @@ class PurchaseHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         else{
-            $fileName = $date."procurement_report";
+            $fileName = $date."reconciliation_report";
             ob_clean();
             header('Pragma: public');
             header('Expires: 0');
@@ -516,4 +516,35 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 			Yii::app()->end();
 		}
 	}
+
+    public function actionDownloadProcurementReport(){
+        $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
+        left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id where ph.status not in ("failed", "cancelled") and ph.delivery_date = CURDATE() group by pl.base_product_id';
+       $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        $fileName = date('Y-m-d')."procurement_report";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush(); 
+    }
 }

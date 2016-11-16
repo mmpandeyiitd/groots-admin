@@ -452,7 +452,7 @@ class TransferHeaderController extends Controller
             on th.id = tl.transfer_id
             left join cb_dev_groots.base_product as bp
             on bp.base_product_id = tl.base_product_id
-            where tl.order_qty is not null and tl.order_qty > 0  and ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status = "received" and tl.status = "Confirmed"';
+            where  ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status = "received" and tl.status = "Confirmed"';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
