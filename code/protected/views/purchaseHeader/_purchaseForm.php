@@ -390,14 +390,32 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             var bp_id = $(this).attr('id').split("_")[1];
 
             if (bp_id==parent_id) return;
-            totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
-            totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
-            totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            if($("#tobe-procured_"+bp_id).length > 0){
+                totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
+            }
+            if($("#order_"+bp_id).length > 0){
+                totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
+            }
+            if($("#received_"+bp_id).length > 0){
+                totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            }
+
+
+
         });
         console.log(totalOrder);
-        $("#tobe-procured_"+parent_id).html(totalTobeProcured);
-        $("#order_"+parent_id).val(totalOrder);
-        $("#received_"+parent_id).val(totalReceived);
+        if($("#tobe-procured_"+parent_id).length > 0){
+            $("#tobe-procured_"+parent_id).html(totalTobeProcured);
+        }
+        if($("#order_"+parent_id).length > 0){
+            $("#order_"+parent_id).val(totalOrder);
+        }
+        if($("#received_"+parent_id).length > 0){
+            $("#received_"+parent_id).val(totalReceived);
+        }
+
+
+
 
     }
 

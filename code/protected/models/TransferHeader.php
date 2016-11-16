@@ -83,6 +83,7 @@ class TransferHeader extends CActiveRecord
         $criteria->compare('status', $this->status);
         $criteria->compare('delivery_date', $this->delivery_date);
         $criteria->compare('comment', $this->comment);
+        $criteria->order = 'delivery_date desc, id desc';
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));

@@ -20,6 +20,7 @@ $this->menu=array(
 
 <?php $this->renderPartial('_purchaseForm', array(
 	'model'=>$model,
+	'inv_header'=>$inv_header,
 	'purchaseLineMap'=> $purchaseLineMap,
 	'dataProvider'=>$dataProvider,
 	'otherItems'=> $otherItems,

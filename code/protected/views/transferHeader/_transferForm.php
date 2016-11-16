@@ -23,6 +23,21 @@ if($update == true) {
     $disabled = "disabled";
 }
 
+$visibleReceived = false;
+$visibleDelivered = false;
+if($this->checkAccess('SuperAdmin')){
+    $visibleReceived = true;
+    $visibleDelivered = true;
+}
+elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->source_warehouse_id))){
+    $visibleReceived = false;
+    $visibleDelivered = true;
+}
+elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->dest_warehouse_id))){
+    $visibleReceived = true;
+    $visibleDelivered = false;
+}
+
 ?>
 
 <div class="form">
@@ -190,6 +205,7 @@ if($update == true) {
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
+                'visible' => $visibleReceived,
                 'value' => function ($data) use($transferLineMap) {
                     if(isset($transferLineMap[$data->base_product_id])){
                         $data->order_qty = $transferLineMap[$data->base_product_id]['order_qty'];
@@ -202,6 +218,7 @@ if($update == true) {
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
+                'visible' => $visibleDelivered,
                 'value' => function ($data) use($transferLineMap) {
                     if(isset($transferLineMap[$data->base_product_id])){
                         $data->delivered_qty = $transferLineMap[$data->base_product_id]['delivered_qty'];
@@ -213,6 +230,7 @@ if($update == true) {
                 'header' => 'Received Quantity',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
+                'visible' => $visibleReceived,
                 'value' => function ($data) use($transferLineMap) {
                     if(isset($transferLineMap[$data->base_product_id])){
                         $data->received_qty = $transferLineMap[$data->base_product_id]['received_qty'];
@@ -347,13 +365,30 @@ if($update == true) {
             var bp_id = $(this).attr('id').split("_")[1];
 
             if (bp_id==parent_id) return;
-            totalOrdered += parseFloat($("#order_"+bp_id).val().trim()) || 0;
-            totalDelivered += parseFloat($("#delivered_"+bp_id).val().trim()) || 0;
-            totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            if($("#order_"+bp_id).length > 0){
+                totalOrdered += parseFloat($("#order_"+bp_id).val().trim()) || 0;
+            }
+            if($("#delivered_"+bp_id).length > 0){
+                totalDelivered += parseFloat($("#delivered_"+bp_id).val().trim()) || 0;
+            }
+            if($("#received_"+bp_id).length > 0){
+                totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            }
+
+
         });
-        $("#order_"+parent_id).val(totalOrdered);
-        $("#delivered_"+parent_id).val(totalDelivered);
-        $("#received_"+parent_id).val(totalReceived);
+        if($("#order_"+parent_id).length > 0){
+            $("#order_"+parent_id).val(totalOrdered);
+        }
+        if($("#delivered_"+parent_id).length > 0){
+            $("#delivered_"+parent_id).val(totalDelivered);
+        }
+        if($("#received_"+parent_id).length > 0){
+            $("#received_"+parent_id).val(totalReceived);
+        }
+
+
+
 
     }
 

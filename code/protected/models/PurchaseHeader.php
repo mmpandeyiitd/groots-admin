@@ -73,6 +73,7 @@ class PurchaseHeader extends CActiveRecord
         $criteria->compare('payment_method', $this->payment_method);
         $criteria->compare('payment_status', $this->payment_status);
         $criteria->compare('status', $this->status);
+        $criteria->order = 'delivery_date desc, id desc';
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));

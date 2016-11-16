@@ -23,7 +23,7 @@ class InventoryHeader extends CActiveRecord
     public $liquidation_wastage = 0;
     public $balance = 0;
     public $schedule_inv_absolute=0;
-    public $parent_id='';
+    public $parent_id;
     public $tobe_procured_qty;
     public $order_qty;
     public $delivered_qty;

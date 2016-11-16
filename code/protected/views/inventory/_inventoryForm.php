@@ -231,7 +231,7 @@ $balance = 0;
                 'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
                 'value' => function($data){
 
-                    if($data->parent_id == 0){
+                    if(isset($data->parent_id) && $data->parent_id == 0){
                         return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
                     }
                     else{

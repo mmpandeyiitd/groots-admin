@@ -138,26 +138,46 @@ class TransferHeaderController extends Controller
 
                 if($model->save()){
 
-                    foreach ($_POST['order_qty'] as $key => $order_qty) {
-                        if ($order_qty > 0) {
-                            $transferLine = new TransferLine();
-                            $transferLine->transfer_id = $model->id;
-                            $transferLine->base_product_id = $_POST['base_product_id'][$key];
+                    if(isset($_POST['received_qty']) || isset($_POST['delivered_qty'])) {
+                        $qtyArr = array();
+                        if(isset($_POST['received_qty'])){
+                            $qtyArr = $_POST['received_qty'];
+                        }
+                        if(isset($_POST['delivered_qty'])){
+                            $qtyArr = $_POST['delivered_qty'];
+                        }
+                        foreach ($qtyArr as $key => $quantity) {
                             if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
-                                $transferLine->order_qty = $_POST['order_qty'][$key];
+                                $order_qty = trim($_POST['order_qty'][$key]);
                             }
                             if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
-                                $transferLine->delivered_qty = $_POST['delivered_qty'][$key];
+                                $delivered_qty = trim($_POST['delivered_qty'][$key]);
                             }
                             if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                $transferLine->received_qty = $_POST['received_qty'][$key];
+                                $received_qty = trim($_POST['received_qty'][$key]);
                             }
 
-                            //$transferLine->unit_price = $_POST['store_offer_price'][$key];
+                            if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
+                                $transferLine = new TransferLine();
+                                $transferLine->transfer_id = $model->id;
+                                $transferLine->base_product_id = $_POST['base_product_id'][$key];
+                                if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                    $transferLine->order_qty = $_POST['order_qty'][$key];
+                                }
+                                if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
+                                    $transferLine->delivered_qty = $_POST['delivered_qty'][$key];
+                                }
+                                if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                    $transferLine->received_qty = $_POST['received_qty'][$key];
+                                }
+
+                                //$transferLine->unit_price = $_POST['store_offer_price'][$key];
                                 $transferLine->created_at = date("y-m-d H:i:s");
-                            $transferLine->save();
+                                $transferLine->save();
+                            }
                         }
                     }
+
                     //$transaction->commit();
                     Yii::app()->controller->redirect(array('admin','w_id'=>$w_id));
                 }
@@ -236,11 +256,25 @@ class TransferHeaderController extends Controller
                 $model->attributes = $_POST['TransferHeader'];
 
                 if ($model->save()) {
-                    foreach ($_POST['order_qty'] as $key => $order_qty) {
+                    $qtyArr = array();
+                    if(isset($_POST['received_qty'])){
+                        $qtyArr = $_POST['received_qty'];
+                    }
+                    if(isset($_POST['delivered_qty'])){
+                        $qtyArr = $_POST['delivered_qty'];
+                    }
+                    foreach ($qtyArr as $key => $order_qty) {
                         //$orderQt = $_POST['product_qty'][$key];
-                        $order_qty = trim($_POST['order_qty'][$key]);
-                        $delivered_qty = trim($_POST['delivered_qty'][$key]);
-                        $received_qty = trim($_POST['received_qty'][$key]);
+                        if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                            $order_qty = trim($_POST['order_qty'][$key]);
+                        }
+                        if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
+                            $delivered_qty = trim($_POST['delivered_qty'][$key]);
+                        }
+                        if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                            $received_qty = trim($_POST['received_qty'][$key]);
+                        }
+
 
                         if(!isset($order_qty) || empty($order_qty)){
                             $order_qty = 0;

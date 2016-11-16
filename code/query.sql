@@ -378,9 +378,9 @@ update product_category_mapping set category_id=3 where category_id=1;
 alter table cb_dev_groots.base_product add column grade  varchar(100) DEFAULT NULL;
 alter table cb_dev_groots.base_product add column priority int(11) DEFAULT NULL;
 update base_product set grade='Unsorted' where base_product_id > 1717;
-update base_product set priority=1  where base_product_id > 1717;
+update base_product set priority=99  where base_product_id > 1717;
 update base_product set grade='Parent' where base_product_id>=1560 and base_product_id <=1717;
-update base_product set priority=99  where base_product_id>=1560 and base_product_id <=1717;
+update base_product set priority=1  where base_product_id>=1560 and base_product_id <=1717;
 update base_product set grade='A', priority=11 where title like "%(GA)%";
 update base_product set grade='B', priority=12 where title like "%(GB)%";
 update base_product set grade='C', priority=13 where title like "%(GC)%";
@@ -389,9 +389,13 @@ update base_product set grade='D', priority=14 where title like "%(GD)%";
 alter table cb_dev_groots.base_product add column title_new varchar(255) default null;
 update cb_dev_groots.base_product bp join base_product bp1 on bp.parent_id=bp1.base_product_id set bp.title_new=bp1.title where bp.parent_id > 0;
 update cb_dev_groots.base_product bp set bp.title_new=bp.title where bp.parent_id is null;
+
+alter table cb_dev_groots.base_product drop foreign key fk_base_prod_1;
+update cb_dev_groots.base_product bp join base_product bp1 on bp1.parent_id=bp.base_product_id set bp.parent_id=0 where bp1.parent_id > 0;
+
 -----------------------------------
 
 
-insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
+insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 1), ("vendor2", now(), now(), 1),("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
 
 alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
