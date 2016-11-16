@@ -178,14 +178,16 @@ class InventoryController extends Controller
         echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "bp.title, i.present_inv, i.wastage, i.liquid_inv, i.liquidation_wastage";
+        $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
-        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where warehouse_id = '.$w_id.' and date = '."'".$date."'";
+        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where date = '."'".$date."'";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
-        $dataArray = $command->queryAll();
-        $fileName = $date." wastageReport.csv";
+        $data = $command->queryAll();
+        $dataArray = $this->arrangeWastageReportData($data);
+        // var_dump($dataArray);die;
+        $fileName = $date."_wastageReport.csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -424,5 +426,39 @@ class InventoryController extends Controller
         }
     }
 
+    public function arrangeWastageReportData($data){
+        $sql = 'select distinct name, id from cb_dev_groots.warehouses order by id';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $warehouses = $command->queryAll();
+        $tempArray = array();
+        foreach ($data as $key => $value) {
+            $row = array('title' => null);
+            foreach ($warehouses as $key => $warehouse) {
+                $nameSplit = explode(',', $warehouse['name']);
+                $warehouse['name'] = $nameSplit[0];
+                $row[$warehouse['name'].'_wastage'] = null;
+                $row[$warehouse['name'].'_liquidation_wastage'] = null;
+                $row[$warehouse['name'].'_balance'] = null;
+                $row[$key] = null;
+            }
+            $nameSplit = explode(',', $value['name']);
+            $value['name'] = $nameSplit[0];
+            $w_name = $value['name'];
+            $row[$w_name.'_wastage'] = $value['wastage'];
+            $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
+            $row[$w_name.'_balance'] = 0;
+            if(!array_key_exists($value['base_product_id'], $tempArray)){
+                $row['title'] = $value['title'];
+            }
+            $tempArray[$value['base_product_id']] = $row;
+        }
+        $finalArray = array();
+        foreach ($tempArray as $key => $temp) {
+            array_push($finalArray, $temp);
+        }
+        return $finalArray;
+    }
 
 }
