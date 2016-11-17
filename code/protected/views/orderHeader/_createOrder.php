@@ -39,6 +39,14 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
 //echo "<pre>";
 //print_r($orderline_detail[0]['min_order_price']);die;
+
+
+$isAdmin = false;
+if($this->checkAccess('SuperAdmin')){
+    $isAdmin = true;
+}
+
+
 ?>
 <div class="form">
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
@@ -298,13 +306,19 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 
                     <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="finalAmountDisplay">  </span></h3>
 
-                    <?php if(isset($update)){ ?>
+                    <?php if(isset($update)){
+                        if(($model->delivery_date < date('Y-m-d') || $model->status=='Delivered') && !$isAdmin){
+                        }
+                        else {
+                            ?>
+                            <input type="submit" class="button_new" value="Update" id="update" name="update"
+                                   style="width: auto;"/>
+                            <!--<a href="index.php?r=OrderHeader/report&id=<?php //echo $model->attributes['order_id'];
+                            ?>" class="button_new" style="width: auto;" target="_blank"  >Create Invoice</a>-->
 
-                        <input type="submit" class="button_new" value="Update" id="update" name="update" style="width: auto;"/>
-                        <!--<a href="index.php?r=OrderHeader/report&id=<?php //echo $model->attributes['order_id']; ?>" class="button_new" style="width: auto;" target="_blank"  >Create Invoice</a>-->
 
-
-                        <?php
+                            <?php
+                        }
                     }
                     else{ ?>
                         <input type="submit" class="button_new" value="Create Order" id="create" name="create" onclick=""/>

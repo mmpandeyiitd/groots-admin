@@ -6,12 +6,20 @@
  * Time: 11:32 PM
  */
 
-    $this->breadcrumbs=array(
-        'Orders'=>array('admin'),
-        'Update',
-    );
+    
 
-
+$w_id='';
+if(isset($_GET['w_id'])){
+    $w_id = $_GET['w_id'];
+}
+$this->breadcrumbs=array(
+    'Orders'=>array('admin&w_id='.$w_id),
+    'Update',
+);
+$this->menu=array(
+    array('label'=>'Order List', 'url'=>array('admin&w_id='.$w_id)),
+    //array('label'=>'Create Order', 'url'=>array('create&w_id='.$w_id)),
+);
 ?>
 
 <h1>Update Order : <b><?php echo $model->attributes['order_number']?></b></h1>

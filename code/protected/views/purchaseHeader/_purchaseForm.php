@@ -8,12 +8,17 @@
 ?>
 
 <?php
+    $showSubmit = true;
     if(isset($update) && $update==true){
         $update=true;
+        if($model->delivery_date < date('Y-m-d')){
+            $showSubmit = false;
+        }
     }
     else{
         $update = false;
     }
+
 $readOnlyReceived = 'readonly';
 $readOnlyProcured = 'readonly';
 $visibleReceived = false;
@@ -60,7 +65,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     <?php echo $form->dropDownList($model,
     'vendor_id',
     CHtml::listData(Vendor::model()->findAllByAttributes(array('allocated_warehouse_id' => $w_id, 'status'=>1), array('select'=>'id,name','order' => 'name')),'id','name'),
-    array('empty' => 'Select a vendor', 'options'=>array($model->vendor_id=>array('selected'=>'selected')))
+    array( 'options'=>array($model->vendor_id=>array('selected'=>'selected')))
     );
     ?>
     <?php echo $form->error($model,'vendor_id'); ?>
@@ -73,13 +78,18 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 </div>
 
 <div class="row">
-    <?php echo $form->labelEx($model,'delivery_date'); ?>
+    <?php
+    $delivery_date = substr($model->attributes['delivery_date'], 0, 10);
+    if(!isset($delivery_date) || empty($delivery_date)){
+        $model->delivery_date = Utility::getDefaultDeliveryDate();
+    }
+    echo $form->labelEx($model,'delivery_date'); ?>
     <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
         'model'=>$model,
         'attribute'=>'delivery_date',
 
         'id'=>'delivery_date',
-        //'value'=> date('Y-m-d'),
+        //'value'=> $delivery_date,
         'options'=>array(
             'dateFormat' => 'yy-mm-dd',
             'showAnim'=>'fold',
@@ -171,7 +181,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
                 'value' => function($data){
 
-                    if($data->parent_id == 0){
+                    if(isset($data->parent_id) && $data->parent_id == 0){
                         return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
                     }
                     else{
@@ -283,11 +293,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <div class="row buttons">
     <?php
-    if($update==true){
-        echo CHtml::submitButton('Update', array('name'=>'purchase-update'));
-    }
-    else{
-        echo CHtml::submitButton('Create', array('name'=>'purchase-create'));
+    if($showSubmit) {
+        if ($update == true) {
+            echo CHtml::submitButton('Update', array('name' => 'purchase-update'));
+        } else {
+            echo CHtml::submitButton('Create', array('name' => 'purchase-create'));
+        }
     }
     ?>
 

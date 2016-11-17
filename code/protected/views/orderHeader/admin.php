@@ -11,6 +11,10 @@ $this->menu=array(
     //array('label'=>'List InventoryHeader', 'url'=>array('index')),
     array('label'=>'Create Order', 'url'=>array('create&w_id='.$w_id)),
 );
+$isAdmin = false;
+if($this->checkAccess('SuperAdmin')){
+    $isAdmin = true;
+}
 /*
 if ($issuperadmin == 0) {
 
@@ -252,8 +256,12 @@ onclick='return confirm("Do you want to cancel");'/>
                 'header' => 'Action',
                  'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                 'type' => 'raw',
-                'value' => function($data) use ($w_id) {
-                     return CHtml::button("Update",array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"w_id"=>$w_id, "bckstatus"=>$data->status))."'"));
+                'value' => function($data) use ($w_id, $isAdmin) {
+                    $text = "Update";
+                    if(($data->delivery_date < date('Y-m-d') || $data->status=='Delivered') && !$isAdmin){
+                        $text = "View";
+                    }
+                     return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"w_id"=>$w_id, "bckstatus"=>$data->status))."'"));
                 },
             ),
                

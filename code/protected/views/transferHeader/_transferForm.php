@@ -9,9 +9,13 @@
 ?>
 
 <?php
+$showSubmit = true;
 if(isset($update) && $update==true){
     $update=true;
     $source_wid=$model->source_warehouse_id;
+    if($model->delivery_date < date('Y-m-d')){
+        $showSubmit = false;
+    }
 }
 else{
     $update = false;
@@ -79,7 +83,13 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
 
     <div class="row">
-        <?php echo $form->labelEx($model,'delivery_date'); ?>
+        <?php
+        $delivery_date = substr($model->attributes['delivery_date'], 0, 10);
+        if(!isset($delivery_date) || empty($delivery_date)){
+            $model->delivery_date = Utility::getDefaultDeliveryDate();
+        }
+
+        echo $form->labelEx($model,'delivery_date'); ?>
         <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
             'attribute'=>'delivery_date',
@@ -166,7 +176,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
             'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
             'value' => function($data){
 
-                if($data->parent_id == 0){
+                if(isset($data->parent_id) && $data->parent_id == 0){
                     return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")"));
                 }
                 else{
@@ -275,11 +285,12 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
     <div class="row buttons">
         <?php
-        if($update==true){
-            echo CHtml::submitButton('Update', array('name'=>'transfer-update'));
-        }
-        else{
-            echo CHtml::submitButton('Create', array('name'=>'transfer-create'));
+        if($showSubmit) {
+            if ($update == true) {
+                echo CHtml::submitButton('Update', array('name' => 'transfer-update'));
+            } else {
+                echo CHtml::submitButton('Create', array('name' => 'transfer-create'));
+            }
         }
         ?>
 
