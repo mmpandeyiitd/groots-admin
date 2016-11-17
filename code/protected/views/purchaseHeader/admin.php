@@ -179,7 +179,13 @@ $('.search-form form').submit(function(){
 			'header' => 'Update',
 			'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
 			'type' => 'raw',
-			'value' => 'CHtml::button("Update",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id))."\'"))',
+			'value' => function($data){
+				$text = "Update";
+				if($data->delivery_date < date('Y-m-d')){
+					$text = "View";
+				}
+				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id))."'"));
+			},
 		),
 	),
 )); ?>

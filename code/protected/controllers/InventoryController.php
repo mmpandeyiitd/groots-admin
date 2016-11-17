@@ -88,7 +88,7 @@ class InventoryController extends Controller
         }
         else{
             $date = date('Y-m-d');
-            $date = "2016-10-10";
+            //$date = "2016-10-10";
         }
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;
@@ -123,6 +123,7 @@ class InventoryController extends Controller
                     $wastage = trim($_POST['wastage'][$key]);
                     $liquidation_wastage = trim($_POST['liquidation_wastage'][$key]);
                     $extra_inv = trim($_POST['extra_inv'][$key]);
+                    $balance = trim($_POST['balance'][$key]);
                     if(true){
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
@@ -147,6 +148,7 @@ class InventoryController extends Controller
                         $inv->wastage = empty($wastage) ? 0: $wastage;
                         $inv->liquidation_wastage = empty($liquidation_wastage) ? 0: $liquidation_wastage;
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
+                        $inv->balance = empty($balance) ? 0: $balance;
                         $inv->save();
                     }
                 }

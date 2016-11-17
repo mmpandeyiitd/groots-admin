@@ -15,8 +15,10 @@ if(isset($update) && $update==true){
 else{
     $update = false;
 }
-
-
+$showSubmit = true;
+if($model->date < date('Y-m-d')){
+    $showSubmit = false;
+}
 function getIfExist($quantitiesMap, $key, $data){
     if(isset($quantitiesMap[$key][$data->base_product_id]))
         return $quantitiesMap[$key][$data->base_product_id];
@@ -474,6 +476,16 @@ $balance = 0;
                 'type' => 'raw',
             ),
             array(
+                'name' => 'balance',
+                'type'=> 'raw',
+                'headerHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'filterHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'htmlOptions'=>array('style'=>'width:0%; display:none'),
+                'value' => function ($data) {
+                    return CHtml::textField('balance[]', $data->balance, array('class' => 'readOnlyInput', 'id' => 'balance-input_'.$data->base_product_id));
+                },
+            ),
+            array(
                 'name' => 'id',
                 'type'=> 'raw',
                 'headerHtmlOptions'=>array('style'=>'width:0%; display:none'),
@@ -504,11 +516,12 @@ $balance = 0;
 
     <div class="row buttons">
         <?php
-        if($update==true){
-            echo CHtml::submitButton('Update', array('name'=>'inventory-update'));
-        }
-        else{
-            echo CHtml::submitButton('Create', array('name'=>'inventory-create'));
+        if($showSubmit) {
+            if ($update == true) {
+                echo CHtml::submitButton('Update', array('name' => 'inventory-update'));
+            } else {
+                echo CHtml::submitButton('Create', array('name' => 'inventory-create'));
+            }
         }
         ?>
 
@@ -589,6 +602,7 @@ $balance = 0;
             var balance = 0;
             balance = transferIn+prevDayInv+purchase -(schInv+order+extraInv+tranferOut+presInv+liquidInv+wastage+wastage_others);
             $("#balance_"+bp_id).html(balance);
+            $("#balance-input_"+bp_id).val(balance);
         }
 
         /*console.log('sch '+schInv);
@@ -740,6 +754,7 @@ $balance = 0;
             $("#order_"+parent_id).html(totalOrder);
 
             $("#balance_"+parent_id).html(totalBalance);
+            $("#balance-input_"+parent_id).val(totalBalance);
         }
         $("#sch-inv_"+parent_id).val(totalSchdInv);
         $("#extra-inv_"+parent_id).val(totalExtraInv);
