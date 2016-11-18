@@ -219,7 +219,7 @@ $balance = 0;
     $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'purchase-header-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        //'rowCssClassExpression' => '$data->parent_id > 0 ? "child parent-id_".$data->parent_id." item_".$data->parent_id :  "parent parent-id_".$data->parent_id." item_".$data->base_product_id',
+
         'rowCssClassExpression' => '$data->getCssClass()',
 
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
@@ -627,73 +627,6 @@ $balance = 0;
 
             var parent_id = $(this).attr('id').split("_")[1];
             updateItemTotalRow(parent_id);
-/*
-            var totalSchdInv = 0;
-            var totalPrevDayInv = 0;
-            var totalPurchase = 0;
-            var totalTransfIn= 0;
-            var totaltransfOut = 0;
-            var totalOrder = 0;
-            var totalExtraInv = 0;
-            var totalOrderInv = 0;
-            var totalLiqInv = 0;
-            var totalLiqWastage = 0;
-            var totalWastage = 0;
-            var totalBalance = 0;
-
-            var editOnly = false;
-
-            if($("#order_"+parent_id).length == 0) {
-                editOnly = true;
-            }
-
-            $(".item_"+parent_id).each( function() {
-                var bp_id = $(this).attr('id').split("_")[1];
-                if (bp_id==parent_id) return;
-                totalSchdInv += parseFloat($("#sch-inv_"+bp_id).val().trim());
-                totalExtraInv += parseFloat($("#extra-inv_"+bp_id).val().trim());
-                totalWastage += parseFloat($("#wastage_"+bp_id).val().trim());
-                totalLiqWastage += parseFloat($("#wastage-others_"+bp_id).val().trim());
-                totalOrderInv += parseFloat($("#pres-inv_"+bp_id).val().trim());
-                totalLiqInv += parseFloat($("#liquid-inv_"+bp_id).val().trim());
-
-                if(!editOnly){
-                    totalOrder += parseFloat($("#order_"+bp_id).html().trim());
-                    totalPrevDayInv += parseFloat($("#prev-day-inv_"+bp_id).html().trim());
-                    totaltransfOut += parseFloat($("#transferOut_"+bp_id).html().trim());
-                    totalTransfIn += parseFloat($("#transferIn_"+bp_id).html().trim());
-                    totalPurchase += parseFloat($("#purchase_"+bp_id).html().trim());
-                    totalBalance += parseFloat($("#balance_"+bp_id).html().trim());
-                }
-
-            });
-
-            if(!editOnly){
-                $("#prev-day-inv_"+parent_id).html(totalPrevDayInv);
-
-                $("#purchase_"+parent_id).html(totalPurchase);
-
-                $("#transferIn_"+parent_id).html(totalTransfIn);
-
-                $("#transferOut_"+parent_id).html(totaltransfOut);
-
-                $("#order_"+parent_id).html(totalOrder);
-
-                $("#balance_"+parent_id).html(totalBalance);
-            }
-
-            $("#extra-inv_"+parent_id).val(totalExtraInv);
-
-            $("#sch-inv_"+parent_id).val(totalSchdInv);
-
-            $("#pres-inv_"+parent_id).val(totalOrderInv);
-
-            $("#liquid-inv_"+parent_id).val(totalLiqInv);
-
-            $("#wastage-others_"+parent_id).val(totalLiqWastage);
-
-            $("#wastage_"+parent_id).val(totalWastage);
-*/
 
             $(this).find("input[type=text] ").each(function(){
                $(this).attr('readonly', 'readonly');
