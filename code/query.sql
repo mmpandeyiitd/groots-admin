@@ -410,3 +410,59 @@ update base_product set title_new="Tomato Hybrid (Hybrid Tamatar) G1" where base
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 1), ("vendor2", now(), now(), 1),("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
 
 alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
+
+----------------------------------------------------------------vendor table edit
+alter table cb_dev_groots.vendors drop column geolocation, drop product_categories, drop categories_of_interest, drop store_size, drop min_order_price, drop shipping_charge;
+
+alter table cb_dev_groots.vendors
+    add column `bussiness_name` varchar(255) default null,
+    add column `payment_terms` int(3) default null;
+
+
+create table `vendor_product_mapping`(
+  vendor_id int(11) not null,
+  base_product_id int(11) not null,
+  status tinyint(1) not null default 1,
+  created_at date not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table groots_employee(
+  employee_id int(11) not null AUTO_INCREMENT,
+  employee_name varchar(255) not null,
+  address varchar(300) default null,
+  city varchar(100) default null,
+  email varchar(255) default null,
+  mobile_numbers varchar(100) default null,
+  alternate_number varchar(100) default null,
+  date_of_onboarding date default null,
+  status tinyint(1) not null default 1,
+  department_id int(11) not null,
+  designation_id int(11) not null,
+  created_at date not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table groots_departments(
+  department_id int(11) not null AUTO_INCREMENT,
+  department_name varchar(255) not null,
+  department_head_id int(11) not null,
+  status tinyint(1) not null,
+  created_at date not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+alter table cb_dev_groots.vendors
+  modify name varchar(255) not null,
+  modify bussiness_name varchar(255) not null,
+  modify mobile varchar(100) not null,
+  modify address varchar(300) not null,
+  modify payment_terms int(3) not null,
+  modify credit_limit int(155) not null;
+
+alter table cb_dev_groots.vendors add column proc_exec_id int(11) not null;
+
