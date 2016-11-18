@@ -443,17 +443,23 @@ create table groots_employee(
   designation_id int(11) not null,
   created_at date not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  updated_by int(11) not null
+  updated_by int(11) not null,
+  primary key (employee_id),
+  key fk_employee_1 (department_id),
+  constraint fk_employee_1 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (department_id),
+  key fk_employee_2 (designation_id),
+  constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (designation_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-create table groots_departments(
+create table cb_dev_groots.groots_departments(
   department_id int(11) not null AUTO_INCREMENT,
   department_name varchar(255) not null,
   department_head_id int(11) not null,
   status tinyint(1) not null,
   created_at date not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  updated_by int(11) not null
+  updated_by int(11) not null,
+  primary key (department_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -467,3 +473,18 @@ alter table cb_dev_groots.vendors
 
 alter table cb_dev_groots.vendors add column proc_exec_id int(11) not null;
 
+create table cb_dev_groots.employee_designation(
+  designation_id int(11) not null AUTO_INCREMENT,
+  designation_name varchar(255) not null,
+  created_at date not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null,
+  primary key (designation_id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--------------------------------------test queries,
+insert into cb_dev_groots.groots_employee (employee_id, employee_name, status, department_id, designation_id, created_at, updated_by)
+  values (0,'test4', 1, 1, 1, NOW(), 1); 
+
+insert into cb_dev_groots.groots_departments values (null , 'procurement', 1, 1, NOW(), null , 1); 
+insert into cb_dev_groots.employee_designation values (null , 'Procurement Executive', NOW(), null , 1);

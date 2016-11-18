@@ -231,6 +231,16 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                     return CHtml::label($data->tobe_procured_qty, $data->tobe_procured_qty, array('id'=>'tobe-procured_'.$data->base_product_id));
                 },
             ),
+
+            array(
+                'header' => 'Vendors',
+                'type' => 'raw',
+                'value' => function($data){
+                    return 
+                    return CHtml::activeDropDownList($data , 'vendor_id', VendorDao::getVendorProductList(), array('options' => array($data->vendor_id=>array('selected'=>true)), 'style' => 'width:220.5px;'));
+                }
+                )
+
             array(
                 'header' => 'Procured Quantity',
                 'type' => 'raw',

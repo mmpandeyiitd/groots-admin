@@ -8,9 +8,6 @@
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
 
-	<?php echo CHtml::button('Update', array('submit'=>$this->createUrl('vendor/update&id='.$data->id), 'style' => 'align:right;', 'target' => '_blank'));?>
-	<br />
-
 	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
 	<?php echo CHtml::encode($data->name); ?>
 	<br />

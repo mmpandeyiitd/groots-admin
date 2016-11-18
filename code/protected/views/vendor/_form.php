@@ -14,10 +14,9 @@
 	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>false,
 )); ?>
+ 	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<?php echo $form->errorSummary($model); ?>
+	<?php echo $form->errorSummary($model);?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'name'); ?>
@@ -165,14 +164,14 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'minimum_credit_amount'); ?>
+		<?php echo $form->labelEx($model,'minimum_credit_amount *'); ?>
 		<?php echo $form->textField($model,'credit_limit'); ?>
 		<?php echo $form->error($model,'credit_limit'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'proc_exec_id'); ?>
-		<?php echo $form->textField($model,'proc_exec_id'); ?>
+		<?php echo CHtml::activeDropDownList($model	, 'proc_exec_id', VendorDao::getProcExecutiveDropdownData(), array('options' => array($model->proc_exec_id=>array('selected'=>true)), 'style' => 'width:220.5px;')); ?>
 		<?php echo $form->error($model,'proc_exec_id'); ?>
 	</div>
 
@@ -182,15 +181,15 @@
 		<?php echo $form->error($model,'created_date'); ?>
 	</div>
 
-	<!-- <div class="row">
+	<div class="row">
 		<?php echo $form->labelEx($model,'updated_at'); ?>
 		<?php echo $form->textField($model,'updated_at'); ?>
 		<?php echo $form->error($model,'updated_at'); ?>
-	</div> -->
+	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'allocated_warehouse_id'); ?>
-		<?php echo $form->textField($model,'allocated_warehouse_id',array('size'=>11,'maxlength'=>11)); ?>
+		<?php echo CHtml::activeDropDownList($model	, 'allocated_warehouse_id', WarehouseDao::getWarehouseDropdownData(), array('options' => array($model->allocated_warehouse_id=>array('selected'=>true)), 'style' => 'width:220.5px;')); ?>
 		<?php echo $form->error($model,'allocated_warehouse_id'); ?>
 	</div>
 
