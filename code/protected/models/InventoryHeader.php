@@ -259,7 +259,7 @@ class InventoryHeader extends CActiveRecord
             }
             $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
         }
-        else{
+        elseif(isset($this->parent_id) && $this->parent_id == 0){
             $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
         }
         return $class;

@@ -404,6 +404,7 @@ update cb_dev_groots.base_product set title_new="Tomato (For gravy) (Gravy Tamat
 // same title new for g1 products
 update base_product set title_new="Tomato Hybrid (Hybrid Tamatar) G1" where base_product_id in (1702) or parent_id=1702; //like this do for all g1 parent ids
 //add grade parent_id,category,title_new to properly show a item at inventory view
+//do not create parent for staff veg
 -----------------------------------
 
 
