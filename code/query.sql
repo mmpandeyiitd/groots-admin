@@ -386,9 +386,9 @@ update base_product set grade='B', priority=12 where title like "%(GB)%";
 update base_product set grade='C', priority=13 where title like "%(GC)%";
 update base_product set grade='D', priority=14 where title like "%(GD)%";
 
-alter table cb_dev_groots.base_product add column title_new varchar(255) default null;
-update cb_dev_groots.base_product bp join base_product bp1 on bp.parent_id=bp1.base_product_id set bp.title_new=bp1.title where bp.parent_id > 0;
-update cb_dev_groots.base_product bp set bp.title_new=bp.title where bp.parent_id is null;
+alter table cb_dev_groots.base_product add column base_title varchar(255) default null;
+update cb_dev_groots.base_product bp join base_product bp1 on bp.parent_id=bp1.base_product_id set bp.base_title=bp1.title where bp.parent_id > 0;
+update cb_dev_groots.base_product bp set bp.base_title=bp.title where bp.parent_id is null;
 
 alter table cb_dev_groots.base_product drop foreign key fk_base_prod_1;
 update cb_dev_groots.base_product bp join cb_dev_groots.base_product bp1 on bp1.parent_id=bp.base_product_id set bp.parent_id=0 where bp1.parent_id > 0;
@@ -400,10 +400,10 @@ alter table groots_orders.inventory add column balance decimal(10,2) DEFAULT NUL
 //delete test products - order of items in inventory is distorted
 delete from cb_dev_groots.base_product where base_product_id in (1369,1538,1539,1540,1541,1542,1543,1544);
 delete from base_product where base_product_id in (1370,1371,1372,1373,1374);
-update cb_dev_groots.base_product set title_new="Tomato (For gravy) (Gravy Tamatar)" where base_product_id in (1696,1830,725,726,727,728)
+update cb_dev_groots.base_product set base_title="Tomato (For gravy) (Gravy Tamatar)" where base_product_id in (1696,1830,725,726,727,728)
 // same title new for g1 products
-update base_product set title_new="Tomato Hybrid (Hybrid Tamatar) G1" where base_product_id in (1702) or parent_id=1702; //like this do for all g1 parent ids
-//add grade parent_id,category,title_new to properly show a item at inventory view
+update base_product set base_title="Tomato Hybrid (Hybrid Tamatar) G1" where base_product_id in (1702) or parent_id=1702; //like this do for all g1 parent ids
+//add grade parent_id,category,base_title to properly show a item at inventory view
 //do not create parent for staff veg
 -----------------------------------
 

@@ -114,7 +114,7 @@ class InventoryHeader extends CActiveRecord
         $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
 
         //$criteria->compare('i.date', $this->date, true);
-        $criteria->order = 'pcm.category_id asc, bp.title_new asc, bp.priority asc';
+        $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
