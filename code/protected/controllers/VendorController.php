@@ -32,7 +32,7 @@ class VendorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update', 'productMap'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -141,6 +141,37 @@ class VendorController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+
+	public function actionProductMap($vendor_id){
+		echo $vendor_id ;
+		$criteria  = new CDbCriteria;
+		$criteria->select  = 'name, bussiness_name, mobile';
+		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
+		$model = Vendor::model()->find($criteria);
+		if(!isset($model) && empty($model)){
+			Yii::app()->user->setFlash('error', 'Either Vendor Id Wrong or Vendor Inactive');
+			Yii::app()->controller->redirect('index.php?r=vendor/admin');
+		}
+		$vendorProducts = true;
+		$data = new CActiveDataProvider('BaseProduct', array(
+					'criteria' => array(
+						'select' => 'base_product_id, title, parent_id, popularity, grade, priority, base_title',
+						'condition' => 'status=1', 
+						'order' => 'title asc'),
+
+                    'sort'=>array(
+                        'attributes'=>array(
+                            'title','base_product_id', 'grade', 'base_title',
+                        ),
+                    ),'pagination'=>array('pageSize'=>100)));
+
+		$this->render('productMap', array(
+			'model' => $model,
+			'vendorProduct' => $vendorProducts,
+			'dataProvider' => $data,
+		));
+
 	}
 
 	/**
