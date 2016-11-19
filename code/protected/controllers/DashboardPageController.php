@@ -138,7 +138,14 @@ class DashboardPageController extends Controller {
             }
         }
         if (isset($_POST['orderQtSummary'])) {
-          
+            $warehouse_id;
+            if(isset($_POST['warehouse_id1']) && !empty($_POST['warehouse_id1'])){
+                $warehouse_id = $_POST['warehouse_id1'];
+            }          
+            else{
+                Yii::app()->user->setFlash('error', 'Warehouse not selected');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }
            if ($_POST['DashboardPage']['order_start_date'] !='') {
             $order_start_date = $_POST['DashboardPage']['order_start_date'];
             $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
@@ -146,7 +153,7 @@ class DashboardPageController extends Controller {
             $odate1 = date("Y-m-d H:i:s");
             if (isset($oDate)) {
                 ob_clean();
-                $data= $model->downloadCSVByIDs($oDate);
+                $data= $model->downloadCSVByIDs($oDate, $warehouse_id);
                 ob_flush();
                 exit();
             }else {
@@ -159,6 +166,14 @@ class DashboardPageController extends Controller {
             }
         }
         if (isset($_POST['deliveredQtSummary'])) {
+            $warehouse_id;
+            if(isset($_POST['warehouse_id2']) && !empty($_POST['warehouse_id2'])){
+                $warehouse_id = $_POST['warehouse_id2'];
+            }          
+            else{
+                Yii::app()->user->setFlash('error', 'Warehouse not selected');
+                Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
+            }
 
             if ($_POST['DashboardPage']['deliverySummaryDeliveryDate'] !='') {
                 $order_start_date = $_POST['DashboardPage']['deliverySummaryDeliveryDate'];
@@ -167,7 +182,7 @@ class DashboardPageController extends Controller {
                 $odate1 = date("Y-m-d H:i:s");
                 if (isset($oDate)) {
                     ob_clean();
-                    $data= $model->downloadCSVDelivered($oDate);
+                    $data= $model->downloadCSVDelivered($oDate, $warehouse_id);
                     ob_flush();
                     exit();
                 }else {

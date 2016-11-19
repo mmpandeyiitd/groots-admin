@@ -68,4 +68,27 @@ class Utility
 
         return $new_array;
     }
+
+    public function getWarehouseDropdownData(){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select id , name from cb_dev_groots.warehouses';
+        //echo $sql; die;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $data = $command->queryAll();
+        $array = array();
+        foreach ($data as $key => $value) {
+            $array[$value['id']] = $value['name'];
+        }
+        return $array;
+    }
+
+    public function getWarehouseNameById($w_id){
+        $sql = 'select name from cb_dev_groots.warehouses where id = '.$w_id.' limit 1';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $name = $command->queryAll();
+        return $name[0]['name'];
+    }
 }
