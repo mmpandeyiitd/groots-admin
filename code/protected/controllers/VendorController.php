@@ -158,18 +158,23 @@ class VendorController extends Controller
 					'criteria' => array(
 						'select' => 'base_product_id, title, parent_id, popularity, grade, priority, base_title',
 						'condition' => 'status=1', 
-						'order' => 'title asc'),
+						'order' => 'title asc, priority asc'),
 
                     'sort'=>array(
                         'attributes'=>array(
                             'title','base_product_id', 'grade', 'base_title',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
+		$criteria->select = 'base_product_id, title, parent_id, popularity, grade, priority, base_title';
+		$criteria->condition = 'status=1';
+		$products = BaseProduct::model()->findAll($criteria);
+		//$products = new BaseProduct('search');
 
 		$this->render('productMap', array(
 			'model' => $model,
 			'vendorProduct' => $vendorProducts,
 			'dataProvider' => $data,
+			'products' => $products,
 		));
 
 	}

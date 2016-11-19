@@ -14,9 +14,19 @@ $vendor_id = $_GET['vendor_id'];
 
 <?php
     $this->widget('zii.widgets.grid.CGridView', array(
-		'id'=>'id',
+		'id'=>'vendor-product-grid',   
+		'itemsCssClass' => 'table table-striped table-bordered table-hover',
 		'dataProvider'=> $dataProvider,
+		'filter' => $products,
 		'columns' => array(
+				array(
+					'header' => 'select',
+					'value' => function($data){
+						echo CHtml::checkBox('base_product_id', false, array());
+					},
+					'type' => 'raw',
+
+					),
             	'base_product_id',
             	'title',
             	'parent_id',
