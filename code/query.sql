@@ -393,7 +393,9 @@ update cb_dev_groots.base_product bp set bp.base_title=bp.title where bp.parent_
 alter table cb_dev_groots.base_product drop foreign key fk_base_prod_1;
 update cb_dev_groots.base_product bp join cb_dev_groots.base_product bp1 on bp1.parent_id=bp.base_product_id set bp.parent_id=0 where bp1.parent_id > 0;
 
-alter table groots_orders.inventory add column balance decimal(10,2) DEFAULT NULL
+alter table groots_orders.inventory add column balance decimal(10,2) DEFAULT NULL;
+alter table groots_orders.inventory add column secondary_sale decimal(10,2) DEFAULT NULL;
+
 
 
 //run only in test server, check in live also

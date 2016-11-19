@@ -168,7 +168,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 <?php
 
     $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'purchase-header-grid',
+        'id'=>'warehouse-item-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'rowCssClassExpression' => '$data->getCssClass()',
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
@@ -386,9 +386,17 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');
             });
-
-
         });
+
+        var firstParentIndex =$(".parent").first().index();
+        $(".child").each(function () {
+            //console.log("child-index"+$(this).index()+"parent"+firstParentIndex);
+            if($(this).index() < firstParentIndex){
+                //console.log("here");
+                $(this).show();
+            }
+        });
+
     }
 
     function updateItemTotalRow(parent_id) {

@@ -217,7 +217,7 @@ $balance = 0;
 
 
     $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'purchase-header-grid',
+        'id'=>'warehouse-item-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
 
         'rowCssClassExpression' => '$data->getCssClass()',
@@ -443,7 +443,16 @@ $balance = 0;
                 },
                 'type' => 'raw',
             ),
-
+            /*array(
+                'header' => 'Sec Sale(-)',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
+                'value' => function ($data) {
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
+                },
+                'type' => 'raw',
+            ),*/
             array(
                 'header' => 'Balance(=)',
                 'class'=>'DataColumn',
@@ -631,6 +640,15 @@ $balance = 0;
             $(this).find("input[type=text] ").each(function(){
                $(this).attr('readonly', 'readonly');
             });
+        });
+
+        var firstParentIndex =$(".parent").first().index();
+        $(".child").each(function () {
+            //console.log("child-index"+$(this).index()+"parent"+firstParentIndex);
+            if($(this).index() < firstParentIndex){
+                //console.log("here");
+                $(this).show();
+            }
         });
     }
 

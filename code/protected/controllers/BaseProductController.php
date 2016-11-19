@@ -2113,7 +2113,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,base_title';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,baseTitle';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
