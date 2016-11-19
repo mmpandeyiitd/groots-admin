@@ -525,7 +525,8 @@ $balance = 0;
 
     <div class="row buttons">
         <?php
-        if($showSubmit) {
+        //if($showSubmit) {
+        if(true) {
             if ($update == true) {
                 echo CHtml::submitButton('Update', array('name' => 'inventory-update'));
             } else {
