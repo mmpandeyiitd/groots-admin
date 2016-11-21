@@ -394,7 +394,7 @@ class PurchaseHeaderController extends Controller
         }
         else{
             $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
-            $fileName = $date."reconciliation_report".$w_name;
+            $fileName = $date."reconciliation_report".".csv";
             ob_clean();
             header('Pragma: public');
             header('Expires: 0');
@@ -535,7 +535,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
-        $fileName = $date."procurement_report".$w_name;
+        $fileName = $date."procurement_report".".csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
