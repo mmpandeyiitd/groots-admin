@@ -144,7 +144,7 @@ class VendorController extends Controller
 	}
 
 	public function actionProductMap($vendor_id){
-		//var_dump($_POST);die;
+		var_dump($_POST['Save']);die;
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -167,7 +167,6 @@ class VendorController extends Controller
                     ),'pagination'=>array('pageSize'=>100)));
 		$products = array();
 		$data = new BaseProduct('search');
-		$data = $data->searchNew();
 
 		if(isset($_POST['Save'])){
 			var_dump($_POST);die;

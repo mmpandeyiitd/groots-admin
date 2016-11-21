@@ -6,17 +6,17 @@ $vendor_id = $_GET['vendor_id'];
 <form name="myform" method="post" action="<?php echo $this->createUrl('vendor/productMap', array('vendor_id' => $vendor_id));?>">
 <div>
 <h1>VENDOR PRODUCT MAPPING </h1>
-<?php echo 'Vendor ID =    '.$vendor_id.'<br>';?>
-<?php echo 'Name =         '.$model->name.'<br>';?>
-<?php echo 'Bussiness Name '.$model->bussiness_name.'<br>'; ?>
-<?php echo 'Mobile Number  '.$model->mobile.'<br>'; ?>
+<?php echo 'Vendor ID =      '.$vendor_id.'<br>';?>
+<?php echo 'Name =           '.$model->name.'<br>';?>
+<?php echo 'Bussiness Name = '.$model->bussiness_name.'<br>'; ?>
+<?php echo 'Mobile Number =  '.$model->mobile.'<br>'; ?>
 </div>
 
 <?php
     $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-product-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
-		'dataProvider'=> $dataProvider,
+		'dataProvider'=> $dataProvider->searchNew(),
 		'filter' => $dataProvider,
 		'columns' => array(
 				array(
