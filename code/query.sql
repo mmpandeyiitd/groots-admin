@@ -482,9 +482,5 @@ create table cb_dev_groots.employee_designation(
   primary key (designation_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---------------------------------------test queries,
-insert into cb_dev_groots.groots_employee (employee_id, employee_name, status, department_id, designation_id, created_at, updated_by)
-  values (0,'test4', 1, 1, 1, NOW(), 1); 
-
-insert into cb_dev_groots.groots_departments values (null , 'procurement', 1, 1, NOW(), null , 1); 
-insert into cb_dev_groots.employee_designation values (null , 'Procurement Executive', NOW(), null , 1);
+--------------------------------------vendor - type,
+alter table cb_dev_groots.vendors add column vendor_type enum('Auctionnaire', 'Trader', 'Reseller') not null; 

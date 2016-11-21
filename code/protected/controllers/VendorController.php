@@ -144,7 +144,7 @@ class VendorController extends Controller
 	}
 
 	public function actionProductMap($vendor_id){
-		echo $vendor_id ;
+		//var_dump($_POST);die;
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -158,18 +158,20 @@ class VendorController extends Controller
 					'criteria' => array(
 						'select' => 'base_product_id, title, parent_id, popularity, grade, priority, base_title',
 						'condition' => 'status=1', 
-						'order' => 'title asc, priority asc'),
+						'order' => ' title asc, priority'),
 
                     'sort'=>array(
                         'attributes'=>array(
                             'title','base_product_id', 'grade', 'base_title',
                         ),
                     ),'pagination'=>array('pageSize'=>100)));
-		$criteria->select = 'base_product_id, title, parent_id, popularity, grade, priority, base_title';
-		$criteria->condition = 'status=1';
-		$products = BaseProduct::model()->findAll($criteria);
-		//$products = new BaseProduct('search');
+		$products = array();
+		$data = new BaseProduct('search');
+		$data = $data->searchNew();
 
+		if(isset($_POST['Save'])){
+			var_dump($_POST);die;
+		}
 		$this->render('productMap', array(
 			'model' => $model,
 			'vendorProduct' => $vendorProducts,

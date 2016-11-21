@@ -1041,4 +1041,26 @@ class BaseProduct extends CActiveRecord {
         return [$purchaseLineArr, $otherItemArray];
     }
 
+    public function searchNew(){
+        $criteria = new CDbCriteria; 
+        $criteria->select = 'base_product_id, title, parent_id, popularity, grade, priority, base_title';
+        $criteria->condition = 'status=1';
+        $criteria->order = 'base_title asc, priority asc';
+        $criteria->compare('base_product_id', $this->base_product_id , true);
+        $criteria->compare('title', $this->title , true);
+        $criteria->compare('parent_id', $this->parent_id , true);
+        $criteria->compare('popularity', $this->popularity , true);
+        $criteria->compare('grade', $this->grade , true);
+        $criteria->compare('priority', $this->priority , true);
+        $criteria->compare('base_title', $this->base_title , true);
+
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 100,
+            ),
+        ));
+
+    }
+
 }
