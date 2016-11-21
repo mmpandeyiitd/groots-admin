@@ -381,7 +381,7 @@ class PurchaseHeaderController extends Controller
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
-                where ( pl.order_qty != pl.received_qty or pl.order_qty is null or pl.received_qty is null) and ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
+                where ( pl.order_qty != pl.received_qty or pl.order_qty is null or pl.received_qty is null) and ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status in ("received" , "pending")
                 group by pl.base_product_id';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
