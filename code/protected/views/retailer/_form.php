@@ -141,6 +141,15 @@
             <?php echo $form->textField($model, 'credit_limit'); ?>
             <?php echo $form->error($model, 'credit_limit'); ?>
         </div>
+        
+        <div class="row">
+            <?php echo $form->labelEx($model, 'collection_frequency'); ?>
+            <?php $list = Chtml::listData(Retailer::getCollectionFrequencies(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'collection_frequency', $list,array('empty' => 'Select Collection Frequency', 'options' => array($model->collection_frequency => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'collection_frequency'); ?>
+        </div>
+
          <div class="row">
             <?php echo $form->labelEx($model, 'collection_agent'); ?>
             <?php 
