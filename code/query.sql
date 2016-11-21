@@ -465,4 +465,6 @@ alter table cb_dev_groots.collecttion_agent add column created_at timestamp not 
 alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;*/
 alter table cb_dev_groots.retailer_product_quotation modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
 alter table cb_dev_groots.retailer_product_quotation_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
-
+----------------------------------------------------------------------------------------------------------------
+alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
+insert into cb_dev_groots.collection_agent values(null, 'Pankaj Ahuja',3,1,null );

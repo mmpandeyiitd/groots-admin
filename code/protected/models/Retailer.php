@@ -396,4 +396,10 @@ class Retailer extends CActiveRecord {
         $this->oldAttrs = $attrs;
     }
 
+    public static function getCollectionFrequencies(){
+        $connection = Yii::app()->db;
+        $collectionFrequency = Utility::get_enum_values($connection, self::tableName(), 'collection_frequency' );
+        return $collectionFrequency;
+    }
+
 }
