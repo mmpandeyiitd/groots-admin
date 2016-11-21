@@ -299,9 +299,9 @@ class DashboardPage extends CActiveRecord {
         $command->execute();
         $assocDataArray = $command->queryAll();
         $warehouse_name = Utility::getWarehouseNameById($warehouse_id);
-        $temp = explode(' ', $warehouse_name);
-        $warehouse_name = implode(',', $temp);
-        $fileName = "OrderQuantitySummary,".$warehouse_name.".csv";
+        $warehouse_name = str_replace(' ', '', $warehouse_name);
+        $warehouse_name = str_replace(',', '-', $warehouse_name);
+        $fileName = "OrderQuantitySummary-".$warehouse_name.".csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -336,9 +336,9 @@ class DashboardPage extends CActiveRecord {
         $command->execute();
         $assocDataArray = $command->queryAll();
         $warehouse_name = Utility::getWarehouseNameById($warehouse_id);
-        $temp = explode(' ', $warehouse_name);
-        $warehouse_name = implode(',', $temp);
-        $fileName = "DeliveredQuantitySummary,".$warehouse_name.".csv";
+        $warehouse_name = str_replace(' ', '', $warehouse_name);
+        $warehouse_name = str_replace(',', '-', $warehouse_name);
+        $fileName = "DeliveredQuantitySummary-".$warehouse_name.".csv";
         // echo $fileName; die;
         ob_clean();
         header('Pragma: public');
