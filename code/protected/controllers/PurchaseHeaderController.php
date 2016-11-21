@@ -376,13 +376,14 @@ class PurchaseHeaderController extends Controller
     public function actionDownloadReconciliationReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) as order_qty from groots_orders.purchase_line as pl
+        $sql = 'select pl.base_product_id, bp.title, ph.id, ph.delivery_date, pl.order_qty as order_qty, pl.received_qty as received_qty from groots_orders.purchase_line as pl
                 left join groots_orders.purchase_header as ph
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
+                left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
                 where ( pl.order_qty != pl.received_qty or pl.order_qty is null or pl.received_qty is null) and ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status in ("received" , "pending")
-                group by pl.base_product_id';
+                 order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -392,7 +393,8 @@ class PurchaseHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         else{
-            $fileName = $date."reconciliation_report";
+            $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
+            $fileName = $date."reconciliation_report".$w_name;
             ob_clean();
             header('Pragma: public');
             header('Expires: 0');
@@ -518,13 +520,22 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 	}
 
     public function actionDownloadProcurementReport(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
         $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
-        left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id where ph.status not in ("failed", "cancelled") and ph.delivery_date = CURDATE() group by pl.base_product_id';
-       $connection = Yii::app()->secondaryDb;
+        left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
+           $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
-        $fileName = date('Y-m-d')."procurement_report";
+        if(!isset($dataArray) || empty($dataArray)){
+            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
+        $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
+        $fileName = $date."procurement_report".$w_name;
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
