@@ -80,7 +80,7 @@ $('.search-form form').submit(function(){
 <div class = "row" style="float:right">
     <?php 
     $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadProcurementReport",array('w_id' => $w_id));
-    echo CHtml::button('Procurement Report',array('submit' =>  array('purchaseHeader/downloadProcurementReport'))); 
+    echo CHtml::button('Procurement Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
     ?>
 </div>
 
@@ -197,7 +197,7 @@ $('.search-form form').submit(function(){
         var date = $("#date").val().trim();
         url = url + "&date="+date;
         //window.location.assign(url);
-        //console.log(url);
+        console.log(url);
         window.open(url, '_blank');
     }
 

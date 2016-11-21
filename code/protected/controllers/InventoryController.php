@@ -182,7 +182,9 @@ class InventoryController extends Controller
         $w_id = $_GET['w_id'];
         $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage, i.balance";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
-        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where date = '."'".$date."'";
+        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id 
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+        where date = '."'".$date."' order by pcm.category_id asc, bp.base_title asc, bp.priority asc";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
