@@ -301,7 +301,7 @@ class DashboardPage extends CActiveRecord {
         $warehouse_name = Utility::getWarehouseNameById($warehouse_id);
         $temp = explode(' ', $warehouse_name);
         $warehouse_name = implode(',', $temp);
-        $fileName = "OrderQuantitySummary,".$warehouse_name.".csv";
+        $fileName = "OrderQuantitySummary_".$warehouse_id.".csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -338,7 +338,7 @@ class DashboardPage extends CActiveRecord {
         $warehouse_name = Utility::getWarehouseNameById($warehouse_id);
         $temp = explode(' ', $warehouse_name);
         $warehouse_name = implode(',', $temp);
-        $fileName = "DeliveredQuantitySummary,".$warehouse_name.".csv";
+        $fileName = "DeliveredQuantitySummary_".$warehouse_id.".csv";
         // echo $fileName; die;
         ob_clean();
         header('Pragma: public');
