@@ -119,9 +119,13 @@ else{
                     <label>Warehouse:</label> <span class="detail">
                         <select name="warehouse" class="selectNew">
                             <?php
+                            $warehouse_id = $model->warehouse_id;
+                            if($warehouse_id==''){
+                                $warehouse_id = $retailer->allocated_warehouse_id;
+                            }
                             foreach ($warehouses as $warehouse){
                                 ?>
-                                <option value= "<?php echo $warehouse->id ?>"  <?php if($model->warehouse_id==$warehouse->id) {echo "'selected'='selected' ";} ?> ><?php echo $warehouse->name ?> </option>
+                                <option value= "<?php echo $warehouse->id ?>"  <?php if($warehouse_id==$warehouse->id) {echo "selected=selected";} ?> ><?php echo $warehouse->name ?> </option>
                                 <?php
                             }
                             ?>
