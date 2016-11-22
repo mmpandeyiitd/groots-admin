@@ -409,7 +409,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('present_inv[]', empty($data->present_inv) ? 0.00:$data->present_inv, array('class'=>'inv-input inputs', 'id'=>'pres-inv_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
             ),
@@ -419,7 +419,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('liquid_inv[]', empty($data->liquid_inv) ? 0.00:$data->liquid_inv, array('class'=>'inv-input inputs', 'id'=>'liquid-inv_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
             ),
@@ -428,7 +428,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;', ),
                 'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('liquidation_wastage[]', empty($data->liquidation_wastage) ? 0.00:$data->liquidation_wastage, array('class'=>'inv-input inputs', 'id'=>'wastage-others_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
                 'type' => 'raw',
@@ -438,7 +438,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('wastage[]',  empty($data->wastage) ? 0.00:$data->wastage, array('class'=>'inv-input inputs', 'id'=>'wastage_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
                 'type' => 'raw',
@@ -448,7 +448,7 @@ $balance = 0;
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
                 'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : $data->base_product_id;
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
                 'type' => 'raw',
@@ -627,8 +627,10 @@ $balance = 0;
         console.log('transferIn '+transferIn);
         console.log('purchase '+purchase);
         console.log('balance '+balance);*/
+        if(parent_id > 0){
+            updateItemTotalRow(parent_id)
+        }
 
-        updateItemTotalRow(parent_id)
     }
 
     function createItemTotalRow() {

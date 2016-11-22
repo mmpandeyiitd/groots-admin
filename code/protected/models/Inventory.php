@@ -160,7 +160,7 @@ class Inventory extends CActiveRecord
         $orderSum = OrderLine::getDeliveredOrderSumByDate($w_id, $date);
         $purchaseSum = PurchaseLine::getReceivedPurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
-        $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
+        $transferOutSum = TransferLine::getDeliveredTransferOutSumByDate($w_id,$date);
         $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
 //print_r($transferOutSum);die;
         $totalPurchase = 0;

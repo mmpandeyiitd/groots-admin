@@ -1,10 +1,3 @@
-
-insert into cb_dev_groots.warehouses values(2, 'Azadpur, delhi', null, 'Azadpur, delhi', 'Delhi', 'Delhi', 'Azadpur', '110033', null, null,null,1,now(), now(),null);
-
-
-
-
-
 /*
 ALTER TABLE cb_dev_groots.base_product ADD COLUMN parent_id int(11) unsigned DEFAULT NULL , add index fk_base_prod_1 (parent_id), add CONSTRAINT fk_base_prod_1 foreign key (parent_id) REFERENCES cb_dev_groots.base_product(base_product_id);*/
 

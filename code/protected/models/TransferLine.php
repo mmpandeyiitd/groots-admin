@@ -115,9 +115,23 @@ class TransferLine extends CActiveRecord
         return $orderLines;
     }
 
-    public static function getTransferOutSumByDate($w_id,$date){
+    public static function getDeliveredTransferOutSumByDate($w_id,$date){
         $connection = Yii::app()->secondaryDb;
         $sql = "SELECT ol.base_product_id as id, SUM(ol.delivered_qty) as qty, bp.pack_size, bp.pack_unit  FROM `transfer_line` ol join transfer_header oh on oh.id=ol.transfer_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.source_warehouse_id=$w_id and oh.status != 'cancelled' and oh.transfer_category='primary' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        $orderLines = array();
+        foreach ($result as $item){
+            $orderLines[$item['id']] = $item['qty'];
+        }
+
+        return $orderLines;
+    }
+
+    public static function getOrderedTransferOutSumByDate($w_id,$date){
+        $connection = Yii::app()->secondaryDb;
+        $sql = "SELECT ol.base_product_id as id, SUM(ol.order_qty) as qty, bp.pack_size, bp.pack_unit  FROM `transfer_line` ol join transfer_header oh on oh.id=ol.transfer_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.source_warehouse_id=$w_id and oh.status != 'cancelled' and oh.transfer_category='primary' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
