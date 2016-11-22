@@ -1411,14 +1411,15 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['parent id'])) {
                                     $parent_id = trim($data[$cols['parent id']]);
-                                    if($parent_id>=0){
-                                        $row['parent_id'] = $parent_id;
+                                    if(!isset($parent_id) || $parent_id==''){
+                                        //$row['parent_id'] = null;
                                     }
-                                    else{
-                                        $row['parent_id'] = null;
+                                    else {
+                                        $row['parent_id'] = $parent_id;
                                     }
 
                                 }
+                               
                                 if (isset($cols['grade'])) {
                                     $row['grade'] = trim($data[$cols['grade']]);
                                 }

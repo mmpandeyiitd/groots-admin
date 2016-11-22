@@ -251,14 +251,14 @@ $balance = 0;
                 },
                 'type' => 'raw',
             ),
-            /*array(
+            array(
                 'header' => 'date',
                 'name' => 'date',
                 'value' => function ($data) {
                     return CHtml::textField('date[]', substr($data->date,5), array('class'=>'id-field', 'readonly'=>'readonly'));
                 },
                 'type' => 'raw',
-            ),*/
+            ),
             array(
                 'header' => 'Grade',
                 'name' => 'grade',
@@ -443,7 +443,7 @@ $balance = 0;
                 },
                 'type' => 'raw',
             ),
-            /*array(
+            array(
                 'header' => 'Sec Sale(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
@@ -452,7 +452,7 @@ $balance = 0;
                     return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
                 },
                 'type' => 'raw',
-            ),*/
+            ),
             array(
                 'header' => 'Balance(=)',
                 'class'=>'DataColumn',

@@ -63,7 +63,7 @@ class InventoryController extends Controller
 	public function actionCreate()
 	{
 	    //echo "<pre>";
-		//print_r($_POST);die;
+		//print_r($_POST);
         //$model=new Inventory('search');
 
         $w_id = '';
@@ -85,6 +85,14 @@ class InventoryController extends Controller
 
         if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
             $date = $_POST['InventoryHeader']['date'];
+        }
+        elseif(!empty($_POST['InventoryHeader'])){
+            if(!empty($_POST['InventoryHeader']['date'])){
+                $date = $_POST['InventoryHeader']['date'];
+            }
+            else{
+                $date = date('Y-m-d');
+            }
         }
         else{
             $date = date('Y-m-d');
@@ -149,7 +157,9 @@ class InventoryController extends Controller
                         $inv->liquidation_wastage = empty($liquidation_wastage) ? 0: $liquidation_wastage;
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
                         $inv->balance = empty($balance) ? 0: $balance;
+                        //var_dump($inv);die;
                         $inv->save();
+
                     }
                 }
                 $transaction->commit();
