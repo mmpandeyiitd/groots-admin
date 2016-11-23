@@ -26,6 +26,13 @@ function getIfExist($quantitiesMap, $key, $data){
         return 0;
 }
 
+
+if($w_id==SOURCE_WH_ID){
+    $isSourceWarehouse=true;
+}
+else{
+    $isSourceWarehouse=false;
+}
 ?>
 
 <div class="form">
@@ -141,6 +148,47 @@ $balance = 0;
                     'htmlOptions' => array('style' => 'width:15%;'),
                     'value' => function ($data) use ($quantitiesMap) {
                         return round($quantitiesMap['totalTransferOut'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'tobe sent Azdpr(+)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'visible' => !$isSourceWarehouse,
+                    'value' => 'round($data["totalToBeSentLiqInv"], 2)',
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Sent Azdpr(-)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'visible' => !$isSourceWarehouse,
+                    'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalSentLiqInv'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Inv Received Azdpr(+)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'visible' => $isSourceWarehouse,
+                        'value' => function ($data) use ($quantitiesMap) {
+                        return round($quantitiesMap['totalReceivedLiqInv'], 2);
+                    },
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Secondary Sale(-)',
+                    'name' => 'secondary_sale',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'value' => function ($data) {
+                        return round($data['secondary_sale'], 2);
                     },
                     'type' => 'raw',
                 ),
@@ -404,6 +452,61 @@ $balance = 0;
                 },
             ),
             array(
+                'header' => 'tobe sent Azdpr (+)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
+                'visible' => !$isSourceWarehouse,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['toBeSentLiqInv'][$data->base_product_id]))
+                        return $quantitiesMap['toBeSentLiqInv'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+            array(
+                'header' => 'Sent Azdpr(-)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
+                'visible' => !$isSourceWarehouse,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['sentLiqInv'][$data->base_product_id]))
+                        return $quantitiesMap['sentLiqInv'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+            array(
+                'header' => 'Inv Received Azdpr(+)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
+                'visible' => $isSourceWarehouse,
+                'value'=>function($data) use ($quantitiesMap){
+                    if(isset($quantitiesMap['receivedLiqInv'][$data->base_product_id]))
+                        return $quantitiesMap['receivedLiqInv'][$data->base_product_id];
+                    else
+                        return 0;
+                },
+            ),
+            array(
+                'header' => 'Sec Sale(-)',
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;'),
+                'value' => function ($data) {
+                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
+                    return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
+                },
+                'type' => 'raw',
+            ),
+            array(
                 'header' => 'Order Inv(-)',
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
@@ -443,16 +546,8 @@ $balance = 0;
                 },
                 'type' => 'raw',
             ),
-            array(
-                'header' => 'Sec Sale(-)',
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;'),
-                'value' => function ($data) {
-                    $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
-                    return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
-                },
-                'type' => 'raw',
-            ),
+
+
             array(
                 'header' => 'Balance(=)',
                 'class'=>'DataColumn',
@@ -601,7 +696,7 @@ $balance = 0;
         var wastage_others = parseFloat($("#wastage-others_"+bp_id).val().trim());
         var presInv = parseFloat($("#pres-inv_"+bp_id).val().trim());
         var liquidInv = parseFloat($("#liquid-inv_"+bp_id).val().trim());
-
+        var secSale = parseFloat($("#secondary-sale_"+bp_id).val().trim());
         if(!editOnly){
 
             var order = parseFloat($("#order_"+bp_id).html().trim());
@@ -610,7 +705,7 @@ $balance = 0;
             var transferIn = parseFloat($("#transferIn_"+bp_id).html().trim());
             var purchase = parseFloat($("#purchase_"+bp_id).html().trim());
             var balance = 0;
-            balance = transferIn+prevDayInv+purchase -(schInv+order+extraInv+tranferOut+presInv+liquidInv+wastage+wastage_others);
+            balance = transferIn+prevDayInv+purchase -(schInv+order+extraInv+tranferOut+presInv+liquidInv+wastage+wastage_others+secSale);
             $("#balance_"+bp_id).html(balance);
             $("#balance-input_"+bp_id).val(balance);
         }
@@ -669,6 +764,7 @@ $balance = 0;
         var totalLiqWastage = 0;
         var totalWastage = 0;
         var totalBalance = 0;
+        var totalSecSale = 0;
 
         var editOnly = false;
 
@@ -685,7 +781,7 @@ $balance = 0;
             totalLiqWastage += parseFloat($("#wastage-others_"+bp_id).val().trim());
             totalOrderInv += parseFloat($("#pres-inv_"+bp_id).val().trim());
             totalLiqInv += parseFloat($("#liquid-inv_"+bp_id).val().trim());
-
+            totalSecSale += parseFloat($("#secondary-sale_"+bp_id).val().trim());
             if(!editOnly){
 
                 totalOrder += parseFloat($("#order_"+bp_id).html().trim());
@@ -706,6 +802,7 @@ $balance = 0;
             $("#transferIn_"+parent_id).html(totalTransfIn);
             $("#transferOut_"+parent_id).html(totaltransfOut);
             $("#order_"+parent_id).html(totalOrder);
+            $("#secondary-sale_"+parent_id).val(totalSecSale);
 
             $("#balance_"+parent_id).html(totalBalance);
             $("#balance-input_"+parent_id).val(totalBalance);
