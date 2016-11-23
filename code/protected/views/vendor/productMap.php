@@ -19,14 +19,18 @@ $vendor_id = $_GET['vendor_id'];
 		'dataProvider'=> $dataProvider->searchNew(),
 		'filter' => $dataProvider,
 		'columns' => array(
-				array(
-					'header' => 'select',
-					'value' => function($data) use ($products) {
+                array(
+					'header' => 'check',
+                    'id' => 'checkedIds[]',
+                    'class' => 'CCheckBoxColumn',
+					'checked' => function($data) use ($products) {
 						$checked = in_array($data->base_product_id, $products);
-						echo CHtml::checkBox('checkbox[]', $checked, array());
+						return $checked;
 					},
-					'type' => 'raw',
-
+                    'value' => function($data){
+                        return $data->base_product_id;
+                    },
+                    'selectableRows' => 100,
 					),
             	'base_product_id',
             	'parent_id',
@@ -37,18 +41,17 @@ $vendor_id = $_GET['vendor_id'];
             	'base_title',
             	array(
             		'value' => function($data){
-            			echo CHtml::hiddenField('checked_ids[]', $data->base_product_id);
+            			echo CHtml::hiddenField('baseProductIds[]', $data->base_product_id);
             		},
             		'type' => 'raw',
             		),
             ),
         )
     );   
-
 ?>
 
 <div class="row buttons">
-	<?php echo CHtml::submitButton('Save'); ?>
+    <?php echo CHtml::submitButton('Save', array('name' => 'save'));?>
 </div>
 </form>
 

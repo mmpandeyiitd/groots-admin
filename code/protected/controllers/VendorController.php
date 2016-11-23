@@ -144,7 +144,6 @@ class VendorController extends Controller
 	}
 
 	public function actionProductMap($vendor_id){
-		var_dump($_POST['Save']);die;
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -153,31 +152,32 @@ class VendorController extends Controller
 			Yii::app()->user->setFlash('error', 'Either Vendor Id Wrong or Vendor Inactive');
 			Yii::app()->controller->redirect('index.php?r=vendor/admin');
 		}
-		$vendorProducts = true;
-		$data = new CActiveDataProvider('BaseProduct', array(
-					'criteria' => array(
-						'select' => 'base_product_id, title, parent_id, popularity, grade, priority, base_title',
-						'condition' => 'status=1', 
-						'order' => ' title asc, priority'),
-
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'title','base_product_id', 'grade', 'base_title',
-                        ),
-                    ),'pagination'=>array('pageSize'=>100)));
-		$products = array();
+		$products = VendorDao::getVendorProductIds($vendor_id);
 		$data = new BaseProduct('search');
-
-		if(isset($_POST['Save'])){
-			var_dump($_POST);die;
+		$insertProductIds = array();
+		if(isset($_POST['save']) && isset($_POST['checkedIds']) && !empty($_POST['checkedIds'])	){
+			$baseProducts = $_POST['baseProductIds'];
+			$checkedValue = $_POST['checkedIds'];
+			foreach ($checkedValue as $key => $product) {
+				if(!in_array($product, $products)){
+					array_push($insertProductIds, $product);
+				}
+				else{
+					$index = array_search($product, $products);
+					if($index){
+					unset($products[$index]);
+					}
+				}
+			}
+			VendorDao::deleteVendorProductById($products, $vendor_id);
+			VendorDao::insertVendorProductById($insertProductIds, $vendor_id);
+			$products = VendorDao::getVendorProductIds($vendor_id);
 		}
 		$this->render('productMap', array(
 			'model' => $model,
-			'vendorProduct' => $vendorProducts,
 			'dataProvider' => $data,
 			'products' => $products,
 		));
-
 	}
 
 	/**
