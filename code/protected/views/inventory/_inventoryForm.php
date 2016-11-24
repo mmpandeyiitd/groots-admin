@@ -157,7 +157,7 @@ $balance = 0;
                     'headerHtmlOptions' => array('style' => 'width:15%;'),
                     'htmlOptions' => array('style' => 'width:15%;'),
                     'visible' => !$isSourceWarehouse,
-                    'value' => 'round($data["totalToBeSentLiqInv"], 2)',
+                    'value' => 'round($data["prev_day_liq_inv"], 2)',
                     'type' => 'raw',
                 ),
                 array(
@@ -187,6 +187,7 @@ $balance = 0;
                     'name' => 'secondary_sale',
                     'headerHtmlOptions' => array('style' => 'width:15%;'),
                     'htmlOptions' => array('style' => 'width:15%;'),
+                    'visible' => $isSourceWarehouse,
                     'value' => function ($data) {
                         return round($data['secondary_sale'], 2);
                     },
@@ -238,7 +239,7 @@ $balance = 0;
                     'headerHtmlOptions' => array('style' => 'width:15%;'),
                     'htmlOptions' => array('style' => 'width:15%;'),
                     'value' => function ($data) use ($quantitiesMap) {
-                        $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $data['liquidation_wastage'] - $data['wastage'];
+                        $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] + $data["prev_day_liq_inv"] +$quantitiesMap['totalReceivedLiqInv'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $quantitiesMap['totalSentLiqInv'] - $data['secondary_sale'] - $data['liquidation_wastage'] - $data['wastage'];
                         return round($balance, 2);
                     },
                     'type' => 'raw',
@@ -457,13 +458,18 @@ $balance = 0;
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
-                'visible' => !$isSourceWarehouse,
-                'value'=>function($data) use ($quantitiesMap){
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"toBeSentLiqInv_{$data->base_product_id}"'),
+                'visible' => !$editOnly && !$isSourceWarehouse,
+                /*'value'=>function($data) use ($quantitiesMap){
                     if(isset($quantitiesMap['toBeSentLiqInv'][$data->base_product_id]))
                         return $quantitiesMap['toBeSentLiqInv'][$data->base_product_id];
                     else
                         return 0;
+                },*/
+                'value'=>function($data) use ($quantitiesMap){
+
+                    return empty($quantitiesMap['prevDayLiqInv'][$data->base_product_id]) ? 0 : $quantitiesMap['prevDayLiqInv'][$data->base_product_id];
+
                 },
             ),
             array(
@@ -472,8 +478,8 @@ $balance = 0;
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
-                'visible' => !$isSourceWarehouse,
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"sentLiqInv_{$data->base_product_id}"'),
+                'visible' => !$editOnly && !$isSourceWarehouse,
                 'value'=>function($data) use ($quantitiesMap){
                     if(isset($quantitiesMap['sentLiqInv'][$data->base_product_id]))
                         return $quantitiesMap['sentLiqInv'][$data->base_product_id];
@@ -487,8 +493,8 @@ $balance = 0;
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"transferOut_{$data->base_product_id}"'),
-                'visible' => $isSourceWarehouse,
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"receivedLiqInv_{$data->base_product_id}"'),
+                'visible' => !$editOnly && $isSourceWarehouse,
                 'value'=>function($data) use ($quantitiesMap){
                     if(isset($quantitiesMap['receivedLiqInv'][$data->base_product_id]))
                         return $quantitiesMap['receivedLiqInv'][$data->base_product_id];
@@ -500,6 +506,7 @@ $balance = 0;
                 'header' => 'Sec Sale(-)',
                 'headerHtmlOptions' => array('style' => 'width:10%;'),
                 'htmlOptions' => array('style' => 'width:10%;'),
+                'visible' => $isSourceWarehouse,
                 'value' => function ($data) {
                     $bp_id_of_parent = $data->parent_id > 0 ? $data->parent_id : 0;
                     return CHtml::textField('secondary_sale[]',  empty($data->secondary_sale) ? 0.00:$data->secondary_sale, array('class'=>'inv-input inputs', 'id'=>'secondary-sale_'.$data->base_product_id, 'onchange'=>'onInvChange('.$data->base_product_id.', '.$bp_id_of_parent.')'));
@@ -570,7 +577,12 @@ $balance = 0;
                     //$extra_inv =  empty($data->extra_inv_absolute) ? 0 : $data->extra_inv_absolute ;
                     $wastage = empty($data->wastage) ? 0 : $data->wastage ;
                     $wastage_others = empty($data->liquidation_wastage) ? 0 : $data->liquidation_wastage ;
-                    $balance =    $purchase+$trans_in -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$wastage+$wastage_others);
+                    $toBeSentLiqInv = getIfExist($quantitiesMap,'prevDayLiqInv', $data);
+                    $sentLiqInv =getIfExist($quantitiesMap,'sentLiqInv', $data);
+                    $receivedLiqInv =getIfExist($quantitiesMap,'receivedLiqInv', $data);
+                    $secondarySale = empty($data->secondary_sale) ? 0 : $data->secondary_sale ;;
+
+                    $balance =  $purchase+$trans_in +$toBeSentLiqInv +$receivedLiqInv -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$sentLiqInv +$secondarySale +$wastage+$wastage_others);
                     $data->balance = $balance;
                     if(empty($data->balance)){
                         $data->balance = 0;
@@ -668,8 +680,8 @@ $balance = 0;
             }
         });
 
-        createItemTotalRow();
-        //updateItemTotalRow();
+        updateAll();
+
     }
 
     function toggleChild(bp_id){
@@ -690,26 +702,42 @@ $balance = 0;
             editOnly = true;
         }
 
+        var secondarySale = 0;
+        var toBeSentLiqInv = 0;
+        var sentLiqInv = 0;
+        var receivedLiqInv = 0;
+
         var schInv = parseFloat($("#sch-inv_"+bp_id).val().trim()) || 0;
-        var extraInv = parseFloat($("#extra-inv_"+bp_id).val().trim());
+        var extraInv = parseFloat($("#extra-inv_"+bp_id).val().trim()) ;
         var wastage = parseFloat($("#wastage_"+bp_id).val().trim()) || 0;
-        var wastage_others = parseFloat($("#wastage-others_"+bp_id).val().trim());
-        var presInv = parseFloat($("#pres-inv_"+bp_id).val().trim());
-        var liquidInv = parseFloat($("#liquid-inv_"+bp_id).val().trim());
-        var secSale = parseFloat($("#secondary-sale_"+bp_id).val().trim());
+        var wastage_others = parseFloat($("#wastage-others_"+bp_id).val().trim()) ;
+        var presInv = parseFloat($("#pres-inv_"+bp_id).val().trim()) ;
+        var liquidInv = parseFloat($("#liquid-inv_"+bp_id).val().trim()) ;
+
+        if($("#secondary-sale_"+bp_id).length != 0) {
+             secondarySale = parseFloat($("#secondary-sale_"+bp_id).val().trim()) ;
+        }
+        if($("#toBeSentLiqInv_"+bp_id).length != 0) {
+             toBeSentLiqInv = parseFloat($("#toBeSentLiqInv_"+bp_id).html().trim());
+        }
+        if($("#sentLiqInv_"+bp_id).length != 0) {
+             sentLiqInv = parseFloat($("#sentLiqInv_"+bp_id).html().trim()) ;
+        }
+        if($("#receivedLiqInv_"+bp_id).length != 0) {
+             receivedLiqInv = parseFloat($("#receivedLiqInv_"+bp_id).html().trim()) ;
+        }
         if(!editOnly){
 
             var order = parseFloat($("#order_"+bp_id).html().trim());
-            var prevDayInv = parseFloat($("#prev-day-inv_"+bp_id).html().trim());
-            var tranferOut = parseFloat($("#transferOut_"+bp_id).html().trim());
-            var transferIn = parseFloat($("#transferIn_"+bp_id).html().trim());
-            var purchase = parseFloat($("#purchase_"+bp_id).html().trim());
+            var prevDayInv = parseFloat($("#prev-day-inv_"+bp_id).html().trim()) ;
+            var transferOut = parseFloat($("#transferOut_"+bp_id).html().trim()) ;
+            var transferIn = parseFloat($("#transferIn_"+bp_id).html().trim()) ;
+            var purchase = parseFloat($("#purchase_"+bp_id).html().trim()) ;
             var balance = 0;
-            balance = transferIn+prevDayInv+purchase -(schInv+order+extraInv+tranferOut+presInv+liquidInv+wastage+wastage_others+secSale);
-            $("#balance_"+bp_id).html(balance);
-            $("#balance-input_"+bp_id).val(balance);
+            balance = transferIn+purchase+receivedLiqInv+toBeSentLiqInv -(order+transferOut+presInv+liquidInv+wastage+wastage_others+secondarySale+sentLiqInv);
+            $("#balance_"+bp_id).html(balance.toFixed(2));
+            $("#balance-input_"+bp_id).val(balance.toFixed(2));
         }
-
         /*console.log('sch '+schInv);
         console.log('prevDayInv '+prevDayInv);
         console.log('presInv '+presInv);
@@ -723,17 +751,17 @@ $balance = 0;
         console.log('purchase '+purchase);
         console.log('balance '+balance);*/
         if(parent_id > 0){
-            updateItemTotalRow(parent_id)
+            updateItem(parent_id)
         }
 
     }
 
-    function createItemTotalRow() {
+    function updateAll() {
         $(".parent").each( function () {
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItemTotalRow(parent_id);
+            updateItem(parent_id);
 
             $(this).find("input[type=text] ").each(function(){
                $(this).attr('readonly', 'readonly');
@@ -750,7 +778,7 @@ $balance = 0;
         });
     }
 
-    function updateItemTotalRow(parent_id) {
+    function updateItem(parent_id) {
 
         var totalSchdInv = 0;
         var totalPrevDayInv = 0;
@@ -765,6 +793,9 @@ $balance = 0;
         var totalWastage = 0;
         var totalBalance = 0;
         var totalSecSale = 0;
+        var totalToBeSentLiqInv = 0;
+        var totalSentLiqInv = 0;
+        var totalReceivedLiqInv = 0;
 
         var editOnly = false;
 
@@ -781,7 +812,18 @@ $balance = 0;
             totalLiqWastage += parseFloat($("#wastage-others_"+bp_id).val().trim());
             totalOrderInv += parseFloat($("#pres-inv_"+bp_id).val().trim());
             totalLiqInv += parseFloat($("#liquid-inv_"+bp_id).val().trim());
-            totalSecSale += parseFloat($("#secondary-sale_"+bp_id).val().trim());
+            if($("#secondary-sale_"+bp_id).length != 0) {
+                totalSecSale += parseFloat($("#secondary-sale_"+bp_id).val().trim());
+            }
+            if($("#toBeSentLiqInv_"+bp_id).length != 0) {
+                totalToBeSentLiqInv += parseFloat($("#toBeSentLiqInv_"+bp_id).html().trim());
+            }
+            if($("#sentLiqInv_"+bp_id).length != 0) {
+                totalSentLiqInv += parseFloat($("#sentLiqInv_"+bp_id).html().trim());
+            }
+            if($("#receivedLiqInv_"+bp_id).length != 0) {
+                totalReceivedLiqInv += parseFloat($("#receivedLiqInv_"+bp_id).html().trim());
+            }
             if(!editOnly){
 
                 totalOrder += parseFloat($("#order_"+bp_id).html().trim());
@@ -813,6 +855,19 @@ $balance = 0;
         $("#liquid-inv_"+parent_id).val(totalLiqInv);
         $("#wastage-others_"+parent_id).val(totalLiqWastage);
         $("#wastage_"+parent_id).val(totalWastage);
+        if($("#secondary-sale_"+parent_id).length != 0) {
+            $("#secondary-sale_"+parent_id).val(totalSecSale);
+        }
+        if($("#toBeSentLiqInv_"+parent_id).length != 0) {
+            $("#toBeSentLiqInv_"+parent_id).html(totalToBeSentLiqInv);
+        }
+        if($("#sentLiqInv_"+parent_id).length != 0) {
+            $("#sentLiqInv_"+parent_id).html(totalSentLiqInv);
+        }
+        if($("#receivedLiqInv_"+parent_id).length != 0) {
+            $("#receivedLiqInv_"+parent_id).html(totalReceivedLiqInv);
+        }
+
 
     }
     

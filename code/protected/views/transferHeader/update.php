@@ -23,6 +23,6 @@ $this->menu=array(
 	'inv_header'=> $inv_header,
 	'transferLineMap'=> $transferLineMap,
 	'dataProvider'=>$dataProvider,
-	'otherItems'=> $otherItems,
+	//'otherItems'=> $otherItems,
 	'w_id'=>$w_id,
 	'update'=>$update,)); ?>

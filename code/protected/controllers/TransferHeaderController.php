@@ -106,12 +106,12 @@ class TransferHeaderController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=transferHeader/admin&w_id=".$w_id);
         }
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        $dataProvider=new CArrayDataProvider($popularItems, array(
+        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        /*$dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>100,
             ),
-        ));
+        ));*/
 
         $transferLineMap = array();
         $inv_header = new InventoryHeader('search');
@@ -138,7 +138,7 @@ class TransferHeaderController extends Controller
 
                 if($model->save()){
 
-                    if(isset($_POST['received_qty']) || isset($_POST['delivered_qty'])) {
+                    if(isset($_POST['received_qty']) || isset($_POST['delivered_qty']) || isset($_POST['order_qty'])) {
                         $qtyArr = array();
                         if(isset($_POST['received_qty'])){
                             $qtyArr = $_POST['received_qty'];
@@ -147,17 +147,21 @@ class TransferHeaderController extends Controller
                             $qtyArr = $_POST['delivered_qty'];
                         }
                         foreach ($qtyArr as $key => $quantity) {
+                            $createLine = false;
                             if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
-                                $order_qty = trim($_POST['order_qty'][$key]);
+                                //$order_qty = trim($_POST['order_qty'][$key]);
+                                $createLine = true;
                             }
-                            if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
-                                $delivered_qty = trim($_POST['delivered_qty'][$key]);
+                            else if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
+                                //$delivered_qty = trim($_POST['delivered_qty'][$key]);
+                                $createLine = true;
                             }
-                            if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                $received_qty = trim($_POST['received_qty'][$key]);
+                            else if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                                //$received_qty = trim($_POST['received_qty'][$key]);
+                                $createLine = true;
                             }
 
-                            if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
+                            if ($createLine) {
                                 $transferLine = new TransferLine();
                                 $transferLine->transfer_id = $model->id;
                                 $transferLine->base_product_id = $_POST['base_product_id'][$key];
@@ -197,7 +201,7 @@ class TransferHeaderController extends Controller
             'inv_header'=>$inv_header,
             'transferLineMap'=> $transferLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
         ));
     }
@@ -221,7 +225,7 @@ class TransferHeaderController extends Controller
         }
         $model=$this->loadModel($id);
         $transferLines = TransferLine::model()->findAllByAttributes(array('transfer_id' => $id));
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $transferLineMap = array();
         $transferLinesArr = array();
         foreach ($transferLines as $item){
@@ -256,43 +260,28 @@ class TransferHeaderController extends Controller
                 $model->attributes = $_POST['TransferHeader'];
 
                 if ($model->save()) {
-                    $qtyArr = array();
-                    if(isset($_POST['received_qty'])){
-                        $qtyArr = $_POST['received_qty'];
-                    }
-                    if(isset($_POST['delivered_qty'])){
-                        $qtyArr = $_POST['delivered_qty'];
-                    }
-                    foreach ($qtyArr as $key => $order_qty) {
+
+                    foreach ($_POST['base_product_id'] as $key => $bp_id) {
                         //$orderQt = $_POST['product_qty'][$key];
-                        if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                        $order_qty = $delivered_qty = $received_qty = '';
+                        if(isset($_POST['order_qty'][$key])){
                             $order_qty = trim($_POST['order_qty'][$key]);
                         }
-                        if(isset($_POST['delivered_qty'][$key]) && $_POST['delivered_qty'][$key] > 0){
+                        if(isset($_POST['delivered_qty'][$key]) ){
                             $delivered_qty = trim($_POST['delivered_qty'][$key]);
                         }
-                        if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
+                        if(isset($_POST['received_qty'][$key]) ){
                             $received_qty = trim($_POST['received_qty'][$key]);
                         }
 
 
-                        if(!isset($order_qty) || empty($order_qty)){
-                            $order_qty = 0;
-                        }
-                        if(!isset($delivered_qty) || empty($delivered_qty)){
-                            $delivered_qty = 0;
-                        }
-                        if(!isset($received_qty) || empty($received_qty)){
-                            $received_qty = 0;
-                        }
-
 
                         //echo "ord ".$order_qty." delv ".$delivered_qty." rec ".$received_qty;die;
-                        if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
+                        //if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
                             if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
                                 $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
                             }
-                            else{
+                            else if(!empty($order_qty) || !empty($delivered_qty) || !empty($received_qty)){
                                 $transferLine = new TransferLine();
                                 $transferLine->transfer_id = $model->id;
                                 $transferLine->base_product_id = $_POST['base_product_id'][$key];
@@ -300,19 +289,33 @@ class TransferHeaderController extends Controller
 
                             }
 
-                            $transferLine->order_qty = $order_qty;
-                            $transferLine->delivered_qty = $delivered_qty;
-                            $transferLine->received_qty = $received_qty;
+                            if(isset($transferLine)){
+                                if(!empty($order_qty)){
+                                    $transferLine->order_qty = $order_qty;
+                                }
+                                if(!empty($delivered_qty)){
+                                    $transferLine->delivered_qty = $delivered_qty;
+                                }
+                                if(!empty($received_qty)){
+                                    $transferLine->received_qty = $received_qty;
+                                }
 
-                            $transferLine->save();
-                        }
-                        else{
-                            if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
-                                $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
-                                $transferLine->deleteByPk($transferLine->id);
+
+                                $transferLine->save();
+                            }
+                            else{
+                                if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
+                                    $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
+                                    $transferLine->deleteByPk($transferLine->id);
+                                }
+
                             }
 
-                        }
+
+
+
+                        //}
+
                     }
                     $transaction->commit();
                     Yii::app()->controller->redirect(array('admin','w_id'=>$w_id));
@@ -333,7 +336,7 @@ class TransferHeaderController extends Controller
             'inv_header'=>$inv_header,
             'transferLineMap'=> $transferLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'update'=>true,
         ));

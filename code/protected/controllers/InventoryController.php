@@ -104,9 +104,7 @@ class InventoryController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        //$inventories = Inventory::model()->with('BaseProduct')->findAllByAttributes(array('warehouse_id'=>$w_id, 'date'=>$date),array('order'=> ' BaseProduct.title ASC'));
-        //$dataProvider = $model->search();
+
         $dataProvider = $inv_header->search();
         //var_dump($dataProvider); die;
         $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
@@ -176,7 +174,6 @@ class InventoryController extends Controller
             'model'=>$inv_header,
             'dataProvider'=>$dataProvider,
             'totalInvData' => $totalInvDataProvider,
-            'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'quantitiesMap' => $quantitiesMap,
             'editOnly' => $editOnly,

@@ -164,7 +164,7 @@ class Inventory extends CActiveRecord
         $purchaseSum = PurchaseLine::getReceivedPurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
         $transferOutSum = TransferLine::getDeliveredTransferOutSumByDate($w_id,$date);
-        $toBeSentLiqInv = TransferLine::getLastDayLiqInv($w_id, $date);
+        //$toBeSentLiqInv = TransferLine::getLastDayLiqInv($w_id, $date);
         $sentLiqInv = TransferLine::getLiqInvSent($w_id, $date);
         $receivedLiqInv = TransferLine::getLiqInvReceived($w_id, $date);
         $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
@@ -173,7 +173,7 @@ class Inventory extends CActiveRecord
         $totalOrder = 0;
         $totalTransferIn = 0;
         $totalTransferOut = 0;
-        $totalToBeSentLiqInv = 0;
+        //$totalToBeSentLiqInv = 0;
         $totalSentLiqInv = 0;
         $totalReceivedLiqInv = 0;
 
@@ -193,9 +193,9 @@ class Inventory extends CActiveRecord
             $totalTransferOut += $transferOut;
         }
 
-        foreach ($toBeSentLiqInv as $liqInv){
+        /*foreach ($toBeSentLiqInv as $liqInv){
             $totalToBeSentLiqInv += $liqInv;
-        }
+        }*/
 
         foreach ($sentLiqInv as $liqInv){
             $totalSentLiqInv += $liqInv;
@@ -212,7 +212,7 @@ class Inventory extends CActiveRecord
         $quantitiesMap['transferOutSum'] = $transferOutSum;
         $quantitiesMap['avgOrder'] = $avgOrderByItem;
         $quantitiesMap['prevDayLiqInv'] = $prevDayLiqInv;
-        $quantitiesMap['toBeSentLiqInv'] = $toBeSentLiqInv;
+        //$quantitiesMap['toBeSentLiqInv'] = $toBeSentLiqInv;
         $quantitiesMap['sentLiqInv'] = $sentLiqInv;
         $quantitiesMap['receivedLiqInv'] = $receivedLiqInv;
 
@@ -220,7 +220,7 @@ class Inventory extends CActiveRecord
         $quantitiesMap['totalOrder'] = $totalOrder;
         $quantitiesMap['totalTransferIn'] = $totalTransferIn;
         $quantitiesMap['totalTransferOut'] = $totalTransferOut;
-        $quantitiesMap['totalToBeSentLiqInv'] = $totalToBeSentLiqInv;
+        //$quantitiesMap['totalToBeSentLiqInv'] = $totalToBeSentLiqInv;
         $quantitiesMap['totalSentLiqInv'] = $totalSentLiqInv;
         $quantitiesMap['totalReceivedLiqInv'] = $totalReceivedLiqInv;
 

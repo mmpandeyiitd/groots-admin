@@ -10,17 +10,22 @@
 
 <?php
 $showSubmit = true;
+$isSystemGenerated = false;
 if(isset($update) && $update==true){
     $update=true;
     $source_wid=$model->source_warehouse_id;
     if($model->delivery_date < date('Y-m-d')){
         $showSubmit = false;
     }
+    if($model->transfer_type=='regular'){
+        $isSystemGenerated = true;
+    }
 }
 else{
     $update = false;
     $source_wid=$w_id;
 }
+
 
 $disabled = "";
 if($update == true) {
@@ -29,7 +34,7 @@ if($update == true) {
 
 $visibleReceived = false;
 $visibleDelivered = false;
-if($this->checkAccess('SuperAdmin')){
+if($this->checkAccess('SuperAdmin') || !$update){
     $visibleReceived = true;
     $visibleDelivered = true;
 }
@@ -216,11 +221,15 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'visible' => $visibleReceived,
-                'value' => function ($data) use($transferLineMap) {
+                'value' => function ($data) use($transferLineMap, $update, $isSystemGenerated) {
                     if(isset($transferLineMap[$data->base_product_id])){
                         $data->order_qty = $transferLineMap[$data->base_product_id]['order_qty'];
                     }
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'id'=>'order_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
+                    $readonly = false;
+                    if($update && $isSystemGenerated){
+                        $readonly = 'readonly';
+                    }
+                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'id'=>'order_'.$data->base_product_id, 'readonly'=>$readonly, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
             ),
             array(

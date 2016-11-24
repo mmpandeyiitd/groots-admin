@@ -110,12 +110,12 @@ class PurchaseHeaderController extends Controller
         }
 
 		$model=new PurchaseHeader('search');
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        /*list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>300,
             ),
-        ));
+        ));*/
 
         $purchaseLineMap = array();
         $inv_header = new InventoryHeader('search');
@@ -192,7 +192,7 @@ class PurchaseHeaderController extends Controller
             'inv_header'=>$inv_header,
             'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $w_id,
 		));
 	}
@@ -221,7 +221,7 @@ class PurchaseHeaderController extends Controller
 
         $model=$this->loadModel($id);
         $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $purchaseLineMap = array();
         $purchaseLinesArr = array();
         foreach ($purchaseLines as $item){
@@ -319,7 +319,7 @@ class PurchaseHeaderController extends Controller
             'inv_header'=>$inv_header,
             'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'update'=>true,
 		));
@@ -421,7 +421,10 @@ class PurchaseHeaderController extends Controller
 
 
 public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
+    //echo "<pre>";
+    //print_r($purchaseOrderMap);
         $purchaseOrder = PurchaseHeader::model()->findByAttributes(array('delivery_date' => $date, 'warehouse_id' =>$w_id, 'purchase_type' => 'regular', 'status' => 'pending'));
+
 
         $transaction = Yii::app()->db->beginTransaction();
         try {
@@ -441,17 +444,22 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             foreach ($purchaseOrderMap as $bp_id => $qty) {
                 if (isset($purchaseLineMap[$bp_id])) {
                     $item = $purchaseLineMap[$bp_id];
+                    /*if($qty < 0) {
+                        $qty=0;
+                    }*/
+                    $item->tobe_procured_qty = $qty;
+                    $item->save();
                 } else {
-                    $item = new PurchaseLine();
-                    $item->purchase_id = $purchaseOrder->id;
-                    $item->base_product_id = $bp_id;
-                    $item->status = 'pending';
-                    $item->created_at = date('Y-m-d');
+                    if($qty > 0) {
+                        $item = new PurchaseLine();
+                        $item->purchase_id = $purchaseOrder->id;
+                        $item->base_product_id = $bp_id;
+                        $item->status = 'pending';
+                        $item->created_at = date('Y-m-d');
+                        $item->tobe_procured_qty = $qty;
+                        $item->save();
+                    }
                 }
-                $item->tobe_procured_qty = $qty;
-                $item->order_qty = 0;
-                //var_dump($item);
-                $item->save();
             }
             $transaction->commit();
         } catch (\Exception $e) {

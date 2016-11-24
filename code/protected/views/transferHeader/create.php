@@ -15,4 +15,4 @@ $this->menu=array(
 
 <h1>Create Transfer Orders</h1>
 
-<?php $this->renderPartial('_transferForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'otherItems'=>$otherItems, 'w_id'=>$w_id, 'inv_header'=>$inv_header, 'transferLineMap'=>$transferLineMap)); ?>
+<?php $this->renderPartial('_transferForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'w_id'=>$w_id, 'inv_header'=>$inv_header, 'transferLineMap'=>$transferLineMap)); ?>
