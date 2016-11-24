@@ -116,6 +116,7 @@ class DashboardPageController extends Controller {
         $model = new DashboardPage;
         $start_date = '';
         $end_date = '';
+        $warehouse_id = '';
         $order_start_date = '';
         $order_end_date = '';
         //if (isset($_POST['DashboardPage'])) {
@@ -138,7 +139,6 @@ class DashboardPageController extends Controller {
             }
         }
         if (isset($_POST['orderQtSummary'])) {
-            $warehouse_id;
             if(isset($_POST['warehouse_id1']) && !empty($_POST['warehouse_id1'])){
                 $warehouse_id = $_POST['warehouse_id1'];
             }          
@@ -166,7 +166,6 @@ class DashboardPageController extends Controller {
             }
         }
         if (isset($_POST['deliveredQtSummary'])) {
-            $warehouse_id;
             if(isset($_POST['warehouse_id2']) && !empty($_POST['warehouse_id2'])){
                 $warehouse_id = $_POST['warehouse_id2'];
             }          
