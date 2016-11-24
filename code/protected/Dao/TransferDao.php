@@ -61,8 +61,8 @@ class TransferDao
                 $extra_inv_absolute = 0;
             }
 
-            //$trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
-            $trans_in = $s_inv + $order_sum  + $extra_inv_absolute - ($purchase + $prev_day_inv );
+            $trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
+            //$trans_in = $s_inv + $order_sum  + $extra_inv_absolute - ($purchase + $prev_day_inv );
 
     /*if($bp_id==1383 || $bp_id==1384 || $bp_id==1574 ){
         $str = "\n".$bp_id."-w_id-".$w_id."---s_inv-".$s_inv."order-".$order_sum."tr_out-".$trans_out."extra-".$extra_inv_absolute."purchase-".$purchase."previnv-".$prev_day_inv."trans_other-".$transIn_other."-------------------------------";
@@ -142,15 +142,13 @@ class TransferDao
                     $item->order_qty = $qty;
                     $item->save();
                 } else {
-                    if($qty > 0) {
-                        $item = new TransferLine();
-                        $item->transfer_id = $transferOrder->id;
-                        $item->base_product_id = $bp_id;
-                        $item->status = 'pending';
-                        $item->created_at = date('Y-m-d');
-                        $item->order_qty = $qty;
-                        $item->save();
-                    }
+                    $item = new TransferLine();
+                    $item->transfer_id = $transferOrder->id;
+                    $item->base_product_id = $bp_id;
+                    $item->status = 'pending';
+                    $item->created_at = date('Y-m-d');
+                    $item->order_qty = $qty;
+                    $item->save();
                 }
             }
             $transaction->commit();

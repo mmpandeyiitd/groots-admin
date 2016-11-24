@@ -450,7 +450,6 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
                     $item->tobe_procured_qty = $qty;
                     $item->save();
                 } else {
-                    if($qty > 0) {
                         $item = new PurchaseLine();
                         $item->purchase_id = $purchaseOrder->id;
                         $item->base_product_id = $bp_id;
@@ -458,7 +457,6 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
                         $item->created_at = date('Y-m-d');
                         $item->tobe_procured_qty = $qty;
                         $item->save();
-                    }
                 }
             }
             $transaction->commit();
