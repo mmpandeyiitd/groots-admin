@@ -447,4 +447,12 @@ class Category extends CActiveRecord {
         return true;
     }
 
+    public function getCatNameByCatId($category_id){
+        $sql = 'select category_name from cb_dev_groots.category where category_id = '.$category_id.' limit 1';
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        return $result[0]['category_name'];
+    }
 }

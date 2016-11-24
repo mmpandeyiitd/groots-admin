@@ -1800,14 +1800,14 @@ Sales: '. SALES_SUPPORT_NO. '</span>
         }
     }
 
-    public function createPdf($model,$modelOrder,$retailer,$type,$zip ){
+    public function createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip ){
 
 
         //die("here23");
-        //print_r($model);die;
+        // var_dump($newModel);
+        // var_dump($model);die;
         ob_start();
-
-        echo $this->renderPartial('reportviewcontent' ,array('model' => $model,
+        echo $this->renderPartial('reportviewcontent' ,array('model' => $model,'newModel' => $newModel,
             'modelOrder' =>$modelOrder, 'retailer'=>$retailer, 'type'=>$type), true);//die;
         $content = ob_get_clean();
         require_once( dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
@@ -1850,6 +1850,19 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             ),array('order'=>'product_name ASC'));*/
 
         $model = OrderLine::getOrderLinebyOrderId($id);
+        foreach ($model as $key => $value) {
+           $catIds = Category::getCategoryMappingByProduId($value['base_product_id']);
+           $value['category_id'] = $catIds[0];
+           $value['category_name'] = Category::getCatNameByCatId($catIds[0]);
+           $model[$key] = $value;
+        }
+        $newModel = array();
+        foreach ($model as $key => $value) {
+            if(! array_key_exists($value['category_name'], $newModel)){
+                $newModel[$value['category_name']] = array();
+            }
+            array_push($newModel[$value['category_name']], $value);
+        }
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
@@ -1862,7 +1875,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
         if($zip==true){
             return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
         }
-        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+        $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
 
     }
 
