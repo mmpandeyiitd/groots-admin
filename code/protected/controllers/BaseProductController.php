@@ -1792,34 +1792,35 @@ class BaseProductController extends Controller {
                                     $categories = '';
                                     //  is_numeric($data[$cols['categoryIds'])
                                     //$categories = explode(';', trim($data[$cols['categoryId']], ';'));
-                                    $categories = trim($data[$cols['categoryId']]);
 
-                                    $category_obj = new Category();
-                                    if ($categories != '') {
-                                        if (isset($categories) && !empty($categories)) {
-                                            $connection = Yii::app()->db;
-                                            $sql = "SELECT DISTINCT category_id
+                                }
+                                $categories = trim($data[$cols['categoryId']]);
+
+                                $category_obj = new Category();
+                                if ($categories != '') {
+                                    if (isset($categories) && !empty($categories)) {
+                                        $connection = Yii::app()->db;
+                                        $sql = "SELECT DISTINCT category_id
                                         FROM `category`
                                         WHERE category_id =$categories
                                         AND is_deleted = 0";
-                                            $catinfo = '';
-                                            $command = $connection->createCommand($sql);
-                                            $catinfo = $command->queryAll();
-                                            $catIds = array();
-                                            if (isset($catinfo) && !empty($catinfo)) {
+                                        $catinfo = '';
+                                        $command = $connection->createCommand($sql);
+                                        $catinfo = $command->queryAll();
+                                        $catIds = array();
+                                        if (isset($catinfo) && !empty($catinfo)) {
 //                                                foreach ($catinfo as $cat) {
 //                                                    $catIds[] = $cat['category_id'];
 //                                                }
-                                                $catIds[] = $categories;
+                                            $catIds[] = $categories;
 
-                                                $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
-                                                //$catDiff = array_diff($categories, $catIds);
-                                                if (!empty($catDiff)) {
+                                            $category_obj->insertCategoryMappings($model1->base_product_id, $catIds);
+                                            //$catDiff = array_diff($categories, $catIds);
+                                            if (!empty($catDiff)) {
 
-                                                    Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
+                                                Yii::app()->user->setFlash('error', 'Invalid Category ids :' . implode(' , ', $colDiff));
 
-                                                    break;
-                                                }
+                                                break;
                                             }
                                         }
                                     }
