@@ -295,6 +295,12 @@ class OrderHeaderController extends Controller {
                     $retailer->total_payable_amount -= $orderAmount;
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 }
+                if($_POST['status'] == 'Delivered'){
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Pending');
+                }
+                else{
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
+                }
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
@@ -1700,6 +1706,12 @@ Sales: '. SALES_SUPPORT_NO. '</span>
                     $order_ids = implode(',', $_POST['selectedIds']);
                     if ($status_order != 'Change status') {
                         $active_record = $model->StatusOrderByID($order_ids, $status_order);
+                        if($status_order == 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Pending');
+                        }
+                        if($status_order != 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Not Required');
+                        } 
 
                         //$active_record = $model->CancelOrderByID($order_ids);
                         if ($active_record) {

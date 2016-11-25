@@ -706,7 +706,12 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
         return $this->groots_authorized_name;
     }
 
-   
+   public function setFeedbackStatusOnDelivered($orderIds, $status){
+    $sql = 'update order_header set feedback_status = "'.$status.'" where order_id in ('.$orderIds.') and feedback_status != "Submitted"';
+    $connection = Yii::app()->secondaryDb;
+    $command = $connection->createCommand($sql);
+    $command->execute();
+   }
 
 }
 
