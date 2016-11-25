@@ -181,9 +181,9 @@ $('.search-form form').submit(function(){
 			'type' => 'raw',
 			'value' => function($data){
 				$text = "Update";
-				if($data->delivery_date < date('Y-m-d')){
+				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
-				}
+				}*/
 				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id))."'"));
 			},
 		),

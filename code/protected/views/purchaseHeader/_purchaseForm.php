@@ -293,13 +293,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <div class="row buttons">
     <?php
-    if($showSubmit) {
+    //if($showSubmit) {
         if ($update == true) {
             echo CHtml::submitButton('Update', array('name' => 'purchase-update'));
         } else {
             echo CHtml::submitButton('Create', array('name' => 'purchase-create'));
         }
-    }
+    //}
     ?>
 
 

@@ -62,8 +62,10 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    //echo "<pre>";
-		//print_r($_POST);
+	    /*echo "<pre>";
+		print_r($_POST);
+        print_r($_GET);*/
+
         //$model=new Inventory('search');
 
         $w_id = '';
@@ -94,10 +96,14 @@ class InventoryController extends Controller
                 $date = date('Y-m-d');
             }
         }
+        elseif(!empty($_GET['date'])){
+            $date = $_GET['date'];
+        }
         else{
             $date = date('Y-m-d');
             //$date = "2016-10-10";
         }
+        
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;
         //$model->warehouse_id = $w_id;

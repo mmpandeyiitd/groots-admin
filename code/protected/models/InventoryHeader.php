@@ -129,7 +129,8 @@ class InventoryHeader extends CActiveRecord
                 ),
             ),
             'pagination' => array(
-                'pageSize' => 150,
+                'pageSize' => 80,
+                'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
             ),
         ));
     }

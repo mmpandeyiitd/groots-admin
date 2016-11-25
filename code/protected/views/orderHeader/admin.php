@@ -258,9 +258,9 @@ onclick='return confirm("Do you want to cancel");'/>
                 'type' => 'raw',
                 'value' => function($data) use ($w_id, $isAdmin) {
                     $text = "Update";
-                    if(($data->delivery_date < date('Y-m-d') || $data->status=='Delivered') && !$isAdmin){
+                    /*if(($data->delivery_date < date('Y-m-d') || $data->status=='Delivered') && !$isAdmin){
                         $text = "View";
-                    }
+                    }*/
                      return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("OrderHeader/update",array("id"=>$data->order_id,"w_id"=>$w_id, "bckstatus"=>$data->status))."'"));
                 },
             ),
