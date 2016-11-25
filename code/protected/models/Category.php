@@ -455,4 +455,17 @@ class Category extends CActiveRecord {
         $result = $command->queryAll();
         return $result[0]['category_name'];
     }
+
+    public static function getCatNameIdbyProdId($prodIds){
+        $sql = 'select c.category_name, c.category_id, pcm.base_product_id from category as c left join product_category_mapping as pcm on pcm.category_id = c.category_id where pcm.base_product_id in ('.$prodIds.')';
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        $returnArray = array();
+        foreach ($result as $key => $value) {
+            $returnArray[$value['base_product_id']] = $value;
+        }
+        return $returnArray;
+    }
 }

@@ -1850,19 +1850,22 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             ),array('order'=>'product_name ASC'));*/
 
         $model = OrderLine::getOrderLinebyOrderId($id);
+        $prodIds= array();
         foreach ($model as $key => $value) {
-           $catIds = Category::getCategoryMappingByProduId($value['base_product_id']);
-           $value['category_id'] = $catIds[0];
-           $value['category_name'] = Category::getCatNameByCatId($catIds[0]);
-           $model[$key] = $value;
+            array_push($prodIds, $value['base_product_id']);
         }
         $newModel = array();
+        $prodIdsString = implode(',', $prodIds);
+        $catNameCatId = Category::getCatNameIdbyProdId($prodIdsString);
         foreach ($model as $key => $value) {
+            $value['category_name'] = $catNameCatId[$value['base_product_id']]['category_name'];
+            $model[$key] = $value;
             if(! array_key_exists($value['category_name'], $newModel)){
                 $newModel[$value['category_name']] = array();
             }
             array_push($newModel[$value['category_name']], $value);
         }
+
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
