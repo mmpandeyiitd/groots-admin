@@ -244,7 +244,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 			   JOIN  cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
 				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` ";
+				GROUP BY oh.`user_id` order by r.name ";
 
         $sqlTotalAmount = "SELECT oh.user_id AS 'Client ID', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
 				FROM `order_header` oh
