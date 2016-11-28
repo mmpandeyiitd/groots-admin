@@ -308,10 +308,10 @@ foreach ($model as $value) {
                     ?></td>
                 <td style="text-align:center;  width: 15%;"> <?php
                     if($model[$key]['pack_unit']=='g'){
-                       echo  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
+                       echo  round(((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000, 2);
                     }
                     else{
-                        echo  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
+                        echo round(((float)$quantityInPacks) * ((float)$model[$key]['pack_size']), 2);
                     }
 
                     ?></td>
@@ -325,9 +325,9 @@ foreach ($model as $value) {
             <td style="text-align:left; width:7%;"></td>
             <th style="text-align:center; padding: 5px; width:35%;">Sub-total</th>
             <td style="text-align:center; padding: 5px;  width:15%;  "></td>
-            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo $subtotalQty ?></th>
+            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo round($subtotalQty, 2) ?></th>
             <td style="text-align:center; padding: 5px; width:14%;" ></td>
-            <th style="text-align:center; padding: 5px; width:14%;"><?php echo $subTotalAmount ?></th>
+            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($subTotalAmount, 2) ?></th>
         </tr>
 
         <?php }
@@ -337,9 +337,9 @@ foreach ($model as $value) {
         <td colspan = "7" style="text-align:left; width:7%;"></td>
             <th style="text-align:center; padding: 5px; width:35%;">Gross Total</th>
             <td style="text-align:center; padding: 5px;  width:15%;  "></td>
-            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo $qtytotal ?></th>
+            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo round($qtytotal, 2) ?></th>
             <td style="text-align:center; padding: 5px; width:14%;" ></td>
-            <th style="text-align:center; padding: 5px; width:14%;"><?php echo $modelOrder->total_payable_amount - $modelOrder->shipping_charges ?></th>
+            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($modelOrder->total_payable_amount - $modelOrder->shipping_charges, 2) ?></th>
         </tr>
 
         <tr>
@@ -348,7 +348,7 @@ foreach ($model as $value) {
         </tr>
         <tr>
             <td colspan="5" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo $modelOrder->total_payable_amount; ?></strong></td>
+            <td style="text-align:center;"><strong><?php echo round($modelOrder->total_payable_amount, 2); ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
