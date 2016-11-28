@@ -492,9 +492,9 @@ create table groots_orders.feedbacks(
 )
 
 alter table groots_orders.order_header add column feedback_status enum ('Not Required', 'Pending', 'Submitted') not null default 'Not Required';
-insert into groots_orders.feedback_category values(null, 'Late Delivery', CURDATE(), null , 1);
-insert into groots_orders.feedback_category values(null, 'Delivery Boy Behaviour', CURDATE(), null , 1);
-insert into groots_orders.feedback_category values(null, 'Incomplete Order', CURDATE(), null , 1);
-insert into groots_orders.feedback_category values(null, 'Product Quality', CURDATE(), null , 1);
-insert into groots_orders.feedback_category values(null, 'Pricing', CURDATE(), null , 1);
-insert into groots_orders.feedback_category values(null, 'Other', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Late Delivery', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Delivery Boy Behaviour', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Incomplete Order', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Product Quality', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Pricing', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Other', CURDATE(), null , 1);
