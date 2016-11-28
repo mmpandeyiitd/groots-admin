@@ -468,3 +468,33 @@ alter table cb_dev_groots.retailer_product_quotation_log modify column created_a
 ----------------------------------------------------------------------------------------------------------------
 alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
 insert into cb_dev_groots.collection_agent values(null, 'Pankaj Ahuja',3,1);
+
+  --------------------------------------------------------------------------------------------feedback------------
+create table groots_orders.feedback_categories(
+  category_id int(11) not null AUTO_INCREMENT,
+  category_name varchar(255) not null,
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null default 1,
+  primary key(category_id)
+)
+
+create table groots_orders.feedbacks(
+  id int(11) not null AUTO_INCREMENT,
+  order_id int(11) not null,
+  rating tinyint(1) not null,
+  feedback_id int(11) default null,
+  comment varchar(1000) default null, 
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null default 1,
+  primary key (id)
+)
+
+alter table groots_orders.order_header add column feedback_status enum ('Not Required', 'Pending', 'Submitted') not null default 'Not Required';
+insert into groots_orders.feedback_categories values(null, 'Late Delivery', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Delivery Boy Behaviour', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Incomplete Order', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Product Quality', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Pricing', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Other', CURDATE(), null , 1);

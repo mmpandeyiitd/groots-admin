@@ -295,6 +295,12 @@ class OrderHeaderController extends Controller {
                     $retailer->total_payable_amount -= $orderAmount;
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 }
+                if($_POST['status'] == 'Delivered'){
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Pending');
+                }
+                else{
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
+                }
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin'));
@@ -1700,6 +1706,12 @@ Sales: '. SALES_SUPPORT_NO. '</span>
                     $order_ids = implode(',', $_POST['selectedIds']);
                     if ($status_order != 'Change status') {
                         $active_record = $model->StatusOrderByID($order_ids, $status_order);
+                        if($status_order == 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Pending');
+                        }
+                        if($status_order != 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Not Required');
+                        } 
 
                         //$active_record = $model->CancelOrderByID($order_ids);
                         if ($active_record) {
@@ -1865,7 +1877,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             }
             array_push($newModel[$value['category_name']], $value);
         }
-
+        ksort($newModel, SORT_STRING);
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
@@ -1876,7 +1888,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
         $modelOrder->groots_authorized_name = $store->store_name;
         $retailer = Retailer::model()->findByPk($modelOrder->user_id);
         if($zip==true){
-            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+            return $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
         }
         $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
 
