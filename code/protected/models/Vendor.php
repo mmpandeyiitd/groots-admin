@@ -36,6 +36,7 @@
  * @property string $bussiness_name
  * @property integer $payment_terms
  * @property integer $proc_exec_id
+ * @property string $vendor_type
  *
  * The followings are the available model relations:
  * @property Warehouses $allocatedWarehouse
@@ -58,7 +59,7 @@ class Vendor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, mobile, address, date_of_onboarding, credit_limit, created_date, updated_at, bussiness_name, payment_terms, proc_exec_id', 'required'),
+			array('name, mobile, address, date_of_onboarding, credit_limit, created_date, updated_at, bussiness_name, payment_terms, proc_exec_id, vendor_type', 'required'),
 			array('status, credit_limit, payment_terms, proc_exec_id', 'numerical', 'integerOnly'=>true),
 			array('name, email, password, owner_email, settlement_days, time_of_delivery, bussiness_name', 'length', 'max'=>255),
 			array('vendor_code, pincode, owner_phone, initial_pending_amount, total_pending_amount', 'length', 'max'=>10),
@@ -70,10 +71,11 @@ class Vendor extends CActiveRecord
 			array('state', 'length', 'max'=>150),
 			array('image, website, contact_person1, contact_person2', 'length', 'max'=>250),
 			array('allocated_warehouse_id', 'length', 'max'=>11),
+			array('vendor_type', 'length', 'max'=>12),
 			array('image_url', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_terms, proc_exec_id', 'safe', 'on'=>'search'),
+			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_terms, proc_exec_id, vendor_type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -127,6 +129,7 @@ class Vendor extends CActiveRecord
 			'bussiness_name' => 'Bussiness Name',
 			'payment_terms' => 'Payment Terms',
 			'proc_exec_id' => 'Proc Exec',
+			'vendor_type' => 'Vendor Type',
 		);
 	}
 
@@ -180,6 +183,7 @@ class Vendor extends CActiveRecord
 		$criteria->compare('bussiness_name',$this->bussiness_name,true);
 		$criteria->compare('payment_terms',$this->payment_terms);
 		$criteria->compare('proc_exec_id',$this->proc_exec_id);
+		$criteria->compare('vendor_type',$this->vendor_type,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

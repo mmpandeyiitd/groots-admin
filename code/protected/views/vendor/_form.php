@@ -17,7 +17,6 @@
  	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
 	<?php echo $form->errorSummary($model);?>
-
 	<div class="row">
 		<?php echo $form->labelEx($model,'name'); ?>
 		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>255)); ?>
@@ -36,6 +35,12 @@
 		<?php echo $form->error($model,'vendor_code'); ?>
 	</div>
  -->
+ 	<div class="row">
+		<?php echo $form->labelEx($model,'vendor_type'); ?>
+		<?php echo CHtml::activeDropDownList($model	, 'vendor_type', VendorDao::getVendorTypeDropdownData(), array('options' => array($model->vendor_type=>array('selected'=>true)), 'style' => 'width:220.5px;')); ?>
+		<?php echo $form->error($model,'vendor_type'); ?>
+	</div>
+
 	<div class="row">
 		<?php echo $form->labelEx($model,'VAT_number'); ?>
 		<?php echo $form->textField($model,'VAT_number',array('size'=>50,'maxlength'=>50)); ?>

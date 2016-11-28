@@ -23,6 +23,7 @@ $this->menu=array(
 	'attributes'=>array(
 		'id',
 		'name',
+		'vendor_type',
 		'vendor_code',
 		'VAT_number',
 		'email',
