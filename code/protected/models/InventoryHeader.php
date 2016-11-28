@@ -107,7 +107,7 @@ class InventoryHeader extends CActiveRecord
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
-        $criteria->join = " Left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id  and inv.date ='".$this->date."') ";
+        $criteria->join = " join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
         $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
         $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
