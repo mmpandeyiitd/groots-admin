@@ -1877,7 +1877,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             }
             array_push($newModel[$value['category_name']], $value);
         }
-
+        ksort($newModel, SORT_STRING);
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
@@ -1888,7 +1888,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
         $modelOrder->groots_authorized_name = $store->store_name;
         $retailer = Retailer::model()->findByPk($modelOrder->user_id);
         if($zip==true){
-            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+            return $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
         }
         $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
 
