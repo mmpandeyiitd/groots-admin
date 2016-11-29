@@ -402,4 +402,26 @@ class Retailer extends CActiveRecord {
         return $collectionFrequency;
     }
 
+    public function getInitialPayableAmount($r_id){
+        if(is_numeric($r_id)){
+            $connection = Yii::app()->db;
+            $sql = 'select initial_payable_amount from retailer where id = '.$r_id;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $initial_payable_amount = $command->queryScalar();
+        }
+        return $initial_payable_amount;
+    }
+
+    public function getLastDueDate($r_id){
+        if(is_numeric($r_id)){
+            $connection = Yii::app()->db;
+            $sql = 'select last_due_date from retailer where id = '.$r_id;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $last_due_date = $command->queryScalar();
+        }
+        return $last_due_date;
+    }
+
 }

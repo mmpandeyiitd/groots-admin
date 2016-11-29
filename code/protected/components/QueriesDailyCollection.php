@@ -54,6 +54,11 @@ class QueriesDailyCollection{
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
+        foreach ($dataArray as $key => $value) {
+            $value['total_payable_amount'] = round(Utility::calTotPayAmoByRetailer($value['id']), 2);
+            $value['due_payable_amount'] = round(Utility::calLastPayAmoByRetailer($value['id']), 2);
+            $dataArray[$key] = $value;
+        }
         $fileName = date('Y-m-d')."backDAtecollection.csv";
         ob_clean();
         header('Pragma: public');
@@ -118,6 +123,11 @@ public static function todaysCollectionQuery(){
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
+        foreach ($dataArray as $key => $value) {
+            $value['total_payable_amount'] = round(Utility::calTotPayAmoByRetailer($value['id']), 2);
+            $value['due_payable_amount'] = round(Utility::calLastPayAmoByRetailer($value['id']), 2);
+            $dataArray[$key] = $value;
+        }
         $fileName = date('Y-m-d')."collection.csv";
         ob_clean();
         header('Pragma: public');
