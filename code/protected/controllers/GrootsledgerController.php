@@ -305,31 +305,35 @@ class GrootsledgerController extends Controller
       $total_due_amount = 0;
       $amount_to_be_collected = 0;
       foreach ($retailers as $rowinfo) {
-        $amount_to_be_collected += $rowinfo['total_payable_amount'];
-        $total_due_amount += $rowinfo['total_payable_amount'];
+        $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
+        $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
+        $amount_to_be_collected += $total_payable_amount;
+        $total_due_amount += $due_payable_amount;
         $tmp = array();
         $tmp['yesterday_payment_received'] = $rowinfo['last_paid_amount'];
         $tmp['id'] = $rowinfo['id'];
         $tmp['name'] = $rowinfo['retailer_name'];
         $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
         $tmp['collection_agent'] = $rowinfo['collection_agent'];
-        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
+        $tmp['total_payable_amount'] = round($total_payable_amount, 2);
         $tmp['collection_center'] = $rowinfo['collection_center'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         array_push($dataprovider, $tmp);
       }
       foreach ($pendingRetailer as $rowinfo) {
-        $total_due_amount += $rowinfo['due_payable_amount'];
-        $amount_to_be_collected += $rowinfo['total_payable_amount'];
+        $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
+        $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
+        $total_due_amount += $due_payable_amount;
+        $amount_to_be_collected += $total_payable_amount;
         $tmp = array();
         $tmp['id'] = $rowinfo['id'];
         $tmp['name'] = $rowinfo['retailer_name'];
         $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
         $tmp['collection_agent'] = $rowinfo['collection_agent'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
-        $tmp['total_payable_amount'] = $rowinfo['total_payable_amount'];
-        $tmp['due_payable_amount'] = $rowinfo['due_payable_amount'];
+        $tmp['total_payable_amount'] = round($total_payable_amount, 2);
+        $tmp['due_payable_amount'] = round($due_payable_amount, 2);
         $tmp['collection_center'] = $rowinfo['collection_center'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
         $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
@@ -436,7 +440,9 @@ class GrootsledgerController extends Controller
                   $date[$key] = $value['date'];
                 }
                 //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
-                array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
+                if(!empty($dataprovider)){
+                  array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
+                }
                 foreach ($dataprovider as $key=>$data){
                     if($data['type'] == 'Order'){
                         $outstanding += $data['invoiceAmount'];
@@ -614,4 +620,5 @@ class GrootsledgerController extends Controller
         $retailer->save();
        //var_dump($retailer->getErrors());die;
   }
+
 }
