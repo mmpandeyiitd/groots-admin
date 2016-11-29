@@ -118,10 +118,10 @@ class Inventory extends CActiveRecord
         ));
     }
 
-    public static function getTotalInvOfDate($date){
+    public static function getTotalInvOfDate($w_id, $date){
         $prevDay = Utility::getPrevDay($date);
-        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(liquidation_wastage) as liquidation_wastage, sum(secondary_sale) as secondary_sale from inventory where date = '" . $date . "' group by date";
-        $sql2 = "select sum(present_inv) as present_inv, sum(liquid_inv) as liquid_inv from inventory where date = '" . $prevDay . "' group by date";
+        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(liquidation_wastage) as liquidation_wastage, sum(secondary_sale) as secondary_sale from inventory where date = '" . $date . "' and warehouse_id=".$w_id." group by date";
+        $sql2 = "select sum(present_inv) as present_inv, sum(liquid_inv) as liquid_inv from inventory where date = '" . $prevDay . "' and warehouse_id=".$w_id." group by date";
         $connection = Yii::app()->secondaryDb;
         $command1 = $connection->createCommand($sql1);
         $invArr = $command1->queryAll();

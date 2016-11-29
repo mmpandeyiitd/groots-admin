@@ -249,7 +249,7 @@ class TransferHeaderController extends Controller
 
         $dataProvider = $inv_header->search();
 
-
+//print_r($transferLineMap);die;
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 

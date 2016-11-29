@@ -115,7 +115,7 @@ class InventoryController extends Controller
         //var_dump($dataProvider); die;
         $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
 
-        $totalInvData = Inventory::getTotalInvOfDate($date);
+        $totalInvData = Inventory::getTotalInvOfDate($w_id, $date);
         $totalInvDataProvider = new CArrayDataProvider($totalInvData);
 
 		// Uncomment the following line if AJAX validation is needed
