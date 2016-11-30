@@ -131,9 +131,9 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 			'type' => 'raw',
 			'value' => function ($data) use ($w_id) {
 				$text = "Update";
-				if($data->delivery_date < date('Y-m-d')){
+				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
-				}
+				}*/
 				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id))."'"));
 			},
 
@@ -215,9 +215,9 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 			'type' => 'raw',
 			'value' => function ($data) use ($w_id) {
 				$text = "Update";
-				if($data->delivery_date < date('Y-m-d')){
+				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
-				}
+				}*/
 				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id))."'"));
 			},
 

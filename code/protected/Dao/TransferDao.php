@@ -11,22 +11,29 @@ Yii::import('application.controllers.PurchaseHeaderController', true) ;
 class TransferDao
 {
     public static function createTransfer($w_id, $date){
+        //echo "<pre>";
         if($w_id==SOURCE_WH_ID) {
+            $procurementOrderMap = array();
             $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=>'id'));
             foreach ($warehouses as $warehouse){
-                if($warehouse->id != $w_id && $warehouse->id != HD_OFFICE_WH_ID){
-                    self::updateDailyTransferOrder($warehouse->id, $date);
+                //echo "\n size-".sizeof($procurementOrderMap);
+                if($warehouse->id != HD_OFFICE_WH_ID){
+                    self::updateDailyTransferOrder($warehouse->id, $date, $procurementOrderMap);
                 }
+                //print_r($procurementOrderMap);
             }
-            self::updateDailyTransferOrder($w_id, $date);
+            //print_r($procurementOrderMap);die;
+            //self::updateDailyTransferOrder($w_id, $date);
+            //$transferOrderMap = self::getTransferOrderSum($date);
+            PurchaseHeaderController::createProcurementOrder($procurementOrderMap, $date, $w_id);
         }
         else{
             self::updateDailyTransferOrder($w_id, $date);
         }
     }
 
-    public static function updateDailyTransferOrder($w_id, $date){
-        echo "<pre>";
+    public static function updateDailyTransferOrder($w_id, $date, &$procurementOrderMap=''){
+        //echo "<pre>";
         //$orderLines = OrderLine::getOrderSumByDate($w_id, $date);
         $invHeadMap = InventoryHeaderDao::getInventoryHeaderMapByBpId($w_id);
         $quantitiesMap = TransferHeader::getTransferInCalculationData($w_id, $date);
@@ -61,7 +68,8 @@ class TransferDao
                 $extra_inv_absolute = 0;
             }
 
-            $trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
+            $trans_in = $s_inv + $order_sum + $extra_inv_absolute - ($purchase + $prev_day_inv);
+            //$trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
             //$trans_in = $s_inv + $order_sum  + $extra_inv_absolute - ($purchase + $prev_day_inv );
 
     /*if($bp_id==1383 || $bp_id==1384 || $bp_id==1574 ){
@@ -72,18 +80,31 @@ class TransferDao
                 $trans_in = 0;
             }
             $transferOrderMap[$bp_id] = $trans_in;
+
+
             //echo "transin-".$trans_in."\n";
 
         }
         //print_r($transferOrderMap);
         $transferOrderMap = self::calculateTransferAtParentLavel($transferOrderMap);
+        if($procurementOrderMap != ''){
+            foreach ($transferOrderMap as $bp_id=>$trans_in){
+                if(!isset($procurementOrderMap[$bp_id])){
+                    $procurementOrderMap[$bp_id] = $trans_in;
+                }
+                else{
+                    $procurementOrderMap[$bp_id] += $trans_in;
+                }
+            }
+
+        }
 //print_r($transferOrderMap); die;
-        if($w_id==SOURCE_WH_ID){
+        /*if($w_id==SOURCE_WH_ID){
             PurchaseHeaderController::createProcurementOrder($transferOrderMap, $date, $w_id);
         }
-        else{
-            self::createTransferOrder($transferOrderMap, $date, $w_id);
-        }
+        else{*/
+        self::createTransferOrder($transferOrderMap, $date, $w_id);
+        //}
 
 
     }
@@ -115,6 +136,8 @@ class TransferDao
     }
 
     private static function createTransferOrder($transferOrderMap, $date, $w_id){
+ //echo "<pre>";
+   //     print_r($transferOrderMap);
         $warehouse = Warehouse::model()->findByAttributes(array('id' => $w_id), array('select' => 'default_source_warehouse_id'));
         $transferOrder = TransferHeader::model()->findByAttributes(array('delivery_date' => $date, 'source_warehouse_id' => $warehouse->default_source_warehouse_id, 'dest_warehouse_id' => $w_id, 'transfer_type' => 'regular'));
 
@@ -168,6 +191,11 @@ class TransferDao
             $itemArr[$item->base_product_id] = $item;
         }
         return $itemArr;
+    }
+
+    public static function getTransferOrderSum($date){
+        $transferOrderMap = array();
+
     }
 
 

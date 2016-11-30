@@ -311,9 +311,9 @@ if($this->checkAccess('SuperAdmin')){
                     <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="finalAmountDisplay">  </span></h3>
 
                     <?php if(isset($update)){
-                        if(($model->delivery_date < date('Y-m-d') || $model->status=='Delivered') && !$isAdmin){
+                        /*if(($model->delivery_date < date('Y-m-d') || $model->status=='Delivered') && !$isAdmin){
                         }
-                        else {
+                        else {*/
                             ?>
                             <input type="submit" class="button_new" value="Update" id="update" name="update"
                                    style="width: auto;"/>
@@ -322,7 +322,7 @@ if($this->checkAccess('SuperAdmin')){
 
 
                             <?php
-                        }
+                        //}
                     }
                     else{ ?>
                         <input type="submit" class="button_new" value="Create Order" id="create" name="create" onclick=""/>

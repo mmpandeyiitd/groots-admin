@@ -47,6 +47,19 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <div class="form">
 
+    <?php if (Yii::app()->user->hasFlash('success')): ?>
+        <div class="label label-success" style="color:green">
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+        </div>
+
+    <?php endif; ?>
+
+    <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <div class="label label-error" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
     <?php $form=$this->beginWidget('CActiveForm', array(
     'id'=>'purchase-form',
     // Please note: When you enable ajax validation, make sure the corresponding
@@ -71,11 +84,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     <?php echo $form->error($model,'vendor_id'); ?>
 </div>
 
-<div class="row" >
-    <?php echo $form->labelEx($model,'paid_amount'); ?>
-    <?php echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255, 'class'=>'inputs')); ?>
-    <?php echo $form->error($model,'paid_amount'); ?>
-</div>
+<!--<div class="row" >
+    <?php /*echo $form->labelEx($model,'paid_amount'); */?>
+    <?php /*echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255, 'class'=>'inputs')); */?>
+    <?php /*echo $form->error($model,'paid_amount'); */?>
+</div>-->
 
 <div class="row">
     <?php
@@ -302,13 +315,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <div class="row buttons">
     <?php
-    if($showSubmit) {
+    //if($showSubmit) {
         if ($update == true) {
             echo CHtml::submitButton('Update', array('name' => 'purchase-update'));
         } else {
             echo CHtml::submitButton('Create', array('name' => 'purchase-create'));
         }
-    }
+    //}
     ?>
 
 

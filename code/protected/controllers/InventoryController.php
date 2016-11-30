@@ -62,8 +62,10 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    //echo "<pre>";
-		//print_r($_POST);
+	    /*echo "<pre>";
+		print_r($_POST);
+        print_r($_GET);die;*/
+
         //$model=new Inventory('search');
 
         $w_id = '';
@@ -94,10 +96,14 @@ class InventoryController extends Controller
                 $date = date('Y-m-d');
             }
         }
+        elseif(!empty($_GET['date'])){
+            $date = $_GET['date'];
+        }
         else{
             $date = date('Y-m-d');
             //$date = "2016-10-10";
         }
+        
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;
         //$model->warehouse_id = $w_id;
@@ -109,7 +115,7 @@ class InventoryController extends Controller
         //var_dump($dataProvider); die;
         $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
 
-        $totalInvData = Inventory::getTotalInvOfDate($date);
+        $totalInvData = Inventory::getTotalInvOfDate($w_id, $date);
         $totalInvDataProvider = new CArrayDataProvider($totalInvData);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -134,7 +140,7 @@ class InventoryController extends Controller
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
                         echo "present_inv-".$wastage_others;die;*/
-                        $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date));
+                        $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date, 'warehouse_id'=>$warehouse_id));
                         if($inv==false){
                             $inv = new Inventory();
                             $inv->warehouse_id = $warehouse_id;

@@ -140,6 +140,18 @@ class PurchaseHeaderController extends Controller
 
                 $model->attributes=$_POST['PurchaseHeader'];
                 $model->created_at = date('Y-m-d');
+                if($model->payment_method == ''){
+                    $model->payment_method = null;
+                }
+                if($model->payment_status == ''){
+                    $model->payment_status = null;
+                }
+                if($model->paid_amount == ''){
+                    $model->paid_amount = null;
+                }
+                if($model->comment == ''){
+                    $model->comment = null;
+                }
                 //print_r($model);die;
 
                 if($model->save()){
@@ -255,7 +267,18 @@ class PurchaseHeaderController extends Controller
             try {
 
                 $model->attributes = $_POST['PurchaseHeader'];
-
+                if($model->payment_method == ''){
+                    $model->payment_method = null;
+                }
+                if($model->payment_status == ''){
+                    $model->payment_status = null;
+                }
+                if($model->paid_amount == ''){
+                    $model->paid_amount = null;
+                }
+                if($model->comment == ''){
+                    $model->comment = null;
+                }
                 if ($model->save()) {
                     if(isset($_POST['order_qty'])){
                         foreach ($_POST['order_qty'] as $key => $quantity) {
@@ -271,6 +294,9 @@ class PurchaseHeaderController extends Controller
                             }
 
                             if (isset($_POST['order_qty'][$key]) ) {
+                                if($quantity==''){
+                                    $quantity = 0;
+                                }
                                 $purchaseLine->order_qty = $quantity;
                             }
 
@@ -292,6 +318,9 @@ class PurchaseHeaderController extends Controller
                             }
 
                             if (isset($_POST['received_qty'][$key]) ) {
+                                if($quantity==''){
+                                    $quantity = 0;
+                                }
                                 $purchaseLine->received_qty = $quantity;
                             }
 
@@ -301,7 +330,10 @@ class PurchaseHeaderController extends Controller
                     }
 
                     $transaction->commit();
-                    $this->redirect(array('admin','w_id'=>$model->warehouse_id));
+                    $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
+                    Yii::app()->user->setFlash('success', 'purchase order successfully Updated.');
+                    Yii::app()->controller->redirect($url);
+                    //$this->redirect(array('admin','w_id'=>$model->warehouse_id));
                 }
                 else{
                     Yii::app()->user->setFlash('error', 'Purchase order Update failed.');

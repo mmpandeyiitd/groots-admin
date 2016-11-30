@@ -82,7 +82,7 @@ class PurchaseLine extends CActiveRecord
     public static function getReceivedPurchaseSumByDate($w_id, $date){
 
         $connection = Yii::app()->secondaryDb;
-        $sql = "SELECT ol.base_product_id as id, SUM(ol.received_qty) as qty, bp.pack_size, bp.pack_unit  FROM `purchase_line` ol join purchase_header oh on oh.id=ol.purchase_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status = 'received' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
+        $sql = "SELECT ol.base_product_id as id, SUM(ol.received_qty) as qty, bp.pack_size, bp.pack_unit, bp.parent_id  FROM `purchase_line` ol join purchase_header oh on oh.id=ol.purchase_id join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id WHERE oh.delivery_date='$date' and oh.warehouse_id=$w_id and oh.status = 'received' group by ol.base_product_id having qty > 0 order by ol.base_product_id asc";
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();

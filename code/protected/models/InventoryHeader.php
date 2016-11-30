@@ -107,7 +107,7 @@ class InventoryHeader extends CActiveRecord
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
-        $criteria->join = " Left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id  and inv.date ='".$this->date."') ";
+        $criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
         $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
         $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
@@ -116,7 +116,9 @@ class InventoryHeader extends CActiveRecord
 
         //$criteria->compare('i.date', $this->date, true);
         $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
-
+        $pageParams = $_GET;
+        $pageParams['date'] = $this->date;
+        $pageParams['w_id'] = $this->warehouse_id;
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort'=>array(
@@ -129,7 +131,9 @@ class InventoryHeader extends CActiveRecord
                 ),
             ),
             'pagination' => array(
-                'pageSize' => 150,
+                'pageSize' => 80,
+                //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
+                'params' => $pageParams,
             ),
         ));
     }

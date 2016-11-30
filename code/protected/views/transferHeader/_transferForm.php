@@ -50,6 +50,19 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 ?>
 
 <div class="form">
+    <?php if (Yii::app()->user->hasFlash('success')): ?>
+        <div class="label label-success" style="color:green">
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+        </div>
+
+    <?php endif; ?>
+
+    <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <div class="label label-error" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 
     <?php $form=$this->beginWidget('CActiveForm', array(
         'id'=>'purchase-form',
@@ -80,7 +93,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
         <?php echo $form->dropDownList($model,
             'dest_warehouse_id',
             CHtml::listData(Warehouse::model()->findAllByAttributes(array('status' => 1), array('select'=>'id,name',  'order' => 'name')),'id','name'),
-            array('empty' => 'Select a warehouse', 'disabled'=>$disabled, 'options'=>array($model->dest_warehouse_id =>array('selected'=>'selected')))
+            array('empty' => 'Select a warehouse', 'id'=>'dest-warehouse-id', 'disabled'=>$disabled, 'options'=>array($model->dest_warehouse_id =>array('selected'=>'selected')))
         );
         ?>
         <?php echo $form->error($model,'dest_warehouse_id'); ?>
@@ -294,13 +307,13 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
     <div class="row buttons">
         <?php
-        if($showSubmit) {
+        //if($showSubmit) {
             if ($update == true) {
                 echo CHtml::submitButton('Update', array('name' => 'transfer-update'));
             } else {
-                echo CHtml::submitButton('Create', array('name' => 'transfer-create'));
+                echo CHtml::submitButton('Create', array('name' => 'transfer-create', 'id' => 'create'));
             }
-        }
+        //}
         ?>
 
 
@@ -325,6 +338,15 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
             allText: 'Complete Item list'
         });*/
         onStartUp();
+
+        $("#create").click(function(event){
+            var destWarehouseId = Number($("#dest-warehouse-id").val());
+            console.log(destWarehouseId);
+            if (destWarehouseId==0){
+                alert("please select dest warehouse");
+                event.preventDefault();
+            }
+        });
 
     });
 
