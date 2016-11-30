@@ -13,25 +13,54 @@ $vendor_id = $_GET['vendor_id'];
 </div>
 
 <?php
+    // var_dump($dataProvider->searchNew());die;
     $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-product-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'rowCssClassExpression' => '$data->getCssClass()',
 		'dataProvider'=> $dataProvider->searchNew(),
 		'filter' => $dataProvider,
 		'columns' => array(
                 array(
-					'header' => 'check',
-                    'id' => 'checkedIds[]',
-                    'class' => 'CCheckBoxColumn',
-					'checked' => function($data) use ($products) {
-						$checked = in_array($data->base_product_id, $products);
-						return $checked;
-					},
+                    'header' => 'show child',
+                    'htmlOptions' => array('style' => 'width:5%;', 'class' => 'expand-bt'),
                     'value' => function($data){
-                        return $data->base_product_id;
+
+                        if(isset($data->parent_id) && $data->parent_id == 0){
+                            //onstartUp($data->base_product_id);
+                            return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
+                        }
+                        else{
+                            return "";
+                        }
+
                     },
-                    'selectableRows' => 100,
-					),
+                    'type' => 'raw',
+                ),
+     //            array(
+					// 'header' => 'check',
+     //                'id' => 'CheckedIds',
+     //                'name' => 'CheckedIds[]',
+     //                'class' => 'CCheckBoxColumn',
+     //                'checkBoxHtmlOptions' => function($data){
+     //                    return array('id' => 'CheckedIds_'.$data->base_product_id, 'onclick' => 'onCbStateChange('.$data->base_product_id.')');
+     //                },
+					// 'checked' => function($data) use ($products) {
+					// 	$checked = in_array($data->base_product_id, $products);
+					// 	return $checked;
+					// },
+     //                'value' => function($data){
+     //                    return $data->base_product_id;
+     //                },
+     //                'selectableRows' => 100,
+					// ),
+                array
+                (   'header' => 'check',
+                    'value' => function($data) use ($products){
+                        $checked = in_array($data->base_product_id, $products);
+                        echo CHtml::checkBox('checkedId_'.$data->base_product_id, $checked, array('onclick' => 'onCbStateChange('.$data->base_product_id.')'));
+                    },
+                    ),
             	'base_product_id',
             	'parent_id',
             	'grade',
@@ -56,4 +85,28 @@ $vendor_id = $_GET['vendor_id'];
 </form>
 
 
+<script type="text/javascript">
+
+    function onCbStateChange(bp_id){
+        var p_value = $('#checkedId_'+bp_id).is(':checked');
+        $(".parent-id_"+bp_id).each(function(){
+            // console.log('checking');
+            // console.log(p_value);
+        $(this).find('input[type=checkbox]').each(function(){
+                $(this).attr('checked', p_value);
+            });
+        }); 
+    }
+
+    function toggleChild(bp_id){
+        $(".parent-id_"+bp_id).each(function ( ){
+            if(!$(this).hasClass("unsorted")){
+                // console.log("reached toggle");
+                // $(this).css('display', 'none');
+                $(this).toggle();
+            }
+
+        })
+    }
+</script>
 

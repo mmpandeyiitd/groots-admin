@@ -36,8 +36,10 @@ class VendorDao{
         $command->execute();
         $data = $command->queryAll();
         $array = array();
-        foreach ($data as $key => $value) {
-            array_push($array, $value['base_product_id']);
+        if(!empty($data)){
+            foreach ($data as $key => $value) {
+                array_push($array, $value['base_product_id']);
+            }
         }
         return $array;
     }
@@ -73,6 +75,7 @@ class VendorDao{
             }
             $sql.= $values;
             $connection = Yii::app()->secondaryDb;
+            //echo $sql;die;
             $command = $connection->createCommand($sql);
             $command->execute();
         }

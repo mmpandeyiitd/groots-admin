@@ -1043,9 +1043,10 @@ class BaseProduct extends CActiveRecord {
 
     public function searchNew(){
         $criteria = new CDbCriteria; 
-        $criteria->select = 'base_product_id, title, parent_id, popularity, grade, priority, base_title';
+        $criteria->select = 't.base_product_id, t.title, t.parent_id, t.popularity, t.grade, t.priority, t.base_title';
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on t.base_product_id = pcm.base_product_id  ";
         $criteria->condition = 'status=1';
-        $criteria->order = 'base_title asc, priority asc';
+        $criteria->order = 'pcm.category_id asc, t.base_title asc, t.priority asc';
         $criteria->compare('base_product_id', $this->base_product_id , true);
         $criteria->compare('title', $this->title , true);
         $criteria->compare('parent_id', $this->parent_id , true);
@@ -1061,6 +1062,20 @@ class BaseProduct extends CActiveRecord {
             ),
         ));
 
+    }
+
+    public function getCssClass(){
+        $class = '';
+        if($this->parent_id > 0){
+            if($this->grade=='Unsorted'){
+                $class .= " unsorted ";
+            }
+            $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
+        }
+        elseif(isset($this->parent_id) && $this->parent_id == 0){
+            $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
+        }
+        return $class;
     }
 
 }
