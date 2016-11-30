@@ -1411,14 +1411,15 @@ class BaseProductController extends Controller {
 
                                 if (isset($cols['parent id'])) {
                                     $parent_id = trim($data[$cols['parent id']]);
-                                    if($parent_id>=0){
-                                        $row['parent_id'] = $parent_id;
+                                    if(!isset($parent_id) || $parent_id==''){
+                                        //$row['parent_id'] = null;
                                     }
-                                    else{
-                                        $row['parent_id'] = null;
+                                    else {
+                                        $row['parent_id'] = $parent_id;
                                     }
 
                                 }
+                               
                                 if (isset($cols['grade'])) {
                                     $row['grade'] = trim($data[$cols['grade']]);
                                 }
@@ -2113,7 +2114,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,base_title';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,baseTitle';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,

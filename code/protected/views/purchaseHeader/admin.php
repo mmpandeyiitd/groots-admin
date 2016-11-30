@@ -72,10 +72,17 @@ $('.search-form form').submit(function(){
 
 <div class = "row" style="float:right">
     <?php 
-    $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadProcurementReport",array('w_id' => $w_id));
-    echo CHtml::button('Download Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
+    $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadReconciliationReport",array('w_id' => $w_id));
+    echo CHtml::button('Reconciliation Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
     ?>
-    </div>
+</div>
+
+<div class = "row" style="float:right">
+    <?php 
+    $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadProcurementReport",array('w_id' => $w_id));
+    echo CHtml::button('Procurement Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
+    ?>
+</div>
 
 <?php if($procurementAccess){
 	?>
@@ -190,7 +197,7 @@ $('.search-form form').submit(function(){
         var date = $("#date").val().trim();
         url = url + "&date="+date;
         //window.location.assign(url);
-        //console.log(url);
+        console.log(url);
         window.open(url, '_blank');
     }
 

@@ -63,7 +63,7 @@ class InventoryController extends Controller
 	public function actionCreate()
 	{
 	    //echo "<pre>";
-		//print_r($_POST);die;
+		//print_r($_POST);
         //$model=new Inventory('search');
 
         $w_id = '';
@@ -86,6 +86,14 @@ class InventoryController extends Controller
         if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
             $date = $_POST['InventoryHeader']['date'];
         }
+        elseif(!empty($_POST['InventoryHeader'])){
+            if(!empty($_POST['InventoryHeader']['date'])){
+                $date = $_POST['InventoryHeader']['date'];
+            }
+            else{
+                $date = date('Y-m-d');
+            }
+        }
         else{
             $date = date('Y-m-d');
             //$date = "2016-10-10";
@@ -96,9 +104,7 @@ class InventoryController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        //$inventories = Inventory::model()->with('BaseProduct')->findAllByAttributes(array('warehouse_id'=>$w_id, 'date'=>$date),array('order'=> ' BaseProduct.title ASC'));
-        //$dataProvider = $model->search();
+
         $dataProvider = $inv_header->search();
         //var_dump($dataProvider); die;
         $quantitiesMap = Inventory::getInventoryCalculationData($w_id, $date);
@@ -149,7 +155,9 @@ class InventoryController extends Controller
                         $inv->liquidation_wastage = empty($liquidation_wastage) ? 0: $liquidation_wastage;
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
                         $inv->balance = empty($balance) ? 0: $balance;
+                        //var_dump($inv);die;
                         $inv->save();
+
                     }
                 }
                 $transaction->commit();
@@ -166,7 +174,6 @@ class InventoryController extends Controller
             'model'=>$inv_header,
             'dataProvider'=>$dataProvider,
             'totalInvData' => $totalInvDataProvider,
-            'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'quantitiesMap' => $quantitiesMap,
             'editOnly' => $editOnly,
@@ -180,14 +187,18 @@ class InventoryController extends Controller
         echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "bp.title, i.present_inv, i.wastage, i.liquid_inv, i.liquidation_wastage";
+        $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage, i.balance";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
-        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id where warehouse_id = '.$w_id.' and date = '."'".$date."'";
+        $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id 
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+        where date = '."'".$date."' order by pcm.category_id asc, bp.base_title asc, bp.priority asc";
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
-        $dataArray = $command->queryAll();
-        $fileName = $date." wastageReport.csv";
+        $data = $command->queryAll();
+        $dataArray = $this->arrangeWastageReportData($data);
+        // var_dump($dataArray);die;
+        $fileName = $date."_wastageReport.csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -426,5 +437,39 @@ class InventoryController extends Controller
         }
     }
 
+    public function arrangeWastageReportData($data){
+        $sql = 'select distinct name, id from cb_dev_groots.warehouses order by id';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $warehouses = $command->queryAll();
+        $tempArray = array();
+        foreach ($data as $key => $value) {
+            $row = array('title' => null);
+            foreach ($warehouses as $key => $warehouse) {
+                $nameSplit = explode(',', $warehouse['name']);
+                $warehouse['name'] = $nameSplit[0];
+                $row[$warehouse['name'].'_wastage'] = null;
+                $row[$warehouse['name'].'_liquidation_wastage'] = null;
+                $row[$warehouse['name'].'_balance'] = null;
+                $row[$key] = null;
+            }
+            $nameSplit = explode(',', $value['name']);
+            $value['name'] = $nameSplit[0];
+            $w_name = $value['name'];
+            $row[$w_name.'_wastage'] = $value['wastage'];
+            $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
+            $row[$w_name.'_balance'] = $value['balance'];
+            if(!array_key_exists($value['base_product_id'], $tempArray)){
+                $row['title'] = $value['title'];
+            }
+            $tempArray[$value['base_product_id']] = $row;
+        }
+        $finalArray = array();
+        foreach ($tempArray as $key => $temp) {
+            array_push($finalArray, $temp);
+        }
+        return $finalArray;
+    }
 
 }

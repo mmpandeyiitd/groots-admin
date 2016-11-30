@@ -16,4 +16,4 @@ $this->menu=array(
 
 <h1>Create Inventory</h1>
 
-<?php $this->renderPartial('_inventoryForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'totalInvData'=>$totalInvData, 'otherItems'=>$otherItems, 'w_id'=>$w_id, 'quantitiesMap'=>$quantitiesMap, 'editOnly'=>$editOnly)); ?>
+<?php $this->renderPartial('_inventoryForm', array('model'=>$model, 'dataProvider'=>$dataProvider, 'totalInvData'=>$totalInvData, 'w_id'=>$w_id, 'quantitiesMap'=>$quantitiesMap, 'editOnly'=>$editOnly)); ?>

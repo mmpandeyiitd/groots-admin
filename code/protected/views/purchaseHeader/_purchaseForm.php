@@ -168,7 +168,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 <?php
 
     $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'purchase-header-grid',
+        'id'=>'warehouse-item-grid',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'rowCssClassExpression' => '$data->getCssClass()',
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
@@ -396,9 +396,17 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');
             });
-
-
         });
+
+        var firstParentIndex =$(".parent").first().index();
+        $(".child").each(function () {
+            //console.log("child-index"+$(this).index()+"parent"+firstParentIndex);
+            if($(this).index() < firstParentIndex){
+                //console.log("here");
+                $(this).show();
+            }
+        });
+
     }
 
     function updateItemTotalRow(parent_id) {
@@ -407,37 +415,32 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var totalOrder = 0;
         var totalReceived = 0;
         console.log(parent_id);
-        $(".item_"+parent_id).each( function() {
+        $(".item_" + parent_id).each(function () {
             var bp_id = $(this).attr('id').split("_")[1];
 
-            if (bp_id==parent_id) return;
-            if($("#tobe-procured_"+bp_id).length > 0){
-                totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
+            if (bp_id == parent_id) return;
+            if ($("#tobe-procured_" + bp_id).length > 0) {
+                totalTobeProcured += parseFloat($("#tobe-procured_" + bp_id).html().trim()) || 0;
             }
-            if($("#order_"+bp_id).length > 0){
-                totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
+            if ($("#order_" + bp_id).length > 0) {
+                totalOrder += parseFloat($("#order_" + bp_id).val().trim()) || 0;
             }
-            if($("#received_"+bp_id).length > 0){
-                totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            if ($("#received_" + bp_id).length > 0) {
+                totalReceived += parseFloat($("#received_" + bp_id).val().trim()) || 0;
             }
-
 
 
         });
         console.log(totalOrder);
-        if($("#tobe-procured_"+parent_id).length > 0){
-            $("#tobe-procured_"+parent_id).html(totalTobeProcured);
+        if ($("#tobe-procured_" + parent_id).length > 0) {
+            $("#tobe-procured_" + parent_id).html(totalTobeProcured);
         }
-        if($("#order_"+parent_id).length > 0){
-            $("#order_"+parent_id).val(totalOrder);
+        if ($("#order_" + parent_id).length > 0) {
+            $("#order_" + parent_id).val(totalOrder);
         }
-        if($("#received_"+parent_id).length > 0){
-            $("#received_"+parent_id).val(totalReceived);
+        if ($("#received_" + parent_id).length > 0) {
+            $("#received_" + parent_id).val(totalReceived);
         }
-
-
-
-
     }
 
     function showAddItemBox(){

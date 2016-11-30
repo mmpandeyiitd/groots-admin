@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadProcurementReport', 'dailyProcurement'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -110,12 +110,12 @@ class PurchaseHeaderController extends Controller
         }
 
 		$model=new PurchaseHeader('search');
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        /*list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $dataProvider=new CArrayDataProvider($popularItems, array(
             'pagination'=>array(
                 'pageSize'=>300,
             ),
-        ));
+        ));*/
 
         $purchaseLineMap = array();
         $inv_header = new InventoryHeader('search');
@@ -192,7 +192,7 @@ class PurchaseHeaderController extends Controller
             'inv_header'=>$inv_header,
             'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $w_id,
 		));
 	}
@@ -221,7 +221,7 @@ class PurchaseHeaderController extends Controller
 
         $model=$this->loadModel($id);
         $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
-        list($popularItems, $otherItems) = BaseProduct::PopularItems();
+        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
         $purchaseLineMap = array();
         $purchaseLinesArr = array();
         foreach ($purchaseLines as $item){
@@ -319,7 +319,7 @@ class PurchaseHeaderController extends Controller
             'inv_header'=>$inv_header,
             'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
-            'otherItems'=> $otherItems,
+            //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'update'=>true,
 		));
@@ -373,16 +373,17 @@ class PurchaseHeaderController extends Controller
 	}
 
 
-    public function actionDownloadProcurementReport(){
+    public function actionDownloadReconciliationReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select bp.title, pl.base_product_id, sum(pl.order_qty) as order_qty from groots_orders.purchase_line as pl
+        $sql = 'select pl.base_product_id, bp.title, ph.id, ph.delivery_date, pl.order_qty as order_qty, pl.received_qty as received_qty from groots_orders.purchase_line as pl
                 left join groots_orders.purchase_header as ph
                 on ph.id = pl.purchase_id
                 left join cb_dev_groots.base_product as bp 
                 on bp.base_product_id = pl.base_product_id
-                where ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status = '.'"received"'.'
-                group by pl.base_product_id';
+                left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+                where ( pl.order_qty != pl.received_qty or pl.order_qty is null or pl.received_qty is null) and ph.delivery_date = '."'".$date."'".'and ph.warehouse_id = '.$w_id.' and ph.status in ("received" , "pending")
+                 order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -392,7 +393,8 @@ class PurchaseHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         else{
-            $fileName = $date."procurement_report";
+            $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
+            $fileName = $date."reconciliation_report".".csv";
             ob_clean();
             header('Pragma: public');
             header('Expires: 0');
@@ -419,7 +421,10 @@ class PurchaseHeaderController extends Controller
 
 
 public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
+    //echo "<pre>";
+    //print_r($purchaseOrderMap);
         $purchaseOrder = PurchaseHeader::model()->findByAttributes(array('delivery_date' => $date, 'warehouse_id' =>$w_id, 'purchase_type' => 'regular', 'status' => 'pending'));
+
 
         $transaction = Yii::app()->db->beginTransaction();
         try {
@@ -439,17 +444,20 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             foreach ($purchaseOrderMap as $bp_id => $qty) {
                 if (isset($purchaseLineMap[$bp_id])) {
                     $item = $purchaseLineMap[$bp_id];
+                    /*if($qty < 0) {
+                        $qty=0;
+                    }*/
+                    $item->tobe_procured_qty = $qty;
+                    $item->save();
                 } else {
-                    $item = new PurchaseLine();
-                    $item->purchase_id = $purchaseOrder->id;
-                    $item->base_product_id = $bp_id;
-                    $item->status = 'pending';
-                    $item->created_at = date('Y-m-d');
+                        $item = new PurchaseLine();
+                        $item->purchase_id = $purchaseOrder->id;
+                        $item->base_product_id = $bp_id;
+                        $item->status = 'pending';
+                        $item->created_at = date('Y-m-d');
+                        $item->tobe_procured_qty = $qty;
+                        $item->save();
                 }
-                $item->tobe_procured_qty = $qty;
-                $item->order_qty = 0;
-                //var_dump($item);
-                $item->save();
             }
             $transaction->commit();
         } catch (\Exception $e) {
@@ -516,4 +524,44 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 			Yii::app()->end();
 		}
 	}
+
+    public function actionDownloadProcurementReport(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
+        $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
+        left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
+           $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $dataArray = $command->queryAll();
+        if(!isset($dataArray) || empty($dataArray)){
+            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
+        $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
+        $fileName = $date."procurement_report".".csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush(); 
+    }
 }

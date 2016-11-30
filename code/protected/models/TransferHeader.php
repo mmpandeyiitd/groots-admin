@@ -115,11 +115,11 @@ class TransferHeader extends CActiveRecord
 
     public static function getTransferInCalculationData($w_id, $date){
         $quantitiesMap = array();
-        $prevDayInv = Inventory::getPrevDayInvMap($date);
+        $prevDayInv = Inventory::getPrevDayInvMap($w_id,$date);
         $orderSum = OrderLine::getOrderSumByDate($w_id, $date);
         $purchaseSum = PurchaseLine::getFullfillablePurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getNotRegularTransferInSumByDate($w_id,$date);
-        $transferOutSum = TransferLine::getTransferOutSumByDate($w_id,$date);
+        $transferOutSum = TransferLine::getOrderedTransferOutSumByDate($w_id,$date);
         $avgOrderByItem = OrderHeader::getAvgOrderByItem($w_id, $date);
 
         $quantitiesMap['prevDayInv'] = $prevDayInv;

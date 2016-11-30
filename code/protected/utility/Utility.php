@@ -190,4 +190,13 @@ class Utility
        
     }
 
+    public function getWarehouseNameById($w_id){
+        $sql = 'select name from cb_dev_groots.warehouses where id = '.$w_id.' limit 1';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $name = $command->queryAll();
+        return $name[0]['name'];
+    } 
+
 }

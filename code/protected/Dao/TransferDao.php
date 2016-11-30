@@ -14,7 +14,7 @@ class TransferDao
         if($w_id==SOURCE_WH_ID) {
             $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=>'id'));
             foreach ($warehouses as $warehouse){
-                if($warehouse->id != $w_id && $w_id != HD_OFFICE_WH_ID){
+                if($warehouse->id != $w_id && $warehouse->id != HD_OFFICE_WH_ID){
                     self::updateDailyTransferOrder($warehouse->id, $date);
                 }
             }
@@ -26,13 +26,15 @@ class TransferDao
     }
 
     public static function updateDailyTransferOrder($w_id, $date){
+        echo "<pre>";
         //$orderLines = OrderLine::getOrderSumByDate($w_id, $date);
         $invHeadMap = InventoryHeaderDao::getInventoryHeaderMapByBpId($w_id);
         $quantitiesMap = TransferHeader::getTransferInCalculationData($w_id, $date);
         $transferOrderMap = array();
 
+        //print_r(array_keys($invHeadMap));die;
         foreach ($invHeadMap as $bp_id => $inv) {
-
+            //$str='';
             $s_inv = 0;
             if (isset($quantitiesMap['avgOrder'][$bp_id]) && isset($invHeadMap[$bp_id])) {
                 $avgOrderInKg = $quantitiesMap['avgOrder'][$bp_id];
@@ -60,14 +62,22 @@ class TransferDao
             }
 
             $trans_in = $s_inv + $order_sum + $trans_out + $extra_inv_absolute - ($purchase + $prev_day_inv + $transIn_other);
+            //$trans_in = $s_inv + $order_sum  + $extra_inv_absolute - ($purchase + $prev_day_inv );
 
-            if (empty($trans_in) || $trans_in < 0) {
+    /*if($bp_id==1383 || $bp_id==1384 || $bp_id==1574 ){
+        $str = "\n".$bp_id."-w_id-".$w_id."---s_inv-".$s_inv."order-".$order_sum."tr_out-".$trans_out."extra-".$extra_inv_absolute."purchase-".$purchase."previnv-".$prev_day_inv."trans_other-".$transIn_other."-------------------------------";
+        echo $str;
+    }*/
+            if (empty($trans_in)) {
                 $trans_in = 0;
             }
             $transferOrderMap[$bp_id] = $trans_in;
             //echo "transin-".$trans_in."\n";
 
         }
+        //print_r($transferOrderMap);
+        $transferOrderMap = self::calculateTransferAtParentLavel($transferOrderMap);
+//print_r($transferOrderMap); die;
         if($w_id==SOURCE_WH_ID){
             PurchaseHeaderController::createProcurementOrder($transferOrderMap, $date, $w_id);
         }
@@ -76,6 +86,32 @@ class TransferDao
         }
 
 
+    }
+
+    public static function calculateTransferAtParentLavel($transferOrderMap){
+        $products = BaseProduct::model()->findAllByAttributes(array('status'=>1),array('select'=>'base_product_id, parent_id'));
+        $parentProductMap = array();
+        foreach ($products as $key=>$product){
+            if($product->parent_id > 0){
+                if(empty($parentProductMap[$product->parent_id])){
+                    $parentProductMap[$product->parent_id] = array();
+                }
+                array_push($parentProductMap[$product->parent_id], $product->base_product_id);
+            }
+        }
+        foreach ($transferOrderMap as $p_id => $qty) {
+            $balance = 0;
+            if (isset($parentProductMap[$p_id])) {
+                foreach ($parentProductMap[$p_id] as $bp_id) {
+                    if (isset($transferOrderMap[$bp_id])) {
+                        $balance += $transferOrderMap[$bp_id];
+                    }
+                }
+                $transferOrderMap[$p_id] = $balance;
+            }
+        }
+        //print_r($parentProductMap);die;
+        return $transferOrderMap;
     }
 
     private static function createTransferOrder($transferOrderMap, $date, $w_id){
@@ -100,16 +136,20 @@ class TransferDao
             foreach ($transferOrderMap as $bp_id => $qty) {
                 if (isset($transferLineMap[$bp_id])) {
                     $item = $transferLineMap[$bp_id];
+                    /*if($qty < 0) {
+                        $qty=0;
+                    }*/
+                    $item->order_qty = $qty;
+                    $item->save();
                 } else {
                     $item = new TransferLine();
                     $item->transfer_id = $transferOrder->id;
                     $item->base_product_id = $bp_id;
                     $item->status = 'pending';
                     $item->created_at = date('Y-m-d');
+                    $item->order_qty = $qty;
+                    $item->save();
                 }
-                $item->order_qty = $qty;
-                //var_dump($item);
-                $item->save();
             }
             $transaction->commit();
         } catch (\Exception $e) {
