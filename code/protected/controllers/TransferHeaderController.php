@@ -213,8 +213,9 @@ class TransferHeaderController extends Controller
 	 */
     public function actionUpdate($id)
     {
-         //echo "<pre>";
-        //print_r($_POST);die;
+         /*echo "<pre>";
+        print_r($_POST);
+         print_r($_POST);die;*/
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -318,7 +319,11 @@ class TransferHeaderController extends Controller
 
                     }
                     $transaction->commit();
-                    Yii::app()->controller->redirect(array('admin','w_id'=>$w_id));
+                    $url = Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
+                    Yii::app()->user->setFlash('success', 'Transfer order successfully Updated.');
+                    Yii::app()->controller->redirect($url);
+
+                    //Yii::app()->controller->redirect(array('update','w_id'=>$w_id));
                 }
                 else{
                     Yii::app()->user->setFlash('error', 'Transfer order Update failed.');

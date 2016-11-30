@@ -50,6 +50,19 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 ?>
 
 <div class="form">
+    <?php if (Yii::app()->user->hasFlash('success')): ?>
+        <div class="label label-success" style="color:green">
+            <?php echo Yii::app()->user->getFlash('success'); ?>
+        </div>
+
+    <?php endif; ?>
+
+    <?php if (Yii::app()->user->hasFlash('error')): ?>
+        <div class="label label-error" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </div>
+    <?php endif; ?>
+
 
     <?php $form=$this->beginWidget('CActiveForm', array(
         'id'=>'purchase-form',

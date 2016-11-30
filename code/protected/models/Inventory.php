@@ -120,8 +120,8 @@ class Inventory extends CActiveRecord
 
     public static function getTotalInvOfDate($w_id, $date){
         $prevDay = Utility::getPrevDay($date);
-        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(liquidation_wastage) as liquidation_wastage, sum(secondary_sale) as secondary_sale from inventory where date = '" . $date . "' and warehouse_id=".$w_id." group by date";
-        $sql2 = "select sum(present_inv) as present_inv, sum(liquid_inv) as liquid_inv from inventory where date = '" . $prevDay . "' and warehouse_id=".$w_id." and ( parent_id is null or parent_id=0) group by date";
+        $sql1 = "select sum(schedule_inv) as schedule_inv, sum(present_inv) as present_inv, sum(wastage) as wastage, sum(liquid_inv) as liquid_inv, sum(liquidation_wastage) as liquidation_wastage, sum(secondary_sale) as secondary_sale from inventory i join cb_dev_groots.base_product bp on bp.base_product_id = i.base_product_id  where date = '" . $date . "' and warehouse_id=".$w_id." and ( bp.parent_id is null or bp.parent_id=0) group by date";
+        $sql2 = "select sum(present_inv) as present_inv, sum(liquid_inv) as liquid_inv from inventory i join cb_dev_groots.base_product bp on bp.base_product_id = i.base_product_id where date = '" . $prevDay . "' and warehouse_id=".$w_id." and ( parent_id is null or parent_id=0) group by date";
         $connection = Yii::app()->secondaryDb;
         $command1 = $connection->createCommand($sql1);
         $invArr = $command1->queryAll();
@@ -157,8 +157,12 @@ class Inventory extends CActiveRecord
 
     public static function getInventoryCalculationData($w_id, $date){
         //echo "<pre>";
-        $baseProducts = BaseProduct::model()->findAllByAttributes(array('status'=>1), array('select'=>'base_prduct_id, parent_id', 'condition'=>'parent_id is null or parent_id = 0'));
-        foreach ($baseProduct as $base)
+        $baseProducts = BaseProduct::model()->findAllByAttributes(array('status'=>1), array('select'=>'base_product_id', 'condition'=>'parent_id is null or parent_id = 0'));
+        //print_r($baseProducts);die;
+        $baseProductArr = array();
+        foreach ($baseProducts as $baseProduct){
+            array_push($baseProductArr, $baseProduct->base_product_id);
+        }
         $quantitiesMap = array();
         $prevDayInv = self::getPrevDayInvMap($w_id, $date);
         $prevDayLiqInv = self::getPrevDayLiqInvMap($w_id, $date);
@@ -179,32 +183,38 @@ class Inventory extends CActiveRecord
         $totalSentLiqInv = 0;
         $totalReceivedLiqInv = 0;
 
-        foreach ($purchaseSum as $purchase){
-            $totalPurchase += $purchase;
+        foreach ($purchaseSum as $bp_id => $purchase){
+            if(in_array($bp_id, $baseProductArr))
+                $totalPurchase += $purchase;
         }
 
-        foreach ($orderSum as $order){
-            $totalOrder += $order;
+        foreach ($orderSum as $bp_id => $order){
+            if(in_array($bp_id, $baseProductArr))
+                $totalOrder += $order;
         }
 
-        foreach ($transferInSum as $transferIn){
-            $totalTransferIn += $transferIn;
+        foreach ($transferInSum as $bp_id => $transferIn){
+            if(in_array($bp_id, $baseProductArr))
+                $totalTransferIn += $transferIn;
         }
 
-        foreach ($transferOutSum as $transferOut){
-            $totalTransferOut += $transferOut;
+        foreach ($transferOutSum as $bp_id => $transferOut){
+            if(in_array($bp_id, $baseProductArr))
+                $totalTransferOut += $transferOut;
         }
 
         /*foreach ($toBeSentLiqInv as $liqInv){
             $totalToBeSentLiqInv += $liqInv;
         }*/
 
-        foreach ($sentLiqInv as $liqInv){
-            $totalSentLiqInv += $liqInv;
+        foreach ($sentLiqInv as $bp_id => $liqInv){
+            if(in_array($bp_id, $baseProductArr))
+                $totalSentLiqInv += $liqInv;
         }
 
-        foreach ($receivedLiqInv as $liqInv){
-            $totalReceivedLiqInv += $liqInv;
+        foreach ($receivedLiqInv as $bp_id => $liqInv){
+            if(in_array($bp_id, $baseProductArr))
+                $totalReceivedLiqInv += $liqInv;
         }
 
         $quantitiesMap['prevDayInv'] = $prevDayInv;

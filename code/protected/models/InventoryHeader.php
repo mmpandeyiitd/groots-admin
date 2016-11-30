@@ -116,7 +116,9 @@ class InventoryHeader extends CActiveRecord
 
         //$criteria->compare('i.date', $this->date, true);
         $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
-
+        $pageParams = $_GET;
+        $pageParams['date'] = $this->date;
+        $pageParams['w_id'] = $this->warehouse_id;
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort'=>array(
@@ -130,7 +132,8 @@ class InventoryHeader extends CActiveRecord
             ),
             'pagination' => array(
                 'pageSize' => 80,
-                'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
+                //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
+                'params' => $pageParams,
             ),
         ));
     }
