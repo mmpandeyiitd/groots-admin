@@ -64,7 +64,7 @@ class InventoryController extends Controller
 	{
 	    /*echo "<pre>";
 		print_r($_POST);
-        print_r($_GET);*/
+        print_r($_GET);die;*/
 
         //$model=new Inventory('search');
 
@@ -140,7 +140,7 @@ class InventoryController extends Controller
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
                         echo "present_inv-".$wastage_others;die;*/
-                        $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date));
+                        $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date, 'warehouse_id'=>$warehouse_id));
                         if($inv==false){
                             $inv = new Inventory();
                             $inv->warehouse_id = $warehouse_id;

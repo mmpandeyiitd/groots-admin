@@ -71,11 +71,11 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     <?php echo $form->error($model,'vendor_id'); ?>
 </div>
 
-<div class="row" >
-    <?php echo $form->labelEx($model,'paid_amount'); ?>
-    <?php echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255, 'class'=>'inputs')); ?>
-    <?php echo $form->error($model,'paid_amount'); ?>
-</div>
+<!--<div class="row" >
+    <?php /*echo $form->labelEx($model,'paid_amount'); */?>
+    <?php /*echo $form->textField($model,'paid_amount',array('size'=>60,'maxlength'=>255, 'class'=>'inputs')); */?>
+    <?php /*echo $form->error($model,'paid_amount'); */?>
+</div>-->
 
 <div class="row">
     <?php
