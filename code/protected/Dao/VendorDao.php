@@ -24,10 +24,11 @@ class VendorDao{
         $data = $command->queryAll();
         $array = array();
         foreach ($data as $key => $value) {
-                $array[$value['vendor_id']] = array();
-                array_push($array[$value['vendor_id']], $value['name']);
-                array_push($array[$value['vendor_id']], CHtml::textField('quantity'));
+                $array[$value['vendor_id']] = array($value['name'], CHtml::textField('quantity'), '');
+                // array_push($array[$value['vendor_id']], $value['name']);
+                // array_push($array[$value['vendor_id']], CHtml::textField('quantity'));
         }
+        //var_dump($array);die;
         return $array;
     }
 
