@@ -32,7 +32,7 @@ class VendorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'productMap'),
+				'actions'=>array('create','update', 'productMap', 'creditManagement', 'procurementOrder'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -182,6 +182,16 @@ class VendorController extends Controller
 			'dataProvider' => $data,
 			'products' => $products,
 		));
+	}
+
+	public function actionCreditManagement(){
+		$skuMap = VendorDao::getAllVendorSkus();
+
+		var_dump($skuMap);die;
+	}
+
+	public function actionProcurementOrder(){
+
 	}
 
 	/**

@@ -24,7 +24,9 @@ class VendorDao{
         $data = $command->queryAll();
         $array = array();
         foreach ($data as $key => $value) {
-                $array[$value['vendor_id']] = $value['name'];
+                $array[$value['vendor_id']] = array();
+                array_push($array[$value['vendor_id']], $value['name']);
+                array_push($array[$value['vendor_id']], CHtml::textField('quantity'));
         }
         return $array;
     }
@@ -89,6 +91,24 @@ class VendorDao{
             $vendorTypes[$value['value']] = $value['value'];
         }
         return $vendorTypes;
+    }
+
+    public function getAllVendorSkus(){
+        $connection = Yii::app()->db;
+        $sql = 'select bp.title , vpm.vendor_id from cb_dev_groots.vendor_product_mapping as vpm left join base_product as bp on vpm.base_product_id = bp.base_product_id where bp.priority != 1';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $map = array();
+        foreach ($result as $key => $value) {
+            if(!isset($map[$value['vendor_id']])){
+                $map[$value['vendor_id']] = array();
+                array_push($map[$value['vendor_id']], $value['title']);
+            }
+            else{
+                array_push($map[$value['vendor_id']], $value['title']);
+            }
+        }
+        return $map;
     }
 }
 
