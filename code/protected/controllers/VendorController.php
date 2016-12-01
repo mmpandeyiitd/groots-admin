@@ -145,11 +145,6 @@ class VendorController extends Controller
 
 	public function actionProductMap($vendor_id){
 		//var_dump($_POST);die;
-		foreach ($_POST as $key => $value) {
-			echo substr($key, 0, 9);
-			echo '<br>';
-		}
-		die;
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -160,21 +155,28 @@ class VendorController extends Controller
 		}
 		$products = VendorDao::getVendorProductIds($vendor_id);
 		$data = new BaseProduct('search');
-		$insertProductIds = array();
 		if(isset($_POST['save'])){
-			foreach ($products as $key => $value) {
-				if(isset($_POST['checkedId_'.$value])){
-					array_push($insertProductIds, $value);
-					unset($products[$key]);
+			$newProducts = array();
+			foreach ($_POST as $key => $value) {
+			if(substr($key, 0, 9) == 'checkedId'){
+				array_push($newProducts, substr($key, 10));
+			}
+		}
+			foreach ($newProducts as $key => $value) {
+				if(in_array($value, $products)){
+					$index = array_search($value, $products);
+					if(is_numeric($index)){
+						unset($products[$index]);
+					}
+					unset($newProducts[$key]);
 				}
 
 			}
-			if(count($products) > 0){
-				VendorDao::deleteVendorProductById($products, $vendor_id);
-			}
-			VendorDao::insertVendorProductById($insertProductIds, $vendor_id);
-			$products = VendorDao::getVendorProductIds($vendor_id);
+			VendorDao::deleteVendorProductById($products, $vendor_id);
+			VendorDao::insertVendorProductById($newProducts, $vendor_id);
 		}
+
+		$products = VendorDao::getVendorProductIds($vendor_id);
 		$this->render('productMap', array(
 			'model' => $model,
 			'dataProvider' => $data,

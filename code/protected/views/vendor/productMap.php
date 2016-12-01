@@ -62,12 +62,12 @@ $vendor_id = $_GET['vendor_id'];
                     },
                     ),
             	'base_product_id',
-            	'parent_id',
+            	//'parent_id',
+                'title',
             	'grade',
-            	'title',
-            	'popularity',
-            	'priority',
-            	'base_title',
+            	//'popularity',
+            	//'priority',
+            	//'base_title',
             	array(
             		'value' => function($data){
             			echo CHtml::hiddenField('baseProductIds[]', $data->base_product_id);
