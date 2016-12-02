@@ -186,8 +186,12 @@ class VendorController extends Controller
 
 	public function actionCreditManagement(){
 		$skuMap = VendorDao::getAllVendorSkus();
-
-		var_dump($skuMap);die;
+		$model = new Vendor();
+		$this->render('creditManagement', array(
+				'model' => $model,
+				'dataProvider' =>$model,
+				'skuMap' => $skuMap,));
+		//var_dump($skuMap);die;
 	}
 
 	public function actionProcurementOrder(){

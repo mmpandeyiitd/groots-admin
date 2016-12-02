@@ -200,4 +200,20 @@ class Vendor extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function searchcredit(){
+		$criteria = new CDbCriteria; 
+        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type';
+        $criteria->compare('id' , $this->id, true);
+       	$criteria->compare('name',$this->name,true);
+       	$criteria->compare('vendor_type',$this->vendor_type,true);
+       	$criteria->compare('total_pending_amount',$this->total_pending_amount,true);
+       	return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 100,
+            ),
+        ));
+
+	}
 }
