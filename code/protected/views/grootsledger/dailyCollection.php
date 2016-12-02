@@ -44,7 +44,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			//'warehouse',
           array(
             'value' => function($data){
-              return CHtml::textField('collected_amount[]', '' , array('class' => 'inputs',));
+              return CHtml::textField('collected_amount[]', '' , array('class' => 'inputs','style' => 'width:100px;'));
             },
             'header' => 'collection',
             'type' => 'raw',
@@ -118,7 +118,7 @@ $(document).ready(function() {
        'last_paid_on',
        array(
             'value' => function($data2){
-              return CHtml::textField('pending_collection[]', '' , array('class' => 'inputs',));
+              return CHtml::textField('pending_collection[]', '' , array('class' => 'inputs','style' => 'width:100px;'));
             },
             'header' => 'collection',
             'type' => 'raw',
