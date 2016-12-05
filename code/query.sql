@@ -486,3 +486,21 @@ create table cb_dev_groots.employee_designation(
 
 --------------------------------------vendor - type,
 alter table cb_dev_groots.vendors add column vendor_type enum('Auctionnaire', 'Trader', 'Reseller') not null; 
+
+CREATE TABLE groots_orders.vendor_payments (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vendor_id` int(11) NOT NULL,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `date` date NOT NULL,
+  `payment_type` enum('Cash','Cheque','DemandDraft','NetBanking','Debit Note') NOT NULL DEFAULT 'Cash',
+  `cheque_no` varchar(256) DEFAULT NULL,
+  `debit_no` varchar(256) DEFAULT NULL,
+  `cheque_cleared` enum('Yes' , 'No') NOT NULL DEFAULT 'NO',
+  `comment` text,
+  `created_at` date NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` smallint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `fk_vd_pm_1` (`vendor_id`),
+  CONSTRAINT `fk_vd_pm_1` FOREIGN KEY (`vendor_id`) REFERENCES `cb_dev_groots`.`vendors` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

@@ -1066,15 +1066,15 @@ class BaseProduct extends CActiveRecord {
 
     public function getCssClass(){
         $class = '';
-        if($this->parent_id > 0){
-            if($this->grade=='Unsorted'){
-                $class .= " unsorted ";
+            if($this->parent_id > 0){
+                if($this->grade=='Unsorted'){
+                    $class .= " unsorted ";
+                }
+                $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
             }
-            $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
-        }
-        elseif(isset($this->parent_id) && $this->parent_id == 0){
-            $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
-        }
+            elseif(isset($this->parent_id) && $this->parent_id == 0){
+                $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
+            }    
         return $class;
     }
 

@@ -216,4 +216,26 @@ class Vendor extends CActiveRecord
         ));
 
 	}
+
+	public function getCssClass(){
+        $class = '';
+        //var_dump($isChecked);die;
+        //$isChecked = VendorDao::getVendorProductIds($vendor_id);
+        // if(in_array($this->base_product_id, $isChecked)){
+        //     $class .= 'isChecked';
+        // }
+       // else{
+            if($this->parent_id > 0){
+                if($this->grade=='Unsorted'){
+                    $class .= " unsorted ";
+                }
+                $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
+            }
+            elseif(isset($this->parent_id) && $this->parent_id == 0){
+                $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
+            }
+        //}
+        return $class;
+    }
+
 }

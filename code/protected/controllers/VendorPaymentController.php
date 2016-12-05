@@ -1,6 +1,6 @@
 <?php
 
-class VendorController extends Controller
+class VendorPaymentController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -32,7 +32,7 @@ class VendorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'productMap', 'creditManagement', 'procurementOrder'),
+				'actions'=>array('create','update', 'createPayment'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -60,24 +60,33 @@ class VendorController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($vendor_id)
 	{
-		$model=new Vendor;
-
+		$model=new VendorPayment;
+		$vendor=Vendor::model()->findByPk($vendor_id);
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Vendor']))
+		if(isset($_POST['VendorPayment']))
 		{
-			$model->attributes=$_POST['Vendor'];
+			$model->attributes=$_POST['VendorPayment'];
+			$model->vendor_id = $vendor_id;
+			$model->created_at = date('Y-m-d');
+			$vendor->total_pending_amount -= $model->paid_amount;
+			if(!$vendor->save()){
+				die(var_dump($vendor->getErrors()));
+			}
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+			'vendor' => $vendor,
+			'update' => false,
 		));
 	}
+
 
 	/**
 	 * Updates a particular model.
@@ -87,19 +96,27 @@ class VendorController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
-
+		$vendor=Vendor::model()->findByPk($model->vendor_id);
+		$initialPaid = $model->paid_amount;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Vendor']))
+		if(isset($_POST['VendorPayment']))
 		{
-			$model->attributes=$_POST['Vendor'];
+			$model->attributes=$_POST['VendorPayment'];
+			$vendor->total_pending_amount += $initialPaid;
+			$vendor->total_pending_amount -= $model->paid_amount;
+			if(!$vendor->save()){
+				die(var_dump($vendor->getErrors()));
+			}
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'vendor' => $vendor,
+			'update' => true,
 		));
 	}
 
@@ -114,7 +131,7 @@ class VendorController extends Controller
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+			$this->redirect(array('admin'));
 	}
 
 	/**
@@ -122,7 +139,7 @@ class VendorController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Vendor');
+		$dataProvider=new CActiveDataProvider('VendorPayment');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -133,84 +150,26 @@ class VendorController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Vendor('search');
+		$model=new VendorPayment('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Vendor']))
-			$model->attributes=$_GET['Vendor'];
+		if(isset($_GET['VendorPayment']))
+			$model->attributes=$_GET['VendorPayment'];
 
 		$this->render('admin',array(
 			'model'=>$model,
 		));
 	}
 
-	public function actionProductMap($vendor_id){
-		//var_dump($_POST);die;
-		$criteria  = new CDbCriteria;
-		$criteria->select  = 'name, bussiness_name, mobile';
-		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
-		$model = Vendor::model()->find($criteria);
-		if(!isset($model) && empty($model)){
-			Yii::app()->user->setFlash('error', 'Either Vendor Id Wrong or Vendor Inactive');
-			Yii::app()->controller->redirect('index.php?r=vendor/admin');
-		}
-		$products = VendorDao::getVendorProductIds($vendor_id);
-		$data = new BaseProduct('search');
-		if(isset($_POST['save'])){
-			$newProducts = array();
-			foreach ($_POST as $key => $value) {
-			if(substr($key, 0, 9) == 'checkedId'){
-				array_push($newProducts, substr($key, 10));
-			}
-		}
-			foreach ($newProducts as $key => $value) {
-				if(in_array($value, $products)){
-					$index = array_search($value, $products);
-					if(is_numeric($index)){
-						unset($products[$index]);
-					}
-					unset($newProducts[$key]);
-				}
-
-			}
-			VendorDao::deleteVendorProductById($products, $vendor_id);
-			VendorDao::insertVendorProductById($newProducts, $vendor_id);
-		}
-
-		$products = VendorDao::getVendorProductIds($vendor_id);
-		$this->render('productMap', array(
-			'model' => $model,
-			'dataProvider' => $data,
-			'products' => $products,
-		));
-	}
-
-	public function actionCreditManagement(){
-		//var_dump($_POST);die;
-		$skuMap = VendorDao::getAllVendorSkus();
-		$model = new Vendor();
-		$vendorPayment = new VendorPayment;
-		$this->render('creditManagement', array(
-				'model' => $model,
-				'dataProvider' =>$model,
-				'skuMap' => $skuMap,
-				'vendorPayment' => $vendorPayment));
-		//var_dump($skuMap);die;
-	}
-
-	public function actionProcurementOrder(){
-
-	}
-
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Vendor the loaded model
+	 * @return VendorPayment the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Vendor::model()->findByPk($id);
+		$model=VendorPayment::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -218,11 +177,11 @@ class VendorController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Vendor $model the model to be validated
+	 * @param VendorPayment $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='vendor-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='vendor-payment-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

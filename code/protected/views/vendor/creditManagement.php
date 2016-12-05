@@ -1,4 +1,23 @@
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/creditManagement';?>">
+
 <?php
+echo 'Select date  ';
+$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+            'model'=>$vendorPayment,
+            'attribute'=>'date',
+
+            'id'=>'date',
+            //'value'=> date('Y-m-d'),
+            'options'=>array(
+                'dateFormat' => 'yy-mm-dd',
+                'showAnim'=>'fold',
+            ),
+            'htmlOptions'=>array(
+                'style'=>'height:20px;'
+            ),
+        ));
+
+
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-credit-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
@@ -12,17 +31,49 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'header' => 'Sku Served',
 				'type' => 'raw',
 				'value' => function($data) use ($skuMap){
-				return CHtml::dropDownList( 'sku' , '',(empty($skuMap[$data->id]) ? array() : $skuMap[$data->id]), array('empty' => "SKU's Served", 'style' => 'width:220.5px;' ));
+				return CHtml::dropDownList( 'sku' , '',(empty($skuMap[$data->id]) ? array() : $skuMap[$data->id]), array('empty' => "SKU's Served", 'style' => 'width:130px;' ));
 				}),
 			'total_pending_amount',
 			array(
-				'header' => 'Credit Repaid',
+				'header' => 'Payment Due Date',
 				'type' => 'raw',
 				'value' => function(){
-					return CHtml::textField('creditPaid', '', array('style' => 'width:110.5px;'));
+					return date('Y-m-d');}
+					,
+				),
+			array(
+				'header' => 'Amount Payable',
+				'value' => '0.00',
+				),
+			array(
+				'header' => 'Credit Repaid',
+				'type' => 'raw',
+				'value' => function($data){
+					return CHtml::textField('creditPaid_'.$data->id, '', array('style' => 'width:110.5px;'));
 				}),
+			array(
+				'header' => 'Payment Mode',
+				'id' => 'paymentMode',
+				'type' => 'raw',
+				'value' => function($data) use ($vendorPayment){
+					return Chtml::dropDownList('payment_type_'.$data->id,$vendorPayment,
+								CHtml::listData(VendorPayment::vendorPaymentTypes(),'value', 'value'),
+								array('empty' => '--Payment Mode--') 
+								);
+				}),
+			array(
+				'header' => 'Cheque Cleared',
+				'id' => 'chequeCleared',
+				'type' => 'raw',
+				'value' => function($data) use ($vendorPayment){
+					return CHtml::dropDownList('cheque_status_'.$data->id, $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
+						array('empty' => "--Cleared--"));
+				}
+				),
 			)
 		)
 );
 
 ?>
+
+</form>

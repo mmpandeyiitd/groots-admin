@@ -17,8 +17,9 @@ $vendor_id = $_GET['vendor_id'];
     $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-product-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'rowCssClassExpression' => '$data->getCssClass()',
-		'dataProvider'=> $dataProvider->searchNew(),
+        'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
+        'rowCssClassExpression' =>'$data->getCssClass()',
+        'dataProvider'=> $dataProvider->searchNew(),
 		'filter' => $dataProvider,
 		'columns' => array(
                 array(
@@ -86,13 +87,21 @@ $vendor_id = $_GET['vendor_id'];
 
 
 <script type="text/javascript">
-
+    $(document).ready(function(){
+        onStartUp();
+        showChecked();
+    });
     function onCbStateChange(bp_id){
         var p_value = $('#checkedId_'+bp_id).is(':checked');
+        // if(p_value == true){
+        //     $('#bp_'+bp_id).addClass('checked');
+        // }
+        // else 
+        //     $('')
         $(".parent-id_"+bp_id).each(function(){
-            // console.log('checking');
             // console.log(p_value);
         $(this).find('input[type=checkbox]').each(function(){
+                //console.log($(this).is(':checked'));
                 $(this).attr('checked', p_value);
             });
         }); 
@@ -107,6 +116,27 @@ $vendor_id = $_GET['vendor_id'];
             }
 
         })
+    }
+
+    function onStartUp(){
+        $(".child").each(function(){
+            //console.log($(this).attr('class'));
+            var isChecked = false;
+            $(this).find('input[type=checkbox]').each(function(){
+                isChecked = $(this).is(':checked');
+            });
+            //console.log($(this).attr('class'));
+            if(isChecked == true){
+                var cls = $(this).attr('class');
+                $(this).addClass('checked');
+            }
+        });
+    }
+
+    function showChecked(){
+        $(".checked").each(function(){
+            $(this).show();
+        });
     }
 </script>
 
