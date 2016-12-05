@@ -498,3 +498,5 @@ insert into groots_orders.feedback_categories values(null, 'Incomplete Order', C
 insert into groots_orders.feedback_categories values(null, 'Product Quality', CURDATE(), null , 1);
 insert into groots_orders.feedback_categories values(null, 'Pricing', CURDATE(), null , 1);
 insert into groots_orders.feedback_categories values(null, 'Other', CURDATE(), null , 1);
+---------------------------------------------------------------------------------retailer type
+alter table cb_dev_groots.retailer add column retailer_type enum ('GA', 'GB', 'GC', 'GD' , 'Contract Price') default null ;

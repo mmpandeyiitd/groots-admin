@@ -36,6 +36,15 @@
             <?php echo $form->error($model, 'contact_person1'); ?>
         </div>
 
+        <div class="row">
+            <?php echo $form->labelEx($model, 'retailer_type'); ?>
+            <?php $list = Chtml::listData(Retailer::getRetailerTypes(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'retailer_type', $list,array('empty' => 'Select Retailer Type', 'options' => array($model->retailer_type => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'retailer_type'); ?>
+        </div>
+
+
         <div class="row customDatepicker1">
             <?php echo $form->labelEx($model, 'Primary Email *'); ?>
             <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255,'readonly'=>true)); ?>
