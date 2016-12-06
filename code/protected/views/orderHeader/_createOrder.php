@@ -230,7 +230,7 @@ else{
 
                                 <input type="text" style="width:80px;" class="inputs" name="quantityInKg" class="quantityInKg inputs"
                                    id="quantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php  echo ($totalQuantity == '') ? '': round($totalQuantity, 2); ?>"
+                                   value="<?php  echo ($totalQuantity > 0 ) ? round($totalQuantity, 2) : $totalQuantity ; ?>"
                                    onchange="onQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'".",'".$updateAmountField."'" ; ?>)" >
 
                             </td>
@@ -253,7 +253,7 @@ else{
 
                             <input type="text" style="width:80px;"  name="delvQuantityInKg" class="delvQuantityInKg inputs"
                                    id="delvQuantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php echo ($delvQuantityInKg == '') ? '' : round($delvQuantityInKg, 2) ?>"
+                                   value="<?php echo ($delvQuantityInKg > 0) ? round($delvQuantityInKg, 2) : $delvQuantityInKg ?>"
                                    onchange="onDelvQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
 
                             </td>
