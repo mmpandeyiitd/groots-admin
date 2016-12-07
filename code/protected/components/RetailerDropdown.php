@@ -15,6 +15,7 @@ class RetailerDropdown extends CPortlet
     public $model ='';
     public $retailerId='';
     public $update='';
+    public $showInactive=false;
     public $contentCssClass='';
 
     protected function renderContent()
@@ -23,6 +24,7 @@ class RetailerDropdown extends CPortlet
             'model'=>$this->model,
             'retailerId'=>$this->retailerId,
             'update'=>$this->update,
+            'showInactive'=>$this->showInactive,
 
         ));
     }

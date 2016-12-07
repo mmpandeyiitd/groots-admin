@@ -63,7 +63,7 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, retailer_type', 'safe'),
+            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -431,5 +431,26 @@ class Retailer extends CActiveRecord {
         $retailerType = Utility::get_enum_values($connection, self::tableName(), 'retailer_type' );
         return $retailerType;
     }
+
+    public static function getRetailerLog($retailerId){
+        $dateStatusMap = array();
+        $connection = Yii::app()->db;
+        $sql = "SELECT id, modified_date,status FROM `retailer_log` where retailer_id=$retailerId order by modified_date desc, id desc";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        // $retailer_name = $command->queryScalar();
+        $retailerLogs = $command->queryAll();
+        foreach ($retailerLogs as $retailerLog){
+            $datetime = strtotime( $retailerLog['modified_date'] );
+            $date = date( 'Y-m-d', $datetime );
+            if(!isset($dateStatusMap[$date] )){
+                $dateStatusMap[$date] = $retailerLog['status'];
+            }
+
+        }
+        return $dateStatusMap;
+    }
+
+    public static $intTostatusMap = array(0 => "Inactive", 1 => "Active", 2=>"Moderated");
 
 }

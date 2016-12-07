@@ -410,6 +410,9 @@ class GrootsledgerController extends Controller
                 $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
                 $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
+                $retailerStatusMap = Retailer::getRetailerLog($retailerId);
+                $dateArr = array_keys($retailerStatusMap);
+                //print_r($retailerStatusMap);die;
                 $outstanding = $retailer->initial_payable_amount;
                 foreach ($retailerOrders as $order){
                     $tmp = array();
@@ -419,7 +422,18 @@ class GrootsledgerController extends Controller
                     $tmp['invoiceAmount'] = $order->total_payable_amount;
                     $tmp['paymentAmount'] = '';
                     $tmp['outstanding'] = '';
+
                     $tmp['update_url'] = 'OrderHeader/update';
+                    //get retailer status at the time of order
+                    $statusChangeDate='';
+                    foreach ($dateArr as $d){
+                        if ($d <= $order->delivery_date) {
+                            $statusChangeDate = $d;
+                            break;
+                        }
+                    }
+                    $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
+                    $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
                     array_push($dataprovider, $tmp);
                 }
 
@@ -433,6 +447,18 @@ class GrootsledgerController extends Controller
                     $tmp['invoiceAmount'] = '';
                     $tmp['paymentAmount'] = $payment->paid_amount;
                     $tmp['update_url'] = 'Grootsledger/UpdatePayment';
+
+                    //get retailer status at the time of payment
+                    $statusChangeDate='';
+                    foreach ($dateArr as $d){
+                        if ($d <= $payment->date) {
+                            $statusChangeDate = $d;
+                            break;
+                        }
+                    }
+                    $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
+                    $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
+
                     array_push($dataprovider, $tmp);
                 }
                 foreach ($dataprovider as $key => $value) {

@@ -32,7 +32,7 @@ class QueriesDailyCollection{
                             group by rep2.retailer_id, rep2.date
                             ) as rep
                 on re.id = rep.retailer_id
-                where re.status = 1 and re.collection_frequency != 'daily'
+                where re.collection_frequency != 'daily'
                 group by re.id";
         return $sql;
     }
@@ -103,7 +103,7 @@ public static function todaysCollectionQuery(){
                 on re.allocated_warehouse_id = wa.id 
                 left join groots_orders.retailer_payments as rep 
                 on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                where re.status ='1' and re.total_payable_amount > 0 and re.collection_frequency = 'daily'
+                where re.total_payable_amount > 0 and re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;
 }
