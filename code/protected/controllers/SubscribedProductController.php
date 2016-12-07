@@ -26,7 +26,7 @@ class SubscribedProductController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view', 'admin', 'mappedProduct', 'listallproduct', 'Updatebaseproducrt'),
+                'actions' => array('index', 'view', 'admin', 'mappedProduct', 'listallproduct', 'Updatebaseproducrt', 'test', 'test2'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -509,5 +509,175 @@ class SubscribedProductController extends Controller {
                 }
             $index = true;
         }
+    }
+
+    public function getLastOrderId(){
+        $sql = 'select order_id from order_header order by order_id desc limit 1';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        return $result[0]['order_id'];
+    }
+
+
+    public function getIdByNameMap(){
+        $file = fopen( dirname(__FILE__).'/Book1.csv', "rb");
+        $start = true;
+        $title = array();
+        $index= array();
+        while(!feof($file)){
+            $row = fgetcsv($file);
+            if($row[0] != ''){
+                //var_dump($row);die;
+                if($start){
+                    for ($key=0; $key < count($row); $key++){
+                        $value = $row[$key];
+                        if($value == 'retailer id')
+                            $index['r_id'] = $key;
+                        else if($value == 'Product')
+                            $index['p_name'] = $key;
+                        else if($value == 'date')
+                            $index['date'] = $key;
+                        else if($value == 'Quantity')
+                            $index['qty'] = $key;
+                        else if($value == 'Price')
+                            $index['price'] = $key;
+                    }
+                }
+                else{
+                    array_push($title, '"'.$row[$index['p_name']].'"');
+                }
+                $start = false;
+            }
+        }
+        $ids = self::returnIdByName($title);
+        //var_dump($ids);die;
+        return $ids;
+    }
+    public function actionTest(){
+        $file = fopen( dirname(__FILE__).'/Book1.csv', "rb");
+        $start = true;
+        $index = array();
+        $data = array();
+        $title = array();
+        $idByName = self::getIdByNameMap();
+        var_dump($idByName);die;
+        $line = array();
+        while(!feof($file)){
+            $row = fgetcsv($file);
+            if($row[0] != ''){
+                //var_dump($row);die;
+                array_push($title, $row[1]);
+                if($start){
+                    for ($key=0; $key < count($row); $key++){
+                        $value = $row[$key];
+                        if($value == 'retailer id')
+                            $index['r_id'] = $key;
+                        else if($value == 'Product')
+                            $index['p_name'] = $key;
+                        else if($value == 'date')
+                            $index['date'] = $key;
+                        else if($value == 'Quantity')
+                            $index['qty'] = $key;
+                        else if($value == 'Price')
+                            $index['price'] = $key;
+                    }
+                }
+                else{
+                    $r_id = $row[$index['r_id']];
+                    $product = $row[$index['p_name']];
+                   // var_dump($product);die;$product;
+                    $rate = $row[$index['price']];
+                    $qty = $row[$index['qty']];
+                    $date = $row[$index['date']];
+                    $currentIndex = $r_id.'_'.$date;
+                    if(!isset($data[$currentIndex])){
+                        $data[$currentIndex] = array();
+                        $data[$currentIndex]['user_id'] = $r_id;
+                        $data[$currentIndex]['created_date'] = date('Y-m-d', strtotime($date.' -1 day'));
+                        $data[$currentIndex]['status'] = '';
+                        $data[$currentIndex]['delivery_date'] = $date;
+                        $data[$currentIndex]['warehouse_id'] = 1;
+                        $data[$currentIndex]['total'] = $qty*$rate;
+                    }
+                    else{
+                        $data[$currentIndex]['total'] += $qty*$rate;                
+                    }
+                    if(!isset($line[$currentIndex])){
+                        $line[$currentIndex] = array();
+                    }
+                    $p_id = $idByName[$product];
+                    $line[$currentIndex][$p_id] = array();
+                    $line[$currentIndex][$p_id]['subscribed_product_id'] = $p_id;
+                    $line[$currentIndex][$p_id]['base_product_id'] = $p_id;
+                    $line[$currentIndex][$p_id]['product_qty'] = $qty;
+                    $line[$currentIndex][$p_id]['delivered_qty'] = $qty;
+                    $line[$currentIndex][$p_id]['unit_price'] = $rate;
+                    $line[$currentIndex][$p_id]['price'] = $qty*$rate ;
+                    $line[$currentIndex][$p_id]['created_date'] = date('Y-m-d', strtotime($date.' -1 day'));
+                }
+                $start = false;
+            }
+        }
+        self::saveData($data,$line);
+    }
+
+
+    public function saveData($header, $line){
+        foreach ($header as $key => $value) {
+            $lastOrderId = self::getLastOrderId();
+            $currentOrderId = $lastOrderId + 1;
+            $value['order_number'] = 'GRT'.$currentOrderId;
+            $value['total_payable_amount'] = $value['total'];
+            $header[$key] = $value;
+            $index = $key;
+            $order_id =  self::saveOrderHeader($value);
+            foreach ($line[$index] as $lineKey => $lineValue) {
+                $lineValue['order_id'] = $order_id;
+                $line[$index][$lineKey] = $lineValue; 
+                self::saveOrderLine($lineValue, $order_id);
+            }
+        }
+        //die('here');
+    }
+
+
+    public function saveOrderHeader($data){
+        //var_dump($data);die;
+        mysql_connect('localhost','root', 'root');
+        $sql = 'insert into groots_orders.order_header (user_id , order_number, created_date , delivery_date, warehouse_id, total, total_payable_amount) values ("'.$data['user_id'].'","'.$data['order_number'].'", "'.$data['created_date'].'", "'.$data['delivery_date'].'", "'.$data['warehouse_id'].'", "'.$data['total'].'", "'.$data['total_payable_amount'].'")';
+        //print_r($sql);die;
+        mysql_query($sql);
+        $order_id = mysql_insert_id();
+        $sql = 'update order_header set order_number = "GRT'.$order_id.'" where order_id = "'.$order_id.'"';
+        return $order_id;
+
+    }
+
+    public function saveOrderLine($data, $order_id){
+        mysql_connect('localhost','root', 'root');
+        $sql = 'insert into groots_orders.order_line (subscribed_product_id, base_product_id, product_qty, delivered_qty, unit_price, price, created_date, order_id, store_id) values ("'.$data['subscribed_product_id'].'", "'.$data['base_product_id'].'", "'.$data['product_qty'].'", "'.$data['delivered_qty'].'", "'.$data['unit_price'].'", "'.$data['price'].'", "'.$data['created_date'].'", "'.$order_id.'", 1)';
+        //print_r($sql);die;
+        mysql_query($sql);
+        $order_id = mysql_insert_id();
+        $sql = 'update order_header set order_number = "GRT'.$order_id.'" where order_id = "'.$order_id.'"';
+    }
+
+    public function returnIdByName($array){
+        $string = implode(', ', $array);
+        $sql = 'select title, base_product_id from cb_dev_groots.base_product where title in ('.$string.')';
+        //print_r($sql);die;
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        var_dump($result);die;
+        $map = array();
+        foreach ($result as $key => $value) {
+            $map[$value['title']] = $value['base_product_id'];
+        }
+        var_dump($result);die;
+        return $map;
     }
 }
