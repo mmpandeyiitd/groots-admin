@@ -126,11 +126,7 @@
             <?php echo $form->textField($model, 'website', array('size' => 60, 'maxlength' => 150)); ?>
             <?php echo $form->error($model, 'website'); ?>
         </div>
-        <div class="row">
-            <?php echo $form->labelEx($model, 'status'); ?>
-            <?php echo $form->dropDownList($model, 'status', array('0' => 'Inactive','1' => 'Active',)); ?>
-            <?php echo $form->error($model, 'status'); ?>
-        </div>
+
          <div class="row">
             <?php echo $form->labelEx($model, 'Shipping Charge'); ?>
             <?php echo $form->textField($model, 'shipping_charge'); ?>
@@ -140,6 +136,17 @@
             <?php echo $form->labelEx($model, 'min Order Price'); ?>
             <?php echo $form->textField($model, 'min_order_price'); ?>
             <?php echo $form->error($model, 'min_order_price'); ?>
+        </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'Order Warehouse'); ?>
+            <?php
+            //var_dump($model);die;
+            $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($warehouse, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list,
+                array('empty' => 'Select a warehouse','options'=>array($model['allocated_warehouse_id']=>array('selected'=>true)))); ?>
+            <?php echo $form->error($model, 'Warehouse'); ?>
         </div>
         <div class="row">
             <?php echo $form->labelEx($model, 'credit_limit'); ?>
@@ -165,14 +172,20 @@
             <?php echo $form->error($model, 'collecttion_agent'); ?>
         </div>
          <div class="row">
-            <?php echo $form->labelEx($model, 'Warehouse'); ?>
+            <?php echo $form->labelEx($model, 'Collection Warehouse'); ?>
             <?php 
             //var_dump($model);die;
             $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
             $list = CHtml::listData($warehouse, 'id', 'name');
-            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list, 
-                        array('options'=>array($model['allocated_warehouse_id']=>array('selected'=>true)))); ?>
+            echo CHtml::activeDropDownList( $model,'collection_center_id', $list,
+                        array('empty' => 'Select a warehouse', 'options'=>array($model['collection_center_id']=>array('selected'=>true)))); ?>
             <?php echo $form->error($model, 'Warehouse'); ?>
+        </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'status'); ?>
+            <?php echo $form->dropDownList($model, 'status', array('0' => 'Inactive','1' => 'Active', '2' => 'Moderated')); ?>
+            <?php echo $form->error($model, 'status'); ?>
         </div>
 
         <div class=" buttons">

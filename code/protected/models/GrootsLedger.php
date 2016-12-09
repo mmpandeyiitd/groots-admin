@@ -187,7 +187,7 @@ class GrootsLedger extends CActiveRecord
     public static function downloadCSVByIDs($cDate,$cdate1) {
 
 
-        $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',r.name as 'Client Name',r.retailer_type as 'Retailer Type',bp.title as 'Item Name',bp.pack_size as 'Pack Size', bp.pack_unit as 'Pack Unit', bp.pack_size_in_gm as 'Pack Size In Gm', ol.product_qty*bp.pack_size_in_gm/1000 as 'Order Quantity (Kg)', ol.delivered_qty as 'Delivered Quantity (Kg)',TRUNCATE((ol.unit_price *ol.delivered_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID', oh.order_id as 'Order Id', ca.category_name as `Category Name` FROM `order_header` oh
+        $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',r.name as 'Client Name',r.retailer_type as 'Retailer Type',bp.title as 'Item Name',bp.pack_size as 'Pack Size', bp.pack_unit as 'Pack Unit', bp.pack_size_in_gm as 'Pack Size In Gm', ol.product_qty*bp.pack_size_in_gm/1000 as 'Order Quantity (Kg)', ol.delivered_qty*bp.pack_size_in_gm/1000 as 'Delivered Quantity (Kg)',TRUNCATE((ol.unit_price *ol.delivered_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID', oh.order_id as 'Order Id', ca.category_name as `Category Name` FROM `order_header` oh
 left join order_line as ol on ol.`order_id`=oh.`order_id` left join cb_dev_groots.retailer r on r.id=oh.user_id
 left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
 left join cb_dev_groots.product_category_mapping cpm on bp.base_product_id = cpm.base_product_id		
