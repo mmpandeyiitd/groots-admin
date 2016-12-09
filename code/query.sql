@@ -500,5 +500,8 @@ insert into groots_orders.feedback_categories values(null, 'Pricing', CURDATE(),
 insert into groots_orders.feedback_categories values(null, 'Other', CURDATE(), null , 1);
 ---------------------------------------------------------------------------------retailer type
 alter table cb_dev_groots.retailer add column retailer_type enum ('GA', 'GB', 'GC', 'GD' , 'Contract Price') default null ;
+---------------------------------------------------------------retailer_payments table fields added
 
 alter table groots_orders.order_header modify column `delivery_date` date NOT NULL;
+
+alter table groots_orders.retailer_payments add column cheque_status enum ('Cleared', 'Pending', 'Bounced') default null;

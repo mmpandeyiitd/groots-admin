@@ -216,6 +216,7 @@ foreach ($model as $value) {
         </tr>
 
         <?php
+        $grossTotal = 0;
         $qtytotal = 0;
         $first = true; 
         $ascii = 97;
@@ -244,6 +245,7 @@ foreach ($model as $value) {
         foreach ($model as $key => $value) {
             $counter++;
             $subTotalAmount += $model[$key]['price'];
+            $grossTotal += $model[$key]['price'];
             /*$subcatinfo = new SubscribedProduct;
             $infodetail = $subcatinfo->getinfobyid($model[$key]->attributes['subscribed_product_id']);
             $linedescinfo = new OrderLine;
@@ -339,7 +341,7 @@ foreach ($model as $value) {
             <td style="text-align:center; padding: 5px;  width:15%;  "></td>
             <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo round($qtytotal, 2) ?></th>
             <td style="text-align:center; padding: 5px; width:14%;" ></td>
-            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($modelOrder->total_payable_amount - $modelOrder->shipping_charges, 2) ?></th>
+            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($grossTotal, 2) ?></th>
         </tr>
 
         <tr>
@@ -348,7 +350,7 @@ foreach ($model as $value) {
         </tr>
         <tr>
             <td colspan="5" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo round($modelOrder->total_payable_amount, 2); ?></strong></td>
+            <td style="text-align:center;"><strong><?php echo round($grossTotal + $modelOrder->shipping_charges, 2); ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 
