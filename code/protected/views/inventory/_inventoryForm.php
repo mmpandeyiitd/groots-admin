@@ -611,6 +611,16 @@ $balance = 0;
                     return CHtml::textField('inv_hd_id[]', $data->id, array('class' => 'readOnlyInput'));
                 },
             ),
+            array(
+                'name' => 'parent_id',
+                'type'=> 'raw',
+                'headerHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'filterHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'htmlOptions'=>array('style'=>'width:0%; display:none'),
+                'value' => function ($data) {
+                    return CHtml::textField('parent_id[]', $data->parent_id, array('class' => 'readOnlyInput'));
+                },
+            ),
 
 
 
@@ -761,13 +771,13 @@ $balance = 0;
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItem(parent_id);
+            //updateItem(parent_id);
 
             $(this).find("input[type=text] ").each(function(){
                $(this).attr('readonly', 'readonly');
             });
         });
-
+//dont hide childs in pagination where parent is not present on the same page
         var firstParentIndex =$(".parent").first().index();
         $(".child").each(function () {
             //console.log("child-index"+$(this).index()+"parent"+firstParentIndex);
@@ -777,7 +787,7 @@ $balance = 0;
             }
         });
     }
-
+//update parent item
     function updateItem(parent_id) {
 
         var totalSchdInv = 0;

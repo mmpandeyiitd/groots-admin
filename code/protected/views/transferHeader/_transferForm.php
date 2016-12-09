@@ -271,6 +271,16 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 },
                 'type' => 'raw',
             ),
+            array(
+                'name' => 'parent_id',
+                'type'=> 'raw',
+                'headerHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'filterHtmlOptions'=>array('style'=>'width:0%; display:none'),
+                'htmlOptions'=>array('style'=>'width:0%; display:none'),
+                'value' => function ($data) {
+                    return CHtml::textField('parent_id[]', $data->parent_id, array('class' => 'readOnlyInput'));
+                },
+            ),
             /*array(
                 'header' => 'Price',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),

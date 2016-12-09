@@ -1041,4 +1041,18 @@ class BaseProduct extends CActiveRecord {
         return [$purchaseLineArr, $otherItemArray];
     }
 
+    public static function getChildBPIds($parentId){
+        $bpIds = array();
+        $query = "select base_product_id from base_product where parent_id =".$parentId;
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($query);
+        $command->execute();
+        $result = $command->queryAll();
+        foreach ($result as $res){
+            array_push($bpIds, $res['base_product_id']);
+        }
+        return $bpIds;
+
+    }
+
 }

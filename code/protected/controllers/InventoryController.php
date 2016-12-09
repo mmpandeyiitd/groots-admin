@@ -62,9 +62,16 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    /*echo "<pre>";
+	    echo "<pre>";
 		print_r($_POST);
-        print_r($_GET);die;*/
+        print_r($_GET);
+        if(isset($_POST['parent_id'][78]) && $_POST['parent_id'][78] == 0){
+            echo "inside if for parent-id-78";
+        }
+        if(isset($_POST['parent_id'][65]) && $_POST['parent_id'][65] == 0){
+            echo "inside if for parent-id-65";
+        }
+        die;
 
         //$model=new Inventory('search');
 
@@ -127,8 +134,12 @@ class InventoryController extends Controller
             try {
                 $date = $_POST['InventoryHeader']['date'];
                 $warehouse_id = $_POST['InventoryHeader']['warehouse_id'];
+                $parentIdArr = array();
                 foreach ($_POST['base_product_id'] as $key => $bp_id) {
                     //$delivered_qty = trim($_POST['schedule_inv'][$key]);
+                    if(isset($_POST['parent_id'][$key]) && $_POST['parent_id'][$key] == 0){
+                        continue;
+                    }
                     $schedule_inv = trim($_POST['schedule_inv'][$key]);
                     $present_inv = trim($_POST['present_inv'][$key]);
                     $liquid_inv = trim($_POST['liquid_inv'][$key]);
@@ -163,10 +174,43 @@ class InventoryController extends Controller
                         $inv->balance = empty($balance) ? 0: $balance;
                         //var_dump($inv);die;
                         $inv->save();
-
+                        array_push($parentIdArr, $_POST['parent_id'][$key]);
                     }
                 }
                 $transaction->commit();
+                foreach ($parentIdArr as $parentId){
+                    if($parentId > 0 ){
+                        $present_inv = 0;
+                        $liquid_inv = 0;
+                        $wastage = 0;
+                        $liquidation_wastage = 0;
+                        $extra_inv = 0;
+                        $balance = 0;
+                        $childIds = BaseProduct::getChildBPIds($parentId);
+                        foreach ($childIds as $bp_id){
+                            $inv = '';
+                            $inv = Inventory::model()->findByAttributes(array('base_product_id'=>$bp_id, 'date'=>$date, 'warehouse_id'=>$warehouse_id));
+                            if($inv){
+                                $present_inv += $inv->present_inv;
+                                $liquid_inv += $inv->liquid_inv;
+                                $wastage += $inv->wastage;
+                                $liquidation_wastage += $inv->liquidation_wastage;
+                                $extra_inv += $inv->extra_inv;
+                                $balance += $inv->balance;
+                            }
+
+                        }
+                        $parentInv = Inventory::model()->findByAttributes(array('base_product_id'=>$parentId, 'date'=>$date, 'warehouse_id'=>$warehouse_id));
+                        $parentInv->present_inv = $present_inv;
+                        $parentInv->liquid_inv = $liquid_inv;
+                        $parentInv->wastage = $wastage;
+                        $parentInv->liquidation_wastage = $liquidation_wastage;
+                        $parentInv->extra_inv = $extra_inv;
+                        $parentInv->balance = $balance;
+                        $parentInv->save();
+                    }
+                }
+
                 $this->redirect(array('create','w_id'=>$w_id));
 
             }catch (\Exception $e) {

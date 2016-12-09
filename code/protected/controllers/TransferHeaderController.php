@@ -318,6 +318,8 @@ class TransferHeaderController extends Controller
                         //}
 
                     }
+                    //update parents
+
                     $transaction->commit();
                     $url = Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
                     Yii::app()->user->setFlash('success', 'Transfer order successfully Updated.');
