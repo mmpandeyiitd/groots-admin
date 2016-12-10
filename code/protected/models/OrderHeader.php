@@ -101,7 +101,6 @@ class OrderHeader extends CActiveRecord {
             array('transaction_id, bank_transaction_id, payment_mod, bankname', 'length', 'max' => 50),
             array('shipping_phone', 'length', 'max' => 10),
             array('shipping_phone', 'length', 'min' => 10),
-            array('status', 'length', 'max' => 9),
 //            array('cron_processed_flag', 'length', 'max' => 1),
 //            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
@@ -729,7 +728,12 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
         return $this->groots_authorized_name;
     }
 
-   
+   public function setFeedbackStatusOnDelivered($orderIds, $status){
+    $sql = 'update order_header set feedback_status = "'.$status.'" where order_id in ('.$orderIds.') and feedback_status != "Submitted"';
+    $connection = Yii::app()->secondaryDb;
+    $command = $connection->createCommand($sql);
+    $command->execute();
+   }
 
 }
 

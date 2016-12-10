@@ -32,7 +32,7 @@ class QueriesDailyCollection{
                             group by rep2.retailer_id, rep2.date
                             ) as rep
                 on re.id = rep.retailer_id
-                where re.status = 1 and re.collection_frequency != 'daily'
+                where re.collection_frequency != 'daily'
                 group by re.id";
         return $sql;
     }
@@ -54,6 +54,11 @@ class QueriesDailyCollection{
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
+        foreach ($dataArray as $key => $value) {
+            $value['total_payable_amount'] = round(Utility::calTotPayAmoByRetailer($value['id']), 2);
+            $value['due_payable_amount'] = round(Utility::calLastPayAmoByRetailer($value['id']), 2);
+            $dataArray[$key] = $value;
+        }
         $fileName = date('Y-m-d')."backDAtecollection.csv";
         ob_clean();
         header('Pragma: public');
@@ -98,7 +103,7 @@ public static function todaysCollectionQuery(){
                 on re.allocated_warehouse_id = wa.id 
                 left join groots_orders.retailer_payments as rep 
                 on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                where re.status ='1' and re.total_payable_amount > 0 and re.collection_frequency = 'daily'
+                where re.total_payable_amount > 0 and re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;
 }
@@ -118,6 +123,11 @@ public static function todaysCollectionQuery(){
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
+        foreach ($dataArray as $key => $value) {
+            $value['total_payable_amount'] = round(Utility::calTotPayAmoByRetailer($value['id']), 2);
+            $value['due_payable_amount'] = round(Utility::calLastPayAmoByRetailer($value['id']), 2);
+            $dataArray[$key] = $value;
+        }
         $fileName = date('Y-m-d')."collection.csv";
         ob_clean();
         header('Pragma: public');

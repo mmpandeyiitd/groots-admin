@@ -116,8 +116,6 @@ ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNI
 
 alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
 
-
-
 alter table cb_dev_groots.retailer add column initial_payable_amount decimal(10,2) DEFAULT NULL, add COLUMN total_payable_amount decimal(10,2) DEFAULT NULL;
 
 CREATE TABLE groots_orders.`retailer_payments` (
@@ -138,7 +136,6 @@ CREATE TABLE groots_orders.`retailer_payments` (
 alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT NULL DEFAULT 1;
 
 
-
 alter table cb_dev_groots.base_product ADD COLUMN pack_size_in_gm float DEFAULT 0 AFTER pack_unit;
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='gm';
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='g';
@@ -147,8 +144,8 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack
 
 update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
 
---------------
-collection
+
+
 alter table cb_dev_groots.retailer add column collection_fulfilled boolean not null default false;
 
 CREATE TABLE cb_dev_groots.collection_agent(
@@ -211,7 +208,6 @@ alter table cb_dev_groots.retailer add column collection_center_id int(11) not n
 insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Delhi','Delhi','Delhi','110030',NULL,NULL,NULL,'1',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 2);
 update cb_dev_groots.retailer set collection_center_id = 1;
 update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
-
 ------------------------------------------------------------------------------------------
 CREATE TABLE groots_orders.`order_header_log` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -265,7 +261,7 @@ CREATE TABLE groots_orders.`order_header_log` (
   KEY `ohl_order_1` (`order_id`),
   KEY `ohl_order_2` (`user_id`),
   KEY `ohl_order_3` (`warehouse_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1468 DEFAULT CHARSET=latin1;
 
 alter table groots_orders.order_header_log add column created_at datetime  default null;
 alter table groots_orders.order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
@@ -295,14 +291,219 @@ create trigger groots_orders.order_header_update after update on groots_orders.o
                                       NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
                                       NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
                                       NEW.shipping_address_id ,NEW.warehouse_id ,NOW() ,'UPDATE');
-
+---------------------------------------------------------------------------------------------------------------------drop old trigger then create this one
 create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
-  update groots_orders.order_header_log set created_at = NOW() and action = 'DELETE';
+  insert into groots_orders.order_header_log values(
+                                     NULL ,OLD.order_id ,OLD.order_number ,OLD.user_id ,OLD.created_date ,OLD.payment_method ,
+                                      OLD.payment_status ,OLD.billing_name ,OLD.billing_phone ,OLD.billing_email ,OLD.billing_address ,
+                                      OLD.billing_state ,OLD.billing_city ,OLD.billing_pincode ,OLD.shipping_name ,OLD.shipping_phone ,
+                                      OLD.shipping_email ,OLD.shipping_address ,OLD.shipping_state ,OLD.shipping_city ,OLD.shipping_pincode ,
+                                      OLD.shipping_charges ,OLD.tax ,OLD.total ,OLD.total_payable_amount ,OLD.total_paid_amount ,
+                                      OLD.discount_amt ,OLD.coupon_code ,OLD.payment_ref_id ,OLD.payment_gateway_name ,
+                                      OLD.payment_type ,OLD.payment_source ,OLD.timestamp ,OLD.transaction_id ,OLD.bank_transaction_id ,
+                                      OLD.transaction_time ,OLD.payment_mod ,OLD.bankname ,OLD.status ,OLD.delivery_date ,
+                                      OLD.user_comment ,OLD.order_type ,OLD.invoice_number ,OLD.agent_name ,OLD.billing_address_id ,
+                                      OLD.shipping_address_id ,OLD.warehouse_id ,NOW() ,'DELETE');
 
 
 alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') not null default 'Cash';
 
 alter table cb_dev_groots.retailer_product_quotation_log add column date date default null;
+
+update cb_dev_groots.retailer_product_quotation_log set date=created_at;
+
+alter table cb_dev_groots.retailer_product_quotation_log modify column `effective_price` double DEFAULT NULL;
+
+
+
+CREATE TABLE groots_orders.`retailer_payments_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `retailer_payment_id` int(11) NOT NULL,
+  `retailer_id` int(11) NOT NULL,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `date` date NOT NULL,
+  `payment_type` enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note') NOT NULL DEFAULT 'Cash',
+  `cheque_no` varchar(256) DEFAULT NULL,
+  `comment` text,
+  `created_at` date NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` smallint(4) NOT NULL DEFAULT '1',
+  `action` enum('INSERT', 'UPDATE', 'DELETE') not null,
+  PRIMARY KEY (`id`),
+  KEY `fk_rt_pm_log1` (`retailer_id`),
+  CONSTRAINT `fk_rt_pm_log1` FOREIGN KEY (`retailer_id`) REFERENCES `cb_dev_groots`.`retailer` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=851 DEFAULT CHARSET=utf8;
+
+
+create trigger groots_orders.retailer_payments_insert after insert on groots_orders.retailer_payments for each row 
+  insert into groots_orders.retailer_payments_log values(
+                                                    NULL ,NEW.id ,NEW.retailer_id ,
+                                                    NEW.paid_amount ,NEW.date ,NEW.payment_type ,NEW.cheque_no ,
+                                                    NEW.comment ,NEW.created_at ,CURRENT_TIMESTAMP ,NEW.status,'INSERT');
+
+create trigger groots_orders.retailer_payments_update after update on groots_orders.retailer_payments for each row 
+  insert into groots_orders.retailer_payments_log values(
+                                                    NULL ,NEW.id ,NEW.retailer_id ,
+                                                    NEW.paid_amount ,NEW.date ,NEW.payment_type ,NEW.cheque_no ,
+                                                    NEW.comment ,NEW.created_at ,CURRENT_TIMESTAMP ,NEW.status,'UPDATE');
+
+create trigger groots_orders.retailer_payments_delete after delete on groots_orders.retailer_payments for each row 
+  insert into groots_orders.retailer_payments_log values(
+                                                    NULL ,OLD.id ,OLD.retailer_id ,
+                                                    OLD.paid_amount ,OLD.date ,OLD.payment_type ,OLD.cheque_no ,
+                                                    OLD.comment ,OLD.created_at ,CURRENT_TIMESTAMP ,OLD.status,'DELETE');
+
+
+CREATE TABLE cb_dev_groots.`retailer_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action` enum('INSERT', 'UPDATE', 'DELETE') not null,
+  `retailer_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `retailer_code` varchar(10) DEFAULT NULL,
+  `VAT_number` varchar(50) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `mobile` varchar(10) DEFAULT NULL,
+  `telephone` varchar(15) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `pincode` varchar(10) DEFAULT NULL,
+  `geolocation` varchar(255) DEFAULT NULL,
+  `owner_phone` varchar(10) DEFAULT NULL,
+  `owner_email` varchar(255) DEFAULT NULL,
+  `billing_email` varchar(255) DEFAULT NULL,
+  `settlement_days` varchar(255) DEFAULT NULL,
+  `time_of_delivery` varchar(255) DEFAULT NULL,
+  `demand_centre` varchar(255) DEFAULT NULL,
+  `date_of_onboarding` datetime NOT NULL,
+  `city` varchar(200) DEFAULT NULL,
+  `state` varchar(150) DEFAULT NULL,
+  `image` varchar(250) DEFAULT NULL,
+  `image_url` text,
+  `website` varchar(250) DEFAULT NULL,
+  `contact_person1` varchar(250) DEFAULT NULL,
+  `contact_person2` varchar(250) DEFAULT NULL,
+  `product_categories` text,
+  `categories_of_interest` varchar(250) DEFAULT NULL,
+  `store_size` int(10) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT '1',
+  `credit_limit` int(155) DEFAULT NULL,
+  `collecttion_agent` varchar(155) DEFAULT NULL,
+  `created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modified_date` datetime DEFAULT NULL,
+  `min_order_price` float DEFAULT NULL,
+  `shipping_charge` float DEFAULT NULL,
+  `allocated_warehouse_id` int(11) unsigned NOT NULL DEFAULT '1',
+  `initial_payable_amount` decimal(10,2) DEFAULT NULL,
+  `total_payable_amount` decimal(10,2) DEFAULT NULL,
+  `collection_fulfilled` tinyint(1) NOT NULL DEFAULT '0',
+  `collection_frequency` enum('daily','weekly','fortnight','monthly','45-days') DEFAULT 'daily',
+  `due_date` date DEFAULT NULL,
+  `last_due_date` date DEFAULT NULL,
+  `due_payable_amount` decimal(10,2) DEFAULT '0.00',
+  `collection_agent_id` int(11) NOT NULL DEFAULT '0',
+  `collection_center_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_retailer_log1` (`allocated_warehouse_id`),
+  CONSTRAINT `fk_retailer_log1` FOREIGN KEY (`allocated_warehouse_id`) REFERENCES `warehouses` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=194 DEFAULT CHARSET=latin1;
+
+
+create trigger cb_dev_groots.retailer_log_insert after insert on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log values(NULL ,'INSERT' ,NEW.id ,NEW.name ,NEW.retailer_code ,
+                                          NEW.VAT_number ,NEW.email ,NEW.password ,NEW.mobile ,NEW.telephone ,NEW.address ,NEW.pincode ,NEW.geolocation ,
+                                          NEW.owner_phone ,NEW.owner_email ,NEW.billing_email ,NEW.settlement_days ,NEW.time_of_delivery ,NEW.demand_centre
+                                           ,NEW.date_of_onboarding ,NEW.city ,NEW.state ,NEW.image ,NEW.image_url ,NEW.website ,NEW.contact_person1 ,
+                                           NEW.contact_person2 ,NEW.product_categories ,NEW.categories_of_interest ,NEW.store_size ,NEW.status ,NEW.credit_limit ,
+                                           NEW.collecttion_agent ,NEW.created_date ,NEW.modified_date ,NEW.min_order_price ,NEW.shipping_charge ,
+                                           NEW.allocated_warehouse_id ,NEW.initial_payable_amount ,NEW.total_payable_amount ,NEW.collection_fulfilled ,
+                                          NEW.collection_frequency ,NEW.due_date ,NEW.last_due_date ,NEW.due_payable_amount ,NEW.collection_agent_id ,
+                                          NEW.collection_center_id);
+
+create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log values(NULL ,'UPDATE' ,NEW.id ,NEW.name ,NEW.retailer_code ,
+                                          NEW.VAT_number ,NEW.email ,NEW.password ,NEW.mobile ,NEW.telephone ,NEW.address ,NEW.pincode ,NEW.geolocation ,
+                                          NEW.owner_phone ,NEW.owner_email ,NEW.billing_email ,NEW.settlement_days ,NEW.time_of_delivery ,NEW.demand_centre
+                                           ,NEW.date_of_onboarding ,NEW.city ,NEW.state ,NEW.image ,NEW.image_url ,NEW.website ,NEW.contact_person1 ,
+                                           NEW.contact_person2 ,NEW.product_categories ,NEW.categories_of_interest ,NEW.store_size ,NEW.status ,NEW.credit_limit ,
+                                           NEW.collecttion_agent ,NEW.created_date ,NEW.modified_date ,NEW.min_order_price ,NEW.shipping_charge ,
+                                           NEW.allocated_warehouse_id ,NEW.initial_payable_amount ,NEW.total_payable_amount ,NEW.collection_fulfilled ,
+                                          NEW.collection_frequency ,NEW.due_date ,NEW.last_due_date ,NEW.due_payable_amount ,NEW.collection_agent_id ,
+                                          NEW.collection_center_id);
+
+create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log values(NULL ,'DELETE' ,OLD.id ,OLD.name ,OLD.retailer_code ,
+                                          OLD.VAT_number ,OLD.email ,OLD.password ,OLD.mobile ,OLD.telephone ,OLD.address ,OLD.pincode ,OLD.geolocation ,
+                                          OLD.owner_phone ,OLD.owner_email ,OLD.billing_email ,OLD.settlement_days ,OLD.time_of_delivery ,OLD.demand_centre
+                                           ,OLD.date_of_onboarding ,OLD.city ,OLD.state ,OLD.image ,OLD.image_url ,OLD.website ,OLD.contact_person1 ,
+                                           OLD.contact_person2 ,OLD.product_categories ,OLD.categories_of_interest ,OLD.store_size ,OLD.status ,OLD.credit_limit ,
+                                           OLD.collecttion_agent ,OLD.created_date ,OLD.modified_date ,OLD.min_order_price ,OLD.shipping_charge ,
+                                           OLD.allocated_warehouse_id ,OLD.initial_payable_amount ,OLD.total_payable_amount ,OLD.collection_fulfilled ,
+                                          OLD.collection_frequency ,OLD.due_date ,OLD.last_due_date ,OLD.due_payable_amount ,OLD.collection_agent_id ,
+                                          OLD.collection_center_id);
+
+create table cb_dev_groots.collection_log(
+`id` int(11) NOT NULL AUTO_INCREMENT,
+`due_payable_amount` decimal(10,2) default 0.00,
+`total_payable_amount` decimal(10,2) default NULL,
+`date` date not null,
+`created_at` datetime not null,
+`updated_at` timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+`updated_by` int(11) not null default 1,
+PRIMARY KEY(`id`)
+)
+
+alter table groots_orders.order_header modify column `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_line add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer modify column created_date datetime  default null;
+alter table cb_dev_groots.retailer add column updated_at timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+
+alter table groots_orders.groots_ledger modify column  created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+/*alter table cb_dev_groots.category modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.collecttion_agent add column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.subscribed_product modify column created_date timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;*/
+alter table cb_dev_groots.retailer_product_quotation modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table cb_dev_groots.retailer_product_quotation_log modify column created_at timestamp not null DEFAULT CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+----------------------------------------------------------------------------------------------------------------
+alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
+insert into cb_dev_groots.collection_agent values(null, 'Pankaj Ahuja',3,1);
+
+  --------------------------------------------------------------------------------------------feedback------------
+create table groots_orders.feedback_categories(
+  category_id int(11) not null AUTO_INCREMENT,
+  category_name varchar(255) not null,
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null default 1,
+  primary key(category_id)
+)
+
+create table groots_orders.feedbacks(
+  id int(11) not null AUTO_INCREMENT,
+  order_id int(11) not null,
+  rating tinyint(1) not null,
+  feedback_id int(11) default null,
+  comment varchar(1000) default null, 
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null default 1,
+  primary key (id)
+)
+
+alter table groots_orders.order_header add column feedback_status enum ('Not Required', 'Pending', 'Submitted') not null default 'Not Required';
+insert into groots_orders.feedback_categories values(null, 'Late Delivery', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Delivery Boy Behaviour', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Incomplete Order', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Product Quality', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Pricing', CURDATE(), null , 1);
+insert into groots_orders.feedback_categories values(null, 'Other', CURDATE(), null , 1);
+---------------------------------------------------------------------------------retailer type
+alter table cb_dev_groots.retailer add column retailer_type enum ('GA', 'GB', 'GC', 'GD' , 'Contract Price') default null ;
+---------------------------------------------------------------retailer_payments table fields added
+
+alter table groots_orders.order_header modify column `delivery_date` date NOT NULL;
+
 
 
 --------------------------------------
@@ -413,3 +614,10 @@ update base_product set base_title="Tomato Hybrid (Hybrid Tamatar) G1" where bas
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 1), ("vendor2", now(), now(), 1),("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
 
 alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
+
+
+
+
+
+---------------------------------------
+alter table groots_orders.retailer_payments add column cheque_status enum ('Cleared', 'Pending', 'Bounced') default null;

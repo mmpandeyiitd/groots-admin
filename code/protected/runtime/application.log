@@ -5638,3 +5638,25 @@ Stack trace:
 #6 /home/manmohan/Projects/groots/html/admin/code/framework/yiic.php(33): CConsoleApplication->run()
 #7 /home/manmohan/Projects/groots/html/admin/code/protected/yiic.php(7): require_once()
 
+2016/11/03 06:54:48 [error] [exception.CException] exception 'CException' with message 'Alias "user.UserModule" is invalid. Make sure it points to an existing PHP file and the file is readable.' in /home/ashu/Projects/groots/html/admin/code/framework/YiiBase.php:322
+Stack trace:
+#0 /home/ashu/Projects/groots/html/admin/code/framework/YiiBase.php(196): YiiBase::import('user.UserModule', true)
+#1 /home/ashu/Projects/groots/html/admin/code/framework/base/CModule.php(282): YiiBase::createComponent('user.UserModule', 'user', NULL, Array)
+#2 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(337): CModule->getModule('user')
+#3 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(276): CWebApplication->createController('')
+#4 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#5 /home/ashu/Projects/groots/html/admin/code/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#6 /home/ashu/Projects/groots/html/admin/code/date_query.php(16): CApplication->run()
+#7 {main}
+---
+2016/11/03 06:55:31 [error] [exception.CException] exception 'CException' with message 'Alias "user.UserModule" is invalid. Make sure it points to an existing PHP file and the file is readable.' in /home/ashu/Projects/groots/html/admin/code/framework/YiiBase.php:322
+Stack trace:
+#0 /home/ashu/Projects/groots/html/admin/code/framework/YiiBase.php(196): YiiBase::import('user.UserModule', true)
+#1 /home/ashu/Projects/groots/html/admin/code/framework/base/CModule.php(282): YiiBase::createComponent('user.UserModule', 'user', NULL, Array)
+#2 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(337): CModule->getModule('user')
+#3 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(276): CWebApplication->createController('')
+#4 /home/ashu/Projects/groots/html/admin/code/framework/web/CWebApplication.php(141): CWebApplication->runController('')
+#5 /home/ashu/Projects/groots/html/admin/code/framework/base/CApplication.php(180): CWebApplication->processRequest()
+#6 /home/ashu/Projects/groots/html/admin/code/date_query.php(16): CApplication->run()
+#7 {main}
+---

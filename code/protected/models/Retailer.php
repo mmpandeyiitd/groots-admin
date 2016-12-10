@@ -63,11 +63,11 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding', 'safe'),
+            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id',
+            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id, retailer_type',
              'safe', 'on' => 'search'),
         );
     }
@@ -121,7 +121,8 @@ class Retailer extends CActiveRecord {
             'settlement_days' => 'settlement_days',
             'shipping_charge'=>'shipping_charge',
             'min_order_price'=>'min_order_price',
-            'collection_agent_id' => 'collection_agent_id'
+            'collection_agent_id' => 'collection_agent_id',
+            'retailer_type => Retailer Type'
         );
     }
 
@@ -176,6 +177,7 @@ class Retailer extends CActiveRecord {
         $criteria->compare('collection_agent_id', $this->collection_agent_id, true);
         $criteria->compare('total_payable_amount', $this->total_payable_amount, true);
         $criteria->compare('allocated_warehouse_id', $this->allocated_warehouse_id, true);
+        $criteria->compare('retailer_type', $this->retailer_type, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -395,5 +397,60 @@ class Retailer extends CActiveRecord {
     public function setOldAttributes($attrs) {
         $this->oldAttrs = $attrs;
     }
+
+    public static function getCollectionFrequencies(){
+        $connection = Yii::app()->db;
+        $collectionFrequency = Utility::get_enum_values($connection, self::tableName(), 'collection_frequency' );
+        return $collectionFrequency;
+    }
+
+    public function getInitialPayableAmount($r_id){
+        if(is_numeric($r_id)){
+            $connection = Yii::app()->db;
+            $sql = 'select initial_payable_amount from retailer where id = '.$r_id;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $initial_payable_amount = $command->queryScalar();
+        }
+        return $initial_payable_amount;
+    }
+
+    public function getLastDueDate($r_id){
+        if(is_numeric($r_id)){
+            $connection = Yii::app()->db;
+            $sql = 'select last_due_date from retailer where id = '.$r_id;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $last_due_date = $command->queryScalar();
+        }
+        return $last_due_date;
+    }
+
+    public function getRetailerTypes(){
+        $connection = Yii::app()->db;
+        $retailerType = Utility::get_enum_values($connection, self::tableName(), 'retailer_type' );
+        return $retailerType;
+    }
+
+    public static function getRetailerLog($retailerId){
+        $dateStatusMap = array();
+        $connection = Yii::app()->db;
+        $sql = "SELECT id, modified_date,status FROM `retailer_log` where retailer_id=$retailerId order by modified_date desc, id desc";
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        // $retailer_name = $command->queryScalar();
+        $retailerLogs = $command->queryAll();
+        foreach ($retailerLogs as $retailerLog){
+            $datetime = strtotime( $retailerLog['modified_date'] );
+            $date = date( 'Y-m-d', $datetime );
+            if(!isset($dateStatusMap[$date] )){
+                $dateStatusMap[$date] = $retailerLog['status'];
+            }
+
+        }
+        return $dateStatusMap;
+    }
+
+    public static $intTostatusMap = array(0 => "Inactive", 1 => "Active", 2=>"Moderated");
 
 }

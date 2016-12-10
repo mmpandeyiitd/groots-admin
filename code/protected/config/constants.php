@@ -84,6 +84,11 @@ define('BANNER_IMG_PATH','catbanners/');
 
 define('ORDER_NUMBER_PREFIX','GRT');
 define('INVOICE_TEXT','GFV');
+define('SALES_SUPPORT_EMAIL','sales@gogroots.com');
+define('ORDER_SUPPORT_NO','011-395-89893');
+define('SALES_SUPPORT_NO','011-395-89894');
+define('CUSTOMER_SUPPORT_NO','011-395-89892');
+define('RETAILER_MODERATED_STATUS',2);
 define('SCHD_INV_AVG_DAYS',7);
 define('DUMP_FOLDER_LOC', dirname(__FILE__) . '/../../../../dump/');
 define('SOURCE_WH_ID',2);

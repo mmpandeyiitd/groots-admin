@@ -37,6 +37,15 @@
         </div>
 
         <div class="row">
+            <?php echo $form->labelEx($model, 'retailer_type'); ?>
+            <?php $list = Chtml::listData(Retailer::getRetailerTypes(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'retailer_type', $list,array('empty' => 'Select Retailer Type', 'options' => array($model->retailer_type => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'retailer_type'); ?>
+        </div>
+
+
+        <div class="row">
             <?php echo $form->labelEx($model, 'Primary Email *'); ?>
             <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255)); ?>
             <?php echo $form->error($model, 'email'); ?>
@@ -137,10 +146,28 @@
             <?php echo $form->error($model, 'min_order_price'); ?>
         </div>
         <div class="row">
+            <?php echo $form->labelEx($model, 'Order Warehouse'); ?>
+            <?php
+            $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+            $list = CHtml::listData($warehouse, 'id', 'name');
+            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list,
+                array('empty' => 'Select a warehouse','options'=>array("1"=>array('selected'=>false), ""=>array('selected'=>'selected')))); ?>
+            <?php echo $form->error($model, 'Warehouse'); ?>
+        </div>
+        <div class="row">
             <?php echo $form->labelEx($model, 'credit_limit'); ?>
             <?php echo $form->textField($model, 'credit_limit'); ?>
             <?php echo $form->error($model, 'credit_limit'); ?>
         </div>
+        
+        <div class="row">
+            <?php echo $form->labelEx($model, 'collection_frequency'); ?>
+            <?php $list = Chtml::listData(Retailer::getCollectionFrequencies(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'collection_frequency', $list,array('empty' => 'Select Collection Frequency', 'options' => array($model->collection_frequency => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'collection_frequency'); ?>
+        </div>
+
          <div class="row">
             <?php echo $form->labelEx($model, 'collection_agent'); ?>
             <?php 
@@ -152,13 +179,21 @@
         </div>
 
         <div class="row">
-            <?php echo $form->labelEx($model, 'Warehouse'); ?>
-            <?php 
+            <?php echo $form->labelEx($model, 'Collection Warehouse'); ?>
+            <?php
             $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
             $list = CHtml::listData($warehouse, 'id', 'name');
-            echo CHtml::activeDropDownList( $model,'allocated_warehouse_id', $list, 
-                        array('empty' => 'Select a warehouse','options'=>array("1"=>array('selected'=>false), ""=>array('selected'=>'selected')))); ?>
+            echo CHtml::activeDropDownList( $model,'collection_center_id', $list,
+                array('empty' => 'Select a warehouse','options'=>array("1"=>array('selected'=>false), ""=>array('selected'=>'selected')))); ?>
             <?php echo $form->error($model, 'Warehouse'); ?>
+        </div>
+
+
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'status'); ?>
+            <?php echo $form->dropDownList($model, 'status', array('0' => 'Inactive','1' => 'Active', '2' => 'Moderated')); ?>
+            <?php echo $form->error($model, 'status'); ?>
         </div>
 
         

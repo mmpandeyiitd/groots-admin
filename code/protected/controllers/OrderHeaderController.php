@@ -122,6 +122,7 @@ class OrderHeaderController extends Controller {
         
         }
         if (isset($_POST['create'])) {
+            echo "here3";
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 $retailerId = $_POST['retailerId'];
@@ -134,7 +135,7 @@ class OrderHeaderController extends Controller {
                 if(isset($_POST['comment']) && !empty($_POST['comment'])){
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if(isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])){
+                if(isset($_POST['shippingCharge'])){
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if(isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])){
@@ -230,7 +231,7 @@ class OrderHeaderController extends Controller {
         $orderHeader = $this->loadModel($id);
         $orderAmount = $orderHeader->total_payable_amount;
         $initialStatus = $orderHeader->status;
-
+        $initialShippingCharge = $orderHeader->shipping_charges;
         $retailerId = $orderHeader->user_id;
         $baseProductIds = array();
         $baseProductIdPriceMap = array();
@@ -254,9 +255,15 @@ class OrderHeaderController extends Controller {
         foreach ($retailerProducts as $key=>$product){
             if(isset($resultEffectivePrice[$product->base_product_id]) && $resultEffectivePrice[$product->base_product_id]>0){
                     $product->effective_price = $resultEffectivePrice[$product->base_product_id];
-                }
-            $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
-            $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
+            }
+            if(isset($baseProductIdPriceMap[$product->base_product_id]))  {
+                $product->store_price = $baseProductIdPriceMap[$product->base_product_id]->store_price;
+                $product->store_offer_price = $baseProductIdPriceMap[$product->base_product_id]->store_offer_price;
+            }
+            else{
+                $product->store_price = 0;
+                $product->store_offer_price = 0;
+            }
             $retailerProducts[$key] = $product;
         }
 
@@ -279,7 +286,7 @@ class OrderHeaderController extends Controller {
                 if (isset($_POST['comment']) && !empty($_POST['comment'])) {
                     $orderHeader->user_comment = $_POST['comment'];
                 }
-                if (isset($_POST['shippingCharge']) && !empty($_POST['shippingCharge'])) {
+                if (isset($_POST['shippingCharge'])) {
                     $orderHeader->shipping_charges = $_POST['shippingCharge'];
                 }
                 if (isset($_POST['discountCharge']) && !empty($_POST['discountCharge'])) {
@@ -335,6 +342,12 @@ class OrderHeaderController extends Controller {
                     $retailer->total_payable_amount -= $orderAmount;
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
                 }
+                if($_POST['status'] == 'Delivered'){
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Pending');
+                }
+                else{
+                    OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
+                }
                 $retailer->save();
                 $transaction->commit();
                 //$this->redirect(array('OrderHeader/admin&w_id='.$w_id));
@@ -357,6 +370,7 @@ class OrderHeaderController extends Controller {
             'retailer' => $retailer,
             'retailerId' => $retailerId,
             'warehouses' => $warehouses,
+            'initialShippingCharge' => $initialShippingCharge,
         ));
 
 
@@ -422,7 +436,7 @@ class OrderHeaderController extends Controller {
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -447,9 +461,9 @@ class OrderHeaderController extends Controller {
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -518,7 +532,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -543,9 +557,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -615,7 +629,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -640,9 +654,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -714,7 +728,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -740,9 +754,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -814,7 +828,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -839,9 +853,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1236,8 +1250,9 @@ Sales: +91-11-3958-9895</span>
                         array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$_POST['selectedIds'][$i]));
                     }
                     else{
-                        array_push($pdfArray, $pdf);
+                        array_push($pdfArray, $this->actionReport($_POST['selectedIds'][$i], $type, true));
                     }
+                    
                 }
                 if($type=='email-invoice'){
                     //$this->sendMailToRetailer($pdfArray);
@@ -1246,6 +1261,7 @@ Sales: +91-11-3958-9895</span>
                     $zipFileName=$type.".zip";
                     $this->zipFilesAndDownload($pdfArray,$zipFileName);
                 }
+
 
             }
         }
@@ -1294,7 +1310,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1318,9 +1334,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1389,7 +1405,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1413,9 +1429,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1485,7 +1501,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1509,9 +1525,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1579,7 +1595,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1603,9 +1619,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1676,7 +1692,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -1701,9 +1717,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          
@@ -1750,6 +1766,12 @@ Sales: +91-11-3958-9895</span>
                     $order_ids = implode(',', $_POST['selectedIds']);
                     if ($status_order != 'Change status') {
                         $active_record = $model->StatusOrderByID($order_ids, $status_order);
+                        if($status_order == 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Pending');
+                        }
+                        if($status_order != 'Delivered'){
+                            $model->setFeedbackStatusOnDelivered($order_ids, 'Not Required');
+                        } 
 
                         //$active_record = $model->CancelOrderByID($order_ids);
                         if ($active_record) {
@@ -1828,7 +1850,7 @@ Sales: +91-11-3958-9895</span>
         }
            if(isset($_REQUEST['status']) && Yii::app()->session['sttus_sess'] != "")
            {
-              $model->setAttribute('status', $_REQUEST['status']); 
+              $model->setAttribute('status', $_REQUEST['status']);
               Yii::app()->session['sttus_sess'] = "";
            }
 
@@ -1837,19 +1859,7 @@ Sales: +91-11-3958-9895</span>
         ));
     }
 
-    /**
-     * Returns the data model based on the primary key given in the GET variable.
-     * If the data model is not found, an HTTP exception will be raised.
-     * @param integer $id the ID of the model to be loaded
-     * @return OrderHeader the loaded model
-     * @throws CHttpException
-     */
-    /*public function loadModel($id) {
-        $model = OrderHeader::model()->findByPk($id);
-        if ($model === null)
-            throw new CHttpException(404, 'The requested page does not exist.');
-        return $model;
-    }*/
+
 
     /**
      * Performs the AJAX validation.
@@ -1862,36 +1872,14 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
-    public function actionReport($id, $type, $zip=false) {
-        // echo "hello";die;
-        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
-            ),array('order'=>'product_name ASC'));*/
-
-        $model = OrderLine::getOrderLinebyOrderId($id);
-        $modelOrder = $this->loadModel($id);
-        $store = Store::model()->findByAttributes(array('store_id' => 1));
-        $modelOrder->groots_address = $store->business_address;
-        $modelOrder->groots_city = $store->business_address_city;
-        $modelOrder->groots_state = $store->business_address_state;
-        $modelOrder->groots_country = $store->business_address_country;
-        $modelOrder->groots_pincode = $store->business_address_pincode;
-        $modelOrder->groots_authorized_name = $store->store_name;
-        $retailer = Retailer::model()->findByPk($modelOrder->user_id);
-        if($zip==true){
-            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
-        }
-        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
-
-    }
-
-    public function createPdf($model,$modelOrder,$retailer,$type,$zip ){
+    public function createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip ){
 
 
         //die("here23");
-        //print_r($model);die;
+        // var_dump($newModel);
+        // var_dump($model);die;
         ob_start();
-
-        echo $this->renderPartial('reportviewcontent' ,array('model' => $model,
+        echo $this->renderPartial('reportviewcontent' ,array('model' => $model,'newModel' => $newModel,
             'modelOrder' =>$modelOrder, 'retailer'=>$retailer, 'type'=>$type), true);//die;
         $content = ob_get_clean();
         require_once( dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
@@ -1911,7 +1899,7 @@ Sales: +91-11-3958-9895</span>
 //      $html2pdf->setModeDebug();
             //  $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            //echo $zip; die("here2");
+            //echo $zip; die("here2"); 
             if($zip==true){
                 return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
             }
@@ -1928,9 +1916,28 @@ Sales: +91-11-3958-9895</span>
         }
     }
 
-    /*public function actionReport($id, $type, $zip=false) {
+    public function actionReport($id, $type, $zip=false) {
+        // echo "hello";die;
+        /*$model = OrderLine::model()->findAllByAttributes(array('order_id' => $id,
+            ),array('order'=>'product_name ASC'));*/
 
         $model = OrderLine::getOrderLinebyOrderId($id);
+        $prodIds= array();
+        foreach ($model as $key => $value) {
+            array_push($prodIds, $value['base_product_id']);
+        }
+        $newModel = array();
+        $prodIdsString = implode(',', $prodIds);
+        $catNameCatId = Category::getCatNameIdbyProdId($prodIdsString);
+        foreach ($model as $key => $value) {
+            $value['category_name'] = $catNameCatId[$value['base_product_id']]['category_name'];
+            $model[$key] = $value;
+            if(! array_key_exists($value['category_name'], $newModel)){
+                $newModel[$value['category_name']] = array();
+            }
+            array_push($newModel[$value['category_name']], $value);
+        }
+        ksort($newModel, SORT_STRING);
         $modelOrder = $this->loadModel($id);
         $store = Store::model()->findByAttributes(array('store_id' => 1));
         $modelOrder->groots_address = $store->business_address;
@@ -1941,11 +1948,11 @@ Sales: +91-11-3958-9895</span>
         $modelOrder->groots_authorized_name = $store->store_name;
         $retailer = Retailer::model()->findByPk($modelOrder->user_id);
         if($zip==true){
-            return $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+            return $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
         }
-        $this->createPdf($model,$modelOrder,$retailer,$type,$zip );
+        $this->createPdf($model,$newModel,$modelOrder,$retailer,$type,$zip );
 
-    }*/
+    }
 
     public function actionReportnew($id, $status, $email, $type) {
         //  echo $status;die;
@@ -2013,6 +2020,7 @@ Sales: +91-11-3958-9895</span>
         }
         $zip->close();
 
+
         //then send the headers to force download the zip file
         header("Content-type: application/zip");
         header("Content-Disposition: attachment; filename=$archive_file_name");
@@ -2020,6 +2028,8 @@ Sales: +91-11-3958-9895</span>
         header("Pragma: no-cache");
         header("Expires: 0");
         readfile($zipName);
+
+
         exit;
         //var_dump($zipName);
     }
@@ -2064,7 +2074,7 @@ Sales: +91-11-3958-9895</span>
     margin: 8px 20px;"></a>
       </td>
       <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-        <span style="float:right;">+91-11-3958-8984</span>
+        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
       </td>
     </tr>
@@ -2089,9 +2099,9 @@ Sales: +91-11-3958-9895</span>
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
-<span style="font-size:14px;">Ordering: +91-11-3958-9893<br>
-Customer Support: +91-11-3958-8984<br>
-Sales: +91-11-3958-9895</span>
+<span style="font-size:14px;">Ordering: '. ORDER_SUPPORT_NO. '<br>
+Customer Support: '. CUSTOMER_SUPPORT_NO. '<br>
+Sales: '. SALES_SUPPORT_NO. '</span>
         <br> <br> 
       </p>
      </td>          

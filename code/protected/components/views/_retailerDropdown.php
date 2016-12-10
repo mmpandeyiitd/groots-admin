@@ -26,18 +26,23 @@ $form=$this->beginWidget('CActiveForm', array(
 	<?php echo $form->labelEx($model, '<b>Select a retailer</b>'); ?>
 	<?php
 	$disabled = "";
+	$condition = "";
+	$retailerQueryArr = array();
 	if($update != '') {
 		$disabled = "disabled";
 	}
+	if(!$showInactive){
+		$condition = 'status != 0 and ';
+	}
 	if(isset($w_id) && $w_id>0){
-		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> ' allocated_warehouse_id = '.$w_id. ' and status =1');
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition.' allocated_warehouse_id = '.$w_id. ' and status =1');
 	}
 	else{
-		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> 'status=1');
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition.' status=1');
 	}
 	    echo $form->dropDownList($model,
 	      'user_id',
-	      CHtml::listData(Retailer::model()->findAll(array('select'=>'id,name','order' => 'name', 'condition' => 'status != 0')),'id','name'),
+	      CHtml::listData(Retailer::model()->findAll($retailerQueryArr),'id','name'),
 	      array('empty' => 'Select a retailer', 'name' => 'retailer-dd', 'disabled'=>$disabled, 'options'=>array($retailerId=>array('selected'=>'selected')))
 	    );
 	?>

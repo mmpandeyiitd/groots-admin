@@ -232,7 +232,7 @@ $this->breadcrumbs = array(
                     echo $form->error($model, 'order_start_date');
                     ?>
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
-
+                    <?php echo CHtml::dropDownList( 'warehouse_id1',null, Utility::getWarehouseDropdownData(), array('empty' => 'Select A Warehouse', 'style' => 'width:220.5px; height:40px;')); ?>
       
                     <input  type="submit" name="orderQtSummary" class="button_new" value="Download" />
                 </div>
@@ -267,7 +267,7 @@ $this->breadcrumbs = array(
                     echo $form->error($model, 'order_start_date');
                     ?>
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
-
+                    <?php echo CHtml::dropDownList( 'warehouse_id2',null, Utility::getWarehouseDropdownData(), array('empty' => 'Select A Warehouse', 'style' => 'width:220.5px; height:40px;')); ?>
 
                     <input  type="submit" name="deliveredQtSummary" class="button_new" value="Download" />
                 </div>

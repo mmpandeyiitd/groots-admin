@@ -28,6 +28,7 @@ $this->breadcrumbs=array(
     $this->widget('RetailerDropdown', array(
         'model'=>$model,
         'retailerId'=>$retailer->id,
+        'showInactive' => true,
     ));
 
 //var_dump($data);die;
@@ -43,6 +44,7 @@ if(isset($retailer->id)) {
                 'id',
                 'date',
                 'type',
+                'retailer_status',
                 array(
                     'header' => 'payment_type',
                     'value' => function($data){

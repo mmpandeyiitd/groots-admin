@@ -36,7 +36,7 @@
 
     <div class="row">
         <?php echo $form->label($model,'totalPayableAmount'); ?>
-        <label for="RetailerPayment_totalPayableAmount"><?php echo$model->totalPayableAmount?></label>
+        <label for="RetailerPayment_totalPayableAmount"><?php echo Utility::calTotPayAmoByRetailer($model->retailer_id)?></label>
         <?php //echo $form->label($model,'totalPayableAmount'); ?>
         <?php echo $form->error($model,'totalPayableAmount'); ?>
     </div>

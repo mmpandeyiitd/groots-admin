@@ -249,7 +249,7 @@ onclick='return confirm("Do you want to cancel");'/>
                    'name' => 'delivery_date',
                 'type' => 'raw',
                 'value'=> function($data){
-           return trim($data->delivery_date,"00:00:00");
+           return trim($data->delivery_date);
        }
        ),
             'link' => array(

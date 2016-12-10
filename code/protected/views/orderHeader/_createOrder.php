@@ -46,6 +46,13 @@ if($this->checkAccess('SuperAdmin')){
     $isAdmin = true;
 }
 
+$setShippingCharge = '';
+if(isset($update)){
+    $setShippingCharge = $initialShippingCharge;
+}
+else{
+    $setShippingCharge = (empty($retailer->shipping_charge)) ? 0: $retailer->shipping_charge;
+}
 
 ?>
 <div class="form">
@@ -231,7 +238,7 @@ if($this->checkAccess('SuperAdmin')){
 
                                 <input type="text" style="width:80px;" class="inputs" name="quantityInKg" class="quantityInKg inputs"
                                    id="quantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php echo $totalQuantity ?>"
+                                   value="<?php  echo ($totalQuantity > 0 ) ? round($totalQuantity, 2) : $totalQuantity ; ?>"
                                    onchange="onQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'".",'".$updateAmountField."'" ; ?>)" >
 
                             </td>
@@ -254,7 +261,7 @@ if($this->checkAccess('SuperAdmin')){
 
                             <input type="text" style="width:80px;"  name="delvQuantityInKg" class="delvQuantityInKg inputs"
                                    id="delvQuantityInKg_<?php echo $_retailerProduct->base_product_id; ?>"
-                                   value="<?php echo $delvQuantityInKg ?>"
+                                   value="<?php echo ($delvQuantityInKg > 0) ? round($delvQuantityInKg, 2) : $delvQuantityInKg ?>"
                                    onchange="onDelvQuanityInputChange(<?php echo $_retailerProduct->base_product_id . "," . $_retailerProduct->pack_size.",'".$_retailerProduct->pack_unit."'" ; ?>)" >
 
                             </td>
@@ -303,7 +310,7 @@ if($this->checkAccess('SuperAdmin')){
                     </h3>
 
                     <h3><b>Shipping Charge:</b><i class="fa fa-inr"></i><span >
-                    <input type="text" style="width:80px;"  name="shippingCharge" class="inputs" id="shippingCharge" onchange ="calculateTotalAmount()" value="<?php echo $retailer->shipping_charge; ?>">
+                    <input type="text" style="width:80px;"  name="shippingCharge" class="inputs" id="shippingCharge" onchange ="calculateTotalAmount()" value="<?php echo $setShippingCharge; ?>">
                         </span>
 
                     </h3>
@@ -320,9 +327,8 @@ if($this->checkAccess('SuperAdmin')){
                             <!--<a href="index.php?r=OrderHeader/report&id=<?php //echo $model->attributes['order_id'];
                             ?>" class="button_new" style="width: auto;" target="_blank"  >Create Invoice</a>-->
 
-
-                            <?php
-                        //}
+                     
+                        <?php
                     }
                     else{ ?>
                         <input type="submit" class="button_new" value="Create Order" id="create" name="create" onclick=""/>
@@ -433,6 +439,7 @@ if($this->checkAccess('SuperAdmin')){
     function setProductPrices(data) {
         console.log(data);
         if(data){
+            <?php var_dump($data);?>
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
                 //if($('#isEffectivePrice_'+k).val()==0){

@@ -54,7 +54,6 @@ class BaseProduct extends CActiveRecord {
     public $image;
     public $base_product_id;
     public $action;
-
     public $categoryIds = null;
     public $store_offer_price;
     public $size_chart;
