@@ -557,8 +557,15 @@ alter table groots_orders.purchase_line add column `tobe_procured_qty`  decimal(
 create parent item (to store total data) and unsorted grade item from bulk product create  (do not forget to fill category_id and parent_id field)
 download upload price update file and and update parent_id for each grade
 
+
+------
+------
+
 //copy parent items from test db to production, or upload csv
 update base_product set status=0  where title like "% G2 %";
+
+------
+------
 
 // optional, if category of parent not submitted by csv
 update  product_category_mapping pcm join  base_product bp  on bp.parent_id=pcm.base_product_id join product_category_mapping pcm2 on bp.base_product_id=pcm2.base_product_id  set pcm.category_id=pcm2.category_id;
@@ -566,12 +573,12 @@ update  product_category_mapping pcm join  base_product bp  on bp.parent_id=pcm.
 //copy parent item to inventory
 select max(base_product_id) from inventory_header;
 insert into groots_orders.inventory_header select null, 1, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product where base_product_id > ;
-
+insert into groots_orders.inventory_header select null, 2, base_product_id, 2, 'days', 15, 'percents', now(), now() from cb_dev_groots.base_product where base_product_id >
 select max(base_product_id) from inventory;
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now(),0,0 from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id where base_product_id > ;
 --------------------------
 //delete category mapping of unavailable products
-delete pcm from product_category_mapping pcm join base_product bp on bp.base_product_id=pcm.base_product_id where bp.base_product_id is null;
+delete pcm from product_category_mapping pcm left join base_product bp on bp.base_product_id=pcm.base_product_id where bp.base_product_id is null;
 //update category of items whose category is set to 1
 update product_category_mapping set category_id=3 where category_id=1;
 //update category of some fruits which have category = 3 instead of 4 from bulk update

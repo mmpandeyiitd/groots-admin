@@ -351,7 +351,8 @@ class OrderHeaderController extends Controller {
                 $retailer->save();
                 $transaction->commit();
                 //$this->redirect(array('OrderHeader/admin&w_id='.$w_id));
-                $url = Yii::app()->controller->createUrl("OrderHeader/update",array("w_id"=>$w_id, "id"=>$orderHeader->order_id));
+                $url = Yii::app()->controller->createUrl("OrderHeader/admin",array("w_id"=>$w_id));
+                //$url = Yii::app()->controller->createUrl("OrderHeader/update",array("w_id"=>$w_id, "id"=>$orderHeader->order_id));
                 Yii::app()->user->setFlash('success', 'order successfully Updated.');
                 Yii::app()->controller->redirect($url);
             } catch (\Exception $e) {

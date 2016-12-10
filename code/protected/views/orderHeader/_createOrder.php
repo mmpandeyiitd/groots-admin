@@ -439,7 +439,7 @@ else{
     function setProductPrices(data) {
         console.log(data);
         if(data){
-            <?php var_dump($data);?>
+
             var data = $.parseJSON(data);
             $.each(data, function(k, v) {
                 //if($('#isEffectivePrice_'+k).val()==0){

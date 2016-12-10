@@ -62,7 +62,7 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    echo "<pre>";
+	    /*echo "<pre>";
 		print_r($_POST);
         print_r($_GET);
         if(isset($_POST['parent_id'][78]) && $_POST['parent_id'][78] == 0){
@@ -71,7 +71,7 @@ class InventoryController extends Controller
         if(isset($_POST['parent_id'][65]) && $_POST['parent_id'][65] == 0){
             echo "inside if for parent-id-65";
         }
-        die;
+        die;*/
 
         //$model=new Inventory('search');
 

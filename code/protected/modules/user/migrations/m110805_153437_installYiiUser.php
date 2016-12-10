@@ -165,7 +165,7 @@ date_default_timezone_set("Asia/Kolkata");
             "password" => Yii::app()->getModule('user')->encrypting($this->_model->password),
             "email" => $this->_model->email,
             "activkey" => Yii::app()->getModule('user')->encrypting(microtime()),
-            "createtime" => date(),
+            "createtime" => date('Y-m-d'),
             "lastvisit" => "0",
             "superuser" => "1",
             "status" => "1",
