@@ -431,7 +431,7 @@ create table `vendor_product_mapping`(
   updated_by int(11) not null
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-create table groots_employee(
+create table cb_dev_groots.groots_employee(
   employee_id int(11) not null AUTO_INCREMENT,
   employee_name varchar(255) not null,
   address varchar(300) default null,
@@ -453,10 +453,17 @@ create table groots_employee(
   constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (designation_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+insert into groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Mudit', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Rakesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Narendar', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 create table cb_dev_groots.groots_departments(
   department_id int(11) not null AUTO_INCREMENT,
   department_name varchar(255) not null,
-  department_head_id int(11) not null,
+  department_head_id int(11) default null,
   status tinyint(1) not null,
   created_at date not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -464,8 +471,8 @@ create table cb_dev_groots.groots_departments(
   primary key (department_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-alter table cb_dev_groots.vendors
+insert into groots_departments values(1, 'sales', null, 1, CURDATE(), null, 1);
+)alter table cb_dev_groots.vendors
   modify name varchar(255) not null,
   modify bussiness_name varchar(255) not null,
   modify mobile varchar(100) not null,
@@ -483,7 +490,7 @@ create table cb_dev_groots.employee_designation(
   updated_by int(11) not null,
   primary key (designation_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+  insert into employee_designation values(1, 'sales_representative', CURDATE(), null, 1);
 --------------------------------------vendor - type,
 alter table cb_dev_groots.vendors add column vendor_type enum('Auctionnaire', 'Trader', 'Reseller') not null; 
 
@@ -504,3 +511,5 @@ CREATE TABLE groots_orders.vendor_payments (
   KEY `fk_vd_pm_1` (`vendor_id`),
   CONSTRAINT `fk_vd_pm_1` FOREIGN KEY (`vendor_id`) REFERENCES `cb_dev_groots`.`vendors` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null ;
