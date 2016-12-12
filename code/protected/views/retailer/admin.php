@@ -65,12 +65,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'name',
         'email',
         'city',
-        array(
+        /*array(
             'header' => 'Total Payable Amount',
             'value' => function($data){
                 echo round(Utility::calTotPayAmoByRetailer($data->id), 2);
                 }
-            ),
+            ),*/
         //'status',
         'link' => array(
             'header' => 'Action',

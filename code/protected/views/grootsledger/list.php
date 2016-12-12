@@ -14,25 +14,33 @@ $this->breadcrumbs=array(
 */
 
 ?>
+<div>
+    <h1>Manage Groots Ledgers</h1>
 
-<h1>Manage Groots Ledgers</h1>
 
-<?php
-
+<div>
+    <?php
+    echo "<br>";
     echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));
     echo "<br>";
+    ?>
+</div>
+</div>
+<?php
+
+    /*echo "<br>";
     echo "<br>";
-    echo "<br>";
+    echo "<br>";*/
     
 
-    $this->widget('RetailerDropdown', array(
+    /*$this->widget('RetailerDropdown', array(
         'model'=>$model,
         'retailerId'=>$retailer->id,
         'showInactive' => true,
-    ));
+    ));*/
 
 //var_dump($data);die;
-if(isset($retailer->id)) {
+/*if(isset($retailer->id)) {
     echo CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 'retailerId' => $retailer->id));
 
     if(!empty($data)) {
@@ -72,6 +80,6 @@ if(isset($retailer->id)) {
             ),
         ));
     }
-}
+}*/
 
 ?>

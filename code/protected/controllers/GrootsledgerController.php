@@ -626,7 +626,7 @@ class GrootsledgerController extends Controller
 
   public function get_due_payable_amount_yesterday(){
     $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
-    echo $sql;
+    //echo $sql;
     $connection = Yii::app()->secondaryDb;
     $command = $connection->createCommand($sql);
     $command->execute();

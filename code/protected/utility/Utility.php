@@ -245,5 +245,15 @@ class Utility
         return date("Y-m-d",$time);
     }
 
+    public static function getPrevDate(){
+        $time=strtotime("-1 day");
+        return date("Y-m-d",$time);
+    }
+
+    public static function getNextDate(){
+        $time=strtotime("+1 day");
+        return date("Y-m-d",$time);
+    }
+
 
 }

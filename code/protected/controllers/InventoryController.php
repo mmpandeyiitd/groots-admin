@@ -92,7 +92,7 @@ class InventoryController extends Controller
         //$date = date('Y-m-d');
         //$date = "2016-09-15";
 
-        if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
+        /*if(isset($_POST['inventory-date']) && !empty($_POST['InventoryHeader'])){
             $date = $_POST['InventoryHeader']['date'];
         }
         elseif(!empty($_POST['InventoryHeader'])){
@@ -109,8 +109,8 @@ class InventoryController extends Controller
         else{
             $date = date('Y-m-d');
             //$date = "2016-10-10";
-        }
-        
+        }*/
+        $date = date('Y-m-d');
         $inv_header->date = $date;
         $inv_header->warehouse_id = $w_id;
         //$model->warehouse_id = $w_id;
@@ -132,7 +132,7 @@ class InventoryController extends Controller
 		{
             $transaction = Yii::app()->db->beginTransaction();
             try {
-                $date = $_POST['InventoryHeader']['date'];
+                //$date = $_POST['InventoryHeader']['date'];
                 $warehouse_id = $_POST['InventoryHeader']['warehouse_id'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -247,11 +247,8 @@ class InventoryController extends Controller
 	}
 
     public function actionDownloadWastageReport(){
-        //var_dump($_GET); echo "ehll"; die;
-
-
-        echo "<pre>";
-        $date = $_GET['date'];
+        //$date = $_GET['date'];
+        $date = date('Y-m-d');
         $w_id = $_GET['w_id'];
         $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage, i.balance";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));

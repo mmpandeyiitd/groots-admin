@@ -47,14 +47,14 @@ else{
     )); ?>
 
     <!--<p class="note">Fields with <span class="required">*</span> are required.</p>-->
--
+
     <?php echo $form->errorSummary($model->errors); ?>
 
 
 
     <div class="row">
-        <?php echo $form->labelEx($model,'date'); ?>
-        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+        <?php /*echo $form->labelEx($model,'date'); */?><!--
+        <?php /*$this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
             'attribute'=>'date',
             'value'=>$model->date,
@@ -68,13 +68,13 @@ else{
             'htmlOptions'=>array(
                 'style'=>'height:20px;'
             ),
-        )); ?>
-        <?php echo $form->error($model,'date'); ?>
-        <?php
-
+        )); */?>
+        <?php /*echo $form->error($model,'date'); */?>
+        --><?php
+/*
         echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
 
-        ?>
+        */?>
     </div>
 
     <div class = "row" style="float:right">
@@ -300,14 +300,14 @@ $balance = 0;
                 },
                 'type' => 'raw',
             ),
-            array(
+            /*array(
                 'header' => 'date',
                 'name' => 'date',
                 'value' => function ($data) {
                     return CHtml::textField('date[]', substr($data->date,5), array('class'=>'id-field', 'readonly'=>'readonly'));
                 },
                 'type' => 'raw',
-            ),
+            ),*/
             array(
                 'header' => 'Grade',
                 'name' => 'grade',
@@ -882,11 +882,8 @@ $balance = 0;
     }
     
     function onClickDownloadReport(url){
-        //document.location.href
-        var date = $("#date").val().trim();
-        url = url + "&date="+date;
-        //window.location.assign(url);
-        //console.log(url);
+        //var date = $("#date").val().trim();
+        //url = url + "&date="+date;
         window.open(url, '_blank');
     }
 

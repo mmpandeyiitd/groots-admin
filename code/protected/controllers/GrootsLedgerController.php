@@ -131,28 +131,24 @@ class GrootsLedgerController extends Controller
 
         if (isset($_POST['client'])) {
 
-           	$start_date = $_POST['tocdate'];
+           	/*$start_date = $_POST['tocdate'];
              
-            /*if($_POST['CatLevel1']==0)   
-            {
-            	Yii::app()->user->setFlash('error', 'Client not selected');
-                Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
-            } */
             if ($start_date !='')
-            {
+            {*/
            
-            $cDate = date("Y-m-d", strtotime($start_date));
+            //$cDate = date("Y-m-d", strtotime($start_date));
+            $cDate = Utility::getNextDeliveryDate();
            
                         	ob_clean();
                 $data= $model->downloadCSVByCIDs($cDate);
                 ob_flush();
                 exit();
-            }
+            /*}
             else
             {
             	 Yii::app()->user->setFlash('error', 'Date not selected');
                  Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
-            }
+            }*/
           
           
         }

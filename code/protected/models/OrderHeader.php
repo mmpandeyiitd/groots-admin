@@ -301,8 +301,12 @@ class OrderHeader extends CActiveRecord {
 //        $criteria->compare('campaign_id', $this->campaign_id);
 //        $criteria->compare('buyer_shipping_cost', $this->buyer_shipping_cost);
         $criteria->compare('order_type', $this->order_type, true);
-        
-        
+        $startDate = Utility::getPrevDate();
+        $endDate = Utility::getNextDate();
+        if($criteria->condition != ''){
+            $criteria->condition .= " and ";
+        }
+        $criteria->condition .= " t.delivery_date >= '".$startDate."' and t.delivery_date <= '".$endDate."'";
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
