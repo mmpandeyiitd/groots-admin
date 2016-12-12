@@ -242,7 +242,7 @@ class Utility
 
     public static function getNextDeliveryDate(){
         $time=strtotime("+2 hour");
-        return date("Y-m-d H:i:s",$time);
+        return date("Y-m-d",$time);
     }
 
 

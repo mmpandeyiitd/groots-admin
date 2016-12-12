@@ -182,7 +182,7 @@ $this->breadcrumbs = array(
                       ), //DateTimePicker options
                       'htmlOptions' => array('readonly'=>'true'),
                       )); */
-                    $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    /*$this->widget('zii.widgets.jui.CJuiDatePicker', array(
                         'model' => $model,
                         'name' => 'order_start_date',
                         'attribute' => 'order_start_date',
@@ -199,7 +199,7 @@ $this->breadcrumbs = array(
                             'style' => '', 'readonly' => 'true'
                         ),
                     ));
-                    echo $form->error($model, 'order_start_date');
+                    echo $form->error($model, 'order_start_date');*/
                     ?>
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
                     <?php echo CHtml::dropDownList( 'warehouse_id1',null, Utility::getWarehouseDropdownData(), array('empty' => 'Select A Warehouse', 'style' => 'width:220.5px; height:40px;')); ?>
