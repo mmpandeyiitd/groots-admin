@@ -253,7 +253,7 @@ class InventoryController extends Controller
         echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "bp.title,i.base_product_id,  wa.name, i.wastage, i.liquidation_wastage, i.balance";
+        $select = "bp.title,i.base_product_id,  wa.name, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.balance";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
         $sql = 'select '.$select.' from groots_orders.inventory as i left join cb_dev_groots.warehouses as wa on i.warehouse_id = wa.id left join cb_dev_groots.base_product as bp on i.base_product_id = bp.base_product_id 
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
@@ -515,6 +515,8 @@ class InventoryController extends Controller
             foreach ($warehouses as $key => $warehouse) {
                 $nameSplit = explode(',', $warehouse['name']);
                 $warehouse['name'] = $nameSplit[0];
+                $row[$warehouse['name'].'_inv'] = null;
+                $row[$warehouse['name'].'_liq_inv'] = null;
                 $row[$warehouse['name'].'_wastage'] = null;
                 $row[$warehouse['name'].'_liquidation_wastage'] = null;
                 $row[$warehouse['name'].'_balance'] = null;
@@ -523,6 +525,8 @@ class InventoryController extends Controller
             $nameSplit = explode(',', $value['name']);
             $value['name'] = $nameSplit[0];
             $w_name = $value['name'];
+            $row[$w_name.'_inv'] = $value['present_inv'];
+            $row[$w_name.'_liq_inv'] = $value['liquid_inv'];
             $row[$w_name.'_wastage'] = $value['wastage'];
             $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
             $row[$w_name.'_balance'] = $value['balance'];
