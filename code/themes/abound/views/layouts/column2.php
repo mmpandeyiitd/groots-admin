@@ -179,7 +179,7 @@ function generateWarehouses($meunAuthItemMap){
                     $warehouseArr,
                     //$regOffArray,
                     $productArr,
-                    $categoryArr,
+                    //$categoryArr,
                     $buyerArr,
                     $collectionArr,
                     $reportArr,

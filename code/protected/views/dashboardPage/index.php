@@ -51,30 +51,15 @@ $this->breadcrumbs = array(
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
 <?php if (Yii::app()->user->hasFlash('permission_error')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('permission_error'); ?></div><?php endif; ?>
     <form method="post">
-         <input name="Reset" class="pull-right" type="submit" value="Reset" />
+         <!--<input name="Reset" class="pull-right" type="submit" value="Reset" />-->
         <div class="dashboard-table">
             
 <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
-            <h4>Orders</h4>
-            <div class="right_date">
+            <!--<h4>Orders</h4>
+            <div class="right_date">-->
     <?php
-                /* $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-                  'model' => $model,
-                  'name' => 'start_date',
-                  'attribute' => 'start_date',
-                  'flat' => false, //remove to hide the datepicker
-                  'options' => array(
-                  'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-                  // 'minDate' => 0,
-                  'dateFormat' => 'dd-mm-yy',
 
-                  ),
-                  'value'=>$start_date,
-                  'htmlOptions' => array(
-                  'style' => ''
-                  ),
-                  )); */
-                $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
+                /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
                     'model' => $model,
                     'attribute' => 'start_date',
                     'value' => $model->start_date,
@@ -86,31 +71,13 @@ $this->breadcrumbs = array(
                     ), //DateTimePicker options 
                     'htmlOptions' => array('readonly' => 'true'),
                 ));
-                echo $form->error($model, 'start_date');
+                echo $form->error($model, 'start_date');*/
                 ?>
-                <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
 
-                <label>To</label>
-                <!--<input name="end_date" class=""  type="text" value="" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
+                <!--<label>To</label>-->
                 <?php
-//        $this->widget('zii.widgets.jui.CJuiDatePicker', array(
-//            'model' => $model,
-//            'name' => 'end_date',
-//         //   'attribute' => 'end_date',
-//            // 'flat' => false, //remove to hide the datepicker
-//            'options' => array(
-//                'showAnim' => 'slide', //'slide','fold','slideDown','fadeIn','blind','bounce','clip','drop'
-//                // 'minDate' => 0,
-//                'dateFormat' => 'dd-mm-yy',
-//               
-//            ),
-//             'value'=>$end_date,
-//            'htmlOptions' => array(
-//                'style' => ''
-//            ),
-//        ));
 
-                $this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
+                /*$this->widget('ext.YiiDateTimePicker.jqueryDateTime', array(
                     'model' => $model,
                     'attribute' => 'end_date',
                     'value' => $model->end_date,
@@ -123,47 +90,47 @@ $this->breadcrumbs = array(
                     ), //DateTimePicker options 
                     'htmlOptions' => array('readonly' => 'true'),
                 ));
-                echo $form->error($model, 'end_date');
-                ?>    
-                <input name="filter" class="button_new" type="submit" value="Filter" />
+                echo $form->error($model, 'end_date');*/
+                ?>
+                <!--<input name="filter" class="button_new" type="submit" value="Filter" />-->
                
-               </div>
+               <!--</div>-->
             
-            <table class="table">
+            <!--<table class="table">
                 <tr>
                     <td class="gray">
-                        <h5><?php echo $TotalOrder; ?></h5>
+                        <h5><?php /*echo $TotalOrder; */?></h5>
                         <span>Total</span>
                     </td>
                     <td>
-                        <h5><?php echo $total_pendingOrder; ?></h5>
+                        <h5><?php /*echo $total_pendingOrder; */?></h5>
                         <span>Pending</span>
                     </td>
                     <td class="gray">
-                        <h5><?php echo $total_shippedOrder; ?></h5>
+                        <h5><?php /*echo $total_shippedOrder; */?></h5>
                         <span>Confirmed</span>
                     </td>
                     <td>
-                        <h5><?php echo $total_cancelledOrder; ?></h5>
+                        <h5><?php /*echo $total_cancelledOrder; */?></h5>
                         <span>Cancelled</span>
                     </td>
                     <td class="gray" >
-                        <h5><?php echo $total_returnOrder; ?></h5>
+                        <h5><?php /*echo $total_returnOrder; */?></h5>
                         <span>Delivered</span>
                     </td>
                 </tr>
-            </table>
+            </table>-->
         </div>
         <div class="view custom_dashboard">
-            <div class="span4 " >
+            <!--<div class="span4 " >
                 <div class="dashboard_boxes">
                     <div class="icon_box">
                         <i class="fa fa-shopping-bag"></i>
                     </div>
                     <div class="conten_boxright">
                         <span >Total Product</span>
-                        <span><?php echo $totalproduct;
-                ; ?></span>
+                        <span><?php /*echo $totalproduct;
+                ; */?></span>
                     </div>
                 </div>
             </div>
@@ -174,11 +141,11 @@ $this->breadcrumbs = array(
                     </div>
                     <div class="conten_boxright">
                         <span>Total Category</span>
-                        <span><?php if ($Total_linesheet != 0 && $Total_linesheet != 1) {
+                        <span><?php /*if ($Total_linesheet != 0 && $Total_linesheet != 1) {
                     echo $Total_linesheet - 2;
                 } else {
                     echo "0";
-                } ?></span>
+                } */?></span>
                     </div>
                 </div>
             </div>
@@ -190,10 +157,13 @@ $this->breadcrumbs = array(
                     </div>
                     <div class="conten_boxright">
                         <span>Total Buyers </span>
-                        <span><?php echo $totalretailers; ?></span>
+                        <span><?php /*echo $totalretailers; */?></span>
                     </div>
                 </div>
-            </div>
+            </div>-->
+
+
+
             <div class="dashboard-table">
                 <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary" ><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
                 <h4>Download Order Quantity Summary</h4>
@@ -247,7 +217,7 @@ $this->breadcrumbs = array(
                 <div class="right_date">
                     <?php
 
-                    $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    /*$this->widget('zii.widgets.jui.CJuiDatePicker', array(
                         'model' => $model,
                         'name' => 'deliverySummaryDeliveryDate',
                         'attribute' => 'deliverySummaryDeliveryDate',
@@ -264,7 +234,7 @@ $this->breadcrumbs = array(
                             'style' => '', 'readonly' => 'true'
                         ),
                     ));
-                    echo $form->error($model, 'order_start_date');
+                    echo $form->error($model, 'order_start_date');*/
                     ?>
                     <!--<input name="start_date" type="text" placeholder="22/02/2015" data-uk-datepicker="{format:'DD.MM.YYYY'}">-->
                     <?php echo CHtml::dropDownList( 'warehouse_id2',null, Utility::getWarehouseDropdownData(), array('empty' => 'Select A Warehouse', 'style' => 'width:220.5px; height:40px;')); ?>

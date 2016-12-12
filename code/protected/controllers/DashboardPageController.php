@@ -146,11 +146,11 @@ class DashboardPageController extends Controller {
                 Yii::app()->user->setFlash('error', 'Warehouse not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
-           if ($_POST['DashboardPage']['order_start_date'] !='') {
+           //if ($_POST['DashboardPage']['order_start_date'] !='') {
             $order_start_date = $_POST['DashboardPage']['order_start_date'];
             $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
+            $oDate = Utility::getNextDeliveryDate(); echo $oDate;die;
             //echo $oDate;die;
-            $odate1 = date("Y-m-d H:i:s");
             if (isset($oDate)) {
                 ob_clean();
                 $data= $model->downloadCSVByIDs($oDate, $warehouse_id);
@@ -160,10 +160,10 @@ class DashboardPageController extends Controller {
                // Yii::app()->user->setFlash('error', 'Date not greater then current date');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
-           }else {
+           /*}else {
                 Yii::app()->user->setFlash('error', 'Date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-            }
+            }*/
         }
         if (isset($_POST['deliveredQtSummary'])) {
             if(isset($_POST['warehouse_id2']) && !empty($_POST['warehouse_id2'])){
@@ -174,7 +174,7 @@ class DashboardPageController extends Controller {
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
             }
 
-            if ($_POST['DashboardPage']['deliverySummaryDeliveryDate'] !='') {
+            //if ($_POST['DashboardPage']['deliverySummaryDeliveryDate'] !='') {
                 $order_start_date = $_POST['DashboardPage']['deliverySummaryDeliveryDate'];
                 $oDate = date("Y-m-d H:i:s", strtotime($order_start_date));
                 //echo $oDate;die;
@@ -188,10 +188,10 @@ class DashboardPageController extends Controller {
                     // Yii::app()->user->setFlash('error', 'Date not greater then current date');
                     Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
                 }
-            }else {
+            /*}else {
                 Yii::app()->user->setFlash('error', 'Date not selected');
                 Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
-            }
+            }*/
         }
        
         $this->render('index', array(
