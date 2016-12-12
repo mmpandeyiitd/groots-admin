@@ -620,16 +620,15 @@ update base_product set base_title="Tomato Hybrid (Hybrid Tamatar) G1" where bas
 
 insert into cb_dev_groots.vendors (name, date_of_onboarding, created_date, allocated_warehouse_id) values ("vendor1", now(), now(), 1), ("vendor2", now(), now(), 1),("vendor1", now(), now(), 2), ("vendor2", now(), now(), 2);
 
-alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
-
-
-
-
+-----
+alter table groots_orders.inventory modify column inv_id int(11) default NULL
 
 ---------------------------------------
 alter table groots_orders.retailer_payments add column cheque_status enum ('Cleared', 'Pending', 'Bounced') default null;
 
------------------------------------groots_employess;
+alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
+
+
 create table cb_dev_groots.groots_employee(
   employee_id int(11) not null AUTO_INCREMENT,
   employee_name varchar(255) not null,
