@@ -135,11 +135,13 @@ class InventoryController extends Controller
                 $date = $_POST['InventoryHeader']['date'];
                 $warehouse_id = $_POST['InventoryHeader']['warehouse_id'];
                 $parentIdArr = array();
+                $parentIdToUpdate = '';
+                if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                    array_push($parentIdArr, $_POST['parent_id'][0]);
+                }
                 foreach ($_POST['base_product_id'] as $key => $bp_id) {
                     //$delivered_qty = trim($_POST['schedule_inv'][$key]);
-                    if(isset($_POST['parent_id'][$key]) && $_POST['parent_id'][$key] == 0){
-                        continue;
-                    }
+                    $parentIdToUpdate = $_POST['parent_id'][$key];
                     $schedule_inv = trim($_POST['schedule_inv'][$key]);
                     $present_inv = trim($_POST['present_inv'][$key]);
                     $liquid_inv = trim($_POST['liquid_inv'][$key]);
@@ -174,12 +176,16 @@ class InventoryController extends Controller
                         $inv->balance = empty($balance) ? 0: $balance;
                         //var_dump($inv);die;
                         $inv->save();
-                        array_push($parentIdArr, $_POST['parent_id'][$key]);
+
                     }
+                }
+                if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
+                    array_push($parentIdArr, $parentIdToUpdate);
                 }
                 $transaction->commit();
                 foreach ($parentIdArr as $parentId){
                     if($parentId > 0 ){
+                        $schedule_inv = 0;
                         $present_inv = 0;
                         $liquid_inv = 0;
                         $wastage = 0;
@@ -197,10 +203,20 @@ class InventoryController extends Controller
                                 $liquidation_wastage += $inv->liquidation_wastage;
                                 $extra_inv += $inv->extra_inv;
                                 $balance += $inv->balance;
+                                $schedule_inv += $inv->schedule_inv;
                             }
 
                         }
                         $parentInv = Inventory::model()->findByAttributes(array('base_product_id'=>$parentId, 'date'=>$date, 'warehouse_id'=>$warehouse_id));
+                        if($parentInv==false){
+                            $parentInv = new Inventory();
+                            $parentInv->warehouse_id = $warehouse_id;
+                            $parentInv->base_product_id = $parentId;
+                            $parentInv->date = $date;
+                            $parentInv->inv_id = null;
+                            $parentInv->created_at = date('Y-m-d');
+                        }
+                        $parentInv->schedule_inv = $schedule_inv;
                         $parentInv->present_inv = $present_inv;
                         $parentInv->liquid_inv = $liquid_inv;
                         $parentInv->wastage = $wastage;
