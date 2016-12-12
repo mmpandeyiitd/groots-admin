@@ -457,6 +457,7 @@ class TransferHeaderController extends Controller
 
 
     public function actionDownloadTransferReport(){
+
         $sql = 'select tl.base_product_id, bp.title, th.source_warehouse_id , th.dest_warehouse_id, th.delivery_date,  tl.order_qty, tl.delivered_qty, tl.received_qty from groots_orders.transfer_header as th
             left join groots_orders.transfer_line as tl
             on th.id = tl.transfer_id

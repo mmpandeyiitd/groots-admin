@@ -50,10 +50,10 @@ $('.search-form form').submit(function(){
 
 <h1>Manage Purchases</h1>
 
-<div class="row">
+<!--<div class="row">
        
     <?php
-    echo '<br>';
+/*    echo '<br>';
     echo 'Select Date    ';
     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
     'name'=>'date',
@@ -65,9 +65,9 @@ $('.search-form form').submit(function(){
     'htmlOptions'=>array(
         'style'=>'height:20px;'
     ),
-)); ?>
+)); */?>
          
-</div>
+</div>-->
 
 
 <div class = "row" style="float:right">
@@ -193,10 +193,8 @@ $('.search-form form').submit(function(){
 <script type="text/javascript">
 
 	function onClickDownloadProcurementReport(url){
-        //document.location.href
-        var date = $("#date").val().trim();
-        url = url + "&date="+date;
-        //window.location.assign(url);
+        //var date = $("#date").val().trim();
+        //url = url + "&date="+date;
         console.log(url);
         window.open(url, '_blank');
     }

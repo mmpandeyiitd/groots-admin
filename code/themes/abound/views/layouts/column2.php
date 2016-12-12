@@ -3,7 +3,7 @@ $store_id = Yii::app()->session['brand_admin_id'];
 $userAuthItemArr = Utility::getUserAuthItemsArrFromSession();
 $meunAuthItemMap = array(
     'report'=>array('SuperAdmin'),
-    'collection' => array('SuperAdmin'),
+    'collection' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'buyer' => array('SuperAdmin'),
     'category' => array('SuperAdmin'),
     'product' => array('SuperAdmin'),
@@ -17,7 +17,7 @@ $meunAuthItemMap = array(
     'warehouseProcurement' => array('ProcurementViewer'),
 );
 $isReportVisible = isMenuVisible($meunAuthItemMap['report']);
-$isCollectionVisible = isMenuVisible($meunAuthItemMap['collection']);
+//$isCollectionVisible = isMenuVisible($meunAuthItemMap['collection']);
 $isBuyerVisible = isMenuVisible($meunAuthItemMap['buyer']);
 $isCategoryVisible = isMenuVisible($meunAuthItemMap['category']);
 $isProductVisible = isMenuVisible($meunAuthItemMap['product']);
@@ -41,7 +41,7 @@ function isMenuVisible($authItemArr, $data=null){
 $logoutArr = array('label' => '<i class="fa fa-sign-out"></i> Logout', 'url' => array('/site/logout'), 'visible' => !Yii::app()->user->isGuest,'linkOptions'=>array('confirm'=>'Are you sure want to logout ?'));
 $loginArr = array('label' => '<i class="fa fa-sign-in"></i> Login', 'url' => array('/site/login'), 'visible' => Yii::app()->user->isGuest, 'linkOptions' => array("data-description" => ""));
 $reportArr = array('label' => '<i class="fa fa-list"></i> Reports', 'url' => array('/GrootsLedger/report'), 'visible' => $isReportVisible);
-$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => $isCollectionVisible);
+//$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => $isCollectionVisible);
 $buyerArr = array('label' => '<i class="fa fa-list"></i> Buyers', 'url' => array('/retailer/admin'), 'visible' =>$isBuyerVisible);
 $categoryArr = array('label' => '<i class="fa fa-sitemap"></i> Category', 'url' => array('/category/index'), 'visible' => $isCategoryVisible);
 $productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => array('/SubscribedProduct/listallproduct', 'store_id' => Yii::app()->session['is_super_admin']), 'visible' => $isProductVisible);
@@ -131,7 +131,7 @@ $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' 
     //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
 
 );
-
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => $isWarehouseVisible);
 function generateWarehouses($meunAuthItemMap){
     $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
     $warehouseMenuArr = array();

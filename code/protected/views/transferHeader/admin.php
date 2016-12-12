@@ -41,9 +41,9 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 ?>
 </div>
 <?php echo $form->errorSummary($model->errors); ?>
-	<div class="row">
-		<?php echo $form->labelEx($model, 'delivery_date'); ?>
-		<?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+	<!--<div class="row">
+		<?php /*echo $form->labelEx($model, 'delivery_date'); */?>
+		<?php /*$this->widget('zii.widgets.jui.CJuiDatePicker',array(
 			//'model'=>$model,
 			'name'=>'delivery_date',
 			'value'=>$model->delivery_date,
@@ -57,14 +57,14 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 			'htmlOptions'=>array(
 				'style'=>'height:20px;'
 			),
-		)); ?>
-		<?php echo $form->error($model,'date'); ?>
+		)); */?>
+		<?php /*echo $form->error($model,'date'); */?>
 		<?php
-
+/*
 		echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
 
-		?>
-	</div>
+		*/?>
+	</div>-->
 <?php $this->endWidget();?>
 
 

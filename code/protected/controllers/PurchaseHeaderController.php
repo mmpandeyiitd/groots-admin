@@ -407,7 +407,8 @@ class PurchaseHeaderController extends Controller
 
     public function actionDownloadReconciliationReport(){
         $w_id = $_GET['w_id'];
-        $date = $_GET['date'];
+        //$date = $_GET['date'];
+        $date = Date('Y-m-d');
         $sql = 'select pl.base_product_id, bp.title, ph.id, ph.delivery_date, pl.order_qty as order_qty, pl.received_qty as received_qty from groots_orders.purchase_line as pl
                 left join groots_orders.purchase_header as ph
                 on ph.id = pl.purchase_id
@@ -421,7 +422,7 @@ class PurchaseHeaderController extends Controller
         $command->execute();
         $dataArray = $command->queryAll();
         if(!isset($dataArray) || empty($dataArray)){
-            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->user->setFlash('error', 'nothing to download...');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         else{
@@ -559,7 +560,8 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 
     public function actionDownloadProcurementReport(){
         $w_id = $_GET['w_id'];
-        $date = $_GET['date'];
+        //$date = $_GET['date'];
+        $date = Date('Y-m-d');
         $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
@@ -569,7 +571,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         $command->execute();
         $dataArray = $command->queryAll();
         if(!isset($dataArray) || empty($dataArray)){
-            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->user->setFlash('error', 'nothing to download... ');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
