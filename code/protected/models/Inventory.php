@@ -189,7 +189,7 @@ class Inventory extends CActiveRecord
         }
 
         foreach ($orderSum as $bp_id => $order){
-            if(in_array($bp_id, $baseProductArr))
+            //if(in_array($bp_id, $baseProductArr))
                 $totalOrder += $order;
         }
 
