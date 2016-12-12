@@ -289,6 +289,10 @@ class GrootsledgerController extends Controller
     public function actiondailyCollection(){
       // var_dump($_POST);
       // die();
+
+        $w_id = $_GET['w_id'];
+
+
       if(isset($_POST['update'])){
         self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
       }
@@ -296,10 +300,10 @@ class GrootsledgerController extends Controller
       if(isset($_POST['update2'])){
           self::updateDaily($_POST['pending_retailer_id'],$_POST['pending_collection']);
       }
-      $retailers = QueriesDailyCollection::todaysCollection();
+      $retailers = QueriesDailyCollection::todaysCollection($w_id);
       $dataprovider = array();
       $dataprovider2 = array();
-      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection();
+      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection($w_id);
       $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
       $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
       $total_due_amount = 0;
@@ -360,14 +364,14 @@ class GrootsledgerController extends Controller
 // die("here");
       if(isset($_GET['download']) && $_GET['download']==true){
       ob_clean();
-          QueriesDailyCollection::downloadDailyCollectionCsv();
+          QueriesDailyCollection::downloadDailyCollectionCsv($w_id);
             ob_flush();
             exit();
         }
 
         if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
       ob_clean();
-          QueriesDailyCollection::downloadBackDateCollectionCsv();
+          QueriesDailyCollection::downloadBackDateCollectionCsv($w_id);
             ob_flush();
             exit();
         }
@@ -379,6 +383,7 @@ class GrootsledgerController extends Controller
           'total_paid_yesterday' => $total_paid_yesterday,
           'total_due_amount' => $total_due_amount,
           'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
+           'w_id'=>$w_id,
           ));
     }
 
@@ -387,6 +392,9 @@ class GrootsledgerController extends Controller
     public function actionAdmin()
     {
         //print("<pre>");
+
+        $w_id = $_GET['w_id'];
+
         $retailer= new Retailer();
         $model = new OrderHeader();
         $retailerOrders ='';
@@ -502,6 +510,7 @@ class GrootsledgerController extends Controller
            'model'=>$model,
             'retailer' => $retailer,
             'data' => $dataprovider,
+            'w_id' => $w_id,
         ));
     }
 

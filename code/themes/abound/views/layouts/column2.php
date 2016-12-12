@@ -131,7 +131,19 @@ $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' 
     //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
 
 );
-$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => array('/Grootsledger/admin'), 'visible' => $isWarehouseVisible);
+$access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
+$access1 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
+$access2 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
+if($access0){
+    $collectionUrl = array('/Grootsledger/admin&w_id=3');
+}
+elseif($access1){
+    $collectionUrl = array('/Grootsledger/admin&w_id=1');
+}
+elseif($access2){
+    $collectionUrl = array('/Grootsledger/admin&w_id=2');
+}
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => $collectionUrl, 'visible' => $isWarehouseVisible);
 function generateWarehouses($meunAuthItemMap){
     $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
     $warehouseMenuArr = array();

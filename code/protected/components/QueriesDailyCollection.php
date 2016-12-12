@@ -2,15 +2,20 @@
 
 class QueriesDailyCollection{
 
-    public static function yesterdayPendingCollectionQuery(){
+    public static function yesterdayPendingCollectionQuery($w_id){
+        $and = "";
+        if($w_id < 3){
+            $and = " and wa2.id = ".$w_id." ";
+        }
+
         $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as                collection_agent, 
                 re.total_payable_amount as total_payable_amount,
                 sum(oh.total_payable_amount) as todays_order, re.due_payable_amount, wa.name as warehouse_name,
                 wa2.name as collection_center,
                  rep.last_paid_amount, rep.last_paid_on, re.last_due_date
                 from cb_dev_groots.retailer as re
-                left join cb_dev_groots.warehouses as wa2
-                on re.collection_center_id = wa2.id and wa2.status = 1
+                 join cb_dev_groots.warehouses as wa2
+                on re.collection_center_id = wa2.id and wa2.status = 1 ".$and."
                 left join cb_dev_groots.collection_agent as ca
                 on re.collection_agent_id = ca.id and ca.status = 1
                 left join cb_dev_groots.warehouses as wa
@@ -37,17 +42,17 @@ class QueriesDailyCollection{
         return $sql;
     }
 
-    public static function yesterdayPendingCollection(){
+    public static function yesterdayPendingCollection($w_id){
         $connection = Yii::app()->secondaryDb;
-        $sql = self::yesterdayPendingCollectionQuery();
+        $sql = self::yesterdayPendingCollectionQuery($w_id);
         //echo $sql; die;
         $command = $connection->createCommand($sql);
         $command->execute();
         return $bsae_id = $command->queryAll();
     }
 
- public static function downloadBackDateCollectionCsv(){
-        $sql = self::yesterdayPendingCollectionQuery();
+ public static function downloadBackDateCollectionCsv($w_id){
+        $sql = self::yesterdayPendingCollectionQuery($w_id);
 
 
         $connection = Yii::app()->secondaryDb;
@@ -83,14 +88,18 @@ class QueriesDailyCollection{
         ob_flush();
     }
 
-public static function todaysCollectionQuery(){
+public static function todaysCollectionQuery($w_id){
+    $and = "";
+    if($w_id < 3){
+        $and = " and wa2.id = ".$w_id." ";
+    }
     $sql =  "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
                 re.total_payable_amount as total_payable_amount, re.due_payable_amount,
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name,
                 wa2.name as collection_center, sum(rep.paid_amount) as last_paid_amount
                 FROM cb_dev_groots.retailer as re
-                left join cb_dev_groots.warehouses as wa2
-                on re.collection_center_id = wa2.id and wa2.status = 1
+                 join cb_dev_groots.warehouses as wa2
+                on re.collection_center_id = wa2.id and wa2.status = 1 ".$and."
                 left join cb_dev_groots.collection_agent as ca
                 on re.collection_agent_id = ca.id and ca.status = 1
                 left join groots_orders.order_header as oh
@@ -108,17 +117,17 @@ public static function todaysCollectionQuery(){
     return $sql;
 }
 
- public static function todaysCollection() {
+ public static function todaysCollection($w_id) {
         $connection = Yii::app()->secondaryDb;
-        $sql = self::todaysCollectionQuery();
+        $sql = self::todaysCollectionQuery($w_id);
         $command = $connection->createCommand($sql);
         $command->execute();
         return $bsae_id = $command->queryAll();
     }
 
 
- public static function downloadDailyCollectionCsv(){
-        $sql = self::todaysCollectionQuery();
+ public static function downloadDailyCollectionCsv($w_id){
+        $sql = self::todaysCollectionQuery($w_id);
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();

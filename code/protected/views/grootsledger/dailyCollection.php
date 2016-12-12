@@ -11,7 +11,8 @@ echo "Total Due Payable Amount = ".$total_due_amount.'<br>';
 echo "Total Due Payable Amount Yesterday = ".$due_payable_amount_yesterday;
 ?>
 
-<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection';?>">
+<!--<form name="myform" method="post" action="<?php /*echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection';*/?>">-->
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection&w_id'.$w_id;?>">
 <h1> Daily Collection </h1>
 <?php 
 $base_url = Yii::app()->getBaseUrl(true);
@@ -21,10 +22,10 @@ $base_url = Yii::app()->getBaseUrl(true);
 
  <div align = "right"><?php echo CHtml::submitButton('UPDATE', array('name'=>'update')); ?> </div>
  <div>
- <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&download=true>Download Daily Report</a>
+ <a href=<?php echo $base_url."?r=Grootsledger/dailyCollection&download=true&w_id=".$w_id; ?>> Download Daily Report</a>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
- <a href=<?php echo $base_url;?>?r=Grootsledger/dailyCollection&downloadPending=true>Download Non Daily Reports</a>
+ <a href=<?php echo $base_url."?r=Grootsledger/dailyCollection&downloadPending=true&w_id=".$w_id; ?>> Download Non Daily Reports</a>
 </div>
 
 

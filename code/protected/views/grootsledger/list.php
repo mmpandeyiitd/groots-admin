@@ -21,7 +21,9 @@ $this->breadcrumbs=array(
 <div>
     <?php
     echo "<br>";
-    echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));
+    /*echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));*/
+    $url = "index.php?r=Grootsledger/dailyCollection&w_id=".$w_id;
+    echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="'.$url.'"'));
     echo "<br>";
     ?>
 </div>
