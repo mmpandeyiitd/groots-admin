@@ -241,14 +241,14 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id` 
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 			   JOIN  cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
-				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` order by r.name ";
+				WHERE oh.delivery_date <= '".$cDate."' and oh.delivery_date >= '2016-12-01' and oh.status not in ('Cancelled')
+				GROUP BY oh.delivery_date, oh.`user_id` order by oh.delivery_date, r.name ";
 
         $sqlTotalAmount = "SELECT oh.user_id AS 'Client ID', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
 				FROM `order_header` oh
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
-				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` ";
+				WHERE oh.delivery_date <= '".$cDate."' and oh.delivery_date >= '2016-12-01' and oh.status not in ('Cancelled')
+				GROUP BY oh.delivery_date, oh.`user_id` ";
 //echo  $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
      try {
