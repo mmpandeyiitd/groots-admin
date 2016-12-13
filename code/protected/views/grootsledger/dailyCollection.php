@@ -1,6 +1,6 @@
 <?php
 $this->breadcrumbs=array(
-  'Groots Ledger'=>array('admin'),
+  'Groots Ledger'=>array('admin&w_id='.$w_id),
   'Daily Collection',
 );
 echo "Total Payable Amount = ".$amount_to_be_collected;
@@ -12,7 +12,7 @@ echo "Total Due Payable Amount Yesterday = ".$due_payable_amount_yesterday;
 ?>
 
 <!--<form name="myform" method="post" action="<?php /*echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection';*/?>">-->
-<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection&w_id'.$w_id;?>">
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=Grootsledger/dailyCollection&w_id='.$w_id;?>">
 <h1> Daily Collection </h1>
 <?php 
 $base_url = Yii::app()->getBaseUrl(true);
@@ -53,9 +53,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
             ),
 			
       			array(
-        		'value'=> function($data){
+        		'value'=> function($data) use ($w_id) {
         			return CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 
-									'retailerId' => $data['id']),array('target'=>'_blank'));
+									'retailerId' => $data['id'], 'w_id'=>$w_id),array('target'=>'_blank'));
         		},
         		'header' => 'Payment Link',
         		'type' => 'raw',
@@ -127,9 +127,9 @@ $(document).ready(function() {
             ),
       'warehouse',
       array(
-            'value'=> function($data2){
+            'value'=> function($data2) use ($w_id){
               return CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 
-                  'retailerId' => $data2['id']),array('target'=>'_blank'));
+                  'retailerId' => $data2['id'], 'w_id'=>$w_id),array('target'=>'_blank'));
             },
             'header' => 'Payment Link',
             'type' => 'raw',
@@ -151,7 +151,7 @@ $(document).ready(function() {
 
 <div>
 <?php echo "<br>" ?>
-<a href="index.php?r=Grootsledger/admin" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+<a href="index.php?r=Grootsledger/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
 </div>
 
 

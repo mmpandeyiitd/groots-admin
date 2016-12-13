@@ -3,7 +3,7 @@
 /* @var $model GrootsLedger */
 
 $this->breadcrumbs=array(
-    'Groots Ledgers'=>array('index'),
+    //'Groots Ledgers'=>array('index'),
     'Manage',
 );
 

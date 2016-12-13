@@ -217,6 +217,7 @@ class GrootsledgerController extends Controller
     public function actionCreatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
+        $w_id = $_GET['w_id'];
       $retailerPayment = new RetailerPayment();
         $retailerId = $_GET['retailerId'];
          $retailer = Retailer::model()->findByPk($retailerId);
@@ -228,7 +229,7 @@ class GrootsledgerController extends Controller
                     GrootsledgerDao::saveCreatePayment($retailer, $_POST['RetailerPayment'], $retailerPayment);
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
-                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
