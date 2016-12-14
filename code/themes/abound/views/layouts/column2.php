@@ -134,6 +134,7 @@ $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' 
 $access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
 $access1 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
 $access2 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
+$collectionUrl = '';
 if($access0){
     $collectionUrl = array('/Grootsledger/admin&w_id=3');
 }
