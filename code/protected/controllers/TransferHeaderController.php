@@ -458,12 +458,15 @@ class TransferHeaderController extends Controller
 
     public function actionDownloadTransferReport(){
 
-        $sql = 'select tl.base_product_id, bp.title, th.source_warehouse_id , th.dest_warehouse_id, th.delivery_date,  tl.order_qty, tl.delivered_qty, tl.received_qty from groots_orders.transfer_header as th
+        $sql = 'select tl.base_product_id, concat(bp.base_title, bp.grade) as title, sw.name as source_warehouse , dw.name as destination_warehouse, th.delivery_date,  tl.order_qty as "Order Qty (Kg)", tl.delivered_qty as "Delivered Qty (Kg)", tl.received_qty as "Received Qty (Kg)" from groots_orders.transfer_header as th
             left join groots_orders.transfer_line as tl
             on th.id = tl.transfer_id
             left join cb_dev_groots.base_product as bp
             on bp.base_product_id = tl.base_product_id
-            where  ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status = "received" and tl.status = "Confirmed"';
+            left join cb_dev_groots.warehouses sw on sw.id = th.source_warehouse_id
+            left join cb_dev_groots.warehouses dw on dw.id = th.dest_warehouse_id
+            left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+            where  ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status != "cancelled" order by th.dest_warehouse_id asc, pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
