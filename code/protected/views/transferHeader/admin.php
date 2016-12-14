@@ -37,7 +37,7 @@ $('.search-form form').submit(function(){
 )); ?>
 <div align = 'right'>
 <?php
-echo CHtml::button('Download Report', array('submit' => array('transferHeader/downloadTransferReport')))
+echo CHtml::button('Download Report', array('submit' => array('transferHeader/downloadTransferReport&w_id='.$w_id)))
 ?>
 </div>
 <?php echo $form->errorSummary($model->errors); ?>

@@ -474,11 +474,12 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             $purchaseOrder->save();
             $purchaseLineMap = self::getPurchaseLineMap($purchaseOrder->id);
             foreach ($purchaseOrderMap as $bp_id => $qty) {
+                if($qty < 0) {
+                    $qty=0;
+                }
                 if (isset($purchaseLineMap[$bp_id])) {
                     $item = $purchaseLineMap[$bp_id];
-                    /*if($qty < 0) {
-                        $qty=0;
-                    }*/
+
                     $item->tobe_procured_qty = $qty;
                     $item->save();
                 } else {
@@ -560,7 +561,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
     public function actionDownloadProcurementReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
+        $sql = 'select pl.base_product_id, concat(bp.base_title, bp.grade) as title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured (Kg)" from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
          where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
