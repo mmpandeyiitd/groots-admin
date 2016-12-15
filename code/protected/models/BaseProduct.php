@@ -54,6 +54,7 @@ class BaseProduct extends CActiveRecord {
     public $image;
     public $base_product_id;
     public $action;
+
     public $categoryIds = null;
     public $store_offer_price;
     public $size_chart;
@@ -1040,7 +1041,44 @@ class BaseProduct extends CActiveRecord {
         return [$purchaseLineArr, $otherItemArray];
     }
 
-    public static function getChildBPIds($parentId){
+    public function searchNew(){
+        $criteria = new CDbCriteria; 
+        $criteria->select = 't.base_product_id, t.title, t.parent_id, t.popularity, t.grade, t.priority, t.base_title';
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on t.base_product_id = pcm.base_product_id  ";
+        $criteria->condition = 'status=1';
+        $criteria->order = 'pcm.category_id asc, t.base_title asc, t.priority asc';
+        $criteria->compare('base_product_id', $this->base_product_id , true);
+        $criteria->compare('title', $this->title , true);
+        $criteria->compare('parent_id', $this->parent_id , true);
+        $criteria->compare('popularity', $this->popularity , true);
+        $criteria->compare('grade', $this->grade , true);
+        $criteria->compare('priority', $this->priority , true);
+        $criteria->compare('base_title', $this->base_title , true);
+
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 100,
+            ),
+        ));
+
+    }
+
+    public function getCssClass(){
+        $class = '';
+            if($this->parent_id > 0){
+                if($this->grade=='Unsorted'){
+                    $class .= " unsorted ";
+                }
+                $class .= "child parent-id_".$this->parent_id." item_".$this->parent_id;
+            }
+            elseif(isset($this->parent_id) && $this->parent_id == 0){
+                $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
+            }    
+        return $class;
+    }
+
+public static function getChildBPIds($parentId){
         $bpIds = array();
         $query = "select base_product_id from base_product where parent_id =".$parentId;
         $connection = Yii::app()->db;

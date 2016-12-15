@@ -2268,3 +2268,11 @@ nav.vertical li.ex1:hover > ul{
 #warehouse-item-grid .unsorted {
     display:table-row;
 }
+
+#vendor-product-grid .child {
+    display:none;
+}
+
+#vendor-product-grid .unsorted {
+    display:table-row;
+}

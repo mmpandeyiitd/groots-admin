@@ -116,6 +116,8 @@ ALTER TABLE cb_dev_groots.product_prices   DROP INDEX uk_prod_price_1,   ADD UNI
 
 alter table groots_orders.order_line add column  delivered_qty decimal(10,2) DEFAULT NULL AFTER product_qty;
 
+
+
 alter table cb_dev_groots.retailer add column initial_payable_amount decimal(10,2) DEFAULT NULL, add COLUMN total_payable_amount decimal(10,2) DEFAULT NULL;
 
 CREATE TABLE groots_orders.`retailer_payments` (
@@ -136,6 +138,7 @@ CREATE TABLE groots_orders.`retailer_payments` (
 alter table groots_orders.`retailer_payments` add COLUMN  status SMALLINT(4) NOT NULL DEFAULT 1;
 
 
+
 alter table cb_dev_groots.base_product ADD COLUMN pack_size_in_gm float DEFAULT 0 AFTER pack_unit;
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='gm';
 update  cb_dev_groots.base_product set pack_size_in_gm=pack_size where pack_unit='g';
@@ -144,8 +147,8 @@ update  cb_dev_groots.base_product set pack_size_in_gm=pack_size*1000 where pack
 
 update cb_dev_groots.store set store_name="GROOTS FOODS VENTURES PRIVATE LIMITED" where store_id=1;
 
-
-
+--------------
+collection
 alter table cb_dev_groots.retailer add column collection_fulfilled boolean not null default false;
 
 CREATE TABLE cb_dev_groots.collection_agent(
@@ -208,6 +211,7 @@ alter table cb_dev_groots.retailer add column collection_center_id int(11) not n
 insert into cb_dev_groots.warehouses values(3,'Head-Office',NULL,'Ghitorni','Delhi','Delhi','Delhi','110030',NULL,NULL,NULL,'1',CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL, 2);
 update cb_dev_groots.retailer set collection_center_id = 1;
 update cb_dev_groots.retailer set collection_center_id = 3 where collection_frequency in ('monthly', 'fortnight');  
+
 ------------------------------------------------------------------------------------------
 CREATE TABLE groots_orders.`order_header_log` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -261,7 +265,7 @@ CREATE TABLE groots_orders.`order_header_log` (
   KEY `ohl_order_1` (`order_id`),
   KEY `ohl_order_2` (`user_id`),
   KEY `ohl_order_3` (`warehouse_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1468 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 alter table groots_orders.order_header_log add column created_at datetime  default null;
 alter table groots_orders.order_header_log add column action enum('INSERT', 'UPDATE', 'DELETE') not null;
@@ -291,7 +295,7 @@ create trigger groots_orders.order_header_update after update on groots_orders.o
                                       NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
                                       NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
                                       NEW.shipping_address_id ,NEW.warehouse_id ,NOW() ,'UPDATE');
----------------------------------------------------------------------------------------------------------------------drop old trigger then create this one
+
 create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
   insert into groots_orders.order_header_log values(
                                      NULL ,OLD.order_id ,OLD.order_number ,OLD.user_id ,OLD.created_date ,OLD.payment_method ,
@@ -557,15 +561,8 @@ alter table groots_orders.purchase_line add column `tobe_procured_qty`  decimal(
 create parent item (to store total data) and unsorted grade item from bulk product create  (do not forget to fill category_id and parent_id field)
 download upload price update file and and update parent_id for each grade
 
-
-------
-------
-
 //copy parent items from test db to production, or upload csv
 update base_product set status=0  where title like "% G2 %";
-
-------
-------
 
 // optional, if category of parent not submitted by csv
 update  product_category_mapping pcm join  base_product bp  on bp.parent_id=pcm.base_product_id join product_category_mapping pcm2 on bp.base_product_id=pcm2.base_product_id  set pcm.category_id=pcm2.category_id;
@@ -578,7 +575,7 @@ select max(base_product_id) from inventory;
 insert into groots_orders.inventory  select null,ih.id, ih.warehouse_id,ih.base_product_id, 2,0,0,0,null,1, 0, now(), now(), now(),0,0 from cb_dev_groots.base_product bp join groots_orders.inventory_header ih on ih.base_product_id=bp.base_product_id where base_product_id > ;
 --------------------------
 //delete category mapping of unavailable products
-delete pcm from product_category_mapping pcm left join base_product bp on bp.base_product_id=pcm.base_product_id where bp.base_product_id is null;
+delete pcm from product_category_mapping pcm join base_product bp on bp.base_product_id=pcm.base_product_id where bp.base_product_id is null;
 //update category of items whose category is set to 1
 update product_category_mapping set category_id=3 where category_id=1;
 //update category of some fruits which have category = 3 instead of 4 from bulk update
@@ -629,7 +626,24 @@ alter table groots_orders.retailer_payments add column cheque_status enum ('Clea
 alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
 
 
-create table cb_dev_groots.groots_employee(
+----------------------------------------------------------------vendor table edit
+alter table cb_dev_groots.vendors drop column geolocation, drop product_categories, drop categories_of_interest, drop store_size, drop min_order_price, drop shipping_charge;
+
+alter table cb_dev_groots.vendors
+    add column `bussiness_name` varchar(255) default null,
+    add column `payment_terms` int(3) default null;
+
+
+create table `vendor_product_mapping`(
+  vendor_id int(11) not null,
+  base_product_id int(11) not null,
+  status tinyint(1) not null default 1,
+  created_at date not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table groots_employee(
   employee_id int(11) not null AUTO_INCREMENT,
   employee_name varchar(255) not null,
   address varchar(300) default null,
@@ -651,11 +665,10 @@ create table cb_dev_groots.groots_employee(
   constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (designation_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 create table cb_dev_groots.groots_departments(
   department_id int(11) not null AUTO_INCREMENT,
   department_name varchar(255) not null,
-  department_head_id int(11) default null,
+  department_head_id int(11) not null,
   status tinyint(1) not null,
   created_at date not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -663,9 +676,16 @@ create table cb_dev_groots.groots_departments(
   primary key (department_id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into groots_departments values(1, 'sales', null, 1, CURDATE(), null, 1);
 
+alter table cb_dev_groots.vendors
+  modify name varchar(255) not null,
+  modify bussiness_name varchar(255) not null,
+  modify mobile varchar(100) not null,
+  modify address varchar(300) not null,
+  modify payment_terms int(3) not null,
+  modify credit_limit int(155) not null;
 
+alter table cb_dev_groots.vendors add column proc_exec_id int(11) not null;
 
 create table cb_dev_groots.employee_designation(
   designation_id int(11) not null AUTO_INCREMENT,
@@ -675,6 +695,24 @@ create table cb_dev_groots.employee_designation(
   updated_by int(11) not null,
   primary key (designation_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  insert into employee_designation values(1, 'sales_representative', CURDATE(), null, 1);
 
-alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null ;
+--------------------------------------vendor - type,
+alter table cb_dev_groots.vendors add column vendor_type enum('Auctionnaire', 'Trader', 'Reseller') not null; 
+
+CREATE TABLE groots_orders.vendor_payments (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `vendor_id` int(11) NOT NULL,
+  `paid_amount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `date` date NOT NULL,
+  `payment_type` enum('Cash','Cheque','DemandDraft','NetBanking','Debit Note') NOT NULL DEFAULT 'Cash',
+  `cheque_no` varchar(256) DEFAULT NULL,
+  `debit_no` varchar(256) DEFAULT NULL,
+  `cheque_cleared` enum('Yes' , 'No') NOT NULL DEFAULT 'NO',
+  `comment` text,
+  `created_at` date NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` smallint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `fk_vd_pm_1` (`vendor_id`),
+  CONSTRAINT `fk_vd_pm_1` FOREIGN KEY (`vendor_id`) REFERENCES `cb_dev_groots`.`vendors` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
