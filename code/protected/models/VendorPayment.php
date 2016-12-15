@@ -11,7 +11,7 @@
  * @property string $payment_type
  * @property string $cheque_no
  * @property string $debit_no
- * @property string $cheque_cleared
+ * @property string $cheque_status
  * @property string $comment
  * @property string $created_at
  * @property string $updated_at
@@ -43,11 +43,11 @@ class VendorPayment extends CActiveRecord
 			array('paid_amount', 'length', 'max'=>10),
 			array('payment_type', 'length', 'max'=>11),
 			array('cheque_no, debit_no', 'length', 'max'=>256),
-			array('cheque_cleared', 'length', 'max'=>3),
+			array('cheque_status', 'length', 'max'=>10),
 			array('comment', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_cleared, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
+			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -76,7 +76,7 @@ class VendorPayment extends CActiveRecord
 			'payment_type' => 'Payment Type',
 			'cheque_no' => 'Cheque No',
 			'debit_no' => 'Debit No',
-			'cheque_cleared' => 'Cheque Cleared',
+			'cheque_status' => 'Cheque Status',
 			'comment' => 'Comment',
 			'created_at' => 'Created At',
 			'updated_at' => 'Updated At',
@@ -109,7 +109,7 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('payment_type',$this->payment_type,true);
 		$criteria->compare('cheque_no',$this->cheque_no,true);
 		$criteria->compare('debit_no',$this->debit_no,true);
-		$criteria->compare('cheque_cleared',$this->cheque_cleared,true);
+		$criteria->compare('cheque_status',$this->cheque_status,true);
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
@@ -147,7 +147,7 @@ class VendorPayment extends CActiveRecord
 
     public static function getChequeStatus(){
         $connection = Yii::app()->secondaryDb;
-        $chequeStatus = Utility::get_enum_values($connection, "vendor_payments", 'cheque_cleared' );
+        $chequeStatus = Utility::get_enum_values($connection, "vendor_payments", 'cheque_status' );
         return $chequeStatus;
     }
 }

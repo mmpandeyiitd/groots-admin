@@ -67,7 +67,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
 					return CHtml::dropDownList('cheque_status_'.$data->id, $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
-						array('empty' => "--Cleared--"));
+						array('empty' => "--Status--"));
 				}
 				),
 			)
