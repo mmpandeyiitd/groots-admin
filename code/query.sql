@@ -482,9 +482,7 @@ create table groots_orders.feedback_categories(
 create table groots_orders.feedbacks(
   id int(11) not null AUTO_INCREMENT,
   order_id int(11) not null,
-  rating tinyint(1) not null,
   feedback_id int(11) default null,
-  comment varchar(1000) default null, 
   created_at datetime not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   updated_by int(11) not null default 1,
@@ -505,3 +503,5 @@ alter table cb_dev_groots.retailer add column retailer_type enum ('GA', 'GB', 'G
 alter table groots_orders.order_header modify column `delivery_date` date NOT NULL;
 
 alter table groots_orders.retailer_payments add column cheque_status enum ('Cleared', 'Pending', 'Bounced') default null;
+---------------------------------ordrer-rating in order_header
+alter table groots_orders.order_header add column order_rating tinyint(1) default null;
