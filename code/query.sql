@@ -652,6 +652,10 @@ create table cb_dev_groots.groots_employee(
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
+
 create table cb_dev_groots.groots_departments(
   department_id int(11) not null AUTO_INCREMENT,
   department_name varchar(255) not null,
@@ -664,6 +668,7 @@ create table cb_dev_groots.groots_departments(
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into groots_departments values(1, 'sales', null, 1, CURDATE(), null, 1);
+insert into groots_departments values(null, 'procurement', null, 1, CURDATE(), null, 1);
 
 
 

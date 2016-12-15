@@ -171,6 +171,18 @@
                         array('options'=>array($model['collection_agent_id']=>array('selected'=>true)))); ?>
             <?php echo $form->error($model, 'collecttion_agent'); ?>
         </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'sales_rep_id'); ?>
+            <?php 
+            $representative = Retailer::getSalesEmployee();
+            $list = CHtml::listData($representative, 'employee_id', 'employee_name');
+            echo CHtml::activeDropDownList( $model,'sales_rep_id', $list, 
+                        array('options' => array($model['collection_agent_id']=>array('selected'=>true)))); ?>
+            <?php echo $form->error($model, 'sales_rep_id'); ?>
+        </div>
+
+
          <div class="row">
             <?php echo $form->labelEx($model, 'Collection Warehouse'); ?>
             <?php 
