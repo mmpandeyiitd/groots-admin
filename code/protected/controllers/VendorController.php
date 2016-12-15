@@ -186,6 +186,14 @@ class VendorController extends Controller
 
 	public function actionCreditManagement(){
 		//var_dump($_POST);die;
+		// if(isset($_POST) && !empty($_POST)){
+		// 	if($_POST['VendorPayment']['date'] != date('Y-m-d')){
+
+		// 	}
+		// 	else{
+				
+		// 	}
+		// }
 		$skuMap = VendorDao::getAllVendorSkus();
 		$model = new Vendor();
 		$vendorPayment = new VendorPayment;

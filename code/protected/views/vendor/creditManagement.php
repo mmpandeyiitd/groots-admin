@@ -49,14 +49,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'header' => 'Credit Repaid',
 				'type' => 'raw',
 				'value' => function($data){
-					return CHtml::textField('creditPaid_'.$data->id, '', array('style' => 'width:110.5px;'));
+					return CHtml::textField('creditRepaid[]','', array('style' => 'width:110.5px;'));
 				}),
 			array(
 				'header' => 'Payment Mode',
 				'id' => 'paymentMode',
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
-					return Chtml::dropDownList('payment_type_'.$data->id,$vendorPayment,
+					return Chtml::dropDownList('paymentType[]',$vendorPayment,
 								CHtml::listData(VendorPayment::vendorPaymentTypes(),'value', 'value'),
 								array('empty' => '--Payment Mode--') 
 								);
@@ -66,15 +66,15 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'id' => 'chequeCleared',
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
-					return CHtml::dropDownList('cheque_status_'.$data->id, $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
+					return CHtml::dropDownList('chequeStatus[]', $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
 						array('empty' => "--Status--"));
 				}
 				),
 			array(
-				'id' => 'vendorIds',
+				'type'=> 'raw',
 				'value' => function($data){
-					echo CHtml::hiddenField($data->id);
-				}
+					return CHtml::hiddenField('vendorIds[]',$data->id);
+				},
 				),
 			)
 		)
