@@ -397,7 +397,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItemTotalRow(parent_id);
+            //updateItemTotalRow(parent_id); do not calculate child sum on start up
 
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');

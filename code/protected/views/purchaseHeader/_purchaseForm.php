@@ -404,7 +404,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItemTotalRow(parent_id);
+            //updateItemTotalRow(parent_id); do not add parent on start up
 
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');
