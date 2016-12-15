@@ -89,7 +89,7 @@ $vendor_id = $_GET['vendor_id'];
 <script type="text/javascript">
     $(document).ready(function(){
         onStartUp();
-        showChecked();
+        showAllItemsChecked();
     });
     function onCbStateChange(bp_id){
         var p_value = $('#checkedId_'+bp_id).is(':checked');
@@ -136,6 +136,24 @@ $vendor_id = $_GET['vendor_id'];
     function showChecked(){
         $(".checked").each(function(){
             $(this).show();
+        });
+    }
+
+    function showAllItemsChecked(){
+        $(".checked").each(function(){
+            var classList = $(this).prop('className').split(' ');
+            //console.log(classList);
+            var p_id = '';
+            $.each(classList, function(index , value){
+                //console.log(value);
+                if(value.startsWith('parent-id')){
+                    p_id = value;
+                }
+            });
+            console.log(p_id);
+            $('.'+p_id).each(function(){
+                $(this).show();
+            });
         });
     }
 </script>

@@ -1,13 +1,13 @@
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/creditManagement';?>">
 
 <?php
-echo 'Select date  ';
+echo CHtml::label('Select date', 'date');
 $this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$vendorPayment,
             'attribute'=>'date',
 
             'id'=>'date',
-            //'value'=> date('Y-m-d'),
+            'value'=> date('Y-m-d'),
             'options'=>array(
                 'dateFormat' => 'yy-mm-dd',
                 'showAnim'=>'fold',
@@ -16,7 +16,7 @@ $this->widget('zii.widgets.jui.CJuiDatePicker',array(
                 'style'=>'height:20px;'
             ),
         ));
-
+echo CHtml::button('Submit', array('submit' => array('vendor/creditManagement')));
 
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-credit-grid',   
@@ -67,7 +67,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
 					return CHtml::dropDownList('cheque_status_'.$data->id, $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
-						array('empty' => "--Cleared--"));
+						array('empty' => "--Status--"));
+				}
+				),
+			array(
+				'id' => 'vendorIds',
+				'value' => function($data){
+					echo CHtml::hiddenField($data->id);
 				}
 				),
 			)

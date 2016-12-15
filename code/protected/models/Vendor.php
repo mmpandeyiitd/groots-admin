@@ -72,10 +72,10 @@ class Vendor extends CActiveRecord
 			array('image, website, contact_person1, contact_person2', 'length', 'max'=>250),
 			array('allocated_warehouse_id', 'length', 'max'=>11),
 			array('vendor_type', 'length', 'max'=>12),
-			array('image_url', 'safe'),
+			array('image_url, credit_days, due_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_terms, proc_exec_id, vendor_type', 'safe', 'on'=>'search'),
+			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_terms, proc_exec_id, vendor_type, credit_days, due_date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -130,6 +130,8 @@ class Vendor extends CActiveRecord
 			'payment_terms' => 'Payment Terms',
 			'proc_exec_id' => 'Proc Exec',
 			'vendor_type' => 'Vendor Type',
+			'credit_days' => 'Credit Days',
+			'due_date' => 'Due Date',
 		);
 	}
 
@@ -184,6 +186,8 @@ class Vendor extends CActiveRecord
 		$criteria->compare('payment_terms',$this->payment_terms);
 		$criteria->compare('proc_exec_id',$this->proc_exec_id);
 		$criteria->compare('vendor_type',$this->vendor_type,true);
+		$criteria->compare('credit_days',$this->credit_days,true);
+		$criteria->compare('due_date',$this->due_date,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
