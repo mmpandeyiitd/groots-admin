@@ -492,7 +492,7 @@ create table cb_dev_groots.employee_designation(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
   insert into employee_designation values(1, 'sales_representative', CURDATE(), null, 1);
 --------------------------------------vendor - type,
-alter table cb_dev_groots.vendors add column vendor_type enum('Auctionnaire', 'Trader', 'Reseller') not null; 
+alter table cb_dev_groots.vendors add column vendor_type enum('Auctioneer', 'Trader', 'Reseller') not null; 
 
 CREATE TABLE groots_orders.vendor_payments (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -502,7 +502,7 @@ CREATE TABLE groots_orders.vendor_payments (
   `payment_type` enum('Cash','Cheque','DemandDraft','NetBanking','Debit Note') NOT NULL DEFAULT 'Cash',
   `cheque_no` varchar(256) DEFAULT NULL,
   `debit_no` varchar(256) DEFAULT NULL,
-  `cheque_cleared` enum('Yes' , 'No') NOT NULL DEFAULT 'NO',
+  `cheque_status` enum('Pending' , 'Bounced', 'Cleared') NOT NULL DEFAULT 'Pending',
   `comment` text,
   `created_at` date NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -513,3 +513,6 @@ CREATE TABLE groots_orders.vendor_payments (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null ;
+
+alter table cb_dev_groots.vendors add column credit_days int(3) default null;
+alter table cb_dev_groots.vendors add column due_date date default null;

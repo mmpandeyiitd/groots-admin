@@ -163,6 +163,33 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'credit_days'); ?>
+		<?php echo $form->textField($model,'credit_days'); ?>
+		<?php echo 'DAYS';?>
+		<?php echo $form->error($model,'credit_days'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'due_date'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+            'model'=>$model,
+            'attribute'=>'due_date',
+
+            'id'=>'date',
+            //'value'=> date('Y-m-d'),
+            'options'=>array(
+                'dateFormat' => 'yy-mm-dd',
+                'showAnim'=>'fold',
+            ),
+            'htmlOptions'=>array(
+                'style'=>'height:20px;'
+            ),
+        )); ?>
+        <?php echo $form->error($model,'due_date'); ?>
+	</div>
+
+
+	<div class="row">
 		<?php echo $form->labelEx($model,'status'); ?>
 		<?php echo $form->textField($model,'status'); ?>
 		<?php echo $form->error($model,'status'); ?>
