@@ -457,7 +457,7 @@ class Retailer extends CActiveRecord {
 
     public function getSalesEmployee(){
         $connection = Yii::app()->db;
-        $sql = 'select ge.employee_id, ge.employee_name from groots_employee as ge left join groots_departments gd on ge.department_id = gd.department_id where gd.department_name = "Sales" and ge.status = 1 order by employee_id';
+        $sql = 'select ge.id, ge.name from groots_employee as ge left join groots_departments gd on ge.department_id = gd.id where gd.name = "Sales" and ge.status = 1 order by ge.id';
         $command = $connection->createCommand($sql);
         $command->execute();
         $result = $command->queryAll();
