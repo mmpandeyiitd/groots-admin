@@ -28,7 +28,7 @@ $this->menu=array(
 		'payment_type',
 		'cheque_no',
 		'debit_no',
-		'cheque_cleared',
+		'cheque_status',
 		'comment',
 		'created_at',
 		'updated_at',

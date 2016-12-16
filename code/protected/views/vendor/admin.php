@@ -10,6 +10,8 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	array('label'=>'List Vendor', 'url'=>array('index')),
 	array('label'=>'Create Vendor', 'url'=>array('create')),
+	array('label' => 'Credit Management', 'url' => array('creditManagement')),
+	array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -94,7 +96,9 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'proc_exec_id',
 		*/
 		array(
+			'header' => 'Update',
 			'class'=>'CButtonColumn',
+			'template' => '{view}{update}'
 		),
 	),
 )); ?>

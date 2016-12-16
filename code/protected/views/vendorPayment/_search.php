@@ -47,8 +47,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'cheque_cleared'); ?>
-		<?php echo $form->textField($model,'cheque_cleared',array('size'=>3,'maxlength'=>3)); ?>
+		<?php echo $form->label($model,'cheque_status'); ?>
+		<?php echo $form->textField($model,'cheque_status',array('size'=>3,'maxlength'=>3)); ?>
 	</div>
 
 	<div class="row">

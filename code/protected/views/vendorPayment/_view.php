@@ -34,8 +34,8 @@
 	<br />
 
 	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_cleared')); ?>:</b>
-	<?php echo CHtml::encode($data->cheque_cleared); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_status')); ?>:</b>
+	<?php echo CHtml::encode($data->cheque_status); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('comment')); ?>:</b>

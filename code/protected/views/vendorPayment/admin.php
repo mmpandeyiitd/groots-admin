@@ -52,13 +52,15 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'payment_type',
 		'cheque_no',
 		'debit_no',
-		'cheque_cleared',
+		'cheque_status',
 		'comment',
 		//'created_at',
 		//'updated_at',
 		'status',
 		array(
+			'header' => 'Update',
 			'class'=>'CButtonColumn',
+			'template' => '{view}{update}',
 		),
 	),
 )); ?>

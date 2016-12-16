@@ -80,6 +80,23 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		)
 );
 
+$colors = array('red','yellow','orange','black','green','blue');
+$data = array();
+for ($i=0; $i < 5; $i++) { 
+	$x = '<input type="text" value="" name="test" id="test" />';
+	array_push($data, '<?php echo '.$x.' >?');
+}
+$this->widget('ext.widgets.EchMultiSelect', array(
+    'name'=>'colors[]',
+    'data'=>$data,
+    //'value'=>array(0,3),
+    'dropDownHtmlOptions'=> array(
+    	'style'=>'width:220px;',
+        'class'=>'span-10',
+        'id'=>'colors',
+    )
+));
+
 ?>
 
 </form>

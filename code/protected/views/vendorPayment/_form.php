@@ -78,12 +78,12 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'cheque_cleared'); ?>
-		<?php echo $form->dropDownList($model,'payment_type',
+		<?php echo $form->labelEx($model,'cheque_status'); ?>
+		<?php echo $form->dropDownList($model,'cheque_status',
             CHtml::listData(VendorPayment::getChequeStatus(),'value', 'value'),
             array('empty' => 'Select a Status', 'style' => 'width:220.5px;'));
         ?>
-		<?php echo $form->error($model,'cheque_cleared'); ?>
+		<?php echo $form->error($model,'cheque_status'); ?>
 	</div>
 
 	<div class="row">
