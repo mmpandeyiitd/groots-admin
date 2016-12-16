@@ -62,18 +62,10 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    /*echo "<pre>";
-		print_r($_POST);
-        print_r($_GET);
-        if(isset($_POST['parent_id'][78]) && $_POST['parent_id'][78] == 0){
-            echo "inside if for parent-id-78";
-        }
-        if(isset($_POST['parent_id'][65]) && $_POST['parent_id'][65] == 0){
-            echo "inside if for parent-id-65";
-        }
-        die;*/
+	    //echo "<pre>";
+		//print_r($_POST);
+        //print_r($_GET);
 
-        //$model=new Inventory('search');
 
         $w_id = '';
         if(isset($_GET['w_id'])){
@@ -117,6 +109,7 @@ class InventoryController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
+        $date = $inv_header->date;
 
         $dataProvider = $inv_header->search();
         //var_dump($dataProvider); die;
@@ -183,6 +176,13 @@ class InventoryController extends Controller
                     array_push($parentIdArr, $parentIdToUpdate);
                 }
                 $transaction->commit();
+            }catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+                throw $e;
+            }
+            $transaction = Yii::app()->db->beginTransaction();
+            try{
                 foreach ($parentIdArr as $parentId){
                     if($parentId > 0 ){
                         $schedule_inv = 0;
@@ -227,7 +227,7 @@ class InventoryController extends Controller
                     }
                 }
 
-                $this->redirect(array('create','w_id'=>$w_id));
+                $this->redirect(array('create','w_id'=>$w_id, 'date'=>$date));
 
             }catch (\Exception $e) {
                 $transaction->rollBack();
