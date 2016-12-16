@@ -653,7 +653,7 @@ class SubscribedProductController extends Controller {
     public function saveOrderHeader($data){
        // var_dump($data);
         mysql_connect('localhost','root', 'root');
-        $sql = 'insert into groots_orders.order_header (user_id , order_number, created_date , delivery_date, warehouse_id, total, total_payable_amount) values ("'.$data['user_id'].'","'.$data['order_number'].'", "'.$data['created_date'].'", "'.$data['delivery_date'].'", "'.$data['warehouse_id'].'", "'.$data['total'].'", "'.$data['total_payable_amount'].'")';
+        $sql = 'insert into groots_orders.order_header (user_id , order_number, created_date , delivery_date, warehouse_id, total, total_payable_amount, status) values ("'.$data['user_id'].'","'.$data['order_number'].'", "'.$data['created_date'].'", "'.$data['delivery_date'].'", "'.$data['warehouse_id'].'", "'.$data['total'].'", "'.$data['total_payable_amount'].'", "Delivered")';
         //print_r($sql);die;
         mysql_query($sql);
         $order_id = mysql_insert_id();
