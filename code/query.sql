@@ -61,7 +61,7 @@ CREATE TABLE cb_dev_groots.`warehouses` (
   `modified_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `image` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 
 insert into cb_dev_groots.`warehouses` values (null, 'sector-5, warehouse', null, 'sector-5, warehouse', 'Haryana', 'Gurgaon', 'Sector-5', 122001, null, null, null, 1, now(),now(),null);
@@ -686,3 +686,19 @@ insert into cb_dev_groots.groots_employee values(null, 'Nimesh', null, null, nul
 insert into cb_dev_groots.groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into cb_dev_groots.groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into cb_dev_groots.groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
+
+
+------------------------------------------------------------sign-up-api table
+
+create table cb_dev_groots.retailer_leads1(
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
+  organisation_name varchar(500) not null,
+  designation varchar(250) default null,
+  contact_number int(12) not null,
+  email varchar(100) default null,
+  created_at datetime not null,
+  updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP ,
+  updated_by int(11) not null,
+  primary key (id)
+)ENGINE=InnoDB default CHARSET=utf8;

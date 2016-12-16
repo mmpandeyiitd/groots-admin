@@ -182,7 +182,7 @@
             <?php echo $form->labelEx($model, 'sales_rep_id'); ?>
             <?php 
             $representative = Retailer::getSalesEmployee();
-            $list = CHtml::listData($representative, 'employee_id', 'employee_name');
+            $list = CHtml::listData($representative, 'id', 'name');
             echo CHtml::activeDropDownList( $model,'sales_rep_id', $list, 
                         array('empty' => 'Select an representative')); ?>
             <?php echo $form->error($model, 'sales_rep_id'); ?>
