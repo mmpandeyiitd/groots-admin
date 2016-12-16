@@ -630,8 +630,8 @@ alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) 
 
 
 create table cb_dev_groots.groots_employee(
-  employee_id int(11) not null AUTO_INCREMENT,
-  employee_name varchar(255) not null,
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
   address varchar(300) default null,
   city varchar(100) default null,
   email varchar(255) default null,
@@ -641,14 +641,14 @@ create table cb_dev_groots.groots_employee(
   status tinyint(1) not null default 1,
   department_id int(11) not null,
   designation_id int(11) not null,
-  created_at date not null,
+  created_at datetime not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   updated_by int(11) not null,
   primary key (employee_id),
   key fk_employee_1 (department_id),
-  constraint fk_employee_1 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (department_id),
+  constraint fk_employee_1 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (id),
   key fk_employee_2 (designation_id),
-  constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (designation_id)
+  constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (id)
   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
@@ -657,11 +657,11 @@ insert into groots_employee values(null, 'Ujjwal', null, null, null, null, null,
 insert into groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
 
 create table cb_dev_groots.groots_departments(
-  department_id int(11) not null AUTO_INCREMENT,
-  department_name varchar(255) not null,
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
   department_head_id int(11) default null,
   status tinyint(1) not null,
-  created_at date not null,
+  created_at datetime not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   updated_by int(11) not null,
   primary key (department_id)
@@ -673,9 +673,9 @@ insert into groots_departments values(null, 'procurement', null, 1, CURDATE(), n
 
 
 create table cb_dev_groots.employee_designation(
-  designation_id int(11) not null AUTO_INCREMENT,
-  designation_name varchar(255) not null,
-  created_at date not null,
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
+  created_at datetime not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   updated_by int(11) not null,
   primary key (designation_id)
