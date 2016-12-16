@@ -163,13 +163,13 @@
         </div>
 
          <div class="row">
-            <?php echo $form->labelEx($model, 'collecttion_agent'); ?>
+            <?php echo $form->labelEx($model, 'collection_agent'); ?>
             <?php 
             $agent = CollectionAgent::model()->findAll(array('order' => 'name'));
             $list = CHtml::listData($agent, 'id', 'name');
             echo CHtml::activeDropDownList( $model,'collection_agent_id', $list, 
                         array('options'=>array($model['collection_agent_id']=>array('selected'=>true)))); ?>
-            <?php echo $form->error($model, 'collecttion_agent'); ?>
+            <?php echo $form->error($model, 'collection_agent'); ?>
         </div>
 
         <div class="row">
