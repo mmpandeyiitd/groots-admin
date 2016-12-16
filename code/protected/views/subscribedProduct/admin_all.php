@@ -53,7 +53,7 @@ Yii::app()->clientScript->registerScript('search', "
     );
     ?>
 
-    <input name="downloadbutton" class="activebutton" value="Download CSV File" type="submit">
+    <!--<input name="downloadbutton" class="activebutton" value="Download CSV File" type="submit">-->
     <!--<input name="inactivebutton" class="activebutton" value="Download ALL Product" type="submit">-->
     <?php
     $store_id = 1;

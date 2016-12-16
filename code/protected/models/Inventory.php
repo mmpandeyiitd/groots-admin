@@ -166,7 +166,7 @@ class Inventory extends CActiveRecord
         $quantitiesMap = array();
         $prevDayInv = self::getPrevDayInvMap($w_id, $date);
         $prevDayLiqInv = self::getPrevDayLiqInvMap($w_id, $date);
-        $orderSum = OrderLine::getDeliveredOrderSumByDate($w_id, $date);
+        $orderSum = OrderLine::getDeliveredOrderSumByDate($w_id, $date);//print_r($orderSum);die;
         $purchaseSum = PurchaseLine::getReceivedPurchaseSumByDate($w_id, $date);
         $transferInSum = TransferLine::getTransferInSumByDate($w_id,$date);
         $transferOutSum = TransferLine::getDeliveredTransferOutSumByDate($w_id,$date);

@@ -137,6 +137,11 @@ class PurchaseHeaderController extends Controller
 		{
             $transaction = Yii::app()->db->beginTransaction();
             try {
+                $parentIdArr = array();
+                $parentIdToUpdate = '';
+                if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                    array_push($parentIdArr, $_POST['parent_id'][0]);
+                }
 
                 $model->attributes=$_POST['PurchaseHeader'];
                 $model->created_at = date('Y-m-d');
@@ -168,6 +173,7 @@ class PurchaseHeaderController extends Controller
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
                                 $purchaseLine->save();
                             }
+                            $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
                     if(isset($_POST['received_qty'])){
@@ -182,10 +188,14 @@ class PurchaseHeaderController extends Controller
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
                                 $purchaseLine->save();
                             }
-                
+                            $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
+                    if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
+                        array_push($parentIdArr, $parentIdToUpdate);
+                    }
                     $transaction->commit();
+                    $this->updateParentsItems($parentIdArr,$model->id);
                     $this->redirect(array('admin','w_id'=>$model->warehouse_id));
                 }
                 else{
@@ -267,6 +277,12 @@ class PurchaseHeaderController extends Controller
             try {
 
                 $model->attributes = $_POST['PurchaseHeader'];
+                $parentIdArr = array();
+                $parentIdToUpdate = '';
+                if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                    array_push($parentIdArr, $_POST['parent_id'][0]);
+                }
+
                 if($model->payment_method == ''){
                     $model->payment_method = null;
                 }
@@ -301,7 +317,7 @@ class PurchaseHeaderController extends Controller
                             }
 
                             $purchaseLine->save();
-
+                            $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
                     if(isset($_POST['received_qty'])){
@@ -325,11 +341,15 @@ class PurchaseHeaderController extends Controller
                             }
 
                             $purchaseLine->save();
-
+                            $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
 
                     $transaction->commit();
+                    if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
+                        array_push($parentIdArr, $parentIdToUpdate);
+                    }
+                    $this->updateParentsItems($parentIdArr, $model->id);
                     $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
                     Yii::app()->user->setFlash('success', 'purchase order successfully Updated.');
                     Yii::app()->controller->redirect($url);
@@ -357,6 +377,37 @@ class PurchaseHeaderController extends Controller
 		));
 	}
 
+
+	private function updateParentsItems($parentIdArr, $purchaseId){
+        foreach ($parentIdArr as $parentId){
+            if($parentId > 0 ){
+                $orderQty = 0;
+                $receivedQty = 0;
+                $tobe_procured_qty = 0;
+                $childIds = BaseProduct::getChildBPIds($parentId);
+                foreach ($childIds as $bp_id){
+                    $pl = PurchaseLine::model()->findByAttributes(array('base_product_id'=>$bp_id, 'purchase_id'=>$purchaseId));
+                    if($pl){
+                        $orderQty += $pl->order_qty;
+                        $receivedQty += $pl->received_qty;
+                        $tobe_procured_qty += $pl->tobe_procured_qty;
+                    }
+
+                }
+                $parentPl = PurchaseLine::model()->findByAttributes(array('base_product_id'=>$parentId, 'purchase_id'=>$purchaseId));
+                if($parentPl==false){
+                    $parentPl = new PurchaseLine();
+                    $parentPl->purchase_id = $purchaseId;
+                    $parentPl->base_product_id = $parentId;
+                    $parentPl->created_at = date('Y-m-d');
+                }
+                $parentPl->order_qty = $orderQty;
+                $parentPl->received_qty = $receivedQty;
+                $parentPl->tobe_procured_qty = $tobe_procured_qty;
+                $parentPl->save();
+            }
+        }
+    }
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
@@ -474,11 +525,12 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             $purchaseOrder->save();
             $purchaseLineMap = self::getPurchaseLineMap($purchaseOrder->id);
             foreach ($purchaseOrderMap as $bp_id => $qty) {
+                if($qty < 0) {
+                    $qty=0;
+                }
                 if (isset($purchaseLineMap[$bp_id])) {
                     $item = $purchaseLineMap[$bp_id];
-                    /*if($qty < 0) {
-                        $qty=0;
-                    }*/
+
                     $item->tobe_procured_qty = $qty;
                     $item->save();
                 } else {
@@ -560,7 +612,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
     public function actionDownloadProcurementReport(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select pl.base_product_id, bp.title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured" from groots_orders.purchase_line as pl 
+        $sql = 'select pl.base_product_id, concat(bp.base_title, bp.grade) as title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured (Kg)" from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
          where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';

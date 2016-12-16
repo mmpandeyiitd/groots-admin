@@ -25,7 +25,8 @@ function getIfExist($quantitiesMap, $key, $data){
     else
         return 0;
 }
-
+//echo "<pre>";
+//print_r($quantitiesMap['orderSum']);
 
 if($w_id==SOURCE_WH_ID){
     $isSourceWarehouse=true;
@@ -71,8 +72,8 @@ else{
         )); ?>
         <?php echo $form->error($model,'date'); ?>
         <?php
-
-        echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+        $url = Yii::app()->controller->createUrl("Inventory/create",array('w_id' => $w_id));
+        echo CHtml::submitButton('submit', array('name'=>'inventory-date', 'onclick' => "onClickDate('".$url."')"));
 
         ?>
     </div>
@@ -411,6 +412,8 @@ $balance = 0;
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"order_{$data->base_product_id}"'),
                 'visible' => !$editOnly,
                 'value'=>function($data) use ($quantitiesMap){
+                    //echo "order-".$quantitiesMap['orderSum'][$data->base_product_id];die;
+                    //if($data->base_product_id])
                     if(isset($quantitiesMap['orderSum'][$data->base_product_id]))
                         return $quantitiesMap['orderSum'][$data->base_product_id];
                     else
@@ -888,6 +891,14 @@ $balance = 0;
         //window.location.assign(url);
         //console.log(url);
         window.open(url, '_blank');
+    }
+
+    function onClickDate(url){
+        var date = $("#date").val().trim();
+        url = url + "&date="+date;
+        console.log(url);
+        //return false;
+        window.open(url, '_self');
     }
 
 

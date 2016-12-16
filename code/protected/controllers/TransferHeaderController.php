@@ -129,7 +129,7 @@ class TransferHeaderController extends Controller
 
         if(isset($_POST['transfer-create']))
         {
-            //$transaction = Yii::app()->db->beginTransaction();
+            $transaction = Yii::app()->db->beginTransaction();
             try {
 //print_r($_POST);die;
                 $model->attributes=$_POST['TransferHeader'];
@@ -146,6 +146,12 @@ class TransferHeaderController extends Controller
                         if(isset($_POST['delivered_qty'])){
                             $qtyArr = $_POST['delivered_qty'];
                         }
+                        $parentIdArr = array();
+                        $parentIdToUpdate = '';
+                        if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                            array_push($parentIdArr, $_POST['parent_id'][0]);
+                        }
+
                         foreach ($qtyArr as $key => $quantity) {
                             $createLine = false;
                             if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
@@ -178,18 +184,23 @@ class TransferHeaderController extends Controller
                                 //$transferLine->unit_price = $_POST['store_offer_price'][$key];
                                 $transferLine->created_at = date("y-m-d H:i:s");
                                 $transferLine->save();
+                                $parentIdToUpdate = $_POST['parent_id'][$key];
                             }
                         }
                     }
 
-                    //$transaction->commit();
+                    $transaction->commit();
+                    if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
+                        array_push($parentIdArr, $parentIdToUpdate);
+                    }
+                    $this->updateParentsItems($parentIdArr,$model->id);
                     Yii::app()->controller->redirect(array('admin','w_id'=>$w_id));
                 }
                 else{
                     Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
                 }
             } catch (\Exception $e) {
-                //$transaction->rollBack();
+                $transaction->rollBack();
                 Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
                 throw $e;
             }
@@ -275,7 +286,11 @@ class TransferHeaderController extends Controller
                             $received_qty = trim($_POST['received_qty'][$key]);
                         }
 
-
+                        $parentIdArr = array();
+                        $parentIdToUpdate = '';
+                        if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                            array_push($parentIdArr, $_POST['parent_id'][0]);
+                        }
 
                         //echo "ord ".$order_qty." delv ".$delivered_qty." rec ".$received_qty;die;
                         //if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
@@ -303,11 +318,13 @@ class TransferHeaderController extends Controller
 
 
                                 $transferLine->save();
+                                $parentIdToUpdate = $_POST['parent_id'][$key];
                             }
                             else{
                                 if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
                                     $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
                                     $transferLine->deleteByPk($transferLine->id);
+                                    $parentIdToUpdate = $_POST['parent_id'][$key];
                                 }
 
                             }
@@ -321,6 +338,10 @@ class TransferHeaderController extends Controller
                     //update parents
 
                     $transaction->commit();
+                    if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
+                        array_push($parentIdArr, $parentIdToUpdate);
+                    }
+                    $this->updateParentsItems($parentIdArr,$model->id);
                     $url = Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
                     Yii::app()->user->setFlash('success', 'Transfer order successfully Updated.');
                     Yii::app()->controller->redirect($url);
@@ -348,6 +369,40 @@ class TransferHeaderController extends Controller
             'update'=>true,
         ));
     }
+
+
+    private function updateParentsItems($parentIdArr, $transferId){
+        foreach ($parentIdArr as $parentId){
+            if($parentId > 0 ){
+                $orderQty = 0;
+                $receivedQty = 0;
+                $delivered_qty = 0;
+                $childIds = BaseProduct::getChildBPIds($parentId);
+                foreach ($childIds as $bp_id){
+                    $tl = TransferLine::model()->findByAttributes(array('base_product_id'=>$bp_id, 'transfer_id'=>$transferId));
+                    if($tl){
+                        $orderQty += $tl->order_qty;
+                        $receivedQty += $tl->received_qty;
+                        $delivered_qty += $tl->delivered_qty;
+                    }
+
+                }
+                $parentTl = TransferLine::model()->findByAttributes(array('base_product_id'=>$parentId, 'transfer_id'=>$transferId));
+                if($parentTl==false){
+                    $parentTl = new TransferLine();
+                    $parentTl->transfer_id = $transferId;
+                    $parentTl->base_product_id = $parentId;
+                    $parentTl->created_at = date('Y-m-d');
+                }
+                $parentTl->order_qty = $orderQty;
+                $parentTl->received_qty = $receivedQty;
+                $parentTl->delivered_qty = $delivered_qty;
+                $parentTl->save();
+            }
+        }
+    }
+
+
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
@@ -457,12 +512,16 @@ class TransferHeaderController extends Controller
 
 
     public function actionDownloadTransferReport(){
-        $sql = 'select tl.base_product_id, bp.title, th.source_warehouse_id , th.dest_warehouse_id, th.delivery_date,  tl.order_qty, tl.delivered_qty, tl.received_qty from groots_orders.transfer_header as th
+
+        $sql = 'select tl.base_product_id, concat(bp.base_title, bp.grade) as title, sw.name as source_warehouse , dw.name as destination_warehouse, th.delivery_date,  tl.order_qty as "Order Qty (Kg)", tl.delivered_qty as "Delivered Qty (Kg)", tl.received_qty as "Received Qty (Kg)" from groots_orders.transfer_header as th
             left join groots_orders.transfer_line as tl
             on th.id = tl.transfer_id
             left join cb_dev_groots.base_product as bp
             on bp.base_product_id = tl.base_product_id
-            where  ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status = "received" and tl.status = "Confirmed"';
+            left join cb_dev_groots.warehouses sw on sw.id = th.source_warehouse_id
+            left join cb_dev_groots.warehouses dw on dw.id = th.dest_warehouse_id
+            left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+            where  ( tl.delivered_qty != tl.received_qty or tl.delivered_qty is null or tl.received_qty is null) and th.delivery_date = CURDATE() and th.status != "cancelled" order by th.dest_warehouse_id asc, pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();

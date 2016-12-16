@@ -233,7 +233,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'visible' => $visibleReceived,
+                //'visible' => $visibleReceived,
                 'value' => function ($data) use($transferLineMap, $update, $isSystemGenerated) {
                     if(isset($transferLineMap[$data->base_product_id])){
                         $data->order_qty = $transferLineMap[$data->base_product_id]['order_qty'];
@@ -397,7 +397,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItemTotalRow(parent_id);
+            //updateItemTotalRow(parent_id); do not calculate child sum on start up
 
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');
