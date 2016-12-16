@@ -690,7 +690,7 @@ insert into cb_dev_groots.groots_employee values(null, 'Harman', null, null, nul
 
 ------------------------------------------------------------sign-up-api table
 
-create table cb_dev_groots.retailer_leads1(
+create table cb_dev_groots.retailer_leads(
   id int(11) not null AUTO_INCREMENT,
   name varchar(255) not null,
   organisation_name varchar(500) not null,
