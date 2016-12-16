@@ -168,14 +168,24 @@
             <?php echo $form->error($model, 'collection_frequency'); ?>
         </div>
 
-         <div class="row">
+        <div class="row">
             <?php echo $form->labelEx($model, 'collection_agent'); ?>
             <?php 
             $agent = CollectionAgent::model()->findAll(array('order' => 'name'));
+            //var_dump($agent);die;
             $list = CHtml::listData($agent, 'id', 'name');
             echo CHtml::activeDropDownList( $model,'collection_agent_id', $list, 
                         array('empty' => 'Select an agent')); ?>
             <?php echo $form->error($model, 'collection_agent'); ?>
+        </div>
+        <div class="row">
+            <?php echo $form->labelEx($model, 'sales_rep_id'); ?>
+            <?php 
+            $representative = Retailer::getSalesEmployee();
+            $list = CHtml::listData($representative, 'employee_id', 'employee_name');
+            echo CHtml::activeDropDownList( $model,'sales_rep_id', $list, 
+                        array('empty' => 'Select an representative')); ?>
+            <?php echo $form->error($model, 'sales_rep_id'); ?>
         </div>
 
         <div class="row">
