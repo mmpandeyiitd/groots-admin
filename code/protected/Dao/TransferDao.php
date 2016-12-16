@@ -33,7 +33,7 @@ class TransferDao
     }
 
     public static function updateDailyTransferOrder($w_id, $date, &$procurementOrderMap=''){
-        //echo "<pre>";
+        echo "<pre>";
         //$orderLines = OrderLine::getOrderSumByDate($w_id, $date);
         $invHeadMap = InventoryHeaderDao::getInventoryHeaderMapByBpId($w_id);
         $quantitiesMap = TransferHeader::getTransferInCalculationData($w_id, $date);
@@ -87,6 +87,7 @@ class TransferDao
         }
         //print_r($transferOrderMap);
         $transferOrderMap = self::calculateTransferAtParentLavel($transferOrderMap);
+        //echo count($transferOrderMap); print_r($transferOrderMap);die;
         if($procurementOrderMap != ''){
             foreach ($transferOrderMap as $bp_id=>$trans_in){
                 if(!isset($procurementOrderMap[$bp_id])){
@@ -110,8 +111,10 @@ class TransferDao
     }
 
     public static function calculateTransferAtParentLavel($transferOrderMap){
+        //echo "<pre>";
         $products = BaseProduct::model()->findAllByAttributes(array('status'=>1),array('select'=>'base_product_id, parent_id'));
         $parentProductMap = array();
+        //$singleGradItemArr = array();
         foreach ($products as $key=>$product){
             if($product->parent_id > 0){
                 if(empty($parentProductMap[$product->parent_id])){
@@ -119,16 +122,37 @@ class TransferDao
                 }
                 array_push($parentProductMap[$product->parent_id], $product->base_product_id);
             }
+            if($product->parent_id == null && empty($transferOrderMap[$product->base_product_id]) ){
+                //echo "test".$product->base_product_id;die;
+                //array_push($singleGradItemArr, $product->base_product_id);
+                unset($transferOrderMap[$product->base_product_id]);
+            }
         }
+        //print_r($singleGradItemArr);die;
         foreach ($transferOrderMap as $p_id => $qty) {
             $balance = 0;
             if (isset($parentProductMap[$p_id])) {
+                $itemQuantity = false; // if all items in a parent grade are 0 than dont set parent item and child items
                 foreach ($parentProductMap[$p_id] as $bp_id) {
                     if (isset($transferOrderMap[$bp_id])) {
-                        $balance += $transferOrderMap[$bp_id];
+                        if($transferOrderMap[$bp_id] != 0){
+                            $balance += $transferOrderMap[$bp_id];
+                            $itemQuantity = true;
+                        }
+
                     }
                 }
-                $transferOrderMap[$p_id] = $balance;
+                if($itemQuantity){
+                    $transferOrderMap[$p_id] = $balance;
+                }
+                else{ //unset parent and child items if all item quantity is 0
+                    //$transferOrderMap[$p_id] = null;
+                    unset($transferOrderMap[$p_id]);
+                    foreach ($parentProductMap[$p_id] as $bp_id){
+                        unset($transferOrderMap[$bp_id]);
+                    }
+                }
+
             }
         }
         //print_r($parentProductMap);die;

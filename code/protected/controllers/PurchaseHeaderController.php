@@ -242,21 +242,6 @@ class PurchaseHeaderController extends Controller
         }
 
         $model=$this->loadModel($id);
-        $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
-        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        $purchaseLineMap = array();
-        $purchaseLinesArr = array();
-        foreach ($purchaseLines as $item){
-            //var_dump($item->BaseProduct); die;
-            $purchaseLineMap[$item->base_product_id] = $item;
-            array_push($purchaseLinesArr,$item);
-        }
-
-        $dataProvider=new CArrayDataProvider($purchaseLinesArr, array(
-            'pagination'=>array(
-                'pageSize'=>100,
-            ),
-        ));
 
 
         $inv_header = new InventoryHeader('search');
@@ -265,17 +250,17 @@ class PurchaseHeaderController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
-
-        $dataProvider = $inv_header->search();
-
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+        $inv_header->purchase_id = $id;
+        $dataProvider = $inv_header->purchaseSearch();
 
         if(isset($_POST['purchase-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
             try {
-
+                $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
+                $purchaseLineMap = array();
+                foreach ($purchaseLines as $item){
+                    $purchaseLineMap[$item->base_product_id] = $item;
+                }
                 $model->attributes = $_POST['PurchaseHeader'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -369,7 +354,7 @@ class PurchaseHeaderController extends Controller
 		$this->render('update',array(
 			'model'=>$model,
             'inv_header'=>$inv_header,
-            'purchaseLineMap'=> $purchaseLineMap,
+            //'purchaseLineMap'=> $purchaseLineMap,
             'dataProvider'=>$dataProvider,
             //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],

@@ -236,21 +236,7 @@ class TransferHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=transferHeader/admin&w_id=".$w_id);
         }
         $model=$this->loadModel($id);
-        $transferLines = TransferLine::model()->findAllByAttributes(array('transfer_id' => $id));
-        //list($popularItems, $otherItems) = BaseProduct::PopularItems();
-        $transferLineMap = array();
-        $transferLinesArr = array();
-        foreach ($transferLines as $item){
-            //var_dump($item->BaseProduct); die;
-            $transferLineMap[$item->base_product_id] = $item;
-            array_push($transferLinesArr,$item);
-        }
 
-        $dataProvider=new CArrayDataProvider($transferLinesArr, array(
-            'pagination'=>array(
-                'pageSize'=>100,
-            ),
-        ));
 
         $inv_header = new InventoryHeader('search');
         $inv_header->warehouse_id = $w_id;
@@ -258,8 +244,8 @@ class TransferHeaderController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
-
-        $dataProvider = $inv_header->search();
+        $inv_header->transfer_id = $id;
+        $dataProvider = $inv_header->transferSearch();
 
 //print_r($transferLineMap);die;
         // Uncomment the following line if AJAX validation is needed
@@ -267,6 +253,11 @@ class TransferHeaderController extends Controller
 
         if(isset($_POST['transfer-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
+            $transferLines = TransferLine::model()->findAllByAttributes(array('transfer_id' => $id));
+            $transferLineMap = array();
+            foreach ($transferLines as $item){
+                $transferLineMap[$item->base_product_id] = $item;
+            }
             try {
 
                 $model->attributes = $_POST['TransferHeader'];
@@ -362,7 +353,7 @@ class TransferHeaderController extends Controller
         $this->render('update',array(
             'model'=>$model,
             'inv_header'=>$inv_header,
-            'transferLineMap'=> $transferLineMap,
+            //'transferLineMap'=> $transferLineMap,
             'dataProvider'=>$dataProvider,
             //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],

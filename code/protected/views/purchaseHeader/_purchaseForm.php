@@ -237,10 +237,10 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'visible' => $visibleProcured,
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($readOnlyProcured, $purchaseLineMap) {
-                    if(isset($purchaseLineMap[$data->base_product_id])){
+                'value' => function ($data) use ($readOnlyProcured) {
+                    /*if(isset($purchaseLineMap[$data->base_product_id])){
                         $data->tobe_procured_qty = $purchaseLineMap[$data->base_product_id]['tobe_procured_qty'];
-                    }
+                    }*/
                     return CHtml::label($data->tobe_procured_qty, $data->tobe_procured_qty, array('id'=>'tobe-procured_'.$data->base_product_id));
                 },
             ),
@@ -250,10 +250,10 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'visible' => $visibleProcured,
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'value' => function ($data) use ($readOnlyProcured, $purchaseLineMap) {
-                    if(isset($purchaseLineMap[$data->base_product_id])){
+                'value' => function ($data) use ($readOnlyProcured) {
+                    /*if(isset($purchaseLineMap[$data->base_product_id])){
                         $data->order_qty = $purchaseLineMap[$data->base_product_id]['order_qty'];
-                    }
+                    }*/
                     return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured, 'id'=>'order_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
             ),
@@ -262,10 +262,10 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'visible' => $visibleReceived,
-                'value' => function ($data) use ($readOnlyReceived, $purchaseLineMap) {
-                    if(isset($purchaseLineMap[$data->base_product_id])){
+                'value' => function ($data) use ($readOnlyReceived) {
+                    /*if(isset($purchaseLineMap[$data->base_product_id])){
                         $data->received_qty = $purchaseLineMap[$data->base_product_id]['received_qty'];
-                    }
+                    }*/
                     return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input received-inputs', 'readonly'=> $readOnlyReceived, 'id'=>'received_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
                 'type' => 'raw',
