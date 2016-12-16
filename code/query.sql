@@ -626,7 +626,38 @@ alter table groots_orders.inventory modify column inv_id int(11) default NULL
 ---------------------------------------
 alter table groots_orders.retailer_payments add column cheque_status enum ('Cleared', 'Pending', 'Bounced') default null;
 
-alter table groots_orders.order_line add COLUMN received_quantity decimal(10,2) DEFAULT NULL;
+
+
+
+
+create table cb_dev_groots.groots_departments(
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
+  department_head_id int(11) default null,
+  status tinyint(1) not null,
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null,
+  primary key (id)
+  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into cb_dev_groots.groots_departments values(1, 'Sales', null, 1, CURDATE(), null, 1);
+insert into cb_dev_groots.groots_departments values(null, 'Procurement', null, 1, CURDATE(), null, 1);
+
+
+
+create table cb_dev_groots.employee_designation(
+  id int(11) not null AUTO_INCREMENT,
+  name varchar(255) not null,
+  created_at datetime not null,
+  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+  updated_by int(11) not null,
+  primary key (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into cb_dev_groots.employee_designation values(1, 'Executive', CURDATE(), null, 1);
+
+alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null ;
 
 
 create table cb_dev_groots.groots_employee(
@@ -644,42 +675,14 @@ create table cb_dev_groots.groots_employee(
   created_at datetime not null,
   updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   updated_by int(11) not null,
-  primary key (employee_id),
+  primary key (id),
   key fk_employee_1 (department_id),
   constraint fk_employee_1 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (id),
   key fk_employee_2 (designation_id),
   constraint fk_employee_2 foreign key (designation_id) REFERENCES cb_dev_groots.employee_designation (id)
-  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-insert into groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
-insert into groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
-insert into groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
-insert into groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
-
-create table cb_dev_groots.groots_departments(
-  id int(11) not null AUTO_INCREMENT,
-  name varchar(255) not null,
-  department_head_id int(11) default null,
-  status tinyint(1) not null,
-  created_at datetime not null,
-  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  updated_by int(11) not null,
-  primary key (department_id)
-  )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-insert into groots_departments values(1, 'sales', null, 1, CURDATE(), null, 1);
-insert into groots_departments values(null, 'procurement', null, 1, CURDATE(), null, 1);
-
-
-
-create table cb_dev_groots.employee_designation(
-  id int(11) not null AUTO_INCREMENT,
-  name varchar(255) not null,
-  created_at datetime not null,
-  updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-  updated_by int(11) not null,
-  primary key (designation_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-  insert into employee_designation values(1, 'sales_representative', CURDATE(), null, 1);
 
-alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null ;
+insert into cb_dev_groots.groots_employee values(null, 'Nimesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
