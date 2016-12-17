@@ -511,17 +511,26 @@ class InventoryController extends Controller
         $warehouses = $command->queryAll();
         $tempArray = array();
         foreach ($data as $key => $value) {
-            $row = array('title' => null);
-            foreach ($warehouses as $key => $warehouse) {
-                $nameSplit = explode(',', $warehouse['name']);
-                $warehouse['name'] = $nameSplit[0];
-                $row[$warehouse['name'].'_inv'] = null;
-                $row[$warehouse['name'].'_liq_inv'] = null;
-                $row[$warehouse['name'].'_wastage'] = null;
-                $row[$warehouse['name'].'_liquidation_wastage'] = null;
-                $row[$warehouse['name'].'_balance'] = null;
-                $row[$key] = null;
+            if(isset($tempArray[$value['base_product_id']])){
+                $row = $tempArray[$value['base_product_id']];
             }
+            else{
+                $row = array('title' => null);
+                foreach ($warehouses as $key1 => $warehouse) {
+                    if($warehouse['id'] == HD_OFFICE_WH_ID){
+                        continue;
+                    }
+                    $nameSplit = explode(',', $warehouse['name']);
+                    $warehouse['name'] = $nameSplit[0];
+                    $row[$warehouse['name'].'_inv'] = null;
+                    $row[$warehouse['name'].'_liq_inv'] = null;
+                    $row[$warehouse['name'].'_wastage'] = null;
+                    $row[$warehouse['name'].'_liquidation_wastage'] = null;
+                    $row[$warehouse['name'].'_balance'] = null;
+                    $row['separator'.$key1] = null;
+                }
+            }
+
             $nameSplit = explode(',', $value['name']);
             $value['name'] = $nameSplit[0];
             $w_name = $value['name'];
@@ -530,9 +539,10 @@ class InventoryController extends Controller
             $row[$w_name.'_wastage'] = $value['wastage'];
             $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
             $row[$w_name.'_balance'] = $value['balance'];
-            if(!array_key_exists($value['base_product_id'], $tempArray)){
+            $row['title'] = $value['title'];
+            /*if(!array_key_exists($value['base_product_id'], $tempArray)){
                 $row['title'] = $value['title'];
-            }
+            }*/
             $tempArray[$value['base_product_id']] = $row;
         }
         $finalArray = array();
