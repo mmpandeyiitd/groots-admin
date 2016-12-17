@@ -695,7 +695,7 @@ create table cb_dev_groots.retailer_leads(
   name varchar(255) not null,
   organisation_name varchar(500) not null,
   designation varchar(250) default null,
-  contact_number int(12) not null,
+  contact_number varchar(250) not null,
   email varchar(100) default null,
   created_at datetime not null,
   updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP ,
