@@ -59,7 +59,7 @@
                 /** Reset Password **/
                 $ch = curl_init();
 				$timeout = 100; // set to zero for no timeout
-				$myurl = "http://api.groots.dev.canbrand.in/index.php/api/resetPassword";
+				$myurl = "http://api.groots.canbrand.in/index.php/api/resetPassword";
 				curl_setopt($ch,CURLOPT_HTTPHEADER,array('API_KEY: andapikey','APP_VERSION: 1.0','CONFIG_VERSION: 1.0'));
 				curl_setopt($ch, CURLOPT_POST, true);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
