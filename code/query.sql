@@ -492,6 +492,7 @@ create table groots_orders.feedbacks(
 )
 
 alter table groots_orders.order_header add column feedback_status enum ('Not Required', 'Pending', 'Submitted') not null default 'Not Required';
+alter table groots_orders.order_header add column `order_rating` tinyint(1) DEFAULT NULL;
 insert into groots_orders.feedback_categories values(null, 'Late Delivery', CURDATE(), null , 1);
 insert into groots_orders.feedback_categories values(null, 'Delivery Boy Behaviour', CURDATE(), null , 1);
 insert into groots_orders.feedback_categories values(null, 'Incomplete Order', CURDATE(), null , 1);
@@ -702,3 +703,39 @@ create table cb_dev_groots.retailer_leads(
   updated_by int(11) not null,
   primary key (id)
 )ENGINE=InnoDB default CHARSET=utf8;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
