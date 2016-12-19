@@ -48,7 +48,42 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'cheque_status'); ?>
-		<?php echo $form->textField($model,'cheque_status',array('size'=>3,'maxlength'=>3)); ?>
+		<?php echo $form->textField($model,'cheque_status',array('size'=>7,'maxlength'=>7)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'cheque_issue_date'); ?>
+		<?php echo $form->textField($model,'cheque_issue_date'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'cheque_name'); ?>
+		<?php echo $form->textField($model,'cheque_name',array('size'=>60,'maxlength'=>255)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'transaction_id'); ?>
+		<?php echo $form->textField($model,'transaction_id',array('size'=>25,'maxlength'=>25)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'receiving_acc_no'); ?>
+		<?php echo $form->textField($model,'receiving_acc_no',array('size'=>25,'maxlength'=>25)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'bank_name'); ?>
+		<?php echo $form->textField($model,'bank_name',array('size'=>60,'maxlength'=>300)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'isfc_code'); ?>
+		<?php echo $form->textField($model,'isfc_code',array('size'=>15,'maxlength'=>15)); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'acc_holder_name'); ?>
+		<?php echo $form->textField($model,'acc_holder_name',array('size'=>60,'maxlength'=>300)); ?>
 	</div>
 
 	<div class="row">

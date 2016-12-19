@@ -7,10 +7,10 @@ $this->breadcrumbs=array(
 	'Manage',
 );
 
-// $this->menu=array(
-// 	array('label'=>'List VendorPayment', 'url'=>array('index')),
-// 	array('label'=>'Create VendorPayment', 'url'=>array('create')),
-// );
+$this->menu=array(
+	array('label'=>'List VendorPayment', 'url'=>array('index')),
+	array('label'=>'Create VendorPayment', 'url'=>array('create')),
+);
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -51,16 +51,23 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'date',
 		'payment_type',
 		'cheque_no',
+		/*
 		'debit_no',
 		'cheque_status',
+		'cheque_issue_date',
+		'cheque_name',
+		'transaction_id',
+		'receiving_acc_no',
+		'bank_name',
+		'isfc_code',
+		'acc_holder_name',
 		'comment',
-		//'created_at',
-		//'updated_at',
+		'created_at',
+		'updated_at',
 		'status',
+		*/
 		array(
-			'header' => 'Update',
 			'class'=>'CButtonColumn',
-			'template' => '{view}{update}',
 		),
 	),
 )); ?>

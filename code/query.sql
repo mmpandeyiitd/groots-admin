@@ -670,7 +670,6 @@ insert into groots_employee values(null, 'Mudit', null, null, null, null, null, 
 insert into groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
-insert into groots_employee values(null, 'Rakesh', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into groots_employee values(null, 'Narendar', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 create table cb_dev_groots.groots_departments(
   department_id int(11) not null AUTO_INCREMENT,
@@ -715,6 +714,13 @@ CREATE TABLE groots_orders.vendor_payments (
   `cheque_no` varchar(256) DEFAULT NULL,
   `debit_no` varchar(256) DEFAULT NULL,
   `cheque_status` enum('Pending' , 'Bounced', 'Cleared') NOT NULL DEFAULT 'Pending',
+  `cheque_issue_date` date default null,
+  `cheque_name` varchar(255) default null,
+  `transaction_id` varchar(25) default null,
+  `receiving_acc_no` varchar(25) default null,
+  `bank_name` varchar(300) default null,
+  `isfc_code` varchar(15) default null,
+  `acc_holder_name` varchar(300) default null,
   `comment` text,
   `created_at` date NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

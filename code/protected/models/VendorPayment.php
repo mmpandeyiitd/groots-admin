@@ -12,6 +12,13 @@
  * @property string $cheque_no
  * @property string $debit_no
  * @property string $cheque_status
+ * @property string $cheque_issue_date
+ * @property string $cheque_name
+ * @property string $transaction_id
+ * @property string $receiving_acc_no
+ * @property string $bank_name
+ * @property string $isfc_code
+ * @property string $acc_holder_name
  * @property string $comment
  * @property string $created_at
  * @property string $updated_at
@@ -38,16 +45,20 @@ class VendorPayment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('vendor_id, date, created_at', 'required'),
+			array('vendor_id, date, created_at, updated_at', 'required'),
 			array('vendor_id, status', 'numerical', 'integerOnly'=>true),
 			array('paid_amount', 'length', 'max'=>10),
 			array('payment_type', 'length', 'max'=>11),
 			array('cheque_no, debit_no', 'length', 'max'=>256),
-			array('cheque_status', 'length', 'max'=>10),
-			array('comment', 'safe'),
+			array('cheque_status', 'length', 'max'=>7),
+			array('cheque_name', 'length', 'max'=>255),
+			array('transaction_id, receiving_acc_no', 'length', 'max'=>25),
+			array('bank_name, acc_holder_name', 'length', 'max'=>300),
+			array('isfc_code', 'length', 'max'=>15),
+			array('cheque_issue_date, comment', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
+			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_issue_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -70,13 +81,20 @@ class VendorPayment extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'vendor_id' => 'Vendor Id',
+			'vendor_id' => 'Vendor',
 			'paid_amount' => 'Paid Amount',
 			'date' => 'Date',
 			'payment_type' => 'Payment Type',
 			'cheque_no' => 'Cheque No',
 			'debit_no' => 'Debit No',
 			'cheque_status' => 'Cheque Status',
+			'cheque_issue_date' => 'Cheque Issue Date',
+			'cheque_name' => 'Cheque Name',
+			'transaction_id' => 'Transaction',
+			'receiving_acc_no' => 'Receiving Acc No',
+			'bank_name' => 'Bank Name',
+			'isfc_code' => 'Isfc Code',
+			'acc_holder_name' => 'Acc Holder Name',
 			'comment' => 'Comment',
 			'created_at' => 'Created At',
 			'updated_at' => 'Updated At',
@@ -110,6 +128,13 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('cheque_no',$this->cheque_no,true);
 		$criteria->compare('debit_no',$this->debit_no,true);
 		$criteria->compare('cheque_status',$this->cheque_status,true);
+		$criteria->compare('cheque_issue_date',$this->cheque_issue_date,true);
+		$criteria->compare('cheque_name',$this->cheque_name,true);
+		$criteria->compare('transaction_id',$this->transaction_id,true);
+		$criteria->compare('receiving_acc_no',$this->receiving_acc_no,true);
+		$criteria->compare('bank_name',$this->bank_name,true);
+		$criteria->compare('isfc_code',$this->isfc_code,true);
+		$criteria->compare('acc_holder_name',$this->acc_holder_name,true);
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
@@ -139,15 +164,23 @@ class VendorPayment extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public static function vendorPaymentTypes(){
-        $connection = Yii::app()->secondaryDb;
-        $paymentTypes = Utility::get_enum_values($connection, "vendor_payments", 'payment_type' );
-        return $paymentTypes;
-    }
+	public function vendorPaymentTypes(){
+		$connection = Yii::app()->secondaryDb;
+		$type = Utility::get_enum_values($connection, 'vendor_payments', 'payment_type');
+		$result = array();
+		foreach ($type as $key => $value) {
+			$result[$value['value']] = $value['value'];
+		}
+		return $result;
+	}
 
-    public static function getChequeStatus(){
-        $connection = Yii::app()->secondaryDb;
-        $chequeStatus = Utility::get_enum_values($connection, "vendor_payments", 'cheque_status' );
-        return $chequeStatus;
-    }
+	public function getChequeStatus(){
+		$connection = Yii::app()->secondaryDb;
+		$status = Utility::get_enum_values($connection, 'vendor_payments', 'cheque_status');
+		$result = array();
+		foreach ($status as $key => $value) {
+			$result[$value['value']] = $value['value'];
+		}
+		return $result;
+	}
 }

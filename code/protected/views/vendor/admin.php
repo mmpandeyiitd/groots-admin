@@ -67,6 +67,12 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 				echo CHtml::link('Payment', array('vendorPayment/create', 'vendor_id' => $data->id), array('target' => '_blank'));
 			}
 			),
+		array(
+			'header' => 'Payment Ledger',
+			'type' => 'raw',
+			'value' => function($data){
+				echo CHtml::link('Payment Ledger', array('vendorPayment/payments', 'vendorId' => $data->id), array('target' => '_blank'));
+			}),
 		/*
 		'mobile',
 		'telephone',

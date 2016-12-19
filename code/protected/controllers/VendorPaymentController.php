@@ -32,7 +32,7 @@ class VendorPaymentController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'createPayment'),
+				'actions'=>array('create','update'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -63,30 +63,28 @@ class VendorPaymentController extends Controller
 	public function actionCreate($vendor_id)
 	{
 		$model=new VendorPayment;
-		$vendor=Vendor::model()->findByPk($vendor_id);
+		$model->vendor_id = $vendor_id;
+		$vendor = Vendor::model()->findByPk($vendor_id);
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['VendorPayment']))
 		{
 			$model->attributes=$_POST['VendorPayment'];
-			$model->vendor_id = $vendor_id;
-			$model->created_at = date('Y-m-d');
-			$vendor->total_pending_amount -= $model->paid_amount;
-			if(!$vendor->save()){
-				die(var_dump($vendor->getErrors()));
+			if($model->save()){
+				$vendor->total_pending_amount-= $model->paid_amount;
+				if(!$vendor->save()){
+					echo '<pre>';
+					die(print_r($vendor->getErrors()));
+				}
+				$this->redirect(array('view','id'=>$model->id));
 			}
-			if($model->save())
-				$this->redirect(array('admin'));
 		}
-
 		$this->render('create',array(
 			'model'=>$model,
 			'vendor' => $vendor,
-			'update' => false,
 		));
 	}
-
 
 	/**
 	 * Updates a particular model.
@@ -94,9 +92,9 @@ class VendorPaymentController extends Controller
 	 * @param integer $id the ID of the model to be updated
 	 */
 	public function actionUpdate($id)
-	{
+	{	
 		$model=$this->loadModel($id);
-		$vendor=Vendor::model()->findByPk($model->vendor_id);
+		$vendor = VendorController::loadModel($model->vendro_id);
 		$initialPaid = $model->paid_amount;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -104,19 +102,19 @@ class VendorPaymentController extends Controller
 		if(isset($_POST['VendorPayment']))
 		{
 			$model->attributes=$_POST['VendorPayment'];
-			$vendor->total_pending_amount += $initialPaid;
-			$vendor->total_pending_amount -= $model->paid_amount;
-			if(!$vendor->save()){
-				die(var_dump($vendor->getErrors()));
+			//$model->vendro_id = $vendro_id;
+			if($model->save()){
+				$vendor->total_pending_amount += $initialPaid;
+				$vendor->total_pending_amount -= $model->paid_amount;
+				if(!$vendor->save()){
+					die(print_r($vendor->getErrors()));
+				}
+				$this->redirect(array('view','id'=>$model->id));
 			}
-			if($model->save())
-				$this->redirect(array('admin'));
 		}
-
 		$this->render('update',array(
 			'model'=>$model,
 			'vendor' => $vendor,
-			'update' => true,
 		));
 	}
 
@@ -131,7 +129,7 @@ class VendorPaymentController extends Controller
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
-			$this->redirect(array('admin'));
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 
 	/**

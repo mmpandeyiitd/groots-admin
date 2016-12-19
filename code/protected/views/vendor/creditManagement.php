@@ -57,7 +57,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
 					return Chtml::dropDownList('paymentType[]',$vendorPayment,
-								CHtml::listData(VendorPayment::vendorPaymentTypes(),'value', 'value'),
+								VendorPayment::vendorPaymentTypes(),
 								array('empty' => '--Payment Mode--') 
 								);
 				}),
@@ -66,7 +66,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'id' => 'chequeCleared',
 				'type' => 'raw',
 				'value' => function($data) use ($vendorPayment){
-					return CHtml::dropDownList('chequeStatus[]', $vendorPayment, CHtml::listData(VendorPayment::getChequeStatus(), 'value', 'value'),
+					return CHtml::dropDownList('chequeStatus[]', $vendorPayment, VendorPayment::getChequeStatus(),
 						array('empty' => "--Status--"));
 				}
 				),
@@ -86,16 +86,16 @@ for ($i=0; $i < 5; $i++) {
 	$x = '<input type="text" value="" name="test" id="test" />';
 	array_push($data, '<?php echo '.$x.' >?');
 }
-$this->widget('ext.widgets.EchMultiSelect', array(
-    'name'=>'colors[]',
-    'data'=>$data,
-    //'value'=>array(0,3),
-    'dropDownHtmlOptions'=> array(
-    	'style'=>'width:220px;',
-        'class'=>'span-10',
-        'id'=>'colors',
-    )
-));
+// $this->widget('ext.widgets.EchMultiSelect', array(
+//     'name'=>'colors[]',
+//     'data'=>$data,
+//     //'value'=>array(0,3),
+//     'dropDownHtmlOptions'=> array(
+//     	'style'=>'width:220px;',
+//         'class'=>'span-10',
+//         'id'=>'colors',
+//     )
+// ));
 
 ?>
 

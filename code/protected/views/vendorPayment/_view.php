@@ -38,6 +38,34 @@
 	<?php echo CHtml::encode($data->cheque_status); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_issue_date')); ?>:</b>
+	<?php echo CHtml::encode($data->cheque_issue_date); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_name')); ?>:</b>
+	<?php echo CHtml::encode($data->cheque_name); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('transaction_id')); ?>:</b>
+	<?php echo CHtml::encode($data->transaction_id); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('receiving_acc_no')); ?>:</b>
+	<?php echo CHtml::encode($data->receiving_acc_no); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('bank_name')); ?>:</b>
+	<?php echo CHtml::encode($data->bank_name); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('isfc_code')); ?>:</b>
+	<?php echo CHtml::encode($data->isfc_code); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('acc_holder_name')); ?>:</b>
+	<?php echo CHtml::encode($data->acc_holder_name); ?>
+	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('comment')); ?>:</b>
 	<?php echo CHtml::encode($data->comment); ?>
 	<br />
