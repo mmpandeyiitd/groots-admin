@@ -70,12 +70,12 @@ $('.search-form form').submit(function(){
 </div>
 
 
-<div class = "row" style="float:right">
-    <?php 
+<!--<div class = "row" style="float:right">
+    <?php /*
     $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadReconciliationReport",array('w_id' => $w_id));
     echo CHtml::button('Reconciliation Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
-    ?>
-</div>
+    */?>
+</div>-->
 
 <div class = "row" style="float:right">
     <?php 

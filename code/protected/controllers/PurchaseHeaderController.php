@@ -595,21 +595,84 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 	}
 
     public function actionDownloadProcurementReport(){
+        //echo "<pre>";
         $w_id = $_GET['w_id'];
+        $sourceWId = SOURCE_WH_ID;
+        $headOffId = HD_OFFICE_WH_ID;
+        if($w_id != $sourceWId){
+            return;
+        }
         $date = $_GET['date'];
-        $sql = 'select pl.base_product_id, concat(bp.base_title, bp.grade) as title, wa.name as warehouse, sum(pl.tobe_procured_qty) as "Qty To Be Procured (Kg)" from groots_orders.purchase_line as pl 
+        $data = array();
+        $sql = 'select pl.base_product_id, bp.title as title, bp.grade as grade, wa.name as warehouse, sum(pl.tobe_procured_qty) as tobe_procured_qty, sum(pl.order_qty) as procured_qty, sum(pl.received_qty) as received_qty from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
-         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
+         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' and pl.tobe_procured_qty > 0 group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
            $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
         $dataArray = $command->queryAll();
         if(!isset($dataArray) || empty($dataArray)){
-            Yii::app()->user->setFlash('error', 'nothing to download... select correct date!!!');
+            Yii::app()->user->setFlash('error', 'nothing to download...');
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
-        $w_name = str_replace(' ', '',Utility::getWarehouseNameById($w_id));
+
+        $sql = 'select name, id from cb_dev_groots.warehouses order by id';
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $res = $command->queryAll();
+        $warehouses = array();
+        $nameArr = array();
+        foreach ($res as $key => $wh) {
+            $w_name = "For ".explode(',', $wh['name'])[0];
+            $warehouses[$wh['id']] = $w_name;
+            if($wh['id'] != $headOffId){
+                array_push($nameArr, $w_name);
+            }
+        }
+
+        foreach ($dataArray as $d){
+            $tmp = array();
+            //$tmp['item'] = $d['title'];
+            $tmp['item'] = $d['title'];
+            $tmp['grade'] = $d['grade'];
+            $tmp['tobe_procured_qty'] = $d['tobe_procured_qty'];
+            $tmp['procured'] = $d['procured_qty'];
+            $tmp['received_by_operation'] = $d['received_qty'];
+            foreach ($nameArr as $name){
+                $tmp[$name] = 0;
+            }
+            $data[$d['base_product_id']] = $tmp;
+        }
+
+        foreach ($warehouses as $wh_id => $name) {
+
+            if ($wh_id ==  HD_OFFICE_WH_ID){
+                continue;
+            }
+            $sql = 'select tl.base_product_id, tl.order_qty from groots_orders.transfer_header as th
+            join groots_orders.transfer_line as tl
+            on th.id = tl.transfer_id
+            join cb_dev_groots.base_product as bp
+            on bp.base_product_id = tl.base_product_id
+            join cb_dev_groots.warehouses sw on sw.id = th.source_warehouse_id
+            join cb_dev_groots.warehouses dw on dw.id = th.dest_warehouse_id
+            where  th.delivery_date = "'.$date.'" and th.status != "cancelled" and th.source_warehouse_id='.$sourceWId.' and th.dest_warehouse_id='.$wh_id.' and th.transfer_type = "regular"';
+            $command = $connection->createCommand($sql);
+            $command->execute();
+            $transfers = $command->queryAll();
+            foreach ($transfers as $t){
+                if(isset($data[$t['base_product_id']])){
+                    $tmp = $data[$t['base_product_id']];
+
+                    $tmp[$name] = $t['order_qty'];
+                    $data[$t['base_product_id']] = $tmp;
+                }
+            }
+        }
+        //print_r(reset($data));die;
+        //print_r($data);die;
+
         $fileName = $date."procurement_report".".csv";
         ob_clean();
         header('Pragma: public');
@@ -619,16 +682,20 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment;filename=' . $fileName);
 
-        if (isset($dataArray['0'])) {
+        if (count($data > 0)) {
             $fp = fopen('php://output', 'w');
-            $columnstring = implode(',', array_keys($dataArray['0']));
+            //$columnstring = implode(',', array_keys($data[0]));
+            $columnstring = implode(',', array_keys(reset($data)));
+
             $updatecolumn = str_replace('_', ' ', $columnstring);
 
             $updatecolumn = explode(',', $updatecolumn);
+            //print_r( $updatecolumn); die;
             fputcsv($fp, $updatecolumn);
-            foreach ($dataArray AS $values) {
+            foreach ($data AS $values) {
                 fputcsv($fp, $values);
             }
+
             fclose($fp);
         }
         ob_flush(); 

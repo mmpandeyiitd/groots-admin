@@ -61,7 +61,7 @@ CREATE TABLE cb_dev_groots.`warehouses` (
   `modified_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `image` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 insert into cb_dev_groots.`warehouses` values (null, 'sector-5, warehouse', null, 'sector-5, warehouse', 'Haryana', 'Gurgaon', 'Sector-5', 122001, null, null, null, 1, now(),now(),null);
@@ -703,6 +703,8 @@ create table cb_dev_groots.retailer_leads(
   updated_by int(11) not null,
   primary key (id)
 )ENGINE=InnoDB default CHARSET=utf8;
+
+alter table groots_orders.retailer_payments modify column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT 'Pending';
 
 
 

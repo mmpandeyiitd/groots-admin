@@ -130,10 +130,8 @@ class GrootsLedgerController extends Controller
         }
 
         if (isset($_POST['client'])) {
-
            	$start_date = $_POST['tocdate'];
-             
-            /*if($_POST['CatLevel1']==0)   
+            /*if($_POST['CatLevel1']==0)
             {
             	Yii::app()->user->setFlash('error', 'Client not selected');
                 Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
@@ -142,7 +140,6 @@ class GrootsLedgerController extends Controller
             {
            
             $cDate = date("Y-m-d", strtotime($start_date));
-           
                         	ob_clean();
                 $data= $model->downloadCSVByCIDs($cDate);
                 ob_flush();
@@ -153,8 +150,30 @@ class GrootsLedgerController extends Controller
             	 Yii::app()->user->setFlash('error', 'Date not selected');
                  Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
             }
-          
-          
+        }
+
+        if (isset($_POST['total-wastage'])) {
+
+            $start_date = $_POST['date'];
+
+            /*if($_POST['CatLevel1']==0)
+            {
+            	Yii::app()->user->setFlash('error', 'Client not selected');
+                Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+            } */
+            if ($start_date !='')
+            {
+                $start_date = date("Y-m-d", strtotime($start_date));
+                $this->downloadTotalWastageReport($start_date);
+                exit();
+            }
+            else
+            {
+                Yii::app()->user->setFlash('error', 'Date not selected');
+                Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+            }
+
+
         }
 
 
@@ -232,4 +251,135 @@ class GrootsLedgerController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+
+    public function downloadTotalWastageReport($date){
+
+        //echo "<pre>";
+        $connection = Yii::app()->secondaryDb;
+
+        $sql = 'select name, id from cb_dev_groots.warehouses order by id';
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $res = $command->queryAll();
+        $warehouses = array();
+        $nameArr = array();
+
+        $data = array();
+        $hdArr = array();
+        foreach ($res as $key => $wh) {
+            $w_name = explode(',', $wh['name'])[0];
+            $warehouses[$wh['id']] = $w_name;
+            if($wh['id'] != HD_OFFICE_WH_ID){
+                array_push($nameArr, $w_name);
+            }
+        }
+
+        //create header array
+        $hdArr['item'] = '';
+        $hdArr['grade'] = '';
+        foreach ($nameArr as $name){
+            $hdArr["procurement ".$name] = 0;
+        }
+        foreach ($nameArr as $name){
+            $hdArr["order ".$name] = 0;
+        }
+        foreach ($nameArr as $name){
+            $hdArr["inv-order ".$name] = 0;
+            $hdArr["inv-liquid ".$name] = 0;
+        }
+
+        foreach ($warehouses as $w_id => $name) {
+
+            if ($w_id == HD_OFFICE_WH_ID) {
+                continue;
+            }
+
+
+            $orderSql = "select ol.base_product_id, bp.base_title,bp.grade, sum(ol.delivered_qty) as qty 
+          from order_header oh join order_line ol on ol.order_id=oh.order_id 
+          join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id 
+          left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+          where oh.status='Delivered' and oh.delivery_date='".$date."' and oh.warehouse_id=".$w_id." 
+          group by ol.base_product_id  order by pcm.category_id asc, bp.base_title asc, bp.priority asc";
+            $command = $connection->createCommand($orderSql);
+            $command->execute();
+            $orderData = $command->queryAll();
+            foreach ($orderData as $oD){
+                if(!isset($data[$oD['base_product_id']])){
+                    $data[$oD['base_product_id']] = $hdArr;
+                    $data[$oD['base_product_id']]["item"] = $oD['base_title'];
+                    $data[$oD['base_product_id']]["grade"] = $oD['grade'];
+                }
+                $data[$oD['base_product_id']]["order ".$name] = $oD['qty'];
+            }
+
+
+            $procureSql = "select pl.base_product_id, bp.base_title,bp.grade, sum(pl.received_qty) as qty 
+          from purchase_header ph join purchase_line pl on pl.purchase_id=ph.id 
+          join cb_dev_groots.base_product bp on bp.base_product_id=pl.base_product_id 
+          left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+          where ph.status='received' and ph.delivery_date='".$date."' and ph.warehouse_id=".$w_id." 
+          group by pl.base_product_id  order by pcm.category_id asc, bp.base_title asc, bp.priority asc";
+            $command = $connection->createCommand($procureSql);
+            $command->execute();
+            $orderData = $command->queryAll();
+            foreach ($orderData as $oD){
+                if(!isset($data[$oD['base_product_id']])){
+                    $data[$oD['base_product_id']] = $hdArr;
+                    $data[$oD['base_product_id']]["item"] = $oD['base_title'];
+                    $data[$oD['base_product_id']]["grade"] = $oD['grade'];
+                }
+                $data[$oD['base_product_id']]["procurement ".$name] = $oD['qty'];
+            }
+
+            $inventorySql = "select i.base_product_id, bp.base_title,bp.grade, sum(i.present_inv) as order_inv, sum(i.liquid_inv) as liquid_inv 
+          from inventory i join cb_dev_groots.base_product bp on bp.base_product_id=i.base_product_id 
+          left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+          where i.date='".$date."' and i.warehouse_id=".$w_id." 
+          group by i.base_product_id  order by pcm.category_id asc, bp.base_title asc, bp.priority asc";
+            $command = $connection->createCommand($inventorySql);
+            $command->execute();
+            $orderData = $command->queryAll();
+            foreach ($orderData as $oD){
+                if(!isset($data[$oD['base_product_id']])){
+                    $data[$oD['base_product_id']] = $hdArr;
+                    $data[$oD['base_product_id']]["item"] = $oD['base_title'];
+                    $data[$oD['base_product_id']]["grade"] = $oD['grade'];
+                }
+                $data[$oD['base_product_id']]["inv-order ".$name] = $oD['order_inv'];
+                $data[$oD['base_product_id']]["inv-liquid ".$name] = $oD['liquid_inv'];
+            }
+        }
+
+
+        if(!isset($data) || empty($data)){
+            Yii::app()->user->setFlash('error', 'nothing to download...');
+            Yii::app()->controller->redirect("index.php?r=GrootsLedger/report&w_id=".$w_id);
+        }
+        //$dataArray = $this->arrangeWastageReportData($data);
+        //print_r($data);die;
+        $fileName = $date."_totalWastageReport.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (count($data) > 0) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys(reset($data)));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+//echo $updatecolumn;die;
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($data AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
 }

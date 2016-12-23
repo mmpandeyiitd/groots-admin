@@ -36,6 +36,13 @@ else{
 }
 ?>
 
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="Csv" style="color:red;">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
+
 <div class="form">
 
     <?php $form=$this->beginWidget('CActiveForm', array(

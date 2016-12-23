@@ -82,7 +82,7 @@
                     'model' => $model,
                     'name' =>'tocdate',
                     'options' => array(
-                        //  'dateFormat' => 'yy-mm-dd',
+                        'dateFormat' => 'yy-mm-dd',
                         'showAnim' => 'fold',
                         'debug' => true,
                         //'maxDate' => "60",
@@ -102,7 +102,42 @@
 
 
 
-       <?php $this->endWidget(); ?>
+
        </div>
+
+
+    <div class="dashboard-table">
+        <form method="post">
+            <h4 style="width:20%">Total Wastage Report</h4>
+            <div class="right_date" style="width:80%">
+
+
+
+                <label>Date</label>
+
+                <?php
+
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    'model' => $model,
+                    'name' =>'date',
+                    'options' => array(
+                        'dateFormat' => 'yy-mm-dd',
+                        'showAnim' => 'fold',
+                        'debug' => true,
+                        //'maxDate' => "60",
+                        //'minDate' => 0,
+                    ), //DateTimePicker options
+                    'htmlOptions' => array('readonly' => 'true'),
+                ));
+
+
+                ?>
+                <input name="total-wastage" class="button_new" type="submit" value="Download" />
+
+            </div>
+        </form>
+
+    </div>
+    <?php $this->endWidget(); ?>
 </div><!-- form -->
       

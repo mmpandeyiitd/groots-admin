@@ -250,7 +250,7 @@ class InventoryController extends Controller
         //var_dump($_GET); echo "ehll"; die;
 
 
-        echo "<pre>";
+        //echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
         $select = "bp.title,i.base_product_id,  wa.name, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.balance";
@@ -262,6 +262,10 @@ class InventoryController extends Controller
         $command = $connection->createCommand($sql);
         $command->execute();
         $data = $command->queryAll();
+        if(!isset($data) || empty($data)){
+            Yii::app()->user->setFlash('error', 'nothing to download...');
+            Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
+        }
         $dataArray = $this->arrangeWastageReportData($data);
         // var_dump($dataArray);die;
         $fileName = $date."_wastageReport.csv";
