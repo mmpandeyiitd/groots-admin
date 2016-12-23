@@ -217,6 +217,7 @@ class GrootsledgerController extends Controller
     public function actionCreatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
+        $w_id = $_GET['w_id'];
       $retailerPayment = new RetailerPayment();
         $retailerId = $_GET['retailerId'];
          $retailer = Retailer::model()->findByPk($retailerId);
@@ -228,7 +229,8 @@ class GrootsledgerController extends Controller
                     GrootsledgerDao::saveCreatePayment($retailer, $_POST['RetailerPayment'], $retailerPayment);
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
-                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                    //$this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
@@ -246,12 +248,14 @@ class GrootsledgerController extends Controller
         $this->render('payment',array(
             'model'=>$retailerPayment,
             'retailerId' => $retailerId,
+            'w_id' => $w_id,
         ));
     }
 
     public function actionUpdatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
+        $w_id = $_GET['w_id'];
         if(isset($_POST['update'])){
             $transaction = Yii::app()->db->beginTransaction();
             try {
@@ -259,7 +263,8 @@ class GrootsledgerController extends Controller
                 $retailerPayment = GrootsledgerDao::saveUpdatePayment($_POST['RetailerPayment']);
                     $transaction->commit();
                     Yii::app()->user->setFlash('success', 'Payment has been saved');
-                    $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                    //$this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
+                $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
             }
             catch (\Exception $e) {
                 $transaction->rollBack();
@@ -283,12 +288,14 @@ class GrootsledgerController extends Controller
         $this->render('payment',array(
             'model'=>$retailerPayment,
             'update' => true,
+            'w_id' => $w_id,
         ));
     }
 
     public function actiondailyCollection(){
       // var_dump($_POST);
       // die();
+        $w_id = $_GET['w_id'];
       if(isset($_POST['update'])){
         self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
       }
@@ -296,10 +303,10 @@ class GrootsledgerController extends Controller
       if(isset($_POST['update2'])){
           self::updateDaily($_POST['pending_retailer_id'],$_POST['pending_collection']);
       }
-      $retailers = QueriesDailyCollection::todaysCollection();
+      $retailers = QueriesDailyCollection::todaysCollection($w_id);
       $dataprovider = array();
       $dataprovider2 = array();
-      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection();
+      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection($w_id);
       $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
       $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
       $total_due_amount = 0;
@@ -360,14 +367,14 @@ class GrootsledgerController extends Controller
 // die("here");
       if(isset($_GET['download']) && $_GET['download']==true){
       ob_clean();
-          QueriesDailyCollection::downloadDailyCollectionCsv();
+          QueriesDailyCollection::downloadDailyCollectionCsv($w_id);
             ob_flush();
             exit();
         }
 
         if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
       ob_clean();
-          QueriesDailyCollection::downloadBackDateCollectionCsv();
+          QueriesDailyCollection::downloadBackDateCollectionCsv($w_id);
             ob_flush();
             exit();
         }
@@ -379,6 +386,7 @@ class GrootsledgerController extends Controller
           'total_paid_yesterday' => $total_paid_yesterday,
           'total_due_amount' => $total_due_amount,
           'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
+           'w_id'=>$w_id,
           ));
     }
 
@@ -387,6 +395,7 @@ class GrootsledgerController extends Controller
     public function actionAdmin()
     {
         //print("<pre>");
+        $w_id = $_GET['w_id'];
         $retailer= new Retailer();
         $model = new OrderHeader();
         $retailerOrders ='';
@@ -502,6 +511,7 @@ class GrootsledgerController extends Controller
            'model'=>$model,
             'retailer' => $retailer,
             'data' => $dataprovider,
+            'w_id' => $w_id,
         ));
     }
 
@@ -626,7 +636,7 @@ class GrootsledgerController extends Controller
 
   public function get_due_payable_amount_yesterday(){
     $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
-    echo $sql;
+    //echo $sql;
     $connection = Yii::app()->secondaryDb;
     $command = $connection->createCommand($sql);
     $command->execute();
