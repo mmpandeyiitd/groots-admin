@@ -109,8 +109,21 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date_of_onboarding'); ?>
-		<?php echo $form->textField($model,'date_of_onboarding'); ?>
-		<?php echo $form->error($model,'date_of_onboarding'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+            'model'=>$model,
+            'attribute'=>'date_of_onboarding',
+
+            'id'=>'date',
+            //'value'=> date('Y-m-d'),
+            'options'=>array(
+                'dateFormat' => 'yy-mm-dd',
+                'showAnim'=>'fold',
+            ),
+            'htmlOptions'=>array(
+                'style'=>'height:20px;'
+            ),
+        )); ?>
+        <?php echo $form->error($model,'date_of_onboarding'); ?>
 	</div>
 
 	<div class="row">
@@ -156,10 +169,29 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'payment_terms'); ?>
-		<?php echo $form->textField($model,'payment_terms'); ?>
+		<?php echo $form->labelEx($model,'payment_start_date'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
+            'model'=>$model,
+            'attribute'=>'payment_start_date',
+
+            'id'=>'payment_start_date',
+            //'value'=> date('Y-m-d'),
+            'options'=>array(
+                'dateFormat' => 'yy-mm-dd',
+                'showAnim'=>'fold',
+            ),
+            'htmlOptions'=>array(
+                'style'=>'height:20px;'
+            ),
+        )); ?>
+        <?php echo $form->error($model,'payment_start_date'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'payment_days_range'); ?>
+		<?php echo $form->textField($model,'payment_days_range'); ?>
 		<?php echo 'DAYS';?>
-		<?php echo $form->error($model,'payment_terms'); ?>
+		<?php echo $form->error($model,'payment_days_range'); ?>
 	</div>
 
 	<div class="row">
@@ -207,17 +239,17 @@
 		<?php echo $form->error($model,'proc_exec_id'); ?>
 	</div>
 
-	<div class="row">
+	<!-- <div class="row">
 		<?php echo $form->labelEx($model,'created_date'); ?>
 		<?php echo $form->textField($model,'created_date'); ?>
 		<?php echo $form->error($model,'created_date'); ?>
-	</div>
+	</div> -->
 
-	<div class="row">
+	<!-- <div class="row">
 		<?php echo $form->labelEx($model,'updated_at'); ?>
 		<?php echo $form->textField($model,'updated_at'); ?>
 		<?php echo $form->error($model,'updated_at'); ?>
-	</div>
+	</div> -->
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'allocated_warehouse_id'); ?>

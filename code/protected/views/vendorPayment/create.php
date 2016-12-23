@@ -15,4 +15,4 @@ $this->menu=array(
 
 <h1>Create VendorPayment</h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model, 'vendor'=> $vendor)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'vendor'=> $vendor, 'update' => false)); ?>

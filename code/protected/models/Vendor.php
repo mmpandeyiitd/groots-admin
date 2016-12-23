@@ -34,7 +34,7 @@
  * @property string $initial_pending_amount
  * @property string $total_pending_amount
  * @property string $bussiness_name
- * @property integer $payment_terms
+ * @property integer $payment_start_date
  * @property integer $proc_exec_id
  * @property string $vendor_type
  *
@@ -59,8 +59,8 @@ class Vendor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, mobile, address, date_of_onboarding, credit_limit, created_date, updated_at, bussiness_name, payment_terms, proc_exec_id, vendor_type', 'required'),
-			array('status, credit_limit, payment_terms, proc_exec_id', 'numerical', 'integerOnly'=>true),
+			array('name, mobile, address, date_of_onboarding, credit_limit, bussiness_name, payment_start_date, proc_exec_id, vendor_type, payment_days_range, credit_days', 'required'),
+			array('status, credit_limit, proc_exec_id', 'numerical', 'integerOnly'=>true),
 			array('name, email, password, owner_email, settlement_days, time_of_delivery, bussiness_name', 'length', 'max'=>255),
 			array('vendor_code, pincode, owner_phone, initial_pending_amount, total_pending_amount', 'length', 'max'=>10),
 			array('VAT_number', 'length', 'max'=>50),
@@ -72,10 +72,10 @@ class Vendor extends CActiveRecord
 			array('image, website, contact_person1, contact_person2', 'length', 'max'=>250),
 			array('allocated_warehouse_id', 'length', 'max'=>11),
 			array('vendor_type', 'length', 'max'=>12),
-			array('image_url, credit_days, due_date', 'safe'),
+			array('image_url, credit_days, due_date, payment_days_range', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_terms, proc_exec_id, vendor_type, credit_days, due_date', 'safe', 'on'=>'search'),
+			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_start_date, proc_exec_id, vendor_type, credit_days, due_date, payment_days_range', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -127,11 +127,12 @@ class Vendor extends CActiveRecord
 			'initial_pending_amount' => 'Initial Pending Amount',
 			'total_pending_amount' => 'Total Pending Amount',
 			'bussiness_name' => 'Bussiness Name',
-			'payment_terms' => 'Payment Terms',
+			'payment_start_date' => 'Payment Start Date',
 			'proc_exec_id' => 'Proc Exec',
 			'vendor_type' => 'Vendor Type',
 			'credit_days' => 'Credit Days',
 			'due_date' => 'Due Date',
+			'payment_days_range' => 'Payment Days Range',
 		);
 	}
 
@@ -183,7 +184,7 @@ class Vendor extends CActiveRecord
 		$criteria->compare('initial_pending_amount',$this->initial_pending_amount,true);
 		$criteria->compare('total_pending_amount',$this->total_pending_amount,true);
 		$criteria->compare('bussiness_name',$this->bussiness_name,true);
-		$criteria->compare('payment_terms',$this->payment_terms);
+		$criteria->compare('payment_start_date',$this->payment_start_date);
 		$criteria->compare('proc_exec_id',$this->proc_exec_id);
 		$criteria->compare('vendor_type',$this->vendor_type,true);
 		$criteria->compare('credit_days',$this->credit_days,true);
@@ -207,7 +208,7 @@ class Vendor extends CActiveRecord
 
 	public function searchcredit(){
 		$criteria = new CDbCriteria; 
-        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type';
+        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
         $criteria->compare('id' , $this->id, true);
        	$criteria->compare('name',$this->name,true);
        	$criteria->compare('vendor_type',$this->vendor_type,true);
@@ -240,6 +241,75 @@ class Vendor extends CActiveRecord
             }
         //}
         return $class;
+    }
+
+    public function getLedgerDataProvider($payments, $orders){
+    	//var_dump(count($orders));die;
+    	$i= $j=0;
+    	$dataProvider = array();
+    	$outstanding = 0;
+    	for ($i=0, $j=0; $i <count($payments), $j<count($orders) ;) { 
+    		$temp = array();
+    		if(strtotime($payments[$i]->date) < strtotime($orders[$j]['delivery_date'])){
+    			$temp['id'] = 'Payment'.$payments[$i]['id'];
+    			$temp['date'] = $payments[$i]['date'];
+    			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+    			$temp['order_amount'] = null;
+    			$temp['order_quantity'] = null;
+    			$outstanding -= $temp['paid_amount'];
+    			$i++;
+    		}
+    		else if(strtotime($payments[$i]->date) > strtotime($orders[$j]['delivery_date'])){
+    			$temp['id'] = 'Order'.$orders[$j]['id'];
+    			$temp['date'] = $orders[$j]['delivery_date'];
+    			$temp['paid_amount'] = null;
+    			$temp['order_amount'] = $orders[$j]['price'];
+    			$temp['order_quantity'] = $orders[$j]['received_qty'];
+    			$outstanding += $temp['order_amount'];
+    			$j++;
+    		}
+    		else{
+    			$temp['id'] = 'Payment:'.$payments[$i]['id'].' / Order:'.$orders[$j]['id'];
+    			$temp['date'] = $payments[$i]['date'];
+    			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+    			$temp['order_amount'] = $orders[$j]['price'];
+    			$temp['order_quantity'] = $orders[$j]['received_qty'];
+    			$outstanding += $temp['order_amount'] - $temp['paid_amount'];
+    			$i++;$j++;
+    		}
+    		$temp['outstanding'] = $outstanding;
+    		array_push($dataProvider, $temp);
+    	}
+    	if($i < count($payments)){
+    		for($a = $i; $a < count($payments); $a++){
+    			$temp = array();
+    			$temp['id'] = 'Payment:'.$payments[$a]['id'];
+    			$temp['date'] = $payments[$a]['date'];
+    			$temp['paid_amount'] = $payments[$a]['paid_amount'];
+    			$temp['order_amount'] = null;
+    			$temp['order_quantity'] = null;
+    			$outstanding -= $temp['paid_amount'];
+    			$temp['outstanding'] = $outstanding;
+    			array_push($dataProvider, $temp);
+    		}
+    	}
+    	if($j < count($orders)){
+    		for ($b=$j; $b < count($orders) ; $b++) { 
+    			$temp = array();
+    			$temp['id'] = 'Order:'.$orders[$b]['id'];
+    			$temp['date'] = $orders[$b]['delivery_date'];
+    			$temp['paid_amount'] = null;
+    			$temp['order_amount'] = $orders[$b]['price'];
+    			$temp['order_quantity'] = $orders[$b]['received_qty'];
+    			$outstanding += $temp['order_amount'];
+    			$temp['outstanding'] = $outstanding;
+    			array_push($dataProvider, $temp);
+    		}
+    	}
+    	return new CArrayDataProvider($dataProvider, array(
+                    'sort'=>array(
+                        'attributes'=>array('id','date','paid_amount','order_amount', 'order_quantity'),
+                    ),'pagination'=>array('pageSize'=>100)));
     }
 
 }

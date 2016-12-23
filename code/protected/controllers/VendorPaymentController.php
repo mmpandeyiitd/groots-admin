@@ -94,7 +94,7 @@ class VendorPaymentController extends Controller
 	public function actionUpdate($id)
 	{	
 		$model=$this->loadModel($id);
-		$vendor = VendorController::loadModel($model->vendro_id);
+		$vendor = Vendor::model()->findByPk($model->vendor_id);
 		$initialPaid = $model->paid_amount;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -102,7 +102,6 @@ class VendorPaymentController extends Controller
 		if(isset($_POST['VendorPayment']))
 		{
 			$model->attributes=$_POST['VendorPayment'];
-			//$model->vendro_id = $vendro_id;
 			if($model->save()){
 				$vendor->total_pending_amount += $initialPaid;
 				$vendor->total_pending_amount -= $model->paid_amount;

@@ -28,7 +28,9 @@ VendorPayment::vendorPaymentTypes();
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'paid_amount'); ?>
-		<?php echo $form->textField($model,'paid_amount',array('size'=>10,'maxlength'=>10)); ?>
+		<?php $array =  array('size'=>10,'maxlength'=>10);
+			if($update){$array['readOnly'] = 'readOnly';}
+			echo $form->textField($model,'paid_amount',$array); ?>
 		<?php echo $form->error($model,'paid_amount'); ?>
 	</div>
 
@@ -149,7 +151,7 @@ VendorPayment::vendorPaymentTypes();
             'attribute'=>'created_at',
 
             'id'=>'created_at',
-            //'value'=> date('Y-m-d'),
+            'value'=> date('Y-m-d'),
             'options'=>array(
                 'dateFormat' => 'yy-mm-dd',
                 'showAnim'=>'fold',
@@ -161,17 +163,18 @@ VendorPayment::vendorPaymentTypes();
         <?php echo $form->error($model,'created_at'); ?>
 	</div>
 
-	<div class="row hide">
+	<div class="row">
 		<?php echo $form->labelEx($model,'updated_at'); ?>
 		<?php echo $form->textField($model,'updated_at'); ?>
 		<?php echo $form->error($model,'updated_at'); ?>
 	</div>
-
-	<div class="row">
+	<?php if(! $update){?>
+	<div class="row status">
 		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->textField($model,'status'); ?>
+		<?php echo $form->dropDownList($model, 'status', array(0=>'Inactive', 1=>'Active'), array('style' => 'width:220.20px;')); ?>
 		<?php echo $form->error($model,'status'); ?>
 	</div>
+	<?php } ?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
@@ -182,8 +185,7 @@ VendorPayment::vendorPaymentTypes();
 </div><!-- form -->
 <script type="text/javascript">
 	$(document).ready(function(){
-        onStartUp();
-        //showAllItemsChecked();
+		checkPaymentMode()
     });
 
     function onStartUp(){

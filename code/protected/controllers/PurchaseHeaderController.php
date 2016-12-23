@@ -166,6 +166,7 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->order_qty = $quantity;
                                 }
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
+                                $purchaseLine->vendor_id = $model->vendor_id;
                                 $purchaseLine->save();
                             }
                         }
@@ -299,7 +300,7 @@ class PurchaseHeaderController extends Controller
                                 }
                                 $purchaseLine->order_qty = $quantity;
                             }
-
+                            $purchaseLine->vendor_id = $model->vendor_id;
                             $purchaseLine->save();
 
                         }
@@ -323,7 +324,7 @@ class PurchaseHeaderController extends Controller
                                 }
                                 $purchaseLine->received_qty = $quantity;
                             }
-
+                            $purchaseLine->vendor_id = $model->vendor_id;
                             $purchaseLine->save();
 
                         }

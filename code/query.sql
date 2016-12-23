@@ -723,7 +723,7 @@ CREATE TABLE groots_orders.vendor_payments (
   `acc_holder_name` varchar(300) default null,
   `comment` text,
   `created_at` date NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `status` smallint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `fk_vd_pm_1` (`vendor_id`),
@@ -734,3 +734,34 @@ alter table cb_dev_groots.retailer add column sales_rep_id int(11)  default null
 
 alter table cb_dev_groots.vendors add column credit_days int(3) default null;
 alter table cb_dev_groots.vendors add column due_date date default null;
+
+alter table cb_dev_groots.vendors add column payment_days_range int(3) not null;
+alter table cb_dev_groots.vendors change payment_terms payment_start_date date not null;
+
+
+alter table cb_dev_groots.vendors modify column updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+
+
+select sum(pl.received_qty), t.delivery_date as received_qty from purchase_header as t left join purchase_line as pl on t.id = pl.purchase_id where t.status = "pending" and t.vendor_id = 1 group by t.delivery_date
+
+alter table purchase_line add column vendor_id int (11) not null;
+update purchase_line as pl left join purchase_header as ph on ph.id = pl.purchase_id set pl.vendor_id = ph.vendor_id; 
+
+
+create table cb_dev_groots.vendor_log(
+  id int(11) not null AUTO_INCREMENT,
+  vendor_id int(11) not null,
+  total_pending decimal(10,2) not null default '0.00',
+  base_date date not null,
+  created_at datetime not null,
+  updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  primary key (id),
+  key fk_vl_1 (vendor_id),
+  constraint fk_vl_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 default CHARSET=utf8;
+
+insert into vendor_log values (null, 1, 3743.90, "2016-12-01", CURDATE(), null);
+
+alter table vendors add column initial_pending_date date not null;
+update vendors set initial_pending_date = "2016-12-01";

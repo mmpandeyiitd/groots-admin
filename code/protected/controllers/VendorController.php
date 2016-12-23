@@ -32,7 +32,7 @@ class VendorController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'productMap', 'creditManagement', 'procurementOrder'),
+				'actions'=>array('create','update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -70,6 +70,8 @@ class VendorController extends Controller
 		if(isset($_POST['Vendor']))
 		{
 			$model->attributes=$_POST['Vendor'];
+			$model->due_date = date('Y-m-d', strtotime($model->payment_start_date.' + '.$model->credit_days.' days'));
+			$model->created_date = date('Y-m-d H:i:s');
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -185,28 +187,102 @@ class VendorController extends Controller
 	}
 
 	public function actionCreditManagement(){
-		//var_dump($_POST);die;
-		// if(isset($_POST) && !empty($_POST)){
-		// 	if($_POST['VendorPayment']['date'] != date('Y-m-d')){
-
-		// 	}
-		// 	else{
-				
-		// 	}
-		// }
+		if(!empty($_GET['date'])){
+			$endDate = $_GET['date'];
+		}
+		else if(isset($_POST['VendorPayment']) && !empty($_POST['VendorPayment'])){
+			$endDate = $_POST['VendorPayment']['date'];
+		}
+		else{
+			$endDate = date('Y-m-d');
+		}
+		$initial_pending_date = VendorDao::getInitialPendingDate();
+		//var_dump($initial_pending_date);die;
+		if(strtotime($endDate) < strtotime($initial_pending_date)){
+			$startDate = VendorDao::getLastPendingDate($endDate, $initial_pending_date);
+		}
+		else $startDate = $initial_pending_date;
+		if(isset($_POST['Payment']) && !empty($_POST['creditRepaid'])){
+			self::saveVendorPaymet($_POST, $endDate);
+		}
+		$nextDate = date('Y-m-d', strtotime($startDate.' + 1 day'));
+		$totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
+		$initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
+		$lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
+		//var_dump($lastPaymentDetails);
+		$totalPending = 0;
+		foreach ($totalPendingMap as $key => $value) {
+			$totalPending += $value;
+		}
+		$totalPendingMap['total'] = strval($totalPending);
 		$skuMap = VendorDao::getAllVendorSkus();
 		$model = new Vendor();
 		$vendorPayment = new VendorPayment;
+		$vendorPayment->date = $endDate;
+		$payable = VendorDao::getPayable($endDate, $nextDate				);
+		$totalPayable = 0;
+		foreach ($payable as $key => $value) {
+			$totalPayable += $value['amount'];
+		}
+		$payable['total'] = strval($totalPayable);
 		$this->render('creditManagement', array(
 				'model' => $model,
 				'dataProvider' =>$model,
 				'skuMap' => $skuMap,
-				'vendorPayment' => $vendorPayment));
+				'vendorPayment' => $vendorPayment,
+				'payable' => $payable,
+				'totalPendingMap' => $totalPendingMap,
+				'initialPendingMap' => $initialPendingMap,
+				'lastPaymentDetails' => $lastPaymentDetails,
+				));
 		//var_dump($skuMap);die;
 	}
 
-	public function actionProcurementOrder(){
+	public function actionVendorLedger($vendor_id){
+		$vendor = Vendor::model()->findByPk($vendor_id);
+		$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order'=>'date asc'));
+		//var_dump($payments);die;
+		$orders = VendorDao::getVendorOrderQuantity($vendor_id);
+		$dataProvider = Vendor::getLedgerDataProvider($payments,$orders);
+		$this->render('vendorLedger', array(
+			'dataProvider' => $dataProvider,
+			'vendor' => $vendor,));
+		
+	}
 
+	public function actionVendorScript(){
+		$username = "root";
+		$password = "root";
+		$localhost = "localhost";
+		$connection = mysql_connect($localhost,$username, $password);
+		mysql_select_db('cb_dev_groots');
+		$sql = 'select due_date, id, name, payment_start_date, payment_days_range, initial_pending_date, initial_pending_amount from cb_dev_groots.vendors where status = 1';
+		$query = mysql_query($sql);
+		$rows = mysql_num_rows($query);
+		$i=0;
+		$today = date('Y-m-d');
+		$yesterday = date('Y-m-d', strtotime($today.' - 1 day'));
+		$initial_pending_date = mysql_result($query, 0, 3);
+		mysql_data_seek($query, 0);
+		$vendorPending = VendorDao::getAllVendorPayableAmount(date('Y-m-d', strtotime($initial_pending_date.' + 1 day')), $yesterday);
+		while($i < $rows){
+			$current = mysql_fetch_array($query);
+			//var_dump($current);
+			if(strtotime($current['due_date']) == strtotime($yesterday)){
+				$newDueDate = date('Y-m-d', strtotime($current['due_date'].' + '.$current['payment_days_range'].' day'));
+				$newStartDate = date('Y-m-d', strtotime($current['payment_start_date'].' + '.$current['payment_days_range'].' day'));
+				$sql2 = 'update vendors set due_date = "'.$newDueDate.'", payment_start_date = "'.$newStartDate.'" where id = '.$current['id'];
+
+				$update = mysql_query($sql2);
+			}
+			if(strtotime($yesterday) == date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month'))){
+				$totalNow = $current['initial_pending_amount'] + $vendorPending[$current['id']];
+				$newBaseDate = strtotime($current['initial_pending_date'].' + 2 month');
+				$updateLog = 'insert into vendor_log values(null, '.$current['id'].', '.$totalNow.', '.$newBaseDate.', CURDATE(), null)';
+				$updateVendorTable = 'update vendors set initial_pending_date = "'.$yesterday.'" , initial_pending_amount = "'.$totalNow.'"';
+			}
+			$i++;
+		}
 	}
 
 	/**
@@ -234,6 +310,16 @@ class VendorController extends Controller
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
+		}
+	}
+
+	public function saveVendorPaymet($post, $date){
+		$vendorIds = $post['vendorIds'];
+		$creditRepaid = $post['creditRepaid'];
+		foreach ($vendorIds as $key => $value) {
+			if($creditRepaid[$key] != ''){
+				VendorPayment::saveVendorCashPayment($value, $creditRepaid[$key], $date);
+			}
 		}
 	}
 }

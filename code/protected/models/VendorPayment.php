@@ -45,7 +45,7 @@ class VendorPayment extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('vendor_id, date, created_at, updated_at', 'required'),
+			array('vendor_id, date, created_at', 'required'),
 			array('vendor_id, status', 'numerical', 'integerOnly'=>true),
 			array('paid_amount', 'length', 'max'=>10),
 			array('payment_type', 'length', 'max'=>11),
@@ -182,5 +182,18 @@ class VendorPayment extends CActiveRecord
 			$result[$value['value']] = $value['value'];
 		}
 		return $result;
+	}
+
+	public function saveVendorCashPayment($vendorId, $amount,$date){
+		$vendorPayment = new VendorPayment;
+		$vendorPayment->vendor_id = $vendorId;
+		$vendorPayment->paid_amount = $amount;
+		$vendorPayment->date = $date;
+		$vendorPayment->payment_type = 'Cash';
+		$vendorPayment->created_at =  date('Y-m-d H:i:s');
+		if($vendorPayment->save()){
+			return true;
+		}
+		else die(print_r($vendorPayment->getErrors()));
 	}
 }

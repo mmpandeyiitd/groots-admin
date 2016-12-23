@@ -3,14 +3,14 @@
 class VendorDao{
 	public function getProcExecutiveDropdownData(){
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select employee_id, employee_name from cb_dev_groots.groots_employee where department_id = 1 and designation_id = 1';
+        $sql = 'select id, name from cb_dev_groots.groots_employee where department_id = 2 and status = 1';
         //echo $sql; die;
         $command = $connection->createCommand($sql);
         $command->execute();
         $data = $command->queryAll();
         $array = array();
         foreach ($data as $key => $value) {
-        	$array[$value['employee_id']] = $value['employee_name'];
+        	$array[$value['id']] = $value['name'];
         }
         return $array;
 	}
@@ -111,6 +111,142 @@ class VendorDao{
         }
         return $map;
     }
+
+    public function getAllVendorPayableAmount($startDate, $endDate){
+        $connection = Yii::app()->secondaryDb;
+        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and l.received_qty > 0 group by h.vendor_id';
+        $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
+        $command = $connection->createCommand($orderSql);
+        $orderAmount = $command->queryAll();
+        $command = $connection->createCommand($paymentSql);
+        $paymentAmount = $command->queryAll();
+        $order = array();
+        $payment  =array();
+        foreach ($orderAmount as $key => $value) {
+            if(!empty($value['price']))
+                $order[$value['vendor_id']] = $value['price'];
+        }
+        foreach ($paymentAmount as $key => $value) {
+            if(! empty($value['paid_amount']))
+                $payment[$value['vendor_id']] = $value['paid_amount'];
+        }
+        foreach ($order as $key => $value) {
+            if(array_key_exists($key, $payment)){
+                $order[$key] -= $payment[$key];
+            }
+        }
+        foreach ($payment as $key => $value) {
+            if(! array_key_exists($key, $order)){
+                $order[$key] = $value;
+            }
+        }
+        return $order;
+    }
+
+    public function getVendorPayableAmount($startDate, $endDate, $vendor_id, $paymentEndDate){
+        $connection = Yii::app()->secondaryDb;
+        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.vendor_id = '.$vendor_id.' and l.price > 0 and l.received_qty > 0 group by h.delivery_date order by h.delivery_date';
+        $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
+        $command = $connection->createCommand($orderSql);
+        $orderAmount = $command->queryAll();
+        $command = $connection->createCommand($paymentSql);
+        $paymentAmount = $command->queryAll();
+    //     if($vendor_id == 1){
+    //     var_dump($orderAmount);
+    //     var_dump($paymentAmount);die;
+    // }
+        $result = 0;
+        foreach ($orderAmount as $key => $value) {
+            $result += $value['price'];
+            $result -= $paymentAmount[$key]['paid_amount'];
+        }
+        return $result;
+    }
+
+    public function getLastDueDateFrom($startDate, $dueDate, $creditDays){
+        if(strtotime($startDate) >= strtotime($dueDate)){
+            return $dueDate;
+        }
+        else{
+            while(strtotime($startDate) < strtotime($dueDate)){
+                $dueDate = date('Y-m-d', strtotime($dueDate.' - '.$creditDays.' day'));
+            }
+            return $dueDate;
+        }
+    }
+
+    public function getPayable($date, $initialPendingDate){
+        $criteria = new CDbCriteria;
+        $criteria->select = 'id, credit_days, due_date, payment_days_range';
+        $criteria->condition = 'status = 1';
+        $vendors = Vendor::model()->findAll($criteria);
+        $result = array();
+        foreach ($vendors as $key => $value) {
+          $lastDueDate = self::getLastDueDateFrom($date , $value['due_date'], $value['credit_days']);
+          $startDate = date('Y-m-d', strtotime($lastDueDate.' - '.$value['credit_days'].' day'));
+          $endDate = date('Y-m-d', strtotime($startDate.' + '.$value['payment_days_range'].' day'));
+          $amount = self::getVendorPayableAmount($initialPendingDate, $endDate, $value['id'], $date);
+          $result[$value['id']]['amount'] = $amount;
+          $result[$value['id']]['dueDate'] = $lastDueDate;
+          $result[$value['id']]['lastDueDate'] = date('Y-m-d', strtotime($lastDueDate.' - '.$value['payment_days_range'].' day'));
+        }
+        return $result;
+    }
+
+    public function getVendorOrderQuantity($vendorId){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select pl.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and pl.vendor_id = 1 and pl.received_qty > 0 and pl.price > 0 group by ph.delivery_date order by ph.delivery_date';
+        // $sql = 'select sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and pl.received_qty != null and pl.price != null and pl.vendor_id = 1 and ph.delivery_date != null group by ph.delivery_date order by ph.delivery_date';
+        $command = $connection->createCommand($sql);
+        $orderedAmount = $command->queryAll();
+        //var_dump($orderedAmount);die;
+        return $orderedAmount;
+
+    }
+
+    public function getLastPendingDate($date, $initialPendingDate){
+        while($date > $initialPendingDate){
+            $initialPendingDate = date('Y-m-d', strtotime($initialPendingDate.' - 2 month'));
+        }
+    }
+
+    public function getInitialPendingDate(){
+        $connection = Yii::app()->db;
+        $sql = 'select initial_pending_date from vendors limit 1';
+        $command = $connection->createCommand($sql);
+        return $command->queryScalar();
+    }
+
+    public function getAllVendorInitialPending($startDate){
+        $map = array();
+        $connection = Yii::app()->db;
+        $sql = 'select id from vendors where status = 1';
+        $command = $connection->createCommand($sql);
+        $ids = $command->queryAll();
+        foreach ($ids as $key => $value) {
+            $sql = 'select total_pending from vendor_log where vendor_id = '.$value['id'].' and base_date = "'.$startDate.'" order by id desc limit 1';
+            $command = $connection->createCommand($sql);
+            $amount = $command->queryScalar();
+            $map[$value['id']] = $amount;
+        }
+        return $map;
+    }
+
+    public function getVendorLastPaymentDetails(){
+        $map = array();
+        $sql = 'select vp1.vendor_id, vp1.date, sum(vp1.paid_amount) as paid_amount from vendor_payments as vp1 inner join (select max(date) as date, vendor_id from vendor_payments group by vendor_id ) as vp2 on (vp2.date = vp1.date and vp1.vendor_id = vp2.vendor_id and vp1.status = 1) group by vp1.vendor_id, vp1.date';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $result  = $command->queryAll();
+        //var_dump($result);
+        foreach ($result as $key => $value) {
+            $map[$value['vendor_id']]['date'] = $value['date'];
+            $map[$value['vendor_id']]['amount'] = $value['paid_amount'];
+        }
+        return $map;
+    }
+
 }
+
 
 ?>
