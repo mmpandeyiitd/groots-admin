@@ -686,3 +686,6 @@ insert into cb_dev_groots.groots_employee values(null, 'Nimesh', null, null, nul
 insert into cb_dev_groots.groots_employee values(null, 'Nadeem', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into cb_dev_groots.groots_employee values(null, 'Ujjwal', null, null, null, null, null, null, 1, 1, 1, CURDATE(), null, 1);
 insert into cb_dev_groots.groots_employee values(null, 'Harman', null, null, null, null, null, null, 1, 2, 1, CURDATE(), null, 1);
+
+
+alter table groots_orders.retailer_payments modify column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT 'Pending';
