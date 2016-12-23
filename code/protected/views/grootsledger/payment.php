@@ -32,6 +32,7 @@ else{
 echo $this->renderPartial('_payment_form', array(
     'model'=>$model,
     'update'=>$update,
+    'w_id' => $w_id,
 ));
 ?>
 
