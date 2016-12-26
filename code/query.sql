@@ -703,6 +703,7 @@ create table cb_dev_groots.retailer_leads(
   primary key (id)
 )ENGINE=InnoDB default CHARSET=utf8;
 
+alter table groots_employee drop foreign key fk_employee_1;
 alter table groots_employee drop column department_id;
 
 create table cb_dev_groots.employee_department(
@@ -718,3 +719,8 @@ create table cb_dev_groots.employee_department(
   key fk_ep_dpt_2 (department_id),
   constraint fk_ep_dpt_2 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (id)
 )ENGINE=InnoDB default CHARSET=utf8;
+
+insert into employee_department values (null, 1, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 2, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 3, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
