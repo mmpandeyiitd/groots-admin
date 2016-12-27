@@ -105,6 +105,7 @@ class GrootsLedgerController extends Controller
 
 	public function actionreport()
 	{    
+		//var_dump($_POST);die;
         $model=new GrootsLedger;
          
          if (isset($_POST['filter'])) {
@@ -157,6 +158,26 @@ class GrootsLedgerController extends Controller
           
         }
 
+        if(isset($_POST['collection']) && !empty($_POST['collection'])){
+        	$startDate = $_POST['collection_from'];
+        	$endDate = $_POST['collection_to'];
+        	if($startDate == '' || $endDate == ''){
+        		Yii::app()->user->setFlash('error', 'Date Not Selected');
+                Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+        	}
+        	else{
+	        	$startDate = date('Y-m-d', strtotime($startDate));
+	        	$endDate = date('Y-m-d', strtotime($endDate));
+	        	if(strtotime($startDate) > strtotime($endDate)){
+	        		Yii::app()->user->setFlash('error', 'End date sholud be greater than Start date');
+	                 Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+	        	}
+	        	else{
+	        		$model->downloadCollectionReport($startDate, $endDate);
+	        		exit();
+	        	}
+        	}
+        }
 
 
 
