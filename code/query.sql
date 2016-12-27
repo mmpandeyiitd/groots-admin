@@ -706,6 +706,27 @@ create table cb_dev_groots.retailer_leads(
 
 alter table groots_orders.retailer_payments modify column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT 'Pending';
 
+alter table groots_employee drop foreign key fk_employee_1;
+alter table groots_employee drop column department_id;
+
+create table cb_dev_groots.employee_department(
+  id int(11) not null AUTO_INCREMENT,
+  employee_id int (11) not null,
+  department_id int(11) not null,
+  created_at datetime not null,
+  updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP ,
+  updated_by int(11) not null,
+  primary key (id),
+  key fk_ep_dpt_1 (employee_id),
+  constraint fk_ep_dpt_1 foreign key (id) REFERENCES cb_dev_groots.groots_employee (id),
+  key fk_ep_dpt_2 (department_id),
+  constraint fk_ep_dpt_2 foreign key (department_id) REFERENCES cb_dev_groots.groots_departments (id)
+)ENGINE=InnoDB default CHARSET=utf8;
+
+insert into employee_department values (null, 1, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 2, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 3, 1, CURDATE(), null, 1);
+insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
 
 
 
