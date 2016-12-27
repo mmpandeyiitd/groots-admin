@@ -213,6 +213,17 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'type' => 'raw',
             ),
             array(
+                'header' => 'Add Row',
+                //'name' => 'add_row',
+                'type' => 'raw',
+                'value' => function($data){
+                    if(isset($data->parent_id) && $data->parent_id != 0 && $data->grade != 'Unsorted'){
+                        return CHtml::button('+', array('onclick' => 'addRows('.$data->base_product_id.')'));
+                    }
+                },
+                )
+            ,
+            array(
                 'header' => 'Grade',
                 'name' => 'grade',
                 'headerHtmlOptions' => array(),
@@ -249,7 +260,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'header' => 'Vendors',
                 'type' => 'raw',
                 'value' => function($data){
-                    return CHtml::activeDropDownList($data , 'vendor_id', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'style' => 'width:220.5px;'));
+                    return CHtml::activeDropDownList($data , 'vendor_id', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;'));
                 }
                 ),
 
@@ -428,7 +439,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var totalTobeProcured = 0;
         var totalOrder = 0;
         var totalReceived = 0;
-        console.log(parent_id);
+        //console.log(parent_id);
         $(".item_"+parent_id).each( function() {
             var bp_id = $(this).attr('id').split("_")[1];
 
@@ -446,7 +457,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 
         });
-        console.log(totalOrder);
+        //console.log(totalOrder);
         if($("#tobe-procured_"+parent_id).length > 0){
             $("#tobe-procured_"+parent_id).html(totalTobeProcured);
         }
@@ -513,5 +524,19 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         });
         $("#sumAmount").val(sumAmount);
     }*/
+
+    function addRows(bp_id){
+       var row = document.getElementById('bp_'+bp_id);
+       console.log(row);
+       var clone = row.cloneNode(true);
+       console.log(clone);
+       var table = document.getElementById('purchase-header-grid');
+       clone.id = 'NewId';
+       //row.insertBefore(clone, row);
+       // row.each( function(){
+       //  console.log($(this));
+       // })
+       //console.log(row); 
+    }
 
 </script>
