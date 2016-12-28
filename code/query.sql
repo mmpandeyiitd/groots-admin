@@ -706,8 +706,8 @@ create table cb_dev_groots.retailer_leads(
 
 alter table groots_orders.retailer_payments modify column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT 'Pending';
 
-alter table groots_employee drop foreign key fk_employee_1;
-alter table groots_employee drop column department_id;
+alter table cb_dev_groots.groots_employee drop foreign key fk_employee_1;
+alter table cb_dev_groots.groots_employee drop column department_id;
 
 create table cb_dev_groots.employee_department(
   id int(11) not null AUTO_INCREMENT,

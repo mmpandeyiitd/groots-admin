@@ -139,7 +139,7 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		'id',
 		//'warehouse_id',
-		array(
+		/*array(
 			'header' => 'vendor',
 			//'headerHtmlOptions' => array('style' => 'width:40%;'),
 			//'htmlOptions' => array('style' => 'width:40%;'),
@@ -147,10 +147,10 @@ $('.search-form form').submit(function(){
 				return CHtml::label($data->Vendor->name, $data->Vendor->name,array('class'=>'title'));
 			},
 			'type' => 'raw',
-		),
+		),*/
 		'delivery_date',
-		'payment_method',
-		'payment_status',
+		/*'payment_method',
+		'payment_status',*/
 		array(
 			'name' => 'purchase_type',
 			'value' => '$data->purchase_type',
