@@ -765,3 +765,21 @@ insert into vendor_log values (null, 1, 3743.90, "2016-12-01", CURDATE(), null);
 
 alter table vendors add column initial_pending_date date not null;
 update vendors set initial_pending_date = "2016-12-01";
+
+drop table vendor_product_mapping;
+
+create table vendor_product_mapping(
+id int(11) not null AUTO_INCREMENT,
+vendor_id int(11) not null,
+base_product_id int(11) unsigned not null,
+price int(11) unsigned NOT NULL,
+status tinyint(1) not null default 1,
+created_at date not null,
+updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+updated_by int(11) not null,
+primary key (id),
+key fk_vpm_1 (vendor_id),
+constraint fk_vpm_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id),
+key fk_vpm_2 (base_product_id),
+constraint fk_vpm_2 foreign key (base_product_id) REFERENCES cb_dev_groots.base_product (base_product_id)
+)ENGINE=InnoDB AUTO_INCREMENT=1 default CHARSET=utf8;

@@ -63,7 +63,6 @@ class VendorController extends Controller
 	public function actionCreate()
 	{
 		$model=new Vendor;
-
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -147,6 +146,7 @@ class VendorController extends Controller
 
 	public function actionProductMap($vendor_id){
 		//var_dump($_POST);die;
+		//flash , transaction remaning, price = '';
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -155,9 +155,18 @@ class VendorController extends Controller
 			Yii::app()->user->setFlash('error', 'Either Vendor Id Wrong or Vendor Inactive');
 			Yii::app()->controller->redirect('index.php?r=vendor/admin');
 		}
-		$products = VendorDao::getVendorProductIds($vendor_id);
+		$products = VendorDao::getVendorProductDetails($vendor_id);
 		$data = new BaseProduct('search');
+		$update = array();
 		if(isset($_POST['save'])){
+			$baseProductIds = array();
+			$postPrice = array();
+			if(isset($_POST['baseProductIds']) && !empty($_POST['baseProductIds'])){
+				$baseProductIds = $_POST['baseProductIds'];
+			}
+			if(isset($_POST['price']) && !empty($_POST['price'])){
+				$postPrice = $_POST['price'];
+			}
 			$newProducts = array();
 			foreach ($_POST as $key => $value) {
 			if(substr($key, 0, 9) == 'checkedId'){
@@ -165,20 +174,40 @@ class VendorController extends Controller
 			}
 		}
 			foreach ($newProducts as $key => $value) {
-				if(in_array($value, $products)){
-					$index = array_search($value, $products);
-					if(is_numeric($index)){
-						unset($products[$index]);
+				if(array_key_exists($value, $products)){
+					$index = array_search($value, $baseProductIds);
+					$price = ($postPrice[$index] != '') ? $postPrice[$index] : 0;
+					if($price != $products[$value]['price']){
+						$temp = array('id'=> $products[$value]['id'], 'price'=> $price);
+						array_push($update, $temp);
 					}
+					unset($products[$value]);
 					unset($newProducts[$key]);
 				}
-
 			}
-			VendorDao::deleteVendorProductById($products, $vendor_id);
-			VendorDao::insertVendorProductById($newProducts, $vendor_id);
+			$ids = '';
+			$first = true;
+			foreach ($products as $key => $value) {
+				if($first)
+					$ids .= $value['id'];
+				else{
+					$ids .= ','.$value['id'];
+				}
+				$first = false;
+			}
+			$insert = array();
+			foreach ($newProducts as $key => $value) {
+				$index = array_search($value, $baseProductIds);
+				$price = ($postPrice[$index] != '') ? $postPrice[$index] : 0;
+				$temp = array('base_product_id' => $value, 'price' => $price);
+				array_push($insert, $temp); 
+			}
+			VendorDao::updateVendorProductById($update);
+			VendorDao::deleteVendorProductById($ids);
+			VendorDao::insertVendorProductById($insert, $vendor_id);
 		}
 
-		$products = VendorDao::getVendorProductIds($vendor_id);
+		$products = VendorDao::getVendorProductDetails($vendor_id);
 		$this->render('productMap', array(
 			'model' => $model,
 			'dataProvider' => $data,
@@ -187,6 +216,7 @@ class VendorController extends Controller
 	}
 
 	public function actionCreditManagement(){
+		//var_dump($_POST);die;
 		if(!empty($_GET['date'])){
 			$endDate = $_GET['date'];
 		}

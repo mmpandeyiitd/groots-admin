@@ -31,52 +31,59 @@ class VendorDao{
         return $array;
     }
 
-    public function getVendorProductIds($vendor_id){
-        $sql = 'select base_product_id from cb_dev_groots.vendor_product_mapping where vendor_id = '.$vendor_id;
+    public function getVendorProductDetails($vendor_id){
+        $sql = 'select id, base_product_id, price from cb_dev_groots.vendor_product_mapping where vendor_id = '.$vendor_id;
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
         $data = $command->queryAll();
-        $array = array();
+        $result = array();
         if(!empty($data)){
             foreach ($data as $key => $value) {
-                array_push($array, $value['base_product_id']);
+                $result[$value['base_product_id']] = $value;
             }
         }
-        return $array;
+        return $result;
     }
 
-    public function deleteVendorProductById($baseProductIds, $vendor_id){
-        if(empty($baseProductIds) || count($baseProductIds) == 0){
+    public function updateVendorProductById($array){
+        foreach ($array as $key => $value) {
+            $sql = 'update vendor_product_mapping set price = '.$value['price'].' where id = '.$value['id'];
+            $connection = Yii::app()->db;
+            $command = $connection->createCommand($sql);
+            $command->execute();
+        }
+    }
+
+    public function deleteVendorProductById($ids){
+        if(empty($ids))
             return;
-        }
         else{
-            $baseProductIds = implode(', ', $baseProductIds);
-            $sql = 'delete from cb_dev_groots.vendor_product_mapping where vendor_id = '.$vendor_id.' and base_product_id in ('.$baseProductIds.')';
-        }
-        $connection = Yii::app()->secondaryDb;
+            $sql = 'delete from vendor_product_mapping where id in ('.$ids.')';
+        $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $command->execute();
+        }
     }
 
-    public function insertVendorProductById($baseProductIds, $vendor_id){
-        if(empty($baseProductIds) || count($baseProductIds) == 0){
+    public function insertVendorProductById($array, $vendor_id){
+        if(empty($array) || count($array) == 0){
             return;
         }
         else{
             $userId = Yii::app()->user->getId();
-            $sql = 'insert into cb_dev_groots.vendor_product_mapping values';
+            $sql = 'insert into vendor_product_mapping values';
             $values = '';
             $count = 1;
-            foreach ($baseProductIds as $key => $id) {
-                $values.= '('.$vendor_id.', '.$id.', 1, CURDATE(), null, '.$userId.')';
-                if($count != count($baseProductIds)){
+            foreach ($array as $key => $value) {
+                $values.= '(null,'.$vendor_id.', '.$value['base_product_id'].', '.$value['price'].', 1, CURDATE(), null, '.$userId.')';
+                if($count != count($array)){
                     $values.= ', ';
                 }
                 $count++;
             }
             $sql.= $values;
-            $connection = Yii::app()->secondaryDb;
+            $connection = Yii::app()->db;
             //echo $sql;die;
             $command = $connection->createCommand($sql);
             $command->execute();
@@ -243,6 +250,19 @@ class VendorDao{
             $map[$value['vendor_id']]['amount'] = $value['paid_amount'];
         }
         return $map;
+    }
+
+    public function getAllVendorsPriceMap(){
+        $sql = 'select base_product_id, vendor_id, price from vendor_product_mapping';
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $data = $command->queryAll();
+        $result = array();
+        foreach ($data as $key => $value) {
+            $result[$value['vendor_id']][$value['base_product_id']] = $value['price'];
+        }
+        //var_dump($result);die;
+        return $result;
     }
 
 }

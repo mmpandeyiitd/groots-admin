@@ -54,7 +54,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'header' => 'Sku Served',
 				'type' => 'raw',
 				'value' => function($data) use ($skuMap){
-				return CHtml::dropDownList( 'sku' , '',(empty($skuMap[$data->id]) ? array() : $skuMap[$data->id]), array('empty' => "SKU's Served", 'style' => 'width:130px;' ));
+				return CHtml::dropDownList( 'sku[]' , '',(empty($skuMap[$data->id]) ? array() : $skuMap[$data->id]), array('empty' => "SKU's Served", 'style' => 'width:130px;' ));
 				},
 				'footer' => '',),
 			array(

@@ -58,7 +58,7 @@ $vendor_id = $_GET['vendor_id'];
                 array
                 (   'header' => 'check',
                     'value' => function($data) use ($products){
-                        $checked = in_array($data->base_product_id, $products);
+                        $checked = array_key_exists($data->base_product_id, $products);
                         echo CHtml::checkBox('checkedId_'.$data->base_product_id, $checked, array('onclick' => 'onCbStateChange('.$data->base_product_id.')'));
                     },
                     ),
@@ -69,6 +69,14 @@ $vendor_id = $_GET['vendor_id'];
             	//'popularity',
             	//'priority',
             	//'base_title',
+                array(
+                    'header' => 'Price',
+                    'type' => 'raw',
+                    'value' => function($data) use ($products){
+                        $temp = array_key_exists($data->base_product_id, $products) ? $products[$data->base_product_id]['price'] : '';
+                        return CHtml::textField('price[]', $temp, array('style' => 'width:100px;'));
+                    }
+                    ),
             	array(
             		'value' => function($data){
             			echo CHtml::hiddenField('baseProductIds[]', $data->base_product_id);

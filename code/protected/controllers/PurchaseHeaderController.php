@@ -99,6 +99,7 @@ class PurchaseHeaderController extends Controller
 	public function actionCreate()
 	{
 	    //echo "<pre>";
+        //var_dump($_POST);die;
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -156,34 +157,30 @@ class PurchaseHeaderController extends Controller
 
                 if($model->save()){
 
-                    if(isset($_POST['order_qty'])){
-                        foreach ($_POST['order_qty'] as $key => $quantity) {
-                            if ($quantity > 0) {
+                    if(isset($_POST['order_qty']) || isset($_POST['received_qty'])){
+                        foreach ($_POST['base_product_id'] as $key => $id) {
+                            $quantity = $_POST['order_qty'][$key];
+                            $receivedQty = $_POST['received_qty'][$key];
+                            if ($quantity > 0 || $receivedQty > 0) {
                                 $purchaseLine = new PurchaseLine();
                                 $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                $purchaseLine->base_product_id = $id;
                                 if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
                                     $purchaseLine->order_qty = $quantity;
                                 }
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-                                $purchaseLine->vendor_id = $model->vendor_id;
-                                $purchaseLine->save();
-                            }
-                        }
-                    }
-                    if(isset($_POST['received_qty'])){
-                        foreach ($_POST['received_qty'] as $key => $quantity) {
-                            if ($quantity > 0) {
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
                                 if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                    $purchaseLine->received_qty = $quantity;
+                                    $purchaseLine->received_qty = $receivedQty;
+                                }
+                                if(isset($_POST['price'][$key]) && $_POST['price'][$key] > 0){
+                                    $purchaseLine->price = $_POST['price'][$key];
                                 }
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
-                                $purchaseLine->save();
+                                $purchaseLine->vendor_id =$_POST['InventoryHeader']['vendor_id'][$key];
+                                
+                                if(!$purchaseLine->save()){
+                                    die(var_dump($purchaseLine->getErrors()));
+                                }
                             }
-                
                         }
                     }
                     $transaction->commit();
@@ -199,7 +196,7 @@ class PurchaseHeaderController extends Controller
             }
 
 		}
-
+        $priceMap = VendorDao::getAllVendorsPriceMap();
 		$this->render('create',array(
 			'model'=>$model,
             'inv_header'=>$inv_header,
@@ -207,6 +204,7 @@ class PurchaseHeaderController extends Controller
             'dataProvider'=>$dataProvider,
             //'otherItems'=> $otherItems,
             'w_id' => $w_id,
+            'priceMap' => $priceMap,
 		));
 	}
 
@@ -346,7 +344,7 @@ class PurchaseHeaderController extends Controller
             }
         }
 
-
+        $priceMap = VendorDao::getAllVendorsPriceMap();
 		$this->render('update',array(
 			'model'=>$model,
             'inv_header'=>$inv_header,
@@ -355,6 +353,7 @@ class PurchaseHeaderController extends Controller
             //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'update'=>true,
+            'priceMap' => $priceMap,
 		));
 	}
 

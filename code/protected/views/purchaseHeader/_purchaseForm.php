@@ -217,7 +217,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 //'name' => 'add_row',
                 'type' => 'raw',
                 'value' => function($data){
-                    if(isset($data->parent_id) && $data->parent_id != 0 && $data->grade != 'Unsorted'){
+                    if(isset($data->parent_id) && $data->parent_id != 0){
                         return CHtml::button('+', array('onclick' => 'addRows('.$data->base_product_id.')'));
                     }
                 },
@@ -259,8 +259,9 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             array(
                 'header' => 'Vendors',
                 'type' => 'raw',
-                'value' => function($data){
-                    return CHtml::activeDropDownList($data , 'vendor_id', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;'));
+                'value' => function($data) use ($priceMap){
+                    $array = json_encode($priceMap);
+                    return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown'));
                 }
                 ),
 
@@ -319,7 +320,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             'created_at',
             'updated_at',
             */
-
+            array(
+                'header' => 'Price',
+                'type' => 'raw',
+                'value' => function($data){
+                    return CHtml::textField('price[]','', array('style' => 'width:50px;', 'class' => 'price'));
+                }
+                ),
         ),
     ));
 
@@ -439,19 +446,29 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var totalTobeProcured = 0;
         var totalOrder = 0;
         var totalReceived = 0;
-        //console.log(parent_id);
+        console.log(parent_id);
         $(".item_"+parent_id).each( function() {
+            //console.log($(this));
+            console.log($(this).find('.inputs').val());
+            var orderQty = $(this).find('.inputs').val();
+            var receivedQty = $(this).find('.received-inputs').val()
             var bp_id = $(this).attr('id').split("_")[1];
-
             if (bp_id==parent_id) return;
-            if($("#tobe-procured_"+bp_id).length > 0){
-                totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
+            // if($("#tobe-procured_"+bp_id).length > 0){
+            //     totalTobeProcured += parseFloat($("#tobe-procured_"+bp_id).html().trim()) || 0;
+            // }
+            // if($("#order_"+bp_id).length > 0){
+            //     totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
+            //     //console.log('here '+ totalOrder);
+            // }
+            // if($("#received_"+bp_id).length > 0){
+            //     totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            // }
+            if(orderQty.length > 0){
+                totalOrder += parseFloat(orderQty.trim());
             }
-            if($("#order_"+bp_id).length > 0){
-                totalOrder += parseFloat($("#order_"+bp_id).val().trim()) || 0;
-            }
-            if($("#received_"+bp_id).length > 0){
-                totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
+            if(receivedQty.length > 0){
+                totalReceived += parseFloat(receivedQty.trim());
             }
 
 
@@ -526,17 +543,29 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     }*/
 
     function addRows(bp_id){
-       var row = document.getElementById('bp_'+bp_id);
-       console.log(row);
-       var clone = row.cloneNode(true);
-       console.log(clone);
-       var table = document.getElementById('purchase-header-grid');
-       clone.id = 'NewId';
-       //row.insertBefore(clone, row);
-       // row.each( function(){
-       //  console.log($(this));
-       // })
+       var row = $('#bp_'+bp_id);
+       //console.log(row);
+       var clone = row.clone();
+       clone.find('.inputs').val('');
+       clone.find('.received-inputs').val('');
+       clone.find('.price').val('');
+       clone.find('.dropDown').val('Select a Vendor');     
+       //console.log(clone);
+       clone.id = row.id;
+       clone.insertAfter(row); 
        //console.log(row); 
+    }
+
+    function onVendorSelect(parent_id, baseProductId, array){
+        //console.log(array);
+        $(".item_"+parent_id).each(function(){
+            var vendorId = $(this).find('.dropDown').val();
+            //console.log(vendorId);
+            if(vendorId){
+                var price = array[vendorId][baseProductId];
+                $(this).find('.price').val(price);
+            }
+        });
     }
 
 </script>
