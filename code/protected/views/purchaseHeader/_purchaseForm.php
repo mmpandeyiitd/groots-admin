@@ -326,7 +326,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     ?>
 
 
-    <a href="index.php?r=purchaseHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+    <a href="index.php?r=purchaseHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_self"  >Back</a>
 
 </div>
 

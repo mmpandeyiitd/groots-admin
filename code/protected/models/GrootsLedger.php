@@ -339,7 +339,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 			$client_id[$key] = $value['client_id'];
 		}
 		array_multisort($date, SORT_DESC , $client_id, SORT_DESC, $type, SORT_ASC, $result);
-		$fileName = $startDate.'collectionReport'.$endDate;
+		$fileName = $startDate.'collectionReport'.$endDate.".csv";
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');

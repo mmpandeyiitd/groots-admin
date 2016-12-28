@@ -240,7 +240,12 @@ class PurchaseHeaderController extends Controller
         if(!($this->checkAccessByData(array('ProcurementEditor', 'PurchaseEditor'), array('warehouse_id'=>$w_id)))){
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
-
+        $updateType = "update";
+        if(isset($_GET['type'])){
+            if ($_GET['type']=="add"){
+                $updateType = "add";
+            }
+        }
         $model=$this->loadModel($id);
 
 
@@ -251,6 +256,7 @@ class PurchaseHeaderController extends Controller
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
         $inv_header->purchase_id = $id;
+        $inv_header->update_type = $updateType;
         $dataProvider = $inv_header->purchaseSearch();
 
         if(isset($_POST['purchase-update'])) {

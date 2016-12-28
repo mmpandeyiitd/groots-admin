@@ -228,12 +228,19 @@ class TransferHeaderController extends Controller
         print_r($_POST);
          print_r($_POST);die;*/
         $w_id = '';
+
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
         if(!$this->checkAccessByData('TransferEditor', array('warehouse_id'=>$w_id))){
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
             Yii::app()->controller->redirect("index.php?r=transferHeader/admin&w_id=".$w_id);
+        }
+        $updateType = "update";
+        if(isset($_GET['type'])){
+            if ($_GET['type']=="add"){
+                $updateType = "add";
+            }
         }
         $model=$this->loadModel($id);
 
@@ -245,6 +252,7 @@ class TransferHeaderController extends Controller
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
         $inv_header->transfer_id = $id;
+        $inv_header->update_type = $updateType;
         $dataProvider = $inv_header->transferSearch();
 
 //print_r($transferLineMap);die;
@@ -287,8 +295,10 @@ class TransferHeaderController extends Controller
                         //if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
                             if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
                                 $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
+                                //echo "base-".$_POST['base_product_id'][$key]." del-".$delivered_qty."\n";
                             }
                             else if(!empty($order_qty) || !empty($delivered_qty) || !empty($received_qty)){
+                                //echo "base-".$_POST['base_product_id'][$key]." del-".$delivered_qty."\n";
                                 $transferLine = new TransferLine();
                                 $transferLine->transfer_id = $model->id;
                                 $transferLine->base_product_id = $_POST['base_product_id'][$key];
@@ -297,13 +307,13 @@ class TransferHeaderController extends Controller
                             }
 
                             if(isset($transferLine)){
-                                if(!empty($order_qty)){
+                                if($order_qty != ""){
                                     $transferLine->order_qty = $order_qty;
                                 }
-                                if(!empty($delivered_qty)){
+                                if($delivered_qty !=""){
                                     $transferLine->delivered_qty = $delivered_qty;
                                 }
-                                if(!empty($received_qty)){
+                                if($received_qty != ""){
                                     $transferLine->received_qty = $received_qty;
                                 }
 

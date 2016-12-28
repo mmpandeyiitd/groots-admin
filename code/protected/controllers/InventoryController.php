@@ -142,6 +142,11 @@ class InventoryController extends Controller
                     $liquidation_wastage = trim($_POST['liquidation_wastage'][$key]);
                     $extra_inv = trim($_POST['extra_inv'][$key]);
                     $balance = trim($_POST['balance'][$key]);
+                    $secondary_sale = 0;
+                    if(!empty($_POST['secondary_sale'][$key])){
+                        $secondary_sale = trim($_POST['secondary_sale'][$key]);
+                    }
+
                     if(true){
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
@@ -167,6 +172,7 @@ class InventoryController extends Controller
                         $inv->liquidation_wastage = empty($liquidation_wastage) ? 0: $liquidation_wastage;
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
                         $inv->balance = empty($balance) ? 0: $balance;
+                        $inv->secondary_sale = empty($secondary_sale) ? 0: $secondary_sale;
                         //var_dump($inv);die;
                         $inv->save();
 

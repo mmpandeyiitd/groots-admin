@@ -31,6 +31,7 @@ class InventoryHeader extends CActiveRecord
     public $order_qty;
     public $delivered_qty;
     public $received_qty;
+    public $update_type="";
     /**
      * @return string the associated database table name
      */
@@ -152,7 +153,11 @@ class InventoryHeader extends CActiveRecord
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
         //$criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
-        $criteria->join = "left join groots_orders.transfer_line tl on tl.base_product_id=t.base_product_id and tl.transfer_id=".$this->transfer_id;
+        $joinType = "";
+        if($this->update_type=="add"){
+            $joinType = " left ";
+        }
+        $criteria->join = $joinType." join groots_orders.transfer_line tl on tl.base_product_id=t.base_product_id and tl.transfer_id=".$this->transfer_id;
         $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
         $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
@@ -195,7 +200,11 @@ class InventoryHeader extends CActiveRecord
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
         );*/
         //$criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
-        $criteria->join = "join groots_orders.purchase_line pl on pl.base_product_id=t.base_product_id and pl.purchase_id=".$this->purchase_id;
+        $joinType = "";
+        if($this->update_type=="add"){
+            $joinType = " left ";
+        }
+        $criteria->join = $joinType." join groots_orders.purchase_line pl on pl.base_product_id=t.base_product_id and pl.purchase_id=".$this->purchase_id;
         $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
         $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
@@ -353,6 +362,10 @@ class InventoryHeader extends CActiveRecord
 
     public function getGrade(){
         return $this->grade;
+    }
+
+    public function getUpdateType(){
+        return $this->update_type;
     }
 
     public function getCssClass(){

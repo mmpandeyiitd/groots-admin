@@ -327,7 +327,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
         ?>
 
 
-        <a href="index.php?r=transferHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+        <a href="index.php?r=transferHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_self"  >Back</a>
 
     </div>
 
