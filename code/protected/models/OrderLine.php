@@ -399,9 +399,9 @@ class OrderLine extends CActiveRecord
     {
       //echo $email.$pass;die;
         // $url  = 'http://sendgrid.com/';
-    $url  = 'https://api.sendgrid.com/';
-    $user = 'connect-groots';
-    $pass = 'connect@123';
+    $url  = SG_URL;
+    $user = SG_USER;
+    $pass = SG_PASS;
 
     $params             = array();
     $params['api_user'] = $user;

@@ -62,18 +62,10 @@ class InventoryController extends Controller
 	 */
 	public function actionCreate()
 	{
-	    /*echo "<pre>";
-		print_r($_POST);
-        print_r($_GET);
-        if(isset($_POST['parent_id'][78]) && $_POST['parent_id'][78] == 0){
-            echo "inside if for parent-id-78";
-        }
-        if(isset($_POST['parent_id'][65]) && $_POST['parent_id'][65] == 0){
-            echo "inside if for parent-id-65";
-        }
-        die;*/
+	    //echo "<pre>";
+		//print_r($_POST);
+        //print_r($_GET);
 
-        //$model=new Inventory('search');
 
         $w_id = '';
         if(isset($_GET['w_id'])){
@@ -117,6 +109,7 @@ class InventoryController extends Controller
         if(isset($_GET['InventoryHeader'])) {
             $inv_header->attributes = $_GET['InventoryHeader'];
         }
+        $date = $inv_header->date;
 
         $dataProvider = $inv_header->search();
         //var_dump($dataProvider); die;
@@ -149,6 +142,11 @@ class InventoryController extends Controller
                     $liquidation_wastage = trim($_POST['liquidation_wastage'][$key]);
                     $extra_inv = trim($_POST['extra_inv'][$key]);
                     $balance = trim($_POST['balance'][$key]);
+                    $secondary_sale = 0;
+                    if(!empty($_POST['secondary_sale'][$key])){
+                        $secondary_sale = trim($_POST['secondary_sale'][$key]);
+                    }
+
                     if(true){
                         /*echo "present_inv-".$present_inv;
                         echo "present_inv-".$wastage;
@@ -174,6 +172,7 @@ class InventoryController extends Controller
                         $inv->liquidation_wastage = empty($liquidation_wastage) ? 0: $liquidation_wastage;
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
                         $inv->balance = empty($balance) ? 0: $balance;
+                        $inv->secondary_sale = empty($secondary_sale) ? 0: $secondary_sale;
                         //var_dump($inv);die;
                         $inv->save();
 
@@ -183,6 +182,13 @@ class InventoryController extends Controller
                     array_push($parentIdArr, $parentIdToUpdate);
                 }
                 $transaction->commit();
+            }catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::app()->user->setFlash('error', 'Transfer order Creation failed.');
+                throw $e;
+            }
+            $transaction = Yii::app()->db->beginTransaction();
+            try{
                 foreach ($parentIdArr as $parentId){
                     if($parentId > 0 ){
                         $schedule_inv = 0;
@@ -227,7 +233,7 @@ class InventoryController extends Controller
                     }
                 }
 
-                $this->redirect(array('create','w_id'=>$w_id));
+                $this->redirect(array('create','w_id'=>$w_id, 'date'=>$date));
 
             }catch (\Exception $e) {
                 $transaction->rollBack();
@@ -250,7 +256,7 @@ class InventoryController extends Controller
         //var_dump($_GET); echo "ehll"; die;
 
 
-        echo "<pre>";
+        //echo "<pre>";
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
         $select = "bp.title,i.base_product_id,  wa.name, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.balance";
@@ -262,6 +268,10 @@ class InventoryController extends Controller
         $command = $connection->createCommand($sql);
         $command->execute();
         $data = $command->queryAll();
+        if(!isset($data) || empty($data)){
+            Yii::app()->user->setFlash('error', 'nothing to download...');
+            Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
+        }
         $dataArray = $this->arrangeWastageReportData($data);
         // var_dump($dataArray);die;
         $fileName = $date."_wastageReport.csv";
@@ -511,17 +521,26 @@ class InventoryController extends Controller
         $warehouses = $command->queryAll();
         $tempArray = array();
         foreach ($data as $key => $value) {
-            $row = array('title' => null);
-            foreach ($warehouses as $key => $warehouse) {
-                $nameSplit = explode(',', $warehouse['name']);
-                $warehouse['name'] = $nameSplit[0];
-                $row[$warehouse['name'].'_inv'] = null;
-                $row[$warehouse['name'].'_liq_inv'] = null;
-                $row[$warehouse['name'].'_wastage'] = null;
-                $row[$warehouse['name'].'_liquidation_wastage'] = null;
-                $row[$warehouse['name'].'_balance'] = null;
-                $row[$key] = null;
+            if(isset($tempArray[$value['base_product_id']])){
+                $row = $tempArray[$value['base_product_id']];
             }
+            else{
+                $row = array('title' => null);
+                foreach ($warehouses as $key1 => $warehouse) {
+                    if($warehouse['id'] == HD_OFFICE_WH_ID){
+                        continue;
+                    }
+                    $nameSplit = explode(',', $warehouse['name']);
+                    $warehouse['name'] = $nameSplit[0];
+                    $row[$warehouse['name'].'_inv'] = null;
+                    $row[$warehouse['name'].'_liq_inv'] = null;
+                    $row[$warehouse['name'].'_wastage'] = null;
+                    $row[$warehouse['name'].'_liquidation_wastage'] = null;
+                    $row[$warehouse['name'].'_balance'] = null;
+                    $row['separator'.$key1] = null;
+                }
+            }
+
             $nameSplit = explode(',', $value['name']);
             $value['name'] = $nameSplit[0];
             $w_name = $value['name'];
@@ -530,9 +549,10 @@ class InventoryController extends Controller
             $row[$w_name.'_wastage'] = $value['wastage'];
             $row[$w_name.'_liquidation_wastage'] = $value['liquidation_wastage'];
             $row[$w_name.'_balance'] = $value['balance'];
-            if(!array_key_exists($value['base_product_id'], $tempArray)){
+            $row['title'] = $value['title'];
+            /*if(!array_key_exists($value['base_product_id'], $tempArray)){
                 $row['title'] = $value['title'];
-            }
+            }*/
             $tempArray[$value['base_product_id']] = $row;
         }
         $finalArray = array();

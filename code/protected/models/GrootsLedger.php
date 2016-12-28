@@ -187,9 +187,10 @@ class GrootsLedger extends CActiveRecord
     public static function downloadCSVByIDs($cDate,$cdate1) {
 
 
-        $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',r.name as 'Client Name',r.retailer_type as 'Retailer Type',bp.title as 'Item Name',bp.pack_size as 'Pack Size', bp.pack_unit as 'Pack Unit', bp.pack_size_in_gm as 'Pack Size In Gm', ol.product_qty*bp.pack_size_in_gm/1000 as 'Order Quantity (Kg)', ol.delivered_qty*bp.pack_size_in_gm/1000 as 'Delivered Quantity (Kg)',TRUNCATE((ol.unit_price *ol.delivered_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID', oh.order_id as 'Order Id', ca.category_name as `Category Name` FROM `order_header` oh
+        $sqlchksubsid = "SELECT oh.`delivery_date`as 'Delivery Date',r.name as 'Client Name',r.retailer_type as 'Retailer Type', ge.name as 'Sales Representative',bp.title as 'Item Name',bp.base_title as 'Parent Item', bp.pack_size as 'Pack Size', bp.pack_unit as 'Pack Unit', bp.pack_size_in_gm as 'Pack Size In Gm', ol.product_qty*bp.pack_size_in_gm/1000 as 'Order Quantity (Kg)', ol.delivered_qty*bp.pack_size_in_gm/1000 as 'Delivered Quantity (Kg)',TRUNCATE((ol.unit_price *ol.delivered_qty),2) as 'Total Amount', oh.`invoice_number` as 'Invoice ID', oh.order_id as 'Order Id', ca.category_name as `Category Name` FROM `order_header` oh
 left join order_line as ol on ol.`order_id`=oh.`order_id` left join cb_dev_groots.retailer r on r.id=oh.user_id
 left join cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
+left join cb_dev_groots.groots_employee as ge on r.sales_rep_id = ge.id
 left join cb_dev_groots.product_category_mapping cpm on bp.base_product_id = cpm.base_product_id		
 left join cb_dev_groots.category ca on ca.category_id = cpm.category_id
 WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status not in ('Cancelled')";
@@ -292,4 +293,72 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         }
         ob_flush();
     }
+
+
+    public function downloadCollectionReport($startDate, $endDate){
+    	$connection = Yii::app()->secondaryDb;
+    	$criteria = new CDbCriteria;
+    	$criteria->select = 't.total_payable_amount, t.user_id, t.delivery_date, r.name';
+    	$criteria->condition = 't.delivery_date between "'.$startDate.'" and "'.$endDate.'" and t.status = "Delivered"';
+    	$criteria->join = 'left join cb_dev_groots.retailer as r on r.id = t.user_id';
+    	$criteria->order = 't.delivery_date, t.user_id';
+    	$orders = OrderHeader::model()->findAll($criteria);
+    	$criteria2 = new CDbCriteria;
+    	$criteria2->select = 't.retailer_id, t.date, t.paid_amount,t.cheque_status, t.payment_type, t.cheque_no, r.name as retailerName';
+    	$criteria2->condition = 't.date between "'.$startDate.'" and "'.$endDate.'" and t.status =1';
+    	$criteria2->join = 'left join cb_dev_groots.retailer as r on r.id = t.retailer_id';
+    	$criteria2->order = 't.date, t.retailer_id';
+    	$payments = RetailerPayment::model()->findAll($criteria2);
+    	$result = array();
+		foreach ($orders as $order) {
+			$temp['date'] = date('Y-m-d', strtotime($order['delivery_date']));
+			$temp['client_id'] = $order['user_id'];
+			$temp['client_name'] = $order['name'];
+			$temp['type'] = 'order';
+			$temp['amount'] = $order['total_payable_amount'];
+			$temp['payment_type'] = null;
+			$temp['cheque_status'] = null;
+			$temp['cheque_no'] = null;
+			array_push($result, $temp);
+		}
+		foreach ($payments as $payment) {
+			$temp['date'] = date('Y-m-d', strtotime($payment['date'])) ;
+			$temp['client_id'] = $payment['retailer_id'];
+			$temp['client_name'] = $payment['retailerName'];
+			$temp['type'] = 'payment';
+			$temp['amount'] = $payment['paid_amount'];
+			$temp['payment_type'] = $payment['payment_type'];
+			$temp['cheque_status'] = $payment['cheque_status'];
+			$temp['cheque_no'] = $payment['cheque_no'];
+			array_push($result, $temp);
+		}
+		$type = $client_id = $date = array();
+		foreach ($result as $key => $value) {
+			$date[$key] = $value['date'];
+			$type[$key] = $value['type'];
+			$client_id[$key] = $value['client_id'];
+		}
+		array_multisort($date, SORT_DESC , $client_id, SORT_DESC, $type, SORT_ASC, $result);
+		$fileName = $startDate.'collectionReport'.$endDate.".csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($result['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($result['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($result AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+	}
 }

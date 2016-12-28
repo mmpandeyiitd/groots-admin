@@ -28,6 +28,45 @@ $('.search-form form').submit(function(){
 ?>
 
 <h1>Manage Transfer Orders</h1>
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+	<div class="Csv" style="color:red;">
+		<?php echo Yii::app()->user->getFlash('error'); ?>
+	</div>
+<?php endif; ?>
+
+	<div class="row">
+
+		<?php
+		echo '<br>';
+		echo 'Select Date    ';
+		$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+			'name'=>'date',
+			// additional javascript options for the date picker plugin
+			'options'=>array(
+				'dateFormat' => 'yy-mm-dd',
+				'showAnim'=>'fold',
+			),
+			'htmlOptions'=>array(
+				'style'=>'height:20px;'
+			),
+		)); ?>
+
+	</div>
+	<!--<div align = 'right'>
+		<?php
+/*		echo CHtml::button('Download Report', array('submit' => array('transferHeader/downloadTransferReport&w_id='.$w_id)))
+		*/?>
+	</div>-->
+
+
+	<div class = "row" style="float:right">
+		<?php
+		$url = Yii::app()->controller->createUrl("transferHeader/downloadTransferReport",array('w_id' => $w_id));
+		echo CHtml::button('Download Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')"));
+		?>
+	</div>
+
 <br>
 	<h4>Auto Generate Transfer Order</h4>
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -35,11 +74,7 @@ $('.search-form form').submit(function(){
 	'action'=>Yii::app()->createUrl('//transferHeader/dailyTransfer',array("w_id"=>$w_id)),
 	'enableAjaxValidation'=>false,
 )); ?>
-<div align = 'right'>
-<?php
-echo CHtml::button('Download Report', array('submit' => array('transferHeader/downloadTransferReport')))
-?>
-</div>
+
 <?php echo $form->errorSummary($model->errors); ?>
 	<div class="row">
 		<?php echo $form->labelEx($model, 'delivery_date'); ?>
@@ -130,11 +165,12 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 			'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
 			'type' => 'raw',
 			'value' => function ($data) use ($w_id) {
-				$text = "Update";
+				$text1 = "Update";
+				$text2 = "Add";
 				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
 				}*/
-				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id))."'"));
+				return CHtml::button($text1,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id, "type"=>"update"))."'")) . CHtml::button($text2,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id, "type"=>"add"))."'"));
 			},
 
 		),
@@ -214,13 +250,30 @@ echo CHtml::button('Download Report', array('submit' => array('transferHeader/do
 			'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
 			'type' => 'raw',
 			'value' => function ($data) use ($w_id) {
-				$text = "Update";
+				$text1 = "Update";
+				$text2 = "Add";
 				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
 				}*/
-				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id))."'"));
+				return CHtml::button($text1,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id, "type"=>"update"))."'")). CHtml::button($text2,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("transferHeader/update",array("w_id"=>$w_id, "id"=>$data->id, "type"=>"add"))."'"));
 			},
 
 		),
 	),
 )); ?>
+
+
+<script type="text/javascript">
+
+	function onClickDownloadProcurementReport(url){
+		//document.location.href
+		var date = $("#date").val().trim();
+		url = url + "&date="+date;
+		//window.location.assign(url);
+		console.log(url);
+		window.open(url, '_blank');
+	}
+
+
+
+</script>

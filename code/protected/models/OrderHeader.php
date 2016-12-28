@@ -307,7 +307,7 @@ class OrderHeader extends CActiveRecord {
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'sort'=>array(
-                'defaultOrder'=>'created_date DESC',
+                'defaultOrder'=>'delivery_date DESC, created_date DESC',
             ),
 
 //            'pagination' => array(

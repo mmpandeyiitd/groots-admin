@@ -11,6 +11,9 @@ $w_id='';
 if(isset($_GET['w_id'])){
 	$w_id = $_GET['w_id'];
 }
+if($w_id == HD_OFFICE_WH_ID){
+	unset($w_id);
+}
 
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'order-header-form',

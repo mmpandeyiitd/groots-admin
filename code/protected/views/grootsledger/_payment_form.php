@@ -109,13 +109,14 @@
         else{
              echo CHtml::submitButton('Create', array('name'=>'create'));
         }
+        $backUrl = "index.php?r=Grootsledger/admin&retailerId=".$model->retailer_id."&w_id=".$w_id;
         ?>
 
 
-        <a href="index.php?r=Grootsledger/admin&retailerId=<?php echo $model->retailer_id; ?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+        <a href="<?php echo $backUrl; ?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
 
     </div>
 
-    <?php $this->endWidget(); ?>
+    <?php $this->endWidget();   ?>
 
 </div><!-- form -->

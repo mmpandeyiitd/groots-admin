@@ -25,7 +25,8 @@ function getIfExist($quantitiesMap, $key, $data){
     else
         return 0;
 }
-
+//echo "<pre>";
+//print_r($quantitiesMap['orderSum']);
 
 if($w_id==SOURCE_WH_ID){
     $isSourceWarehouse=true;
@@ -34,6 +35,13 @@ else{
     $isSourceWarehouse=false;
 }
 ?>
+
+
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="Csv" style="color:red;">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
 
 <div class="form">
 
@@ -71,8 +79,8 @@ else{
         )); ?>
         <?php echo $form->error($model,'date'); ?>
         <?php
-
-        echo CHtml::submitButton('submit', array('name'=>'inventory-date'));
+        $url = Yii::app()->controller->createUrl("Inventory/create",array('w_id' => $w_id));
+        echo CHtml::submitButton('submit', array('name'=>'inventory-date', 'onclick' => "onClickDate('".$url."')"));
 
         ?>
     </div>
@@ -103,11 +111,20 @@ $balance = 0;
                     'type' => 'raw',
                 ),
                 array(
-                    'header' => 'Prev Day Inv',
+                    'header' => 'Prev Day Inv(+)',
                     'name' => 'prev_day_inv',
                     'headerHtmlOptions' => array('style' => 'width:15%;'),
                     'htmlOptions' => array('style' => 'width:15%;'),
                     'value' => 'round($data["prev_day_inv"], 2)',
+                    'type' => 'raw',
+                ),
+                array(
+                    'header' => 'Tobe sent Azdpr(+)',
+                    'name' => 'total_order',
+                    'headerHtmlOptions' => array('style' => 'width:15%;'),
+                    'htmlOptions' => array('style' => 'width:15%;'),
+                    'visible' => !$isSourceWarehouse,
+                    'value' => 'round($data["prev_day_liq_inv"], 2)',
                     'type' => 'raw',
                 ),
                 array(
@@ -151,15 +168,7 @@ $balance = 0;
                     },
                     'type' => 'raw',
                 ),
-                array(
-                    'header' => 'tobe sent Azdpr(+)',
-                    'name' => 'total_order',
-                    'headerHtmlOptions' => array('style' => 'width:15%;'),
-                    'htmlOptions' => array('style' => 'width:15%;'),
-                    'visible' => !$isSourceWarehouse,
-                    'value' => 'round($data["prev_day_liq_inv"], 2)',
-                    'type' => 'raw',
-                ),
+
                 array(
                     'header' => 'Sent Azdpr(-)',
                     'name' => 'total_order',
@@ -239,7 +248,7 @@ $balance = 0;
                     'headerHtmlOptions' => array('style' => 'width:15%;'),
                     'htmlOptions' => array('style' => 'width:15%;'),
                     'value' => function ($data) use ($quantitiesMap) {
-                        $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] + $data["prev_day_liq_inv"] +$quantitiesMap['totalReceivedLiqInv'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $quantitiesMap['totalSentLiqInv'] - $data['secondary_sale'] - $data['liquidation_wastage'] - $data['wastage'];
+                        $balance = $quantitiesMap['totalPurchase'] +  $quantitiesMap['totalTransferIn'] + $data["prev_day_inv"] + $data["prev_day_liq_inv"] +$quantitiesMap['totalReceivedLiqInv'] - $quantitiesMap['totalOrder'] - $quantitiesMap['totalTransferOut'] - $data['present_inv'] - $data['liquid_inv'] - $quantitiesMap['totalSentLiqInv'] - $data['secondary_sale'] - $data['liquidation_wastage'] - $data['wastage'];
                         return round($balance, 2);
                     },
                     'type' => 'raw',
@@ -354,7 +363,7 @@ $balance = 0;
             ),
 
             array(
-                'header' => 'Prev Day Inv()',
+                'header' => 'Prev Day Inv(+)',
                 'type' => 'raw',
                 'class'=>'DataColumn',
                 'evaluateHtmlOptions'=>true,
@@ -362,14 +371,22 @@ $balance = 0;
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"prev-day-inv_{$data->base_product_id}"'),
                 'visible' => !$editOnly,
                 'value'=>function($data) use ($quantitiesMap){
-                    /*if(isset($quantitiesMap['prevDayInv'][$data->base_product_id])){
-                        $data->prev_day_inv = $quantitiesMap['prevDayInv'][$data->base_product_id];
-                    }
-                    else{
-                        $data->prev_day_inv = 0;
-                    }*/
                     $data->prev_day_inv = empty($quantitiesMap['prevDayInv'][$data->base_product_id]) ? 0 : $quantitiesMap['prevDayInv'][$data->base_product_id];
                     return $data->prev_day_inv;
+                },
+            ),
+            array(
+                'header' => 'tobe sent Azdpr (+)',
+                'type' => 'raw',
+                'class'=>'DataColumn',
+                'evaluateHtmlOptions'=>true,
+                'headerHtmlOptions' => array('style' => 'width:10%;'),
+                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"toBeSentLiqInv_{$data->base_product_id}"'),
+                'visible' => !$editOnly && !$isSourceWarehouse,
+                'value'=>function($data) use ($quantitiesMap){
+
+                    return empty($quantitiesMap['prevDayLiqInv'][$data->base_product_id]) ? 0 : $quantitiesMap['prevDayLiqInv'][$data->base_product_id];
+
                 },
             ),
             array(
@@ -411,6 +428,8 @@ $balance = 0;
                 'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"order_{$data->base_product_id}"'),
                 'visible' => !$editOnly,
                 'value'=>function($data) use ($quantitiesMap){
+                    //echo "order-".$quantitiesMap['orderSum'][$data->base_product_id];die;
+                    //if($data->base_product_id])
                     if(isset($quantitiesMap['orderSum'][$data->base_product_id]))
                         return $quantitiesMap['orderSum'][$data->base_product_id];
                     else
@@ -452,26 +471,7 @@ $balance = 0;
                     return CHtml::textField('extra_inv[]', $data->extra_inv_absolute, array('class'=>'inv-input id-field readOnlyInput', 'id'=>'extra-inv_'.$data->base_product_id, 'readonly'=>'readonly' ));
                 },
             ),
-            array(
-                'header' => 'tobe sent Azdpr (+)',
-                'type' => 'raw',
-                'class'=>'DataColumn',
-                'evaluateHtmlOptions'=>true,
-                'headerHtmlOptions' => array('style' => 'width:10%;'),
-                'htmlOptions' => array('style' => 'width:10%;', 'id'=> '"toBeSentLiqInv_{$data->base_product_id}"'),
-                'visible' => !$editOnly && !$isSourceWarehouse,
-                /*'value'=>function($data) use ($quantitiesMap){
-                    if(isset($quantitiesMap['toBeSentLiqInv'][$data->base_product_id]))
-                        return $quantitiesMap['toBeSentLiqInv'][$data->base_product_id];
-                    else
-                        return 0;
-                },*/
-                'value'=>function($data) use ($quantitiesMap){
 
-                    return empty($quantitiesMap['prevDayLiqInv'][$data->base_product_id]) ? 0 : $quantitiesMap['prevDayLiqInv'][$data->base_product_id];
-
-                },
-            ),
             array(
                 'header' => 'Sent Azdpr(-)',
                 'type' => 'raw',
@@ -580,9 +580,10 @@ $balance = 0;
                     $toBeSentLiqInv = getIfExist($quantitiesMap,'prevDayLiqInv', $data);
                     $sentLiqInv =getIfExist($quantitiesMap,'sentLiqInv', $data);
                     $receivedLiqInv =getIfExist($quantitiesMap,'receivedLiqInv', $data);
-                    $secondarySale = empty($data->secondary_sale) ? 0 : $data->secondary_sale ;;
+                    $secondarySale = empty($data->secondary_sale) ? 0 : $data->secondary_sale ;
+                    $prevDayInv = empty($data->prev_day_inv) ? 0 : $data->prev_day_inv ;
 
-                    $balance =  $purchase+$trans_in +$toBeSentLiqInv +$receivedLiqInv -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$sentLiqInv +$secondarySale +$wastage+$wastage_others);
+                    $balance =  $purchase+$trans_in+$prevDayInv +$toBeSentLiqInv +$receivedLiqInv -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$sentLiqInv +$secondarySale +$wastage+$wastage_others);
                     $data->balance = $balance;
                     if(empty($data->balance)){
                         $data->balance = 0;
@@ -888,6 +889,14 @@ $balance = 0;
         //window.location.assign(url);
         //console.log(url);
         window.open(url, '_blank');
+    }
+
+    function onClickDate(url){
+        var date = $("#date").val().trim();
+        url = url + "&date="+date;
+        console.log(url);
+        //return false;
+        window.open(url, '_self');
     }
 
 

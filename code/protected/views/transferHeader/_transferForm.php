@@ -233,11 +233,11 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 'type' => 'raw',
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
-                'visible' => $visibleReceived,
-                'value' => function ($data) use($transferLineMap, $update, $isSystemGenerated) {
-                    if(isset($transferLineMap[$data->base_product_id])){
+                //'visible' => $visibleReceived,
+                'value' => function ($data) use( $update, $isSystemGenerated) {
+                    /*if(isset($transferLineMap[$data->base_product_id])){
                         $data->order_qty = $transferLineMap[$data->base_product_id]['order_qty'];
-                    }
+                    }*/
                     $readonly = false;
                     if($update && $isSystemGenerated){
                         $readonly = 'readonly';
@@ -251,10 +251,10 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'visible' => $visibleDelivered,
-                'value' => function ($data) use($transferLineMap) {
-                    if(isset($transferLineMap[$data->base_product_id])){
+                'value' => function ($data)  {
+                    /*if(isset($transferLineMap[$data->base_product_id])){
                         $data->delivered_qty = $transferLineMap[$data->base_product_id]['delivered_qty'];
-                    }
+                    }*/
                     return CHtml::textField('delivered_qty[]', $data->delivered_qty, array('class'=>'input inputs', 'id'=>'delivered_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
             ),
@@ -263,10 +263,10 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
                 'headerHtmlOptions' => array('style' => 'width:15%;'),
                 'htmlOptions' => array('style' => 'width:15%;'),
                 'visible' => $visibleReceived,
-                'value' => function ($data) use($transferLineMap) {
-                    if(isset($transferLineMap[$data->base_product_id])){
+                'value' => function ($data)  {
+                    /*if(isset($transferLineMap[$data->base_product_id])){
                         $data->received_qty = $transferLineMap[$data->base_product_id]['received_qty'];
-                    }
+                    }*/
                     return CHtml::textField('received_qty[]', $data->received_qty, array('class'=>'input inputs', 'id'=>'received_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
                 },
                 'type' => 'raw',
@@ -327,7 +327,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
         ?>
 
 
-        <a href="index.php?r=transferHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+        <a href="index.php?r=transferHeader/admin&w_id=<?php echo $w_id;?>" class="button_new" style="width: auto;" target="_self"  >Back</a>
 
     </div>
 
@@ -397,7 +397,7 @@ elseif($this->checkAccessByData('TransferEditor', array('warehouse_id'=>$model->
 
 
             var parent_id = $(this).attr('id').split("_")[1];
-            updateItemTotalRow(parent_id);
+            //updateItemTotalRow(parent_id); do not calculate child sum on start up
 
             $(this).find("input[type=text] ").each(function(){
                 $(this).attr('readonly', 'readonly');

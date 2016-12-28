@@ -70,12 +70,12 @@ $('.search-form form').submit(function(){
 </div>
 
 
-<div class = "row" style="float:right">
-    <?php 
+<!--<div class = "row" style="float:right">
+    <?php /*
     $url = Yii::app()->controller->createUrl("PurchaseHeader/downloadReconciliationReport",array('w_id' => $w_id));
     echo CHtml::button('Reconciliation Report', array('onclick' => "onClickDownloadProcurementReport('".$url."')")); 
-    ?>
-</div>
+    */?>
+</div>-->
 
 <div class = "row" style="float:right">
     <?php 
@@ -139,7 +139,7 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		'id',
 		//'warehouse_id',
-		array(
+		/*array(
 			'header' => 'vendor',
 			//'headerHtmlOptions' => array('style' => 'width:40%;'),
 			//'htmlOptions' => array('style' => 'width:40%;'),
@@ -147,10 +147,10 @@ $('.search-form form').submit(function(){
 				return CHtml::label($data->Vendor->name, $data->Vendor->name,array('class'=>'title'));
 			},
 			'type' => 'raw',
-		),
+		),*/
 		'delivery_date',
-		'payment_method',
-		'payment_status',
+		/*'payment_method',
+		'payment_status',*/
 		array(
 			'name' => 'purchase_type',
 			'value' => '$data->purchase_type',
@@ -180,11 +180,12 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
 			'type' => 'raw',
 			'value' => function($data){
-				$text = "Update";
+				$text1 = "Update";
+				$text2 = "Add";
 				/*if($data->delivery_date < date('Y-m-d')){
 					$text = "View";
 				}*/
-				return CHtml::button($text,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id))."'"));
+				return CHtml::button($text1,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id, "type"=>"update"))."'")) . CHtml::button($text2,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id, "type"=>"add"))."'"));
 			},
 		),
 	),

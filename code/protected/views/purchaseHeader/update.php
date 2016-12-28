@@ -21,7 +21,7 @@ $this->menu=array(
 <?php $this->renderPartial('_purchaseForm', array(
 	'model'=>$model,
 	'inv_header'=>$inv_header,
-	'purchaseLineMap'=> $purchaseLineMap,
+	//'purchaseLineMap'=> $purchaseLineMap,
 	'dataProvider'=>$dataProvider,
 	'w_id'=>$w_id,
 	'update'=>$update,
