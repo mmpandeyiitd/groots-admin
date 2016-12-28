@@ -200,9 +200,9 @@ class Retailer extends CActiveRecord {
     public static function sgSendMail($mailArray) {
         //echo $email.$pass;die;
         // $url  = 'http://sendgrid.com/';
-        $url = 'https://api.sendgrid.com/';
-        $user = 'rishabhsingla';
-        $pass = 'lwi@pranav123';
+        $url = SG_URL;
+        $user = SG_USER;
+        $pass = SG_PASS;
 
         $params = array();
         $params['api_user'] = $user;
