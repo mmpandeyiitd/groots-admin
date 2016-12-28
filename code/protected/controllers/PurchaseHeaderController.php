@@ -161,29 +161,27 @@ class PurchaseHeaderController extends Controller
 
                 if($model->save()){
 
-                    if(isset($_POST['order_qty'])){
-                        foreach ($_POST['order_qty'] as $key => $quantity) {
-                            if ($quantity > 0) {
+                    if(isset($_POST['order_qty']) || isset($_POST['received_qty'])){
+                        foreach ($_POST['base_product_id'] as $key => $id) {
+
+                            $quantity = '';
+                            if(isset($_POST['order_qty'][$key])){
+                                $quantity = $_POST['order_qty'][$key];
+                            }
+                            $receivedQty = '';
+                            if(isset($_POST['received_qty'][$key])){
+                                $receivedQty = $_POST['received_qty'][$key];
+                            }
+
+                            if ($quantity > 0 || $receivedQty > 0) {
                                 $purchaseLine = new PurchaseLine();
                                 $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
-                                if(isset($_POST['order_qty'][$key]) && $_POST['order_qty'][$key] > 0){
+                                $purchaseLine->base_product_id = $id;
+                                if($quantity > 0){
                                     $purchaseLine->order_qty = $quantity;
                                 }
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-                                $purchaseLine->save();
-                            }
-                            $parentIdToUpdate = $_POST['parent_id'][$key];
-                        }
-                    }
-                    if(isset($_POST['received_qty'])){
-                        foreach ($_POST['received_qty'] as $key => $quantity) {
-                            if ($quantity > 0) {
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
-                                if(isset($_POST['received_qty'][$key]) && $_POST['received_qty'][$key] > 0){
-                                    $purchaseLine->received_qty = $quantity;
+                                if($receivedQty > 0){
+                                    $purchaseLine->received_qty = $receivedQty;
                                 }
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
                                 $purchaseLine->save();
@@ -191,6 +189,7 @@ class PurchaseHeaderController extends Controller
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
+
                     if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
                         array_push($parentIdArr, $parentIdToUpdate);
                     }
@@ -287,54 +286,53 @@ class PurchaseHeaderController extends Controller
                     $model->comment = null;
                 }
                 if ($model->save()) {
-                    if(isset($_POST['order_qty'])){
-                        foreach ($_POST['order_qty'] as $key => $quantity) {
+                    if(isset($_POST['order_qty']) || isset($_POST['received_qty'])){
 
-                            if (isset($purchaseLineMap[$_POST['base_product_id'][$key]])) {
-                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
-                            } else {
+
+                        foreach ($_POST['base_product_id'] as $key => $id) {
+                            $order_qty = $received_qty = '';
+                            if(isset($_POST['order_qty'][$key])){
+                                $order_qty = trim($_POST['order_qty'][$key]);
+                            }
+
+                            if(isset($_POST['received_qty'][$key]) ){
+                                $received_qty = trim($_POST['received_qty'][$key]);
+                            }
+
+                            if (isset($purchaseLineMap[$id])) {
+                                $purchaseLine = $purchaseLineMap[$id];
+                            }
+                            else if(!empty($order_qty) || !empty($received_qty)){
                                 $purchaseLine = new PurchaseLine();
                                 $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
+                                $purchaseLine->base_product_id = $id;
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
-
                             }
-
-                            if (isset($_POST['order_qty'][$key]) ) {
-                                if($quantity==''){
-                                    $quantity = 0;
+                            if(isset($purchaseLine)){
+                                if($order_qty != ""){
+                                    $purchaseLine->order_qty = $order_qty;
                                 }
-                                $purchaseLine->order_qty = $quantity;
+
+                                if($received_qty != ""){
+                                    $purchaseLine->received_qty = $received_qty;
+                                }
+
+
+                                $purchaseLine->save();
+
+                            }
+                            else{
+                                if(isset($purchaseLineMap[$id])){
+                                    $purchaseLine = $purchaseLineMap[$id];
+                                    $purchaseLine->deleteByPk($purchaseLine->id);
+                                }
+
                             }
 
-                            $purchaseLine->save();
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
-                    if(isset($_POST['received_qty'])){
-                        foreach ($_POST['received_qty'] as $key => $quantity) {
 
-                            if (isset($purchaseLineMap[$_POST['base_product_id'][$key]])) {
-                                $purchaseLine = $purchaseLineMap[$_POST['base_product_id'][$key]];
-                            } else {
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-
-                            }
-
-                            if (isset($_POST['received_qty'][$key]) ) {
-                                if($quantity==''){
-                                    $quantity = 0;
-                                }
-                                $purchaseLine->received_qty = $quantity;
-                            }
-
-                            $purchaseLine->save();
-                            $parentIdToUpdate = $_POST['parent_id'][$key];
-                        }
-                    }
 
                     $transaction->commit();
                     if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
@@ -386,16 +384,19 @@ class PurchaseHeaderController extends Controller
 
                 }
                 $parentPl = PurchaseLine::model()->findByAttributes(array('base_product_id'=>$parentId, 'purchase_id'=>$purchaseId));
-                if($parentPl==false){
+                if($parentPl==false && ($orderQty>0 || $receivedQty>0 || $tobe_procured_qty > 0)){
                     $parentPl = new PurchaseLine();
                     $parentPl->purchase_id = $purchaseId;
                     $parentPl->base_product_id = $parentId;
                     $parentPl->created_at = date('Y-m-d');
                 }
-                $parentPl->order_qty = $orderQty;
-                $parentPl->received_qty = $receivedQty;
-                $parentPl->tobe_procured_qty = $tobe_procured_qty;
-                $parentPl->save();
+                if($parentPl){
+                    $parentPl->order_qty = $orderQty;
+                    $parentPl->received_qty = $receivedQty;
+                    $parentPl->tobe_procured_qty = $tobe_procured_qty;
+                    $parentPl->save();
+                }
+
             }
         }
     }
