@@ -119,8 +119,10 @@ class VendorDao{
     }
 
     public function getAllVendorPayableAmount($startDate, $endDate){
+       // $endDate = date('Y-m-d', strtotime($endDate.' + 1 day'));
+        //var_dump($endDate);die;
         $connection = Yii::app()->secondaryDb;
-        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by h.vendor_id';
+        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
         $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
@@ -136,6 +138,7 @@ class VendorDao{
             if(! empty($value['paid_amount']))
                 $payment[$value['vendor_id']] = $value['paid_amount'];
         }
+        //var_dump($order, $payment);die;
         foreach ($order as $key => $value) {
             if(array_key_exists($key, $payment)){
                 $order[$key] -= $payment[$key];
@@ -150,6 +153,8 @@ class VendorDao{
     }
 
     public function getVendorPayableAmount($startDate, $endDate, $vendor_id, $paymentEndDate){
+        //$endDate = date('Y-m-d', strtotime($endDate.' + 1 day'));
+        //$paymentEndDate = date('Y-m-d', strtotime($paymentEndDate.' + 1 day'));
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and (l.vendor_id = '.$vendor_id.' or h.vendor_id = '.$vendor_id.') and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0)' ; //group by h.delivery_date order by h.delivery_date';
         $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
