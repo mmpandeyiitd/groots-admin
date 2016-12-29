@@ -163,8 +163,16 @@ class PurchaseHeaderController extends Controller
 
                     if(isset($_POST['order_qty']) || isset($_POST['received_qty'])){
                         foreach ($_POST['base_product_id'] as $key => $id) {
-                            $quantity = $_POST['order_qty'][$key];
-                            $receivedQty = $_POST['received_qty'][$key];
+                            $quantity = '';
+                            if(isset($_POST['order_qty'][$key])){
+                                $quantity = $_POST['order_qty'][$key];
+                            }
+                            $receivedQty = '';
+                            if(isset($_POST['received_qty'][$key])){
+                                $receivedQty = $_POST['received_qty'][$key];
+                            }
+                            
+                            
                             if ($quantity > 0 || $receivedQty > 0) {
                                 $purchaseLine = new PurchaseLine();
                                 $purchaseLine->purchase_id = $model->id;
@@ -227,7 +235,7 @@ class PurchaseHeaderController extends Controller
 	public function actionUpdate($id)
 	{
 	    //echo "<pre>";
-		//print_r($_POST);die;
+		//var_dump($_POST);die;
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -295,7 +303,7 @@ class PurchaseHeaderController extends Controller
                                 $purchaseLine->purchase_id = $model->id;
                                 $purchaseLine->base_product_id = $_POST['base_product_id'][$key];
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
-
+                                $purchaseLineMap[$_POST['base_product_id'][$key]] = $purchaseLine;
                             }
 
                             if (isset($_POST['order_qty'][$key]) ) {
@@ -303,6 +311,13 @@ class PurchaseHeaderController extends Controller
                                     $quantity = 0;
                                 }
                                 $purchaseLine->order_qty = $quantity;
+                            }
+                            if(!empty($_POST['InventoryHeader']['vendor_id'][$key])){
+                                $purchaseLine->vendor_id = $_POST['InventoryHeader']['vendor_id'][$key];    
+                            }
+                            else $purchaseLine->vendor_id = null;
+                            if(!empty($_POST['price'][$key])){
+                                $purchaseLine->price = $_POST['price'][$key];
                             }
                             //$purchaseLine->vendor_id = $model->vendor_id;
                             

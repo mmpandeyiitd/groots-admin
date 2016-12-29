@@ -323,8 +323,8 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             array(
                 'header' => 'Price',
                 'type' => 'raw',
-                'value' => function($data){
-                    return CHtml::textField('price[]','', array('style' => 'width:50px;', 'class' => 'price'));
+                'value' => function($data) use ($update){
+                    return CHtml::textField('price[]',$data->price, array('style' => 'width:50px;', 'class' => 'price'));
                 }
                 ),
         ),
@@ -549,7 +549,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
        clone.find('.inputs').val('');
        clone.find('.received-inputs').val('');
        clone.find('.price').val('');
-       clone.find('.dropDown').val('Select a Vendor');     
+       clone.find('.dropDown').val(0);     
        //console.log(clone);
        clone.id = row.id;
        clone.insertAfter(row); 

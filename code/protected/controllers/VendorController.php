@@ -146,7 +146,7 @@ class VendorController extends Controller
 
 	public function actionProductMap($vendor_id){
 		//var_dump($_POST);die;
-		//flash , transaction remaning, price = '';
+		//flash , transaction remaning, price = ''
 		$criteria  = new CDbCriteria;
 		$criteria->select  = 'name, bussiness_name, mobile';
 		$criteria->condition = 'id = '.$vendor_id.' and status = 1';
@@ -244,12 +244,13 @@ class VendorController extends Controller
 		foreach ($totalPendingMap as $key => $value) {
 			$totalPending += $value;
 		}
+		var_dump($totalPending);die;
 		$totalPendingMap['total'] = strval($totalPending);
 		$skuMap = VendorDao::getAllVendorSkus();
 		$model = new Vendor();
 		$vendorPayment = new VendorPayment;
 		$vendorPayment->date = $endDate;
-		$payable = VendorDao::getPayable($endDate, $nextDate				);
+		$payable = VendorDao::getPayable($endDate, $nextDate);
 		$totalPayable = 0;
 		foreach ($payable as $key => $value) {
 			$totalPayable += $value['amount'];

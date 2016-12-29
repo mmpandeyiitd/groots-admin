@@ -2276,3 +2276,11 @@ nav.vertical li.ex1:hover > ul{
 #vendor-product-grid .unsorted {
     display:table-row;
 }
+
+#purchase-header-grid .child {
+    display:none;
+}
+
+#purchase-header-grid .unsorted {
+    display:table-row;
+}

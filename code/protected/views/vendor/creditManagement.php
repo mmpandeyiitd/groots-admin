@@ -183,6 +183,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		)
 );
 
+echo 'Total Pending : '.$totalPendingMap['total']. '<br>';
+echo 'Total Payable : '.$payable['total'];
 ?>
 <div class="row buttons">
 	<?php echo CHtml::submitButton('Save', array('name' => 'Payment')); ?>
