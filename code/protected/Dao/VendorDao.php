@@ -216,7 +216,7 @@ class VendorDao{
     }
 
     public function getLastPendingDate($date, $initialPendingDate){
-        while($date > $initialPendingDate){
+        while(strtotime($date) > strtotime($initialPendingDate)){
             $initialPendingDate = date('Y-m-d', strtotime($initialPendingDate.' - 2 month'));
         }
     }

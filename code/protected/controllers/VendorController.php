@@ -28,7 +28,7 @@ class VendorController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','vendorScript'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -285,40 +285,7 @@ class VendorController extends Controller
 		
 	}
 
-	public function actionVendorScript(){
-		$username = "root";
-		$password = "root";
-		$localhost = "localhost";
-		$connection = mysql_connect($localhost,$username, $password);
-		mysql_select_db('cb_dev_groots');
-		$sql = 'select due_date, id, name, payment_start_date, payment_days_range, initial_pending_date, initial_pending_amount from cb_dev_groots.vendors where status = 1';
-		$query = mysql_query($sql);
-		$rows = mysql_num_rows($query);
-		$i=0;
-		$today = date('Y-m-d');
-		$yesterday = date('Y-m-d', strtotime($today.' - 1 day'));
-		$initial_pending_date = mysql_result($query, 0, 3);
-		mysql_data_seek($query, 0);
-		$vendorPending = VendorDao::getAllVendorPayableAmount(date('Y-m-d', strtotime($initial_pending_date.' + 1 day')), $yesterday);
-		while($i < $rows){
-			$current = mysql_fetch_array($query);
-			//var_dump($current);
-			if(strtotime($current['due_date']) == strtotime($yesterday)){
-				$newDueDate = date('Y-m-d', strtotime($current['due_date'].' + '.$current['payment_days_range'].' day'));
-				$newStartDate = date('Y-m-d', strtotime($current['payment_start_date'].' + '.$current['payment_days_range'].' day'));
-				$sql2 = 'update vendors set due_date = "'.$newDueDate.'", payment_start_date = "'.$newStartDate.'" where id = '.$current['id'];
-
-				$update = mysql_query($sql2);
-			}
-			if(strtotime($yesterday) == date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month'))){
-				$totalNow = $current['initial_pending_amount'] + $vendorPending[$current['id']];
-				$newBaseDate = strtotime($current['initial_pending_date'].' + 2 month');
-				$updateLog = 'insert into vendor_log values(null, '.$current['id'].', '.$totalNow.', '.$newBaseDate.', CURDATE(), null)';
-				$updateVendorTable = 'update vendors set initial_pending_date = "'.$yesterday.'" , initial_pending_amount = "'.$totalNow.'"';
-			}
-			$i++;
-		}
-	}
+	
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
