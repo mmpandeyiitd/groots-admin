@@ -1,7 +1,7 @@
 <?php
 /* @var $this VendorPaymentController */
 /* @var $model VendorPayment */
-
+$vendor_id = $_GET['id'];
 $this->breadcrumbs=array(
 	'Vendor Payments'=>array('index'),
 	$model->id=>array('view','id'=>$model->id),
@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 
 $this->menu=array(
 	array('label'=>'List VendorPayment', 'url'=>array('index')),
-	array('label'=>'Create VendorPayment', 'url'=>array('create')),
+	array('label'=>'Create VendorPayment', 'url'=>array('create', 'vendor_id' => $model->vendor_id)),
 	array('label'=>'View VendorPayment', 'url'=>array('view', 'id'=>$model->id)),
 	array('label'=>'Manage VendorPayment', 'url'=>array('admin')),
 );

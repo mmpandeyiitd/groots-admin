@@ -7,7 +7,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create VendorPayment', 'url'=>array('create')),
+	//array('label'=>'Create VendorPayment', 'url'=>array('create')),
 	array('label'=>'Manage VendorPayment', 'url'=>array('admin')),
 );
 ?>
