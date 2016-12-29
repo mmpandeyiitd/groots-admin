@@ -266,6 +266,11 @@ class TransferHeaderController extends Controller
             foreach ($transferLines as $item){
                 $transferLineMap[$item->base_product_id] = $item;
             }
+            $parentIdArr = array();
+            $parentIdToUpdate = '';
+            if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
+                array_push($parentIdArr, $_POST['parent_id'][0]);
+            }
             try {
 
                 $model->attributes = $_POST['TransferHeader'];
@@ -285,16 +290,13 @@ class TransferHeaderController extends Controller
                             $received_qty = trim($_POST['received_qty'][$key]);
                         }
 
-                        $parentIdArr = array();
-                        $parentIdToUpdate = '';
-                        if(isset($_POST['parent_id'][0]) && $_POST['parent_id'][0] >= 0){
-                            array_push($parentIdArr, $_POST['parent_id'][0]);
-                        }
+
+
 
                         //echo "ord ".$order_qty." delv ".$delivered_qty." rec ".$received_qty;die;
                         //if ($order_qty > 0 || $delivered_qty > 0 || $received_qty > 0) {
-                            if(isset($transferLineMap[$_POST['base_product_id'][$key]])){
-                                $transferLine = $transferLineMap[$_POST['base_product_id'][$key]];
+                            if(isset($transferLineMap[$bp_id])){
+                                $transferLine = $transferLineMap[$bp_id];
                                 //echo "base-".$_POST['base_product_id'][$key]." del-".$delivered_qty."\n";
                             }
                             else if(!empty($order_qty) || !empty($delivered_qty) || !empty($received_qty)){
@@ -389,16 +391,19 @@ class TransferHeaderController extends Controller
 
                 }
                 $parentTl = TransferLine::model()->findByAttributes(array('base_product_id'=>$parentId, 'transfer_id'=>$transferId));
-                if($parentTl==false){
+                if($parentTl==false && ($orderQty>0 || $receivedQty>0 || $delivered_qty > 0)){
                     $parentTl = new TransferLine();
                     $parentTl->transfer_id = $transferId;
                     $parentTl->base_product_id = $parentId;
                     $parentTl->created_at = date('Y-m-d');
                 }
-                $parentTl->order_qty = $orderQty;
-                $parentTl->received_qty = $receivedQty;
-                $parentTl->delivered_qty = $delivered_qty;
-                $parentTl->save();
+                if($parentTl){
+                    $parentTl->order_qty = $orderQty;
+                    $parentTl->received_qty = $receivedQty;
+                    $parentTl->delivered_qty = $delivered_qty;
+                    $parentTl->save();
+                }
+
             }
         }
     }

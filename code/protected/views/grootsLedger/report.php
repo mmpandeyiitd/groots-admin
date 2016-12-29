@@ -74,13 +74,15 @@
              
              
                
-                <label>Date</label> 
+                <label>From Date</label>
              
                 <?php
 
                 $this->widget('zii.widgets.jui.CJuiDatePicker', array(
                     'model' => $model,
-                    'name' =>'tocdate',
+                    'name' =>'client_start_date',
+                    'attribute' => 'client_start_date',
+                    'value' => $model->client_start_date,
                     'options' => array(
                         'dateFormat' => 'yy-mm-dd',
                         'showAnim' => 'fold',
@@ -91,7 +93,26 @@
                     'htmlOptions' => array('readonly' => 'true'),
                 ));
                
-                ?>    
+                ?>
+
+                <label>To Date</label>
+                <?php
+
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    'model' => $model,
+                    'name' => 'client_end_date',
+                    'attribute' => 'client_end_date',
+                    'value' => $model->client_end_date,
+                    'options' => array(
+                        'dateFormat' => 'yy-mm-dd',
+                        'showAnim' => 'fold',
+                        'debug' => true,
+                        //'maxDate' => "60",
+                    ), //DateTimePicker options
+                    'htmlOptions' => array('readonly' => 'true'),
+                ));
+                //echo $form->error($model, 'inv_created_at');
+                ?>
                 <input name="client" class="button_new" type="submit" value="Download" />
                
                </div>

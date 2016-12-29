@@ -107,7 +107,10 @@ class GrootsLedgerController extends Controller
 	{    
 		//var_dump($_POST);die;
         $model=new GrootsLedger;
-         
+        if(isset($_POST['GrootsLedger'])){
+            $model->attributes = $_POST['GrootsLedger'];//echo $model->client_start_date;die;
+        }
+
          if (isset($_POST['filter'])) {
              $start_date = $_POST['GrootsLedger']['created_at'];
              $end_date = $_POST['GrootsLedger']['inv_created_at'];
@@ -117,7 +120,7 @@ class GrootsLedgerController extends Controller
              if ($cDate > $cdate1)
               {
                  Yii::app()->user->setFlash('error', 'End date always greater than Start date');
-                  Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+                  //Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
              }
 
             else
@@ -131,25 +134,32 @@ class GrootsLedgerController extends Controller
         }
 
         if (isset($_POST['client'])) {
-           	$start_date = $_POST['tocdate'];
-            /*if($_POST['CatLevel1']==0)
+           	$start_date = $_POST['GrootsLedger']['client_start_date'];
+            $end_date = $_POST['GrootsLedger']['client_end_date'];
+            //echo $start_date; die;
+            if ($start_date !='' && $end_date !='')
             {
-            	Yii::app()->user->setFlash('error', 'Client not selected');
-                Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
-            } */
-            if ($start_date !='')
-            {
-           
-            $cDate = date("Y-m-d", strtotime($start_date));
-                        	ob_clean();
-                $data= $model->downloadCSVByCIDs($cDate);
-                ob_flush();
-                exit();
+                $start_date = date("Y-m-d", strtotime($start_date));
+                $end_date = date("Y-m-d", strtotime($end_date));
+
+                if ($start_date > $end_date)
+                {
+                    Yii::app()->user->setFlash('error', 'End date should always greater or equal to Start date');
+                    //Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+                }
+                else{
+                    ob_clean();
+                    $data= $model->downloadCSVByCIDs($start_date, $end_date);
+                    ob_flush();
+                    exit();
+                }
+
+
             }
             else
             {
             	 Yii::app()->user->setFlash('error', 'Date not selected');
-                 Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
+                 //Yii::app()->controller->redirect("index.php?r=GrootsLedger/report");
             }
         }
 

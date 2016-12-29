@@ -27,6 +27,9 @@ class GrootsLedger extends CActiveRecord
 		return 'groots_ledger';
 	}
 
+    public $client_start_date = "";
+    public $client_end_date = "";
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -39,7 +42,7 @@ class GrootsLedger extends CActiveRecord
 			array('user_id, paid_value', 'numerical', 'integerOnly'=>true),
 			array('total_amount, due_amount, paid_amount', 'numerical'),
 			array('order_id, order_number, agent_name', 'length', 'max'=>155),
-			array('inv_created_at', 'safe'),
+			array('inv_created_at, client_start_date, client_end_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, order_id, order_number, user_id, agent_name, total_amount, due_amount, paid_amount, paid_value, delivery_date, created_at, inv_created_at', 'safe', 'on'=>'search'),
@@ -233,23 +236,23 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         ob_flush();
     }
 
-    public static function  downloadCSVByCIDs($cDate) {
+    public static function  downloadCSVByCIDs($start_date, $end_date) {
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', r.name AS 'Client Name',r.retailer_type as 'Retailer Type', TRUNCATE((SUM(bp.pack_size_in_gm *ol.product_qty))/1000,2) AS 'Total Ordered Quantity(Kg)', TRUNCATE((SUM(bp.pack_size_in_gm *ol.delivered_qty))/1000,2) AS 'Total Delivered Quantity(Kg)', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', '".$start_date."' as 'Start Date', '".$end_date."' as 'End Date', r.name AS 'Client Name',r.retailer_type as 'Retailer Type', TRUNCATE((SUM(bp.pack_size_in_gm *ol.product_qty))/1000,2) AS 'Total Ordered Quantity(Kg)', TRUNCATE((SUM(bp.pack_size_in_gm *ol.delivered_qty))/1000,2) AS 'Total Delivered Quantity(Kg)', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
 				FROM `order_header` oh
 			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id` 
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 			   JOIN  cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
-				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` order by r.name ";
+				WHERE oh.delivery_date >= '".$start_date."'  and oh.delivery_date <= '".$end_date."' and oh.status not in ('Cancelled')
+				GROUP BY oh.`user_id` order by  r.name asc ";
 
         $sqlTotalAmount = "SELECT oh.user_id AS 'Client ID', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
 				FROM `order_header` oh
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
-				WHERE oh.delivery_date = '".$cDate."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` ";
+				WHERE oh.delivery_date  >= '".$start_date."'  and oh.delivery_date <= '".$end_date."' and oh.status not in ('Cancelled')
+				GROUP BY oh.`user_id`";
 //echo  $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
      try {
@@ -268,6 +271,9 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         }
         $amountMap = array();
         foreach ($totalAmountArray as $value){
+            /*if(!isset($amountMap[$value['Client ID']])){
+                $amountMap[$value['Client ID']] = array();
+            }*/
             $amountMap[$value['Client ID']] = $value['Total Amount'];
         }
         $fileName = "totalOrderByClient.csv";
@@ -285,7 +291,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 
             $updatecolumn = explode(',', $updatecolumn);
             fputcsv($fp, $updatecolumn);
-            foreach ($assocDataArray AS $values) {
+            foreach ($assocDataArray AS $key => $values) {
                 $values['Total Amount'] = $amountMap[$values['Client ID']];
                 fputcsv($fp, $values);
             }
@@ -361,4 +367,12 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         }
         ob_flush();
 	}
+
+    public function getClientStartDate(){
+        return $this->client_start_date;
+    }
+
+    public function getClientEndDate(){
+        return $this->client_end_date;
+    }
 }

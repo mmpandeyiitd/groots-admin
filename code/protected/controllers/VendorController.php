@@ -239,23 +239,27 @@ class VendorController extends Controller
 		$totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
 		$initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
 		$lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
-		//var_dump($lastPaymentDetails);
+		//var_dump($initialPendingMap);die;
 		$totalPending = 0;
-		foreach ($totalPendingMap as $key => $value) {
-			$totalPending += $value;
-		}
-		var_dump($totalPending);die;
-		$totalPendingMap['total'] = strval($totalPending);
+		// foreach ($initialPendingMap as $key => $value) {
+		// 	$totalPending += $value;
+		// 	if(array_key_exists($key, $totalPendingMap)){
+		// 		$totalPending += $totalPendingMap[$key];
+		// 	}
+		// }
+		//$totalPendingMap['total'] = strval($totalPending);
 		$skuMap = VendorDao::getAllVendorSkus();
 		$model = new Vendor();
 		$vendorPayment = new VendorPayment;
 		$vendorPayment->date = $endDate;
 		$payable = VendorDao::getPayable($endDate, $nextDate);
+		// var_dump($payable);die;
 		$totalPayable = 0;
-		foreach ($payable as $key => $value) {
-			$totalPayable += $value['amount'];
-		}
-		$payable['total'] = strval($totalPayable);
+		// foreach ($payable as $key => $value) {
+		// 	$totalPayable += $value['amount'];
+		// 	$totalPayable += $initialPendingMap[$key];
+		// }
+		// $payable['total'] = strval($totalPayable);
 		$this->render('creditManagement', array(
 				'model' => $model,
 				'dataProvider' =>$model,

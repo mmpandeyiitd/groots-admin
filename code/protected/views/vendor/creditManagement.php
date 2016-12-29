@@ -24,6 +24,8 @@ echo CHtml::button('Submit', array('submit' => array('vendor/creditManagement'),
 <span style = "color:#F2391C;"> <b>Create Only Cash Payments Here. For Other Payment Modes Click The <u>Payment</u> link </b></span>
 <form name="credit" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/creditManagement&date='.$vendorPayment->date;?>">
 <?php
+$totalPayable = 0;
+$totalPending = 0;
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'vendor-credit-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
@@ -34,19 +36,16 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'header' => 'Id',
 				'name' => 'id',
 				'value' => '$data->id',
-				'footer' => 'Totals :',
 				),
 			array(
 				'header' => 'Name',
 				'name' => 'name',
 				'value' => '$data->name',
-				'footer' => '',
 				),
 			array(
 				'header' => 'Vendor Type',
 				'name' => 'vendor_type',
 				'value' => '$data->vendor_type',
-				'footer' => '',
 				),
 			'credit_limit',
 			//'vendor_type',
@@ -56,15 +55,19 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'value' => function($data) use ($skuMap){
 				return CHtml::dropDownList( 'sku[]' , '',(empty($skuMap[$data->id]) ? array() : $skuMap[$data->id]), array('empty' => "SKU's Served", 'style' => 'width:130px;' ));
 				},
-				'footer' => '',),
+				),
 			array(
 				'header' => 'Total Pending',
 				'type' => 'raw',
-				'value' => function($data) use ($totalPendingMap, $initialPendingMap){
+				'value' => function($data) use ($totalPendingMap, $initialPendingMap, &$totalPending){
 					if(array_key_exists($data->id, $totalPendingMap)){
-						return $totalPendingMap[$data->id] + $initialPendingMap[$data->id];
+						$temp = $totalPendingMap[$data->id] + $initialPendingMap[$data->id];
 					}
-					else return $initialPendingMap[$data->id];
+					else {
+						$temp = $initialPendingMap[$data->id];
+					}
+					$totalPending += $temp;
+					return $temp;
 				},
 				/*'footer' => function() use ($totalPendingMap){
 					echo $totalPendingMap['total'];
@@ -77,7 +80,6 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'value' => function($data) use ($payable){
 					return $payable[$data->id]['dueDate'];
 				},
-				'footer'=>'',
 				),
 			array(
 				'header' => 'Previous Due Date',
@@ -85,11 +87,10 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'value' => function($data) use ($payable){
 					return $payable[$data->id]['lastDueDate'];
 				},
-				'footer'=>'',
 				),
 			array(
 				'header' => 'Amount Payable',
-				'value' => function($data) use ($payable, $initialPendingMap){
+				'value' => function($data) use ($payable, $initialPendingMap, &$totalPayable){
 					// $temp  = $payable[$data->id]['amount'];
 					// if(array_key_exists($data->id, $totalPendingMap)){
 					// 	$total = $totalPendingMap[$data->id];
@@ -102,7 +103,10 @@ $this->widget('zii.widgets.grid.CGridView', array(
 					//return ($payable[$data->id]['amount']);
 
 					$temp = $payable[$data->id]['amount'] + $initialPendingMap[$data->id] - $data->credit_limit;
-					return ($temp > 0) ? $temp : 0;
+					$temp = ($temp > 0) ? $temp : 0;
+					$totalPayable += $temp;
+					//$payable['total'] -= $data->credit_limit;
+					return $temp;
 
 				},
 				// 'footer' => function($payable){
@@ -134,7 +138,6 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'value' => function($data){
 					return CHtml::textField('creditRepaid[]','', array('style' => 'width:110.5px;'));
 				},
-				'footer' => '',),
 			// array(
 			// 	'header' => 'Payment Mode',
 			// 	'id' => 'paymentMode',
@@ -154,15 +157,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			// 		return CHtml::dropDownList('chequeStatus[]', $vendorPayment, VendorPayment::getChequeStatus(),
 			// 			array('empty' => "--Status--"));
 			// 	},
-			// 	'footer'=>'',
-			// 	),
+		 	),
 			array(
 				'header' => 'Create Payment',
 				'type' => 'raw',
 				'value' => function($data){
 					return CHtml::link('Payment', array('vendorPayment/create', 'vendor_id' => $data->id), array('target' => '_blank'));
 				},
-				'footer'=>'',
 				),
 			array(
 				'header' => 'Ledger',
@@ -170,21 +171,19 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'value' => function($data){
 					return CHtml::link('Ledger', array('vendor/vendorLedger', 'vendor_id' => $data->id), array('target' => '_blank'));
 				},
-				'footer'=>'',
 				),
 			array(
 				'type'=> 'raw',
 				'value' => function($data){
 					return CHtml::hiddenField('vendorIds[]',$data->id);
 				},
-				'footer'=>'',
 				),
 			)
 		)
 );
 
-echo 'Total Pending : '.$totalPendingMap['total']. '<br>';
-echo 'Total Payable : '.$payable['total'];
+echo 'Total Pending : '.$totalPending.'<br>';
+echo 'Total Payable : '.$totalPayable;
 ?>
 <div class="row buttons">
 	<?php echo CHtml::submitButton('Save', array('name' => 'Payment')); ?>
