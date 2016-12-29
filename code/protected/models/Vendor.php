@@ -244,7 +244,7 @@ class Vendor extends CActiveRecord
     }
 
     public function getLedgerDataProvider($payments, $orders){
-    	//var_dump(count($orders), ($payments[18]));die;
+    	//var_dump(count($orders), count($payments));die;
     	$i= $j=0;
     	$dataProvider = array();
     	$outstanding = 0;
