@@ -136,12 +136,12 @@ class VendorDao{
         }
         foreach ($paymentAmount as $key => $value) {
             if(! empty($value['paid_amount']))
-                $payment[$value['vendor_id']] = $value['paid_amount'];
+                $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
         }
         //var_dump($order, $payment);die;
         foreach ($order as $key => $value) {
             if(array_key_exists($key, $payment)){
-                $order[$key] -= $payment[$key];
+                $order[$key] += $payment[$key];
             }
         }
         foreach ($payment as $key => $value) {
