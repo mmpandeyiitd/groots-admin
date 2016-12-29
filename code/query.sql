@@ -728,6 +728,8 @@ insert into employee_department values (null, 2, 1, CURDATE(), null, 1);
 insert into employee_department values (null, 3, 1, CURDATE(), null, 1);
 insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
 
+alter table groots_orders.order_header add column order_platform enum('Admin', 'Android') DEFAULT 'Admin';
+
 
 
 
