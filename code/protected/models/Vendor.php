@@ -244,11 +244,11 @@ class Vendor extends CActiveRecord
     }
 
     public function getLedgerDataProvider($payments, $orders){
-    	//var_dump(count($orders));die;
+    	//var_dump(count($orders), ($payments[18]));die;
     	$i= $j=0;
     	$dataProvider = array();
     	$outstanding = 0;
-    	for ($i=0, $j=0; $i <count($payments), $j<count($orders) ;) { 
+    	for ($i=0, $j=0; $i<count($payments) && $j<count($orders) ;) { 
     		$temp = array();
     		if(strtotime($payments[$i]->date) < strtotime($orders[$j]['delivery_date'])){
     			$temp['id'] = 'Payment'.$payments[$i]['id'];
@@ -279,6 +279,9 @@ class Vendor extends CActiveRecord
     		}
     		$temp['outstanding'] = $outstanding;
     		array_push($dataProvider, $temp);
+    		// echo $i.'<br>';
+    		// echo $j.'<br>';
+    		//if($i==19)die;
     	}
     	if($i < count($payments)){
     		for($a = $i; $a < count($payments); $a++){

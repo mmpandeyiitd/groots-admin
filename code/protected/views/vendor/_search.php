@@ -156,10 +156,6 @@
 		<?php echo $form->textField($model,'bussiness_name',array('size'=>60,'maxlength'=>255)); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->label($model,'payment_terms'); ?>
-		<?php echo $form->textField($model,'payment_terms'); ?>
-	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'proc_exec_id'); ?>
