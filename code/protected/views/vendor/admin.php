@@ -45,6 +45,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'vendor-grid',
 	'dataProvider'=>$model->search(),
+	'itemsCssClass' => 'table table-striped table-bordered table-hover',
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
