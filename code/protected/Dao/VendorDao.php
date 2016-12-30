@@ -3,7 +3,7 @@
 class VendorDao{
 	public function getProcExecutiveDropdownData(){
         $connection = Yii::app()->db;
-        $sql = 'select ge.id, ge.name from cb_dev_groots.groots_employee as ge left join employee_department ed on ed.employee_id = ge.id where ed.department_id = 2 and status = 1';
+        $sql = 'select ge.id, ge.name from cb_dev_groots.groots_employee as ge left join employee_department ed on ed.employee_id = ge.id where ed.department_id = 2 and ge.status = 1';
         //echo $sql; die;
         $command = $connection->createCommand($sql);
         $command->execute();
