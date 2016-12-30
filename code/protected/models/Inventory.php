@@ -308,4 +308,58 @@ class Inventory extends CActiveRecord
         return $this->prev_day_inv;
     }
 
+    public function readInventoryUploadedFile($uploadedFile, $logFile, $w_id){
+        $connection = Yii::app()->secondaryDb;
+        $i=0;
+        $log =array();
+        $first = true;
+        while(!feof($uploadedFile)){
+            $row = fgetcsv($uploadedFile);
+            if(!$first && $row[0] != ''){
+                $sql = 'select id from inventory where warehouse_id = '.$w_id.' and base_product_id = '.$row[0].' and date = "'.$row[4].'"';
+                $command = $connection->createCommand($sql);
+                $result = $command->queryScalar();
+                if(!empty($result)){
+                    $inv = Inventory::model()->findByPk($result);
+                    $inv->date = $row[4];
+                    $inv->present_inv = $row[5];
+                    $inv->liquid_inv = $row[6];
+                    $inv->wastage = $row[7];
+                    $inv->liquidation_wastage = $row[8];
+                    $inv->secondary_sale = $row[9];
+                    if($inv->save()){
+                        $log= array($result, $row[0], 'Update', 'Success', 0);
+                    }
+                    else{
+                        $log = array($row[0], 'Update', 'Failed', json_encode($inv->getErrors()));
+                    }
+                    fputcsv($logFile, $log);
+                }
+                else{
+                    $inv = new Inventory;
+                    $inv->base_product_id = $row[0];
+                    $inv->inv_id = $row[2];
+                    $inv->warehouse_id = $w_id;
+                    $inv->date = $row[4];
+                    $inv->present_inv = $row[5];
+                    $inv->liquid_inv = $row[6];
+                    $inv->wastage = $row[7];
+                    $inv->liquidation_wastage = $row[8];
+                    $inv->secondary_sale = $row[9];
+                    $inv->balance = null;
+                    $inv->created_at = date('Y-m-d');
+                    if($inv->save()){
+                        $log= array($inv->id,$row[0], 'Insert', 'Success', 0);
+                    }
+                    else{
+                        $log = array('Header:'.$row[2], 'Insert', 'Failed', json_encode($inv->getErrors()));
+                    }
+                    fputcsv($logFile, $log);
+     
+                }
+            }
+            $first = false;
+        }
+    }
+
 }

@@ -573,7 +573,7 @@ class InventoryController extends Controller
             Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
         }
 
-
+        $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
         set_time_limit(0);
         $logfile = '';
         $baseid = '';
@@ -612,25 +612,14 @@ class InventoryController extends Controller
                     Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
                     $this->render('bulkupload', array('model' => $model));
                 }
-                $i = 0;
-                $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit', 'Effective Price Date');
-                $defaultFields = array('title', 'base_product_id', 'categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image', 'Status', 'parent id', 'grade', 'priority', 'base_title');
-
-                if ($model->action == 'update') {
-                    $requiredFields = array('Base Product ID');
-                    $defaultFields[] = 'Base Product ID';
-                }
-
-
                 if (isset($insert_base_csv_info) && !empty($insert_base_csv_info)) {
                     $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
-                    $createFile = fopen($csv_filename, "a");
+                    $logfile = fopen($csv_filename, "a");
+                    $uploadedFile = fopen($fileName, 'r');
+                    fputcsv($logfile, $logTemplate);
+                    Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
 
-                    foreach ($insert_base_csv_info as $row) {
-
-                        fputcsv($createFile, $row);
-                    }
-                    fclose($createFile);
+                    fclose($logfile);
                 }
             }
         }
@@ -649,7 +638,7 @@ class InventoryController extends Controller
 //print_r($_GET);die("here");
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "ih.base_product_id, bp.title,  wa.name, '".$date."' as date, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.secondary_sale";
+        $select = "ih.base_product_id, bp.title,ih.id, wa.name, '".$date."' as date, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.secondary_sale";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
         $sql = 'select '.$select.' from groots_orders.inventory_header ih  left join cb_dev_groots.warehouses as wa on ih.warehouse_id = wa.id 
         left join groots_orders.inventory i on i.inv_id=ih.id and date = "'.$date.'"
@@ -690,5 +679,6 @@ class InventoryController extends Controller
         }
         ob_flush();
     }
+
 
 }
