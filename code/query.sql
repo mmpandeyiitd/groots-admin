@@ -820,30 +820,5 @@ constraint fk_vpm_2 foreign key (base_product_id) REFERENCES cb_dev_groots.base_
 )ENGINE=InnoDB AUTO_INCREMENT=1 default CHARSET=utf8;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+insert into groots_employee values(null, 'Kamlesh', null, null, null, null, null, CURDATE(), 1,1,1,CURDATE(),null,   1);
+insert into employee_department values(null, 5, 2, CURDATE(), null, 1);

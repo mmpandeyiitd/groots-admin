@@ -156,7 +156,8 @@ class VendorController extends Controller
 			Yii::app()->controller->redirect('index.php?r=vendor/admin');
 		}
 		$products = VendorDao::getVendorProductDetails($vendor_id);
-		$data = new BaseProduct('search');
+		$data = new BaseProduct;
+		$data->unsetAttributes();
 		$update = array();
 		if(isset($_POST['save'])){
 			$baseProductIds = array();
