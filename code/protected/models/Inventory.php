@@ -430,7 +430,7 @@ class Inventory extends CActiveRecord
         $count = 0;
         foreach ($header->getData() as $data) {
             $log = array();
-            if($data['warehouse_id'] == $w_id && $data->present_inv > 0 && !empty($idMap[$data['base_product_id']])){
+            if($data['warehouse_id'] == $w_id && !empty($idMap[$data['base_product_id']])){
                 $cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
                 $liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
                 $order_sum = self::getIfExist($quantitiesMap,'orderSum', $data);
