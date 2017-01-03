@@ -311,61 +311,56 @@ class Inventory extends CActiveRecord
     public function readInventoryUploadedFile($uploadedFile, $logFile, $w_id){
         $connection = Yii::app()->secondaryDb;
         $date = '';
-        $i=0;
         $log =array();
         $first = true;
         $parentData = array();
         $idMap = array();
+        $quantitiesMap = array();
         while(!feof($uploadedFile)){
             $row = fgetcsv($uploadedFile);
             if(!$first && $row[0] != ''){
                 if(empty($date)){
                     $date = $row[4];
                 }
-                $sql = 'select id from inventory where warehouse_id = '.$w_id.' and base_product_id = '.$row[0].' and date = "'.$row[4].'"';
-                $command = $connection->createCommand($sql);
-                $result = $command->queryScalar();
+                if(empty($quantitiesMap) && !empty($date)){
+                    $quantitiesMap = self::getInventoryCalculationData($w_id, $date);
+                }
+                $base_product_id = $row[0];
+                $inv_id = $row[2];
+                $date = $row[4];
+                $present_inv = ($row[5] == '') ? 0: round(trim($row[5]));
+                $liquid_inv = ($row[6] == '') ? 0: round(trim($row[6]));
+                $wastage = ($row[7] == '') ? 0: round(trim($row[7]));
+                $liquidation_wastage = ($row[8] == '') ? 0: round(trim($row[8]));
+                $secondary_sale = ($row[9] == '') ? 0: round(trim($row[9]));
+                $parent_id = $row[10];                
                 
-                if(array_key_exists($row[10], $parentData)){
-                    $parentData[$row[10]]['present_inv'] += $row[5];
-                    $parentData[$row[10]]['liquid_inv'] += $row[6];
-                    $parentData[$row[10]]['wastage'] += $row[7];
-                    $parentData[$row[10]]['liquidation_wastage'] += $row[8];
-                    $parentData[$row[10]]['secondary_sale'] += $row[9];
-                }
-                else{
-                    $parentData[$row[10]] = array();
-                    $parentData[$row[10]]['present_inv'] = $row[5];
-                    $parentData[$row[10]]['liquid_inv'] = $row[6];
-                    $parentData[$row[10]]['wastage'] = $row[7];
-                    $parentData[$row[10]]['liquidation_wastage'] = $row[8];
-                    $parentData[$row[10]]['secondary_sale'] = $row[9];
-                }
                 $action = '';
-                $update = false;
-                if(!empty($result)){
-                    $inv = Inventory::model()->findByPk($result);
-                    $update = true;
+                $inv = Inventory::model()->findByAttributes(array('warehouse_id' => $w_id, 'base_product_id' => $base_product_id, 'date' => $date));
+                if(!empty($inv)){
                     $action = 'Update';
                 }
                 else{
                     $inv = new Inventory;
-                    $inv->base_product_id = $row[0];
-                    $inv->inv_id = $row[2];
+                    $inv->base_product_id = $base_product_id;
+                    $inv->inv_id = $inv_id;
                     $inv->warehouse_id = $w_id;
-                    $inv->balance = null;
+                   // $inv->balance = null;
                     $inv->created_at = date('Y-m-d H:i:s');
                     $action = 'Insert';
                 }
-                $inv->date = $row[4];
-                $inv->present_inv = $row[5];
-                $inv->liquid_inv = $row[6];
-                $inv->wastage = $row[7];
-                $inv->liquidation_wastage = $row[8];
-                $inv->secondary_sale = $row[9];
+                //var_dump($inv->base_product_id);die;
+                $inv->date = $date;
+                $inv->present_inv = $present_inv;
+                $inv->liquid_inv = $liquid_inv;
+                $inv->wastage = $wastage;
+                $inv->liquidation_wastage = $liquidation_wastage;
+                $inv->secondary_sale = $secondary_sale;
+                $inv->balance = self::getBalanceForCurrentProduct($quantitiesMap, $inv);
                 if($inv->save()){
                     $log= array($inv->id,$row[0], $action, 'Success', 0);
                     $idMap[$inv->base_product_id] = $inv->id;
+                    $parentData = self::saveParentData($parentData, $parent_id, $inv);
                 }
                 else{
                     $log = array('Header:'.$row[2], $row[0], $action, 'Failed', json_encode($inv->getErrors()));
@@ -376,18 +371,15 @@ class Inventory extends CActiveRecord
             $first = false;
         } 
         fclose($uploadedFile);
-        self::setParentData($parentData, $date, $w_id, $logFile, $idMap);
+        self::setParentData($parentData, $date, $w_id, $logFile, $idMap, $quantitiesMap);
     }
 
-    public function setParentData($parentData, $date, $w_id, $logFile, $idMap){
+    public function setParentData($parentData, $date, $w_id, $logFile, $idMap, $quantitiesMap){
         $action = '';
         $connection = Yii::app()->secondaryDb;
         foreach ($parentData as $key => $value) {
-            $sql = 'select id from inventory where date = "'.$date.'" and warehouse_id = '.$w_id.' and base_product_id = '.$key;
-            $command = $connection->createCommand($sql);
-            $result = $command->queryScalar();
-            if(!empty($result)){
-                $inv = Inventory::model()->findByPk($result);
+            $inv = Inventory::model()->findByAttributes(array('warehouse_id' => $w_id, 'base_product_id' => $key, 'date' => $date));
+            if(!empty($inv)){
                 $action = 'Parent Update';
             }
             else{
@@ -398,7 +390,6 @@ class Inventory extends CActiveRecord
                 $inv->base_product_id = $key;
                 $inv->inv_id = $result;
                 $inv->warehouse_id = $w_id;
-                $inv->balance = null;
                 $inv->created_at = date('Y-m-d H:i:s');
                 $action = 'Parent Insert';
             }
@@ -408,6 +399,7 @@ class Inventory extends CActiveRecord
             $inv->wastage = $value['wastage'];
             $inv->liquidation_wastage = $value['liquidation_wastage'];
             $inv->secondary_sale = $value['secondary_sale'];
+            $inv->balance = self::getBalanceForCurrentProduct($quantitiesMap, $inv);
             if($inv->save()){
                 $log = array($inv->id, $inv->base_product_id,$action, 'Success', 0);
                 $idMap[$inv->base_product_id] = $inv->id;
@@ -417,56 +409,50 @@ class Inventory extends CActiveRecord
             }
             fputcsv($logFile, $log);
         }
-        self::setBalanceAndParentData($logFile, $w_id,$date, $idMap);
     }
 
-    public function setBalanceAndParentData($logFile, $w_id, $date, $idMap){
-
-        $quantitiesMap = self::getInventoryCalculationData($w_id, $date);
-        $header = new InventoryHeader('search');
-        $header->date = $date;
-        $header = $header->search();
-        $header->setPagination(false);
-        $count = 0;
-        foreach ($header->getData() as $data) {
-            $log = array();
-            if($data['warehouse_id'] == $w_id && !empty($idMap[$data['base_product_id']])){
-                $cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
-                $liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
-                $order_sum = self::getIfExist($quantitiesMap,'orderSum', $data);
-                $purchase = self::getIfExist($quantitiesMap,'purchaseSum', $data);
-                $trans_in = self::getIfExist($quantitiesMap,'transferInSum', $data);
-                $trans_out = self::getIfExist($quantitiesMap,'transferOutSum', $data);
-
-                $wastage = empty($data->wastage) ? 0 : $data->wastage ;
-                $wastage_others = empty($data->liquidation_wastage) ? 0 : $data->liquidation_wastage ;
-                $toBeSentLiqInv = self::getIfExist($quantitiesMap,'prevDayLiqInv', $data);
-                $sentLiqInv = self::getIfExist($quantitiesMap,'sentLiqInv', $data);
-                $receivedLiqInv = self::getIfExist($quantitiesMap,'receivedLiqInv', $data);
-                $secondarySale = empty($data->secondary_sale) ? 0 : $data->secondary_sale ;
-                $prevDayInv = self::getIfExist($quantitiesMap,'prevDayInv', $data); ;
-
-                $balance =  $purchase+$trans_in+$prevDayInv +$toBeSentLiqInv +$receivedLiqInv -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$sentLiqInv +$secondarySale +$wastage+$wastage_others);
-                $inv = Inventory::model()->findByPk($idMap[$data['base_product_id']]);
-                $inv->balance = $balance;
-                if($inv->save()){
-                    $log = array($inv->id, $inv->base_product_id,'Balance', 'Success', 0);
-                }
-                else
-                    $log = array($inv->id, $inv->base_product_id,'Balance', 'Failed', json_encode($inv->getErrors()));
-                fputcsv($logFile, $log);
-                if($data->present_inv> 0)
-                    $count ++;
-            }
-        }
-        fclose($logFile);
-        die(var_dump($count));
-    }
 
     public function getIfExist($array, $key, $data){
-        if(isset($array[$key][$data['base_product_id']]))
-            return $array[$key][$data['base_product_id']];
+        if(isset($array[$key][$data->base_product_id]))
+            return $array[$key][$data->base_product_id];
         return 0;
+    }
+
+    public function getBalanceForCurrentProduct($quantitiesMap, $data){
+        $cur_inv =  empty($data->present_inv) ? 0 : $data->present_inv ;
+        $liq_inv =  empty($data->liquid_inv) ? 0 : $data->liquid_inv ;
+        $order_sum = self::getIfExist($quantitiesMap,'orderSum', $data);
+        $purchase = self::getIfExist($quantitiesMap,'purchaseSum', $data);
+        $trans_in = self::getIfExist($quantitiesMap,'transferInSum', $data);
+        $trans_out = self::getIfExist($quantitiesMap,'transferOutSum', $data);
+        $wastage = empty($data->wastage) ? 0 : $data->wastage ;
+        $wastage_others = empty($data->liquidation_wastage) ? 0 : $data->liquidation_wastage ;
+        $toBeSentLiqInv = self::getIfExist($quantitiesMap,'prevDayLiqInv', $data);
+        $sentLiqInv = self::getIfExist($quantitiesMap,'sentLiqInv', $data);
+        $receivedLiqInv = self::getIfExist($quantitiesMap,'receivedLiqInv', $data);
+        $secondarySale = empty($data->secondary_sale) ? 0 : $data->secondary_sale ;
+        $prevDayInv = self::getIfExist($quantitiesMap,'prevDayInv', $data);
+        $balance =  $purchase+$trans_in+$prevDayInv +$toBeSentLiqInv +$receivedLiqInv -  ($order_sum+$trans_out+$cur_inv+$liq_inv+$sentLiqInv +$secondarySale +$wastage+$wastage_others);
+        return $balance;
+    }
+
+    public function saveParentData($parentData, $parent_id, $inv){
+        if(array_key_exists($parent_id, $parentData)){
+            $parentData[$parent_id]['present_inv'] += $inv->present_inv;
+            $parentData[$parent_id]['liquid_inv'] += $inv->liquid_inv;
+            $parentData[$parent_id]['wastage'] += $inv->wastage;
+            $parentData[$parent_id]['liquidation_wastage'] += $inv->liquidation_wastage;
+            $parentData[$parent_id]['secondary_sale'] += $inv->secondary_sale;
+        }
+        else{
+            $parentData[$parent_id] = array();
+            $parentData[$parent_id]['present_inv'] = $inv->present_inv;
+            $parentData[$parent_id]['liquid_inv'] = $inv->liquid_inv;
+            $parentData[$parent_id]['wastage'] = $inv->wastage;
+            $parentData[$parent_id]['liquidation_wastage'] = $inv->liquidation_wastage;
+            $parentData[$parent_id]['secondary_sale'] = $inv->secondary_sale;
+        }
+        return $parentData;
     }
 
 }
