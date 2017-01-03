@@ -19,6 +19,7 @@ $vendor_id = $_GET['vendor_id'];
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'rowHtmlOptionsExpression' => 'array("id" => "bp_".$data->base_product_id)',
         'rowCssClassExpression' =>'$data->getCssClass()',
+        'afterAjaxUpdate' => 'onPageStartUp',
         'dataProvider'=> $dataProvider->searchNew(),
 		'filter' => $dataProvider,
 		'columns' => array(
@@ -96,9 +97,16 @@ $vendor_id = $_GET['vendor_id'];
 
 <script type="text/javascript">
     $(document).ready(function(){
-        onStartUp();
-        showAllItemsChecked();
+        onPageStartUp();
+
+       
     });
+
+    function onPageStartUp(){
+        onStartUp();
+        showAllItemsChecked();  
+    }
+
     function onCbStateChange(bp_id){
         var p_value = $('#checkedId_'+bp_id).is(':checked');
         // if(p_value == true){
@@ -127,6 +135,7 @@ $vendor_id = $_GET['vendor_id'];
     }
 
     function onStartUp(){
+        console.log('onStartUp');
         $(".child").each(function(){
             //console.log($(this).attr('class'));
             var isChecked = false;
@@ -148,6 +157,7 @@ $vendor_id = $_GET['vendor_id'];
     }
 
     function showAllItemsChecked(){
+        console.log('show');
         $(".checked").each(function(){
             var classList = $(this).prop('className').split(' ');
             //console.log(classList);
