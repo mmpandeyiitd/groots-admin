@@ -380,4 +380,67 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
     public function getUpdateType(){
         return $this->client_end_date;
     }
+
+    public function downloadFeedbackReport(){
+        //add status for order, 
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select oh.order_id as "Id", oh.order_number as "Order Number" , oh.user_id as "User Id",r.name as "Client Name", r.mobile as "Contact No", oh.delivery_date as "Delivery Date", oh.order_rating as "Rating", oh.user_comment as "Comment","" as "Feedbacks" , "" as "Avg Rating",wa1.name as "Fulfilling Center", wa2.name as "Procurement Center" from order_header as oh
+        left join cb_dev_groots.retailer as r on r.id = oh.user_id
+        left join cb_dev_groots.warehouses as wa1 on wa1.id = oh.warehouse_id
+        left join cb_dev_groots.warehouses as wa2 on wa2.id = wa1.default_source_warehouse_id
+        where oh.status = "Delivered" order by oh.delivery_date desc limit 10';
+        
+        $updatecolumn = array('Id', 'Order Number', 'User Id', 'Client Name', 'Contact No', 'Delivery Date', 'Rating','Comment',' Feedbacks','Avg Rating','Fulfilling Center','Procurement Center');      
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $orderIds = array();
+        $userIds = array();
+        foreach ($result as $key => $value) {
+            array_push($orderIds, $value['Id']);
+            if(!in_array($value['User Id'], $userIds)){
+                array_push($userIds, $value['User Id']);
+            }
+        }
+        $orderIds = implode(',', $orderIds);
+        $userIds = implode(',', $userIds);
+        //var_dump($userIds);die;
+        $sql2 = 'select fc.category_name, f.order_id from feedbacks as f left join feedback_categories as fc on fc.category_id = f.feedback_id where f.order_id in ('.$orderIds.')';
+        $command = $connection->createCommand($sql2);
+        $data = $command->queryAll();
+        $feedbackData = array();
+        foreach ($data as $key => $value) {
+            if(isset($feedbackData[$value['order_id']]) && !empty($feedbackData[$value['order_id']])){
+                $feedbackData[$value['order_id']] .= ', '.$value['category_name'];
+            }
+            else $feedbackData[$value['order_id']] = $value['category_name'];
+        }
+        $ratingMap = Utility::avgFiveRatingMap();
+        //var_dump($ratingMap);die;
+        foreach ($result as $key => $value) {
+            if(array_key_exists($value['Id'], $feedbackData)){
+                $value['Feedbacks'] = $feedbackData[$value['Id']];
+            }
+            if(array_key_exists($value['User Id'], $ratingMap)){
+                $value['Avg Rating'] = $ratingMap[$value['User Id']];
+            }
+            $result[$key] = $value;
+        }
+        $fileName = 'feedbackReport.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        if (isset($result['0'])) {
+            $fp = fopen('php://output', 'w');
+            fputcsv($fp, $updatecolumn);
+            foreach ($result AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
 }

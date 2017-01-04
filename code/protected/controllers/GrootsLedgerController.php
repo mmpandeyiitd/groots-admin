@@ -207,6 +207,10 @@ class GrootsLedgerController extends Controller
 	        	}
         	}
         }
+        if(isset($_POST['feedback']) && !empty($_POST['feedback'])){
+            $model->downloadFeedbackReport();
+            exit();
+        }
 
 
 
