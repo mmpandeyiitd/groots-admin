@@ -587,41 +587,46 @@ class InventoryController extends Controller
         $keycsv++;
         $cateogryarray = array();
 
-        if (isset($_POST['Bulk'])) {
+        try{
+            //$a = $_POST['Buk']['assd'];
+            if (isset($_POST['Bulk'])) {
 
-            $model->action = 'update';
-            $model->attributes = $_POST['Bulk'];
-            if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
-                $csv = CUploadedFile::getInstance($model, 'csv_file');
-                if (!empty($csv)) {
-                    if ($csv->size > 30 * 1024 * 1024) {
-                        Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                $model->action = 'update';
+                $model->attributes = $_POST['Bulk'];
+                if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
+                    $csv = CUploadedFile::getInstance($model, 'csv_file');
+                    if (!empty($csv)) {
+                        if ($csv->size > 30 * 1024 * 1024) {
+                            Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                            $this->render('bulkupload', array('model' => $model));
+                        }
+                        $fileName = 'csvupload/' . $csv->name;
+                        $filenameArr = explode('.', $fileName);
+                        $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
+                        $csv->saveAs($fileName);
+                    } else {
+
+                        Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
                         $this->render('bulkupload', array('model' => $model));
                     }
-                    $fileName = 'csvupload/' . $csv->name;
-                    $filenameArr = explode('.', $fileName);
-                    $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
-                    $csv->saveAs($fileName);
-                } else {
-
-                    Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
-                    $this->render('bulkupload', array('model' => $model));
-                }
-                $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-                if ($ext != 'csv') {
-                    Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
-                    $this->render('bulkupload', array('model' => $model));
-                }
-                if (isset($insert_base_csv_info) && !empty($insert_base_csv_info)) {
-                    $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
-                    $logfile = fopen($csv_filename, "a");
-                    $uploadedFile = fopen($fileName, 'r');
-                    fputcsv($logfile, $logTemplate);
-                    Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
-
-                    fclose($logfile);
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                    if ($ext != 'csv') {
+                        Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
+                        $this->render('bulkupload', array('model' => $model));
+                    }
+                    if (isset($insert_base_csv_info) && !empty($insert_base_csv_info)) {
+                        $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
+                        $logfile = fopen($csv_filename, "a");
+                        $uploadedFile = fopen($fileName, 'r');
+                        fputcsv($logfile, $logTemplate);
+                        Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                        fclose($logfile);
+                    }
                 }
             }
+        } catch(Exception $e){
+            Yii::app()->user->setFlash('error','File Upload Failed'.$e->getMessage());
         }
 
 

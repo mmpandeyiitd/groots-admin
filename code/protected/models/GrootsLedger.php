@@ -433,14 +433,13 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         header('Cache-Control: private', false);
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment;filename=' . $fileName);
-        if (isset($result['0'])) {
-            $fp = fopen('php://output', 'w');
-            fputcsv($fp, $updatecolumn);
-            foreach ($result AS $values) {
-                fputcsv($fp, $values);
-            }
-            fclose($fp);
+            
+        $fp = fopen('php://output', 'w');
+        fputcsv($fp, $updatecolumn);
+        foreach ($result AS $values) {
+            fputcsv($fp, $values);
         }
+        fclose($fp);
         ob_flush();
     }
 }
