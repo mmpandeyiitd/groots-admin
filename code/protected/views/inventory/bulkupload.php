@@ -38,13 +38,16 @@ $form = $this->beginWidget('CActiveForm', array(
         <div >
             <div class="span12">
 
-                <?php if (Yii::app()->user->hasFlash('success')): ?>
-                    <div class="row" id="logfile" >
-                        To view logs of recently uploaded Inventory click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'>Bulk Upload Inventory Log File1
+            <?php
+            if(!empty($csv_filename)){ ?>
+               <div class="row" id="logfile" >
+                        To view logs of recently uploaded Inventory click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'>Bulk Upload Inventory Log File
 
                         </a>
-                    </div>
-                <?php endif; ?>
+                    </div> 
+            <?php } 
+            ?>
+
                 <!--<div class="bulkupload_btn">
 
                     <?php /*echo CHtml::button('Download Template For Update', array('onclick' => 'js:document.location.href="index.php?r=inventory/UpdateFileDownload&w_id=$w_id"',)); */?>
