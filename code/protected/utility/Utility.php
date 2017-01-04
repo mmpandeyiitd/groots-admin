@@ -296,11 +296,11 @@ class Utility
         try {
             $result = $client->sendEmail($request);
             $messageId = $result->get('MessageId');
-            echo("Email sent! Message ID: $messageId"."\n"); die;
+            echo("Email sent! Message ID: $messageId"."\n"); 
 
         } catch (Exception $e) {
             echo("The email was not sent. Error message: ");
-            echo($e->getMessage()."\n");die;
+            echo($e->getMessage()."\n");
         }
 
     }
