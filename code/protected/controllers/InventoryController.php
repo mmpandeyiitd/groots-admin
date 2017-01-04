@@ -618,8 +618,8 @@ class InventoryController extends Controller
                     $uploadedFile = fopen($fileName, 'r');
                     fputcsv($logfile, $logTemplate);
                     Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
-
-                    fclose($logfile);
+                    Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                    //fclose($logfile);
                 }
             }
         }

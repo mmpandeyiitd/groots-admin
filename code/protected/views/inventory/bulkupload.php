@@ -40,7 +40,7 @@ $form = $this->beginWidget('CActiveForm', array(
 
                 <?php if (Yii::app()->user->hasFlash('success')): ?>
                     <div class="row" id="logfile" >
-                        To view logs of recently uploaded Inventory click : <a id='loglink' target='_blank' href='log/<?php echo $logfile; ?>'>Bulk Upload Inventory Log File
+                        To view logs of recently uploaded Inventory click : <a id='loglink' target='_blank' href='<?php echo $csv_filename; ?>'>Bulk Upload Inventory Log File1
 
                         </a>
                     </div>
