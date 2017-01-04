@@ -1,3 +1,10 @@
+<?php
+$this->menu=array(
+    array('label'=>'Manage Vendor', 'url'=>array('admin')),
+    array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
+);
+?>
+
 <form name="dateSelector" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/creditManagement';?>">
 
 <?php

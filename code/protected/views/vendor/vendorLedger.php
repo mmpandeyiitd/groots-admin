@@ -1,4 +1,11 @@
-
+<?php
+$this->menu=array(
+    array('label'=>'Manage Vendor', 'url'=>array('admin')),
+    array('label' => 'Credit Management', 'url' => array('creditManagement')),
+    array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
+);
+ 
+?>
 <h1 style = "color:#003300;">Vendor Ledger</h1>
 <br>
 <h4>

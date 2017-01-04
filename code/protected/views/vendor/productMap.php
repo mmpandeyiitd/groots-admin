@@ -1,5 +1,11 @@
 <?php
 
+$this->menu=array(
+    array('label'=>'Manage Vendor', 'url'=>array('admin')),
+    array('label' => 'Credit Management', 'url' => array('creditManagement')),
+    array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
+);
+
 $vendor_id = $_GET['vendor_id'];
 
 ?>
