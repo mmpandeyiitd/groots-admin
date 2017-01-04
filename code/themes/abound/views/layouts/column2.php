@@ -51,7 +51,7 @@ $productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => arr
 $regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('/store/update&id=1'), 'visible' => false);
 $orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('/orderHeader/admin'), 'visible' => $isOrderVisible);
 $dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => $isDashboardVisible);
-$vendorArr = array('label' => '<i class="fa fa-list"></i> Vendors', 'url' => array('/vendor/index'), 'visible' =>$isVendorVisible);
+$vendorArr = array('label' => '<i class="fa fa-list"></i> Vendors', 'url' => array('/vendor/admin'), 'visible' =>$isVendorVisible);
 
 function generateOrderMenu($id, $meunAuthItemMap){
     if(isMenuVisible($meunAuthItemMap['warehouseOrder'], array('warehouse_id'=>$id))){

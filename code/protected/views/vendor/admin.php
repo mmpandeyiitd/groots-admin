@@ -50,10 +50,13 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'columns'=>array(
 		'id',
 		'name',
-		'vendor_code',
-		'VAT_number',
+		'vendor_type',
+		'credit_limit',
+
+		//'vendor_code',
+		//'VAT_number',
 		'email',
-		'password',
+		//'password',
 		array(
 			'header' => 'Product Mapping',
 			'type' => 'raw',
@@ -105,7 +108,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		array(
 			'header' => 'Update',
 			'class'=>'CButtonColumn',
-			'template' => '{view}{update}'
+			'template' => '{view}{update}',
 		),
 	),
 )); ?>

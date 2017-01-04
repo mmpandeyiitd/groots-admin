@@ -257,7 +257,12 @@ class VendorController extends Controller
 		// }
 		//$totalPendingMap['total'] = strval($totalPending);
 		$skuMap = VendorDao::getAllVendorSkus();
-		$model = new Vendor();
+		$model = new Vendor('search');
+		$model->unsetAttributes();
+		if(isset($_GET['Vendor'])){
+			$model->attributes = $_GET['Vendor'];
+		}
+
 		$vendorPayment = new VendorPayment;
 		$vendorPayment->date = $endDate;
 		$payable = VendorDao::getPayable($endDate, $nextDate);
