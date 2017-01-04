@@ -395,7 +395,7 @@ class OrderLine extends CActiveRecord
     {
         $this->oldAttrs = $attrs;
     }
-     public static function sgSendMail($mailArray)
+     public static function sgSendMail1($mailArray)
     {
       //echo $email.$pass;die;
         // $url  = 'http://sendgrid.com/';
@@ -406,29 +406,30 @@ class OrderLine extends CActiveRecord
     $params             = array();
     $params['api_user'] = $user;
     $params['api_key']  = $pass;
-    $i                  = 0;
-    $json_string        = array();
-    foreach ($mailArray['to'] as $to)
-    {
-        if($to['email']=="grootsadmin@gmail.com")
+        $i                  = 0;
+        $json_string        = array();
+        foreach ($mailArray['to'] as $to)
         {
-            continue;
+            if($to['email']=="grootsadmin@gmail.com")
+            {
+                continue;
+            }
+            if ($i == 0)
+            {
+                $params['to']        = $to['email'];
+                //   $params['toname']    = $to['name'];
+                $json_string['to'][] = $to['email'];
+            }
+            else
+            {
+                $json_string['to'][] = $to['email'];
+            }
+            $i++;
         }
-        if ($i == 0)
-        {
-            $params['to']        = $to['email'];
-         //   $params['toname']    = $to['name'];
-            $json_string['to'][] = $to['email'];
-        }
-        else
-        {
-            $json_string['to'][] = $to['email'];
-        }
-        $i++;
-    }
 
 
-    $params['from'] = $mailArray['from'];
+    /*$params['from'] = $mailArray['from'];*/
+        $params['from'] = "";
 
     if ($mailArray['fromname'] && $mailArray['fromname'] != '')
     {
@@ -479,6 +480,14 @@ class OrderLine extends CActiveRecord
     // print everything out
     return $response;
        
+    }
+
+    public static function sgSendMail($mailArray)
+    {
+        //echo $email.$pass;die;
+        // $url  = 'http://sendgrid.com/';
+        Utility::sendMailSes($mailArray);
+
     }
 
     /*
