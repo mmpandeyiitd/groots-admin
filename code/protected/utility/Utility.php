@@ -240,5 +240,17 @@ class Utility
         return $outstanding;
     }
 
+    public function avgFiveRatingMap(){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select user_id, avg(order_rating) as rating from(select user_id, order_rating from order_header oh where( select count(*) from order_header as oh1 where oh1.user_id = oh.user_id and oh1.order_rating is not null and oh1.status="Delivered" and oh1.order_id >= oh.order_id )<= 5  and oh.order_rating is not null and oh.status="Delivered") as t group by user_id';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $map = array();
+        foreach ($result as $key => $value) {
+            $map[$value['user_id']] = round($value['rating'],2);            
+        }
+        return $map;
+    }
+
 
 }

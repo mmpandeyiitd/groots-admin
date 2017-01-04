@@ -206,6 +206,16 @@
         </form>
 
     </div>
+
+    <div class="dashboard-table">
+        <form method="post">
+        <h4 style="width:40%">Feedback Report</h4> 
+            <div class="right_date" style="width:60%">
+                
+                <input name="feedback" class="button_new" type="submit" value="Download" />   
+           </div>
+        </form>
+    </div>
     <?php $this->endWidget(); ?>
 </div><!-- form -->
       
