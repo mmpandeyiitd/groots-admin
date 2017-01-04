@@ -116,6 +116,10 @@ $this->endWidget();
         <script type="text/javascript">
             function onClickDate(url){
                 var date = $("#date").val().trim();
+                if(!date){
+                    alert('Please Select Date');
+                    return false;
+                }
                 url = url + "&date="+date;
                 console.log(url);
                 //return false;
