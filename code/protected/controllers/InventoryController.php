@@ -643,7 +643,7 @@ class InventoryController extends Controller
 //print_r($_GET);die("here");
         $date = $_GET['date'];
         $w_id = $_GET['w_id'];
-        $select = "ih.base_product_id, bp.title,ih.id, wa.name, '".$date."' as date, i.present_inv, i.liquid_inv, i.wastage, i.liquidation_wastage, i.secondary_sale,bp.parent_id";
+        $select = "ih.base_product_id, bp.title,ih.id, wa.name, '".$date."' as date, i.present_inv as 'order inv', i.liquid_inv, i.wastage, i.liquidation_wastage, i.secondary_sale,bp.parent_id";
         // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
         $sql = 'select '.$select.' from groots_orders.inventory_header ih  left join cb_dev_groots.warehouses as wa on ih.warehouse_id = wa.id 
         left join groots_orders.inventory i on i.inv_id=ih.id and date = "'.$date.'"
