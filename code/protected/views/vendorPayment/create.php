@@ -3,12 +3,12 @@
 /* @var $model VendorPayment */
 
 $this->breadcrumbs=array(
-	'Vendor Payments'=>array('index'),
+	//'Vendor Payments'=>array('index'),
 	'Create',
 );
 
 $this->menu=array(
-	array('label'=>'List VendorPayment', 'url'=>array('index')),
+	//array('label'=>'List VendorPayment', 'url'=>array('index')),
 	array('label'=>'Manage VendorPayment', 'url'=>array('admin')),
 );
 ?>

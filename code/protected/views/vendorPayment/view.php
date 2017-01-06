@@ -8,10 +8,10 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List VendorPayment', 'url'=>array('index')),
+	//array('label'=>'List VendorPayment', 'url'=>array('index')),
 	array('label'=>'Create VendorPayment', 'url'=>array('create', 'vendor_id' => $model->vendor_id)),
 	array('label'=>'Update VendorPayment', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete VendorPayment', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
+	//array('label'=>'Delete VendorPayment', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage VendorPayment', 'url'=>array('admin')),
 );
 ?>

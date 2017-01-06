@@ -8,10 +8,10 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Vendor', 'url'=>array('index')),
+	//array('label'=>'List Vendor', 'url'=>array('index')),
 	array('label'=>'Create Vendor', 'url'=>array('create')),
 	array('label'=>'Update Vendor', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete Vendor', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
+	//array('label'=>'Delete Vendor', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
 	array('label'=>'Manage Vendor', 'url'=>array('admin')),
 );
 ?>

@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Vendor', 'url'=>array('index')),
+	//array('label'=>'List Vendor', 'url'=>array('index')),
 	array('label'=>'Create Vendor', 'url'=>array('create')),
 	array('label' => 'Credit Management', 'url' => array('creditManagement')),
 	array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),

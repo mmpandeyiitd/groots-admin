@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List VendorPayment', 'url'=>array('index')),
+	//array('label'=>'List VendorPayment', 'url'=>array('index')),
 	array('label'=>'Create VendorPayment', 'url'=>array('create', 'vendor_id' => $model->vendor_id)),
 	array('label'=>'View VendorPayment', 'url'=>array('view', 'id'=>$model->id)),
 	array('label'=>'Manage VendorPayment', 'url'=>array('admin')),

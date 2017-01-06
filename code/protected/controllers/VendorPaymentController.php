@@ -77,7 +77,7 @@ class VendorPaymentController extends Controller
 					echo '<pre>';
 					die(print_r($vendor->getErrors()));
 				}
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 			}
 		}
 		$this->render('create',array(

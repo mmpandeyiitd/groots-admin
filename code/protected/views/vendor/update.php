@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Vendor', 'url'=>array('index')),
+	//array('label'=>'List Vendor', 'url'=>array('index')),
 	array('label'=>'Create Vendor', 'url'=>array('create')),
 	array('label'=>'View Vendor', 'url'=>array('view', 'id'=>$model->id)),
 	array('label'=>'Manage Vendor', 'url'=>array('admin')),

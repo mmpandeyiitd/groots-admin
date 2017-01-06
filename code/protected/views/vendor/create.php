@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Vendor', 'url'=>array('index')),
+	//array('label'=>'List Vendor', 'url'=>array('index')),
 	array('label'=>'Manage Vendor', 'url'=>array('admin')),
 );
 ?>

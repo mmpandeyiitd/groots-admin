@@ -119,7 +119,12 @@ class VendorPayment extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+			$criteria->select = 't.*';
+			$criteria->join = 'left join cb_dev_groots.vendors as v on t.vendor_id = v.id';
+			$criteria->condition = 'v.allocated_warehouse_id = '.$w_id;
+		}
 		$criteria->compare('id',$this->id);
 		$criteria->compare('vendor_id',$this->vendor_id);
 		$criteria->compare('paid_amount',$this->paid_amount,true);

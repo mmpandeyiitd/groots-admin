@@ -46,6 +46,9 @@ class Vendor extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+
+	public $w_id = '';
+
 	public function tableName()
 	{
 		return 'vendors';
@@ -153,7 +156,11 @@ class Vendor extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+			$criteria->condition = 'allocated_warehouse_id = '.$w_id;
+		}
+		
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('vendor_code',$this->vendor_code,true);
@@ -209,6 +216,10 @@ class Vendor extends CActiveRecord
 	public function searchcredit(){
 		$criteria = new CDbCriteria; 
         $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
+        if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+			$criteria->condition = 't.allocated_warehouse_id = '.$w_id;
+		}
         $criteria->compare('id' , $this->id, true);
        	$criteria->compare('name',$this->name,true);
        	$criteria->compare('vendor_type',$this->vendor_type,true);

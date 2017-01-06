@@ -11,7 +11,7 @@ $meunAuthItemMap = array(
     'order' => array('SuperAdmin'),
     'dashboard' => array('SuperAdmin'),
     //'vendors' => array('SuperAdmin'),
-    'vendors' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
+    'vendors' => array('VendorProfileViewer', 'VendorProductViewer', 'VendorLedgerViewer', 'VendorCreditViewer'),
     'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'warehouseOrder' => array('OrderViewer'),
     'warehouseInventory' => array('InventoryViewer'),
@@ -177,7 +177,7 @@ function generateWarehouses($meunAuthItemMap){
 
 function generateVendorWarehouse($meunAuthItemMap){
     $vendorWarehouses = array();
-    $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
+    $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name', 'condition' => 'id !='.HD_OFFICE_WH_ID));
     foreach ($warehouses as $key => $warehouse) {
         $id = $warehouse->id;
         $name = $warehouse->name;
