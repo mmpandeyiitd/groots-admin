@@ -134,6 +134,11 @@ class VendorController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		$w_id ='';
+		if(isset($_GET['w_id'])){
+			$w_id = $_GET['w_id'];
+		}
+		Yii::app()->session['w_id'] = $w_id;
 		$model=new Vendor('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Vendor']))
