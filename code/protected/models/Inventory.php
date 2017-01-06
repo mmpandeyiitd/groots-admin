@@ -360,7 +360,9 @@ class Inventory extends CActiveRecord
                 if($inv->save()){
                     $log= array($inv->id,$row[0], $action, 'Success', 0);
                     $idMap[$inv->base_product_id] = $inv->id;
-                    $parentData = self::saveParentData($parentData, $parent_id, $inv);
+                    if($parent_id != '' && $parent_id > 0){
+                        $parentData = self::saveParentData($parentData, $parent_id, $inv);
+                    }
                 }
                 else{
                     $log = array('Header:'.$row[2], $row[0], $action, 'Failed', json_encode($inv->getErrors()));
