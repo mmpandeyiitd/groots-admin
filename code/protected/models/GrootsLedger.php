@@ -388,7 +388,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         left join cb_dev_groots.retailer as r on r.id = oh.user_id
         left join cb_dev_groots.warehouses as wa1 on wa1.id = oh.warehouse_id
         left join cb_dev_groots.warehouses as wa2 on wa2.id = wa1.default_source_warehouse_id
-        where oh.status = "Delivered" order by oh.delivery_date desc limit 10';
+        where oh.status = "Delivered" order by oh.delivery_date desc limit '.FEEDBACK_LIMIT;
         
         $updatecolumn = array('Id', 'Order Number', 'User Id', 'Client Name', 'Contact No', 'Delivery Date', 'Rating','Comment',' Feedbacks','Avg Rating','Fulfilling Center','Procurement Center');      
         $command = $connection->createCommand($sql);
