@@ -487,8 +487,8 @@ class OrderLine extends CActiveRecord
     public static function sgSendMail($mailArray)
     {
 
-        $sesEmail = new EmailClient();
-        $sesEmail->sendMail($mailArray);
+        //$sesEmail = new EmailClient();
+        //$sesEmail->sendMail($mailArray);
         //$sesEmail->verifyEmailToSes();
     }
 
