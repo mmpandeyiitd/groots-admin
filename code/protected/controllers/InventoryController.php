@@ -563,7 +563,6 @@ class InventoryController extends Controller
     }
 
     public function actionBulkUpload() {
-
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -649,7 +648,7 @@ class InventoryController extends Controller
         left join groots_orders.inventory i on i.inv_id=ih.id and date = "'.$date.'"
         left join cb_dev_groots.base_product as bp on ih.base_product_id = bp.base_product_id 
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
-        where ih.warehouse_id='.$w_id.' and parent_id != 0 order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        where ih.warehouse_id='.$w_id.' and parent_id != 0 or parent_id is null order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
