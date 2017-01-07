@@ -111,7 +111,7 @@ public static function todaysCollectionQuery($w_id){
                 on re.allocated_warehouse_id = wa.id 
                 left join groots_orders.retailer_payments as rep 
                 on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                where re.total_payable_amount > 0 and re.collection_frequency = 'daily'
+                where re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;
 }
