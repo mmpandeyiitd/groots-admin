@@ -822,3 +822,24 @@ constraint fk_vpm_2 foreign key (base_product_id) REFERENCES cb_dev_groots.base_
 
 insert into groots_employee values(null, 'Kamlesh', null, null, null, null, null, CURDATE(), 1,1,1,CURDATE(),null,   1);
 insert into employee_department values(null, 5, 2, CURDATE(), null, 1);
+
+insert into cb_dev_groots.users values (null, "VendorEditor", md5("ve@123"), "ve@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorCreditEditor", md5("vce@123"), "vce@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorProductEditor", md5("vpe@123"), "vpe@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorProfileEditor", md5("vpr@123"), "vpr@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorLedgerEditor", md5("vle@123"), "vle@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorCreditViewer", md5("vcp@123"), "vcp@abc.com","", 0, 1, now(), now()), 
+  (null, "VendorProductViewer", md5("vpv@123"), "vpv@abc.com","", 0, 1, now(), now()),
+   (null, "VendorLedgerViewer", md5("vlv@123"), "vlv@abc.com","", 0, 1, now(), now()), 
+   (null, "VendorProfileViewer", md5("vprv@123"), "vprv@abc.com","", 0, 1, now(), now());
+
+insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
+ ('VendorEditor', 24, "return $params['warehouse_id']==1;"),
+ ('VendorCreditEditor', 25, "return $params['warehouse_id']==1;"), 
+ ('VendorProductEditor', 26, "return $params['warehouse_id']==1;"), 
+ ('VendorProfileEditor', 27, "return $params['warehouse_id']==1;"),
+ ('VendorLedgerEditor',28, "return $params['warehouse_id']==1;"),  
+ ('VendorCreditViewer', 29,"return $params['warehouse_id']==1;"),
+ ('VendorProductViewer', 30,"return $params['warehouse_id']==1;") , 
+ ('VendorLedgerViewer', 31,"return $params['warehouse_id']==1;"), 
+ ('VendorProfileViewer', 32, "return $params['warehouse_id']==1;");

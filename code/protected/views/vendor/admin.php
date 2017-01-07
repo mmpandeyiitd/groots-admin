@@ -27,7 +27,11 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?>
+        <span class="Csv" style="color:red">
+            <?php echo Yii::app()->user->getFlash('premission_info'); ?>
+        </span>
+    <?php endif; ?>
 <h1>Manage Vendors</h1>
 
 <p>

@@ -62,6 +62,15 @@ class VendorController extends Controller
 	 */
 	public function actionCreate()
 	{
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        }
+		
 		$model=new Vendor;
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -87,6 +96,15 @@ class VendorController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        }
+
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -150,6 +168,14 @@ class VendorController extends Controller
 	}
 
 	public function actionProductMap($vendor_id){
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendroProductEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        }
 		//var_dump($_POST);die;
 		//flash , transaction remaning, price = ''
 		$criteria  = new CDbCriteria;
@@ -230,6 +256,17 @@ class VendorController extends Controller
 
 	public function actionCreditManagement(){
 		//var_dump($_POST);die;
+
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        }
+
+
 		if(!empty($_GET['date'])){
 			$endDate = $_GET['date'];
 		}
@@ -292,6 +329,16 @@ class VendorController extends Controller
 	}
 
 	public function actionVendorLedger($vendor_id){
+
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorLedgerEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        }
+
 		$vendor = Vendor::model()->findByPk($vendor_id);
 		$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order'=>'date asc'));
 		//var_dump($payments);die;
