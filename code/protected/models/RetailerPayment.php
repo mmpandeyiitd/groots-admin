@@ -32,8 +32,8 @@ class RetailerPayment extends CActiveRecord
         // will receive user inputs.
         return array(array('retailer_id,paid_amount,date,payment_type', 'required'),
                     //array('cheque_no, status', 'integerOnly' => true),
-                     array('retailer_id, paid_amount ,date, payment_type, cheque_no, comment, created_at, updated_at, status', 'safe'),
-                     );
+           array('retailer_id, paid_amount ,date, payment_type, cheque_no, comment, created_at, updated_at, status', 'safe'),
+           );
     }
 
     /**
@@ -43,7 +43,7 @@ class RetailerPayment extends CActiveRecord
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-        );
+            );
     }
 
 
@@ -60,8 +60,8 @@ class RetailerPayment extends CActiveRecord
             'pincode' => 'Pincode',
             'phone' => 'Phone No',
             'created_date' => 'Created Date',
-        );*/
-    }
+            );*/
+        }
 
     /*
      * Retrieves a list of models based on the current search/filter conditions.
@@ -81,7 +81,7 @@ class RetailerPayment extends CActiveRecord
         $criteria = new CDbCriteria;
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
-        ));
+            ));
     }
 
     /**
@@ -108,14 +108,31 @@ class RetailerPayment extends CActiveRecord
 
 
     public function getRetailerName(){
-            return $this->retailerName;
+        return $this->retailerName;
     }
 
     public function geTotalPayableAmount(){
         return $this->totalPayableAmount;
     }
 
+    public function getRetPayChequeDropData(){
+        $connection = Yii::app()->secondaryDb;
+        $ddData = Utility::get_enum_values($connection, self::tableName(), 'cheque_status' );
+        return $ddData;
+    }
 
-
+    public function SumPaidAmountByRetailer(){
+        $connection = Yii::app()->secondaryDb;
+        $sql = "select rp.retailer_id, sum(rp.paid_amount) as 'paid_amount', re.due_date from groots_orders.retailer_payments as rp 
+        left join cb_dev_groots.retailer as re on rp.retailer_id = re.id 
+        where rp.date between re.last_due_date and CURDATE() and re.status =1 group by re.id";
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $map = array();
+        foreach ($result as $key => $value) {
+            $map[$value['retailer_id']] = $value;
+        }
+        return $map;
+    }
 
 }

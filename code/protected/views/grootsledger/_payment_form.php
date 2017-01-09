@@ -70,7 +70,7 @@
         <?php echo $form->labelEx($model,'payment_type'); ?>
         <?php echo $form->dropDownList($model,'payment_type',
             CHtml::listData(RetailerPayment::paymentTypes(),'value', 'value'),
-            array('empty' => 'Select a Payment Type'));
+            array('empty' => 'Select a Payment Type','style'=>'width:222px;'));
 
         ?>
         <?php echo $form->error($model,'payment_type'); ?>
@@ -83,9 +83,18 @@
     </div>
 
     <div class="row">
+        <?php echo $form->labelEx($model,'cheque_status'); ?>
+        <?php echo $form->dropDownList($model,'cheque_status',
+            CHtml::listData(RetailerPayment::getRetPayChequeDropData(),'value', 'value'), array('style'=>'width:222px;'));
+
+        ?>
+        <?php echo $form->error($model,'status'); ?>
+    </div>
+
+    <div class="row">
         <?php echo $form->labelEx($model,'status'); ?>
         <?php echo $form->dropDownList($model,'status',
-            CHtml::listData(RetailerPayment::status(),'value', 'value'));
+            CHtml::listData(RetailerPayment::status(),'value', 'value'), array('style'=>'width:222px;'));
 
         ?>
         <?php echo $form->error($model,'status'); ?>
@@ -93,7 +102,7 @@
 
     <div class="row">
         <?php echo $form->label($model,'comment'); ?>
-        <?php echo $form->textArea($model,'comment', array('cols'=>200, 'rows'=>4, 'style'=>'width:400px;')); ?>
+        <?php echo $form->textArea($model,'comment', array('cols'=>200, 'rows'=>4, 'style'=>'width:210px;')); ?>
         <?php echo $form->error($model,'comment'); ?>
     </div>
 
