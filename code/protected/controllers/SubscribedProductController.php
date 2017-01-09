@@ -213,8 +213,8 @@ class SubscribedProductController extends Controller {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }*/
-
-	if(isset($_FILES) && !empty($_FILES)){
+        $retailer_id = $_GET['id'];
+	   if(isset($_FILES) && !empty($_FILES)){
          if( $_FILES['uploadedFile']['error'] >0){
              Yii::app()->user->setFlash('error', 'File Uploading Unsuccessful, Please try again...'); 
              Yii::app()->controller->redirect("index.php?r=subscribedProduct/admin&id=".$retailer_id);

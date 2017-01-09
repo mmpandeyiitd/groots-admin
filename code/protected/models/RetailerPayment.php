@@ -125,7 +125,7 @@ class RetailerPayment extends CActiveRecord
         $connection = Yii::app()->secondaryDb;
         $sql = "select rp.retailer_id, sum(rp.paid_amount) as 'paid_amount', re.due_date from groots_orders.retailer_payments as rp 
         left join cb_dev_groots.retailer as re on rp.retailer_id = re.id 
-        where rp.date between re.due_date and CURDATE() and re.status =1 group by re.id";
+        where rp.date between re.last_due_date and CURDATE() and re.status =1 group by re.id";
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         $map = array();

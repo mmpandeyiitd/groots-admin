@@ -113,7 +113,7 @@ $(document).ready(function() {
         'header' => 'Name',
         'type' => 'raw',
         'value' => function($data2) use ($paidAmountMap){
-          if(strtotime($data2['due_date']) > strtotime($data2['last_paid_on'])){
+          if(strtotime($data2['last_due_date']) > strtotime($data2['last_paid_on'])){
             return CHtml::label($data2['name'], 'prevDayPaymentUnfulfilled', array('class' => 'defaulter'));
           }
           else if(isset($paidAmountMap[$data2['id']]) && $paidAmountMap[$data2['id']]['paid_amount']/$data2['due_payable_amount'] <  0.9){
