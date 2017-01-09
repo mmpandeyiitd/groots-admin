@@ -730,37 +730,10 @@ insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
 
 alter table groots_orders.order_header add column order_platform enum('Admin', 'Android') DEFAULT 'Admin';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+---------------------------------------------------2017-01-09
+alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
+insert into cb_dev_groots.collection_agent values(null, 'Warehouse', 0, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Narender', null, null, null, null, null, null, 1, 1, CURDATE(), null, 1);
+insert into employee_department values (null,5, 1, CURDATE(), null, 1);
+alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note','PayTm') NOT NULL DEFAULT 'Cash';
+alter table cb_dev_groots.retailer modify column collection_frequency enum('daily','weekly','fortnight','monthly','45-days', '3-days') DEFAULT 'daily';
