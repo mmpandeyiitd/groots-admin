@@ -25,12 +25,22 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
 		'dataProvider'=> $dataProvider,
 		'columns' => array(
-			 'id',
+			'id',
 			'date',
 			'paid_amount',
 			'order_quantity',
 			'order_amount',
 			'outstanding',
+			array(
+				'header' => 'Invoice',
+				'type'=>'raw',
+				'value' => function($data) use ($vendor){
+					if(isset($data['purchase_id']) && !empty($data['purchase_id'])){
+						return CHtml::button('Invoice', array('submit' => 'index.php?r=vendor/invoice&vendorId='.$vendor->id.'&purchaseId='.$data['purchase_id']));
+					}
+					else return '';
+				}
+				)
 				),
 		));
 ?>

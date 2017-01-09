@@ -267,6 +267,8 @@ class Vendor extends CActiveRecord
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
+    			$temp['payment_id'] = $payments[$i]['id'];
+    			$temp['purchase_id'] = null;
     			$outstanding -= $temp['paid_amount'];
     			$i++;
     		}
@@ -276,6 +278,8 @@ class Vendor extends CActiveRecord
     			$temp['paid_amount'] = null;
     			$temp['order_amount'] = $orders[$j]['price'];
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
+    			$temp['purchase_id'] = $orders[$j]['id'];
+    			$temp['payment_id'] = null;
     			$outstanding += $temp['order_amount'];
     			$j++;
     		}
@@ -285,6 +289,8 @@ class Vendor extends CActiveRecord
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
     			$temp['order_amount'] = $orders[$j]['price'];
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
+    			$temp['purchase_id'] = $orders[$j]['id'];
+    			$temp['payment_id'] = $payments[$i]['id'];
     			$outstanding += $temp['order_amount'] - $temp['paid_amount'];
     			$i++;$j++;
     		}
@@ -303,6 +309,8 @@ class Vendor extends CActiveRecord
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
     			$outstanding -= $temp['paid_amount'];
+    			$temp['payment_id'] = $payments[$a]['id'];
+    			$temp['purchase_id'] = null;
     			$temp['outstanding'] = $outstanding;
     			array_push($dataProvider, $temp);
     		}
@@ -316,6 +324,8 @@ class Vendor extends CActiveRecord
     			$temp['order_amount'] = $orders[$b]['price'];
     			$temp['order_quantity'] = $orders[$b]['received_qty'];
     			$outstanding += $temp['order_amount'];
+    			$temp['purchase_id'] = $orders[$b]['id'];
+    			$temp['payment_id'] = null;
     			$temp['outstanding'] = $outstanding;
     			array_push($dataProvider, $temp);
     		}

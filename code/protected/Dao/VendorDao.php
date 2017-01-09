@@ -206,7 +206,7 @@ class VendorDao{
 
     public function getVendorOrderQuantity($vendorId){
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select pl.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendorId.' group by ph.delivery_date order by ph.delivery_date';
+        $sql = 'select ph.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendorId.' group by ph.delivery_date order by ph.delivery_date';
         //$sql = 'select sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and (pl.received_qty > 0 or pl.order_qty > 0) and pl.price > 0 and pl.vendor_id = '.$vendorId.' group by ph.delivery_date order by ph.delivery_date';
         //die($sql);
         $command = $connection->createCommand($sql);
@@ -269,6 +269,14 @@ class VendorDao{
         }
         //var_dump($result);die;
         return $result;
+    }
+
+    public function getLineByPurchasId($vendorId, $purchaseId){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select pl.* from purchase_line as pl left join purchase_header as ph on ph.id = pl.purchase_id where pl.purchase_id = '.$purchaseId.' and pl.vendor_id ='.$vendorId.' and ph.status = "received" and pl.received_qty > 0';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        return $result; 
     }
 
 }

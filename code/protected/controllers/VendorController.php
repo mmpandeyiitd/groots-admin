@@ -16,7 +16,7 @@ class VendorController extends Controller
 		return array(
 			'accessControl', // perform access control for CRUD operations
 			'postOnly + delete', // we only allow deletion via POST request
-		);
+			);
 	}
 
 	/**
@@ -30,19 +30,19 @@ class VendorController extends Controller
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view'),
 				'users'=>array('*'),
-			),
+				),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript','admin'),
+				'actions'=>array('create','update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript','admin','invoice'),
 				'users'=>array('@'),
-			),
+				),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
 				'users'=>array('admin'),
-			),
+				),
 			array('deny',  // deny all users
 				'users'=>array('*'),
-			),
-		);
+				),
+			);
 	}
 
 	/**
@@ -53,7 +53,7 @@ class VendorController extends Controller
 	{
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
-		));
+			));
 	}
 
 	/**
@@ -67,9 +67,9 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        }
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 		
 		$model=new Vendor;
 		// Uncomment the following line if AJAX validation is needed
@@ -86,7 +86,7 @@ class VendorController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
-		));
+			));
 	}
 
 	/**
@@ -101,9 +101,9 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        }
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 
 		$model=$this->loadModel($id);
 
@@ -119,7 +119,7 @@ class VendorController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
-		));
+			));
 	}
 
 	/**
@@ -144,7 +144,7 @@ class VendorController extends Controller
 		$dataProvider=new CActiveDataProvider('Vendor');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
-		));
+			));
 	}
 
 	/**
@@ -164,7 +164,7 @@ class VendorController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
-		));
+			));
 	}
 
 	public function actionProductMap($vendor_id){
@@ -173,9 +173,9 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorProductViewer', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        }
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 		//var_dump($_POST);die;
 		//flash , transaction remaning, price = ''
 		$criteria  = new CDbCriteria;
@@ -199,9 +199,9 @@ class VendorController extends Controller
 		$update = array();
 		if(isset($_POST['save'])){
 			if(!$this->checkAccessByData('VendorProductEditor', array('warehouse_id'=>$w_id))){
-	            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-	            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        	}
+				Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+				Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+			}
 			$baseProductIds = array();
 			$postPrice = array();
 			if(isset($_POST['baseProductIds']) && !empty($_POST['baseProductIds'])){
@@ -212,10 +212,10 @@ class VendorController extends Controller
 			}
 			$newProducts = array();
 			foreach ($_POST as $key => $value) {
-			if(substr($key, 0, 9) == 'checkedId'){
-				array_push($newProducts, substr($key, 10));
+				if(substr($key, 0, 9) == 'checkedId'){
+					array_push($newProducts, substr($key, 10));
+				}
 			}
-		}
 			foreach ($newProducts as $key => $value) {
 				if(array_key_exists($value, $products)){
 					$index = array_search($value, $baseProductIds);
@@ -255,7 +255,7 @@ class VendorController extends Controller
 			'model' => $model,
 			'dataProvider' => $data,
 			'products' => $products,
-		));
+			));
 	}
 
 	public function actionCreditManagement(){
@@ -266,9 +266,9 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorCreditViewer', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        }
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 
 
 		if(!empty($_GET['date'])){
@@ -289,9 +289,9 @@ class VendorController extends Controller
 		else $startDate = $initial_pending_date;
 		if(isset($_POST['Payment']) && !empty($_POST['creditRepaid'])){
 			if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/creditManagement");
-        }
+				Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+				Yii::app()->controller->redirect("index.php?r=vendor/creditManagement");
+			}
 			self::saveVendorPaymet($_POST, $endDate);
 		}
 		$nextDate = date('Y-m-d', strtotime($startDate.' + 1 day'));
@@ -325,15 +325,15 @@ class VendorController extends Controller
 		// }
 		// $payable['total'] = strval($totalPayable);
 		$this->render('creditManagement', array(
-				'model' => $model,
-				'dataProvider' =>$model,
-				'skuMap' => $skuMap,
-				'vendorPayment' => $vendorPayment,
-				'payable' => $payable,
-				'totalPendingMap' => $totalPendingMap,
-				'initialPendingMap' => $initialPendingMap,
-				'lastPaymentDetails' => $lastPaymentDetails,
-				));
+			'model' => $model,
+			'dataProvider' =>$model,
+			'skuMap' => $skuMap,
+			'vendorPayment' => $vendorPayment,
+			'payable' => $payable,
+			'totalPendingMap' => $totalPendingMap,
+			'initialPendingMap' => $initialPendingMap,
+			'lastPaymentDetails' => $lastPaymentDetails,
+			));
 		//var_dump($skuMap);die;
 	}
 
@@ -343,9 +343,9 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorLedgerViewer', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
-            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
-        }
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 
 		$vendor = Vendor::model()->findByPk($vendor_id);
 		$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order'=>'date asc'));
@@ -394,6 +394,71 @@ class VendorController extends Controller
 			if($creditRepaid[$key] != ''){
 				VendorPayment::saveVendorCashPayment($value, $creditRepaid[$key], $date);
 			}
+		}
+	}
+
+	public function actionInvoice($vendorId, $purchaseId){
+		$model = VendorDao::getLineByPurchasId($vendorId, $purchaseId);
+		//var_dump($model);die;
+		$prodIds= array();
+		foreach ($model as $key => $value) {
+			array_push($prodIds, $value['base_product_id']);
+		}
+		$newModel = array();
+		$prodIdsString = implode(',', $prodIds);
+		$catNameCatId = Category::getCatNameIdbyProdId($prodIdsString);
+		foreach ($model as $key => $value) {
+			$value['category_name'] = $catNameCatId[$value['base_product_id']]['category_name'];
+			$model[$key] = $value;
+			if(! array_key_exists($value['category_name'], $newModel)){
+				$newModel[$value['category_name']] = array();
+			}
+			array_push($newModel[$value['category_name']], $value);
+		}
+		ksort($newModel, SORT_STRING);
+		var_dump($newModel);die;
+        // $modelOrder = OrderHeaderController::loadModel($id);
+        // $store = Store::model()->findByAttributes(array('store_id' => 1));
+        // $modelOrder->groots_address = $store->business_address;
+        // $modelOrder->groots_city = $store->business_address_city;
+        // $modelOrder->groots_state = $store->business_address_state;
+        // $modelOrder->groots_country = $store->business_address_country;
+        // $modelOrder->groots_pincode = $store->business_address_pincode;
+        // $modelOrder->groots_authorized_name = $store->store_name;
+		$vendor = Vendor::model()->findByPk($vendorId);
+		if($zip==true){
+			return $this->createPdf($model,$newModel,$vendor);
+		}
+		$this->createPdf($model,$newModel,$vendor);
+	}
+
+	public function createPdf($model,$newModel,$vendor){
+		ob_start();
+		echo $this->renderPartial('invoice' ,array('model' => $model,'newModel' => $newModel,
+            'retailer'=>$vendor), true);//die;
+		$content = ob_get_clean();
+		require_once( dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
+		$title = "Vendor Invoice";
+		$downloadFileName=$vendor->name." (".substr($modelOrder->delivery_date, 0, 10).")"." ". $modelOrder->order_id.".pdf";
+
+		try
+		{
+			$html2pdf = new HTML2PDF('P', 'A4', 'en');
+			$html2pdf->pdf->SetTitle($title);
+			$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+			if($zip==true){
+				return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
+			}
+			else{
+				$html2pdf->Output($downloadFileName);
+				var_dump($html2pdf);
+			}
+
+
+		}
+		catch(HTML2PDF_exception $e) {
+			echo $e;
+			exit;
 		}
 	}
 }
