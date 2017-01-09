@@ -295,6 +295,7 @@ class GrootsledgerController extends Controller
     public function actiondailyCollection(){
       // var_dump($_POST);
       // die();
+      $paidAmountMap = RetailerPayment::SumPaidAmountByRetailer();
         $w_id = $_GET['w_id'];
       if(isset($_POST['update'])){
         self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
@@ -326,6 +327,7 @@ class GrootsledgerController extends Controller
         $tmp['collection_center'] = $rowinfo['collection_center'];
         $tmp['warehouse'] = $rowinfo['warehouse_name'];
         $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+        $tmp['due_date'] = $rowinfo['due_date'];
         array_push($dataprovider, $tmp);
       }
       foreach ($pendingRetailer as $rowinfo) {
@@ -346,6 +348,7 @@ class GrootsledgerController extends Controller
         $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
         $tmp['last_due_date'] = $rowinfo['last_due_date'];
         $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+        $tmp['due_date'] = $rowinfo['due_date'];
         array_push($dataprovider2, $tmp);
       }
       $dataprovider = new CArrayDataProvider($dataprovider, array(
@@ -387,6 +390,7 @@ class GrootsledgerController extends Controller
           'total_due_amount' => $total_due_amount,
           'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
            'w_id'=>$w_id,
+           'paidAmountMap' => $paidAmountMap,
           ));
     }
 
