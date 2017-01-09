@@ -122,7 +122,7 @@ class VendorDao{
        // $endDate = date('Y-m-d', strtotime($endDate.' + 1 day'));
         //var_dump($endDate);die;
         $connection = Yii::app()->secondaryDb;
-        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
+        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and l.received_qty > 0 group by l.vendor_id';
         $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
@@ -156,7 +156,7 @@ class VendorDao{
         //$endDate = date('Y-m-d', strtotime($endDate.' + 1 day'));
         //$paymentEndDate = date('Y-m-d', strtotime($paymentEndDate.' + 1 day'));
         $connection = Yii::app()->secondaryDb;
-        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and (l.vendor_id = '.$vendor_id.' or h.vendor_id = '.$vendor_id.') and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0)' ; //group by h.delivery_date order by h.delivery_date';
+        $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.vendor_id = '.$vendor_id.'  and l.price > 0 and l.received_qty > 0' ; //group by h.delivery_date order by h.delivery_date';
         $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
@@ -206,8 +206,9 @@ class VendorDao{
 
     public function getVendorOrderQuantity($vendorId){
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select pl.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and (pl.received_qty > 0 or pl.order_qty > 0) and pl.price > 0 and (pl.vendor_id = '.$vendorId.' or ph.vendor_id = '.$vendorId.') group by ph.delivery_date order by ph.delivery_date';
-        // $sql = 'select sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and pl.received_qty != null and pl.price != null and pl.vendor_id = 1 and ph.delivery_date != null group by ph.delivery_date order by ph.delivery_date';
+        $sql = 'select pl.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendorId.' group by ph.delivery_date order by ph.delivery_date';
+        //$sql = 'select sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id where pl.status = "pending" and (pl.received_qty > 0 or pl.order_qty > 0) and pl.price > 0 and pl.vendor_id = '.$vendorId.' group by ph.delivery_date order by ph.delivery_date';
+        //die($sql);
         $command = $connection->createCommand($sql);
         $orderedAmount = $command->queryAll();
         //var_dump($orderedAmount);die;

@@ -67,7 +67,7 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
         }
 		
@@ -101,7 +101,7 @@ class VendorController extends Controller
 			$w_id = Yii::app()->session['w_id'];
 		}
 		if(!$this->checkAccessByData('VendorProfileEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
         }
 
@@ -151,7 +151,7 @@ class VendorController extends Controller
 	 * Manages all models.
 	 */
 	public function actionAdmin()
-	{
+	{	
 		$w_id ='';
 		if(isset($_GET['w_id'])){
 			$w_id = $_GET['w_id'];
@@ -172,8 +172,8 @@ class VendorController extends Controller
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 		}
-		if(!$this->checkAccessByData('VendroProductEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+		if(!$this->checkAccessByData('VendorProductViewer', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
         }
 		//var_dump($_POST);die;
@@ -198,6 +198,10 @@ class VendorController extends Controller
 		
 		$update = array();
 		if(isset($_POST['save'])){
+			if(!$this->checkAccessByData('VendorProductEditor', array('warehouse_id'=>$w_id))){
+	            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+	            Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+        	}
 			$baseProductIds = array();
 			$postPrice = array();
 			if(isset($_POST['baseProductIds']) && !empty($_POST['baseProductIds'])){
@@ -261,8 +265,8 @@ class VendorController extends Controller
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 		}
-		if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+		if(!$this->checkAccessByData('VendorCreditViewer', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
         }
 
@@ -279,10 +283,15 @@ class VendorController extends Controller
 		$initial_pending_date = VendorDao::getInitialPendingDate();
 		//var_dump($initial_pending_date);die;
 		if(strtotime($endDate) < strtotime($initial_pending_date)){
+			
 			$startDate = VendorDao::getLastPendingDate($endDate, $initial_pending_date);
 		}
 		else $startDate = $initial_pending_date;
 		if(isset($_POST['Payment']) && !empty($_POST['creditRepaid'])){
+			if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
+            Yii::app()->controller->redirect("index.php?r=vendor/creditManagement");
+        }
 			self::saveVendorPaymet($_POST, $endDate);
 		}
 		$nextDate = date('Y-m-d', strtotime($startDate.' + 1 day'));
@@ -329,19 +338,17 @@ class VendorController extends Controller
 	}
 
 	public function actionVendorLedger($vendor_id){
-
 		$w_id = '';
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 		}
-		if(!$this->checkAccessByData('VendorLedgerEditor', array('warehouse_id'=>$w_id))){
-            Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+		if(!$this->checkAccessByData('VendorLedgerViewer', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
         }
 
 		$vendor = Vendor::model()->findByPk($vendor_id);
 		$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order'=>'date asc'));
-		//var_dump($payments);die;
 		$orders = VendorDao::getVendorOrderQuantity($vendor_id);
 		$dataProvider = Vendor::getLedgerDataProvider($payments,$orders);
 		$this->render('vendorLedger', array(

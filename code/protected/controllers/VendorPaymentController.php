@@ -16,7 +16,7 @@ class VendorPaymentController extends Controller
 		return array(
 			'accessControl', // perform access control for CRUD operations
 			'postOnly + delete', // we only allow deletion via POST request
-		);
+			);
 	}
 
 	/**
@@ -30,19 +30,19 @@ class VendorPaymentController extends Controller
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view'),
 				'users'=>array('*'),
-			),
+				),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
 				'users'=>array('@'),
-			),
+				),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
 				'users'=>array('admin'),
-			),
+				),
 			array('deny',  // deny all users
 				'users'=>array('*'),
-			),
-		);
+				),
+			);
 	}
 
 	/**
@@ -53,7 +53,7 @@ class VendorPaymentController extends Controller
 	{
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
-		));
+			));
 	}
 
 	/**
@@ -62,6 +62,14 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionCreate($vendor_id)
 	{
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
 		$model=new VendorPayment;
 		$model->vendor_id = $vendor_id;
 		$vendor = Vendor::model()->findByPk($vendor_id);
@@ -83,7 +91,7 @@ class VendorPaymentController extends Controller
 		$this->render('create',array(
 			'model'=>$model,
 			'vendor' => $vendor,
-		));
+			));
 	}
 
 	/**
@@ -93,6 +101,15 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionUpdate($id)
 	{	
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
+
 		$model=$this->loadModel($id);
 		$vendor = Vendor::model()->findByPk($model->vendor_id);
 		$initialPaid = $model->paid_amount;
@@ -114,7 +131,7 @@ class VendorPaymentController extends Controller
 		$this->render('update',array(
 			'model'=>$model,
 			'vendor' => $vendor,
-		));
+			));
 	}
 
 	/**
@@ -124,6 +141,15 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		$w_id = '';
+		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+			$w_id = Yii::app()->session['w_id'];
+		}
+		if(!$this->checkAccessByData('VendorCreditEditor', array('warehouse_id'=>$w_id))){
+			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+		}
+
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -139,7 +165,7 @@ class VendorPaymentController extends Controller
 		$dataProvider=new CActiveDataProvider('VendorPayment');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
-		));
+			));
 	}
 
 	/**
@@ -154,7 +180,7 @@ class VendorPaymentController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
-		));
+			));
 	}
 
 	/**
@@ -182,6 +208,19 @@ class VendorPaymentController extends Controller
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
+		}
+	}
+
+	public function beforeAction(){
+		if(parent::beforeAction()){
+			$w_id = '';
+			if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+				$w_id = Yii::app()->session['w_id'];
+			}
+			if(!$this->checkAccessByData('VendorCreditViewer', array('warehouse_id'=>$w_id))){
+				Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+				Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
+			}
 		}
 	}
 }

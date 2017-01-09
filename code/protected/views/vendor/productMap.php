@@ -9,6 +9,13 @@ $this->menu=array(
 $vendor_id = $_GET['vendor_id'];
 
 ?>
+
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?>
+    <span class="Csv" style="color:red">
+        <?php echo Yii::app()->user->getFlash('premission_info'); ?>
+    </span>
+<?php endif; ?>
+
 <form name="myform" method="post" action="<?php echo $this->createUrl('vendor/productMap', array('vendor_id' => $vendor_id));?>">
 <div>
 <h1>VENDOR PRODUCT MAPPING </h1>

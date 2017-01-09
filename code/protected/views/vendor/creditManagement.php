@@ -7,6 +7,12 @@ $this->menu=array(
 
 <form name="dateSelector" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/creditManagement';?>">
 
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?>
+	<span class="Csv" style="color:red">
+        <?php echo Yii::app()->user->getFlash('premission_info'); ?>
+    </span>
+<?php endif; ?>
+
 <?php
 echo CHtml::label('Select date', 'date');
 $this->widget('zii.widgets.jui.CJuiDatePicker',array(

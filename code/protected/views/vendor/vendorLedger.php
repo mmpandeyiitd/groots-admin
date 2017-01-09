@@ -12,8 +12,14 @@ $this->menu=array(
 	Name : <?php echo $vendor->name; ?></br>
 	Id: <?php echo $vendor->id; ?>
 </h4>
-<?php
 
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?>
+	<span class="Csv" style="color:red">
+        <?php echo Yii::app()->user->getFlash('premission_info'); ?>
+    </span>
+<?php endif; ?>
+
+<?php
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'ledger-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',

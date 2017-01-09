@@ -12,6 +12,12 @@ $this->menu=array(
 );
 ?>
 
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?>
+	<span class="Csv" style="color:red">
+        <?php echo Yii::app()->user->getFlash('premission_info'); ?>
+    </span>
+<?php endif; ?>
+
 <h1>Vendors</h1>
 
 <?php $this->widget('zii.widgets.CListView', array(
