@@ -25,6 +25,8 @@
 * @property string $unit_price
 * @property string $price
 */
+
+use EmailClient;
 class OrderLine extends CActiveRecord
 {
     /**
@@ -484,10 +486,10 @@ class OrderLine extends CActiveRecord
 
     public static function sgSendMail($mailArray)
     {
-        //echo $email.$pass;die;
-        // $url  = 'http://sendgrid.com/';
-        Utility::sendMailSes($mailArray);
 
+        $sesEmail = new EmailClient();
+        $sesEmail->sendMail($mailArray);
+        //$sesEmail->verifyEmailToSes();
     }
 
     /*

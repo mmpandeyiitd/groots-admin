@@ -730,6 +730,11 @@ insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
 
 alter table groots_orders.order_header add column order_platform enum('Admin', 'Android') DEFAULT 'Admin';
 
+alter table cb_dev_groots.app_versions add column expiry_date date not null;
+insert into app_versions values(null, 1.2, 1, NOW(), NOW(), "2017-01-31");
+insert into api_configs values(null, 2, 999999999, 1.0, 1 ,NOW(),null);
+
+
 ---------------------------------------------------2017-01-09
 alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
 insert into cb_dev_groots.collection_agent values(null, 'Warehouse', 0, 1);
