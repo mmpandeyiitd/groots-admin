@@ -2268,3 +2268,7 @@ nav.vertical li.ex1:hover > ul{
 #warehouse-item-grid .unsorted {
     display:table-row;
 }
+
+#prevDayPaymentUnfulfilled .defaulter{
+    background-color: red; 
+}

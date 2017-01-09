@@ -109,7 +109,20 @@ $(document).ready(function() {
     'dataProvider'=> $data2,
     'columns' => array(
       'id',
-      'name',
+      array(
+        'header' => 'Name',
+        'type' => 'raw',
+        'value' => function($data2) use ($paidAmountMap){
+          if(strtotime($data2['last_due_date']) > strtotime($data2['last_paid_on'])){
+            return CHtml::label($data2['name'], 'prevDayPaymentUnfulfilled', array('class' => 'defaulter'));
+          }
+          else if(isset($paidAmountMap[$data2['id']]) && $paidAmountMap[$data2['id']]['paid_amount']/$data2['due_payable_amount'] <  0.9){
+            return CHtml::label($data2['name'], 'prevDayPaymentUnfulfilled', array('class' => 'defaulter')); 
+          }
+          else return CHtml::label($data2['name'], 'prevDayPaymentUnfulfilled');
+        }
+        ),
+      //'name',
       'collection_frequency',
       'collection_agent',
       'collection_center',
