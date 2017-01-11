@@ -206,6 +206,12 @@
             <?php echo $form->error($model, 'status'); ?>
         </div>
 
+        <div class="row">
+            <?php echo $form->labelEx($model, 'delivery_time'.'(24hr 00:00:00)'); ?>
+            <?php echo $form->timeField($model, 'delivery_time'); ?>
+            <?php echo $form->error($model, 'delivery_time'); ?>
+        </div>
+
         
         <div class=" buttons">
             <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

@@ -200,6 +200,12 @@
             <?php echo $form->error($model, 'status'); ?>
         </div>
 
+        <div class="row">
+            <?php echo $form->labelEx($model, 'delivery_time'.'(24hr 00:00:00)'); ?>
+            <?php echo $form->timeField($model, 'delivery_time'); ?>
+            <?php echo $form->error($model, 'delivery_time'); ?>
+        </div>
+
         <div class=" buttons">
             <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
             <?php //echo  CHtml::button("See Request", array("onclick" => "document.location.href='" . Yii::app()->controller->createUrl("retailerRequest/admin", array('retailer_id' => $retailer_id)) . "'")); ?>
