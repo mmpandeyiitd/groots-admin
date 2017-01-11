@@ -47,21 +47,9 @@
     .logoRight {float:right; width:300px;}
 </style>
 <?php
-if($type == "invoice"){
-    $title = "Invoice";
-    $challanNoText = "Invoice No";
-    $text = "";
-}
-elseif($type == "dc"){
-    $title = "Delivery Challan";
-    $challanNoText = "DC No";
-    $text = "This is the copy of delivery challan. Invoice will be sent to you after the delivery process is completed.";
-}
-elseif($type == 'mi'){
-    $title = "Invoice Email";
-    $challanNoText = "Invoice No";
-    $text = "";
-}
+$title = "Invoice";
+$challanNoText = "Invoice No";
+$text = "";
 
 
 ?>
@@ -108,7 +96,7 @@ elseif($type == 'mi'){
                                             <tr >
                                                 <td style="border-bottom:1pt solid black;">
                                                     <span style="float:left;">
-                                                        <strong>Order Id: </strong><?php echo $modelOrder->attributes['order_number']; ?>
+                                                        <strong>Purchase Id: </strong><?php echo $modelOrder->attributes['id']; ?>
                                                     </span>
                                                 </td>
                                             </tr>
@@ -118,7 +106,7 @@ elseif($type == 'mi'){
                                                         <strong><?php echo $challanNoText;?> : </strong>
                                                         <?php
                                                         $deliveryDateArray = explode("-", $modelOrder->attributes['delivery_date']);
-                                                        echo INVOICE_TEXT.$deliveryDateArray[0].$deliveryDateArray[1].$modelOrder->attributes['order_id'];
+                                                        echo INVOICE_TEXT.$deliveryDateArray[0].$deliveryDateArray[1].$modelOrder->attributes['id'];
                                                         ?>
                                                     </span>
                                                 </td>
@@ -143,15 +131,14 @@ elseif($type == 'mi'){
                     <tr>
                         <td colspan="6">
 
-                            <strong><?php echo $retailer->attributes['name']; ?></strong>
+                            <strong><?php echo $vendor->attributes['name']; ?></strong>
                             <br>
 
-                            <?php echo $retailer->attributes['address'] . ', ' . $retailer->attributes['city'] . ', ' . $retailer->attributes['state'] . ', ' . $retailer->attributes['pincode']; ?>
+                            <?php echo $vendor->attributes['address'] . ', ' . $vendor->attributes['city'] . ', ' . $vendor->attributes['state'] . ', ' . $vendor->attributes['pincode']; ?>
                             <br>
 
                             <?php
-                            $modelOrderline = new OrderLine;
-                            $mobile = $modelOrderline->mobile($modelOrder->attributes['user_id']);
+                            $mobile = $vendor->attributes['mobile'];
                             echo '+91-' . $mobile;
                             ?>
 
@@ -162,12 +149,10 @@ elseif($type == 'mi'){
 
 
                     <tr>
-                        <th style="text-align:left;  padding: 5px; width:7%;"> S.No. </th>
-                        <th style="text-align:left;  padding: 5px; width:35%;"> Product </th>
-                        <th style="text-align:center; padding: 5px;  width:15%;  "> Units * Pack Size </th>
-                        <th style="text-align:center; padding: 5px;  width:15%;  "> Total Qty (Kgs.) </th>
-                        <th style="text-align:center; padding: 5px; width:14%;" colspan="1"> Unit price (Rs.) </th>
-                        <th style="text-align:center; padding: 5px; width:14%;"> Total (Rs.) </th>
+                        <th style="text-align:left;  padding: 5px; width:12%;"> S.No. </th>
+                        <th colspan = "2" style="text-align:left;  padding: 5px; width:50%;"> Product </th>
+                        <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "> Total Qty (Kgs.) </th>
+                        <th style="text-align:center; padding: 5px; width:17%;"> Total (Rs.) </th>
                     </tr>
 
                     <?php
@@ -177,27 +162,23 @@ elseif($type == 'mi'){
                     $ascii = 97;
                     foreach ($newModel as $key => $model) {
 
-                     ?>
-                     <tr><td colspan="6"><strong><?php echo chr($ascii).'. '.$key; ?></strong></td></tr>
-                     <?php 
-                     $first = false;
-                     $counter = 0;
-                     $grandtotal = 0;
-                     $grand_producttotal = 0;
-                     $subtotalQty = 0;
-                     $subTotalAmount = 0;
-                     $wsptotal1 = 0;
-                     $wsptotal = 0;
-                     $i = 0;
+                       ?>
+                       <tr><td colspan="6"><strong><?php echo chr($ascii).'. '.$key; ?></strong></td></tr>
+                       <?php 
+                       $first = false;
+                       $counter = 0;
+                       $grandtotal = 0;
+                       $grand_producttotal = 0;
+                       $subtotalQty = 0;
+                       $subTotalAmount = 0;
+                       $wsptotal1 = 0;
+                       $wsptotal = 0;
+                       $i = 0;
 //        echo '<pre>';
         //print_r($model[2]->shipping_charges);die;
 //        //echo $model;
         //echo round($model[2]->shipping_charges);    
-                     if(isset($modelOrder->shipping_charges) && !empty(round($modelOrder->shipping_charges)))
-                     {
-                        $shipping_charge=$modelOrder->shipping_charges;
-                    };
-                    foreach ($model as $key => $value) {
+                       foreach ($model as $key => $value) {
                         $counter++;
                         $subTotalAmount += $model[$key]['price'];
                         $grossTotal += $model[$key]['price'];
@@ -218,131 +199,94 @@ elseif($type == 'mi'){
             $wsptotal = $wsptotal + $wsptotal1;
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;*/
-            $quantityInPacks = '';
-            if($type == "invoice"){
-                $quantityInPacks = $model[$key]['delivered_qty'];
-                if($model[$key]['pack_unit']=='g'){
-                   $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
-                   $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
-               }
-               else{
-                $qtytotal +=  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
-                $subtotalQty += ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
-            }
-        }
-        elseif($type == "dc"){
-            $quantityInPacks = $model[$key]['product_qty'];
-            if($model[$key]['pack_unit']=='g'){
-               $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
-               $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
-           }
-           else{
-            $qtytotal +=  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
-            $subtotalQty += ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
-        }
-    }
-    ?>  
+            $quantityInKg = '';
+            $quantityInKg = $model[$key]['received_qty'];
+            $subtotalQty += $model[$key]['received_qty'];
+            $qtytotal += $model[$key]['received_qty'];
+        //     if($model[$key]['pack_unit']=='g'){
+        //        $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
+        //        $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
+        //    }
+        //    else{
+        //     $qtytotal +=  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
+        //     $subtotalQty += ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
+        // }
+            ?>  
 
-    <tr>
-        <td style="text-align:left; width:7%; ">
-            <?php
-            echo $counter;
-            ?>
-
-        </td>
-        <td style="text-align:left; width:35%; ">
-            <?php
-            echo $model[$key]['product_name'];
-            ?>
-
-        </td>
-        <td style="text-align:center;  width: 15%;"> <?php
-            echo $quantityInPacks;
-            echo ' x ';
-            echo $model[$key]['pack_size'];
-
-            echo $model[$key]['pack_unit'];
-            ?></td>
-            <td style="text-align:center;  width: 15%;"> <?php
-                if($model[$key]['pack_unit']=='g'){
-                   echo  round(((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000, 2);
-               }
-               else{
-                echo round(((float)$quantityInPacks) * ((float)$model[$key]['pack_size']), 2);
-            }
-
-            ?></td>
-            <td style="text-align:center;  width: 14%;"><?php echo $model[$key]['unit_price']; ?> </td>
-            <td style="text-align:center;  width: 14%;"><?php echo $model[$key]['price']; ?></td>
-        </tr>
-        <?php }
-        $ascii++;
-        ?>
-        <tr>
-            <td style="text-align:left; width:7%;"></td>
-            <th style="text-align:center; padding: 5px; width:35%;">Sub-total</th>
-            <td style="text-align:center; padding: 5px;  width:15%;  "></td>
-            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo round($subtotalQty, 2) ?></th>
-            <td style="text-align:center; padding: 5px; width:14%;" ></td>
-            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($subTotalAmount, 2) ?></th>
-        </tr>
-
-        <?php }
-        ?>
-        <tr><td colspan="6"><strong></strong></td></tr>
-        <tr>
-            <td colspan = "7" style="text-align:left; width:7%;"></td>
-            <th style="text-align:center; padding: 5px; width:35%;">Gross Total</th>
-            <td style="text-align:center; padding: 5px;  width:15%;  "></td>
-            <th style="text-align:center; padding: 5px;  width:15%;  "><?php echo round($qtytotal, 2) ?></th>
-            <td style="text-align:center; padding: 5px; width:14%;" ></td>
-            <th style="text-align:center; padding: 5px; width:14%;"><?php echo round($grossTotal, 2) ?></th>
-        </tr>
-
-        <tr>
-            <td colspan="5" style="text-align:right;"><strong>Shipping Charge (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo $modelOrder->shipping_charges; ?></strong></td>
-        </tr>
-        <tr>
-            <td colspan="5" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo round($grossTotal + $modelOrder->shipping_charges, 2); ?></strong></td>
-        </tr>
-        <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
-
-        <tr>
-            <td colspan="6">
-                <strong>Comment : </strong>
-                <span style="word-wrap: break-word">
+            <tr>
+                <td style="text-align:left; width:12%; ">
                     <?php
-                    echo wordwrap($modelOrder->attributes['user_comment'], 90, "<br/>\n");
+                    echo $counter;
                     ?>
-                </span>
-            </td>
 
-        </tr>
+                </td>
+                <td colspan = "2" style="text-align:left; width:50%; ">
+                    <?php
+                    echo $model[$key]['product_name'];
+                    ?>
 
-        <?php } ?>
-        <tr>
-            <td colspan="6">
+                </td>
+                <td colspan = "2" style="text-align:center;  width: 16%;"> <?php
+                   //  if($model[$key]['pack_unit']=='g'){
+                   //     echo  round(((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000, 2);
+                   // }
+                    echo round(((float)$quantityInKg), 2);
 
-                <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
-                    Thank you for your business! We look forward to serving you again<br>
-                    Contact email id: <?php echo SALES_SUPPORT_EMAIL;?> <br>
-                    Ordering Support: <?php echo ORDER_SUPPORT_NO;?><br>
-                    Customer Support: <?php echo CUSTOMER_SUPPORT_NO;?><br>
-                    Sales Support: <?php echo SALES_SUPPORT_NO;?><br>
-                    <br>
-                    <?php echo $text;?><br>
-                    All disputes are subject to the jurisdiction of the courts of Delhi.
-                </p>
-            </td>
+                    ?></td>
+<!--                 <td style="text-align:center;  width: 14%;"><?php echo $model[$key]['unit_price']; ?> </td>
+-->                <td style="text-align:center;  width: 17%;"><?php echo $model[$key]['price']; ?></td>
+</tr>
+<?php }
+$ascii++;
+?>
+<tr>
+    <td style="text-align:left; width:12%;"></td>
+    <th colspan = "2" style="text-align:center; padding: 5px; width:50%;">Sub-total</th>
+<!--                 <td style="text-align:center; padding: 5px;  width:15%;  "></td>
+-->                <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "><?php echo round($subtotalQty, 2) ?></th>
+<!--                 <td style="text-align:center; padding: 5px; width:14%;" ></td>
+-->                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($subTotalAmount, 2) ?></th>
+</tr>
 
-        </tr>
+<?php }
+?>
+<tr><td colspan="6"><strong></strong></td></tr>
+<tr>
+    <td style="text-align:left; width:12%;"></td>
+    <th colspan = "2" style="text-align:center; padding: 5px; width:50%;">Gross Total</th>
+<!--                 <td style="text-align:center; padding: 5px;  width:15%;  "></td>
+-->                <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "><?php echo round($qtytotal, 2) ?></th>
+<!--                 <td style="text-align:center; padding: 5px; width:14%;" ></td>
+-->                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($grossTotal, 2) ?></th>
+</tr>
+
+<tr>
+    <td colspan="2" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
+    <td></td>
+    <td colspan="1" style="text-align:center;"><strong><?php echo round($grossTotal, 2); ?></strong></td>
+</tr>
+
+<tr>
+    <td colspan="6">
+
+        <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
+            Thank you for your business! We look forward to serving you again<br>
+            Contact email id: <?php echo SALES_SUPPORT_EMAIL;?> <br>
+            Ordering Support: <?php echo ORDER_SUPPORT_NO;?><br>
+            Customer Support: <?php echo CUSTOMER_SUPPORT_NO;?><br>
+            Sales Support: <?php echo SALES_SUPPORT_NO;?><br>
+            <br>
+            <?php echo $text;?><br>
+            All disputes are subject to the jurisdiction of the courts of Delhi.
+        </p>
+    </td>
+
+</tr>
 
 
-    </table>
+</table>
 </div>
 <page_footer>
-Order Id - <?php echo $modelOrder->attributes['order_number']; ?>
+Purchase Id - <?php echo $modelOrder->attributes['id']; ?>
 </page_footer>
 </page>

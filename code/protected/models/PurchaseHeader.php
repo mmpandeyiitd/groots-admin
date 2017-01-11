@@ -11,6 +11,14 @@
 class PurchaseHeader extends CActiveRecord
 {
 
+    public $groots_authorized_name;
+    public $groots_address;
+    public $groots_city;
+    public $groots_state;
+    public $groots_country;
+    public $groots_pincode;
+
+
     /**
      * @return string the associated database table name
      */

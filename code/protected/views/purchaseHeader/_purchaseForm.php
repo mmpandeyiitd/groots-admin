@@ -327,6 +327,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                     return CHtml::textField('price[]',$data->price, array('style' => 'width:50px;', 'class' => 'price'));
                 }
                 ),
+            array(
+                'header' => 'Total Price',
+                'type' => 'raw',
+                'value' => function($data) use ($update){
+                    return CHtml::textField('price[]',$data->price, array('style' => 'width:50px;', 'class' => 'totalPrice'));
+                }
+                )
         ),
     ));
 
@@ -471,7 +478,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 totalReceived += parseFloat(receivedQty.trim());
             }
 
-
+            var totalPrice = $(this).find('.totalPrice').val();
+            var unitPrice = $(this).find('.price').val()
+            if(unitPrice){
+                totalPrice = parseFloat(orderQty.trim()) * unitPrice;
+                $(this).find('.totalPrice').val(totalPrice);
+            }
 
         });
         //console.log(totalOrder);

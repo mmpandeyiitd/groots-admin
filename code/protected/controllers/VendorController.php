@@ -416,43 +416,34 @@ class VendorController extends Controller
 			array_push($newModel[$value['category_name']], $value);
 		}
 		ksort($newModel, SORT_STRING);
-		var_dump($newModel);die;
-        // $modelOrder = OrderHeaderController::loadModel($id);
-        // $store = Store::model()->findByAttributes(array('store_id' => 1));
-        // $modelOrder->groots_address = $store->business_address;
-        // $modelOrder->groots_city = $store->business_address_city;
-        // $modelOrder->groots_state = $store->business_address_state;
-        // $modelOrder->groots_country = $store->business_address_country;
-        // $modelOrder->groots_pincode = $store->business_address_pincode;
-        // $modelOrder->groots_authorized_name = $store->store_name;
+		$modelOrder= PurchaseHeader::model()->findByPk($purchaseId);
+		$store = Store::model()->findByAttributes(array('store_id' => 1));
+		$modelOrder->groots_address = $store->business_address;
+		$modelOrder->groots_city = $store->business_address_city;
+		$modelOrder->groots_state = $store->business_address_state;
+		$modelOrder->groots_country = $store->business_address_country;
+		$modelOrder->groots_pincode = $store->business_address_pincode;
+		$modelOrder->groots_authorized_name = $store->store_name;
 		$vendor = Vendor::model()->findByPk($vendorId);
-		if($zip==true){
-			return $this->createPdf($model,$newModel,$vendor);
-		}
-		$this->createPdf($model,$newModel,$vendor);
+		$this->createPdf($model,$newModel,$vendor, $modelOrder);
 	}
 
-	public function createPdf($model,$newModel,$vendor){
+	public function createPdf($model,$newModel,$vendor, $modelOrder){
 		ob_start();
 		echo $this->renderPartial('invoice' ,array('model' => $model,'newModel' => $newModel,
-            'retailer'=>$vendor), true);//die;
+            'vendor'=>$vendor, 'modelOrder' => $modelOrder, 'type'=>'invoice'), true);//die;
 		$content = ob_get_clean();
 		require_once( dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
 		$title = "Vendor Invoice";
-		$downloadFileName=$vendor->name." (".substr($modelOrder->delivery_date, 0, 10).")"." ". $modelOrder->order_id.".pdf";
+		$downloadFileName=$vendor->name." (".substr($modelOrder->delivery_date, 0, 10).")"." ". $modelOrder->id.".pdf";
 
 		try
 		{
 			$html2pdf = new HTML2PDF('P', 'A4', 'en');
 			$html2pdf->pdf->SetTitle($title);
 			$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-			if($zip==true){
-				return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
-			}
-			else{
-				$html2pdf->Output($downloadFileName);
-				var_dump($html2pdf);
-			}
+			$html2pdf->Output($downloadFileName);
+			var_dump($html2pdf);
 
 
 		}

@@ -843,3 +843,7 @@ insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
  ('VendorProductViewer', 30,"return $params['warehouse_id']==1;") , 
  ('VendorLedgerViewer', 31,"return $params['warehouse_id']==1;"), 
  ('VendorProfileViewer', 32, "return $params['warehouse_id']==1;");
+
+
+
+update groots_orders.purchase_line as l join base_product as b on b.base_product_id = l.base_product_id set l.pack_unit = b.pack_unit, l.pack_size = b.pack_size;
