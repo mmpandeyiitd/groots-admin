@@ -22,6 +22,7 @@
 
     <?php echo $form->errorSummary($model); ?>
     <?php if (Yii::app()->user->hasFlash('success')): ?><div class="flash-error label label-success" ><?php echo Yii::app()->user->getFlash('success'); ?></div><?php endif; ?>
+    <?php if (Yii::app()->user->hasFlash('error')): ?><div style="color:red"><?php echo Yii::app()->user->getFlash('error'); ?></div><?php endif; ?>
     <div class="">
 
 
@@ -208,7 +209,25 @@
 
         <div class="row">
             <?php echo $form->labelEx($model, 'delivery_time'.'(24hr 00:00:00)'); ?>
-            <?php echo $form->timeField($model, 'delivery_time'); ?>
+            <?php $this->widget('application.extensions.timepicker.timepicker', array(
+                    'id'=>'delivery_time',
+                    'model'=>$model,
+                    'name'=>'delivery_time',
+                    'select'=> 'time',
+                    'options' => array(
+                        'value'=>$model->delivery_time,
+                        'showOn'=>'focus',
+                        'dateFormat' => 'yy-mm-dd',
+                        'timeFormat'=>'hh:mm:ss',
+                        'showSecond' => 'true',
+                //'hourMin'=> (int) $hourMin,
+                //'hourMax'=> (int) $hourMax,
+                        //'hourGrid'=>2,
+                        //'minuteGrid'=>10,
+                        ),
+                    )
+                );
+                ?>
             <?php echo $form->error($model, 'delivery_time'); ?>
         </div>
 

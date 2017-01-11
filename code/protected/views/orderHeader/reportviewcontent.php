@@ -179,7 +179,7 @@ foreach ($model as $value) {
                                     </td>
                                 </tr>
                                 <tr >
-                                    <td bgcolor="red" style="border-bottom:1pt solid black;">
+                                    <td style="border-bottom:1pt solid black;">
                                         <span style="float:left;">
                                         <strong>Delivery Time: </strong><b><?php echo $retailer->delivery_time; ?></b>
                                         </span>
