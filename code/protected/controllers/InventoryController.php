@@ -32,7 +32,7 @@ class InventoryController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','admin','downloadWastageReport'),
+				'actions'=>array('create','update','admin','downloadWastageReport','bulkUpload','updateFileDownload'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -561,5 +561,128 @@ class InventoryController extends Controller
         }
         return $finalArray;
     }
+
+    public function actionBulkUpload() {
+        $w_id = '';
+        if(isset($_GET['w_id'])){
+            $w_id = $_GET['w_id'];
+        }
+        if(!$this->checkAccessByData('InventoryEditor', array('warehouse_id'=>$w_id))){
+            Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
+            Yii::app()->controller->redirect("index.php?r=inventory/create&w_id=".$w_id);
+        }
+
+        $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
+        set_time_limit(0);
+        $logfile = '';
+        $baseid = '';
+        $model = new Bulk();
+        $keycsv = 1;
+        $csv_filename = '';
+        $insert_base_csv_info = array();
+        $insert_base_csv_info[$keycsv]['base_product_id'] = 'base_product_id';
+        $insert_base_csv_info[$keycsv]['model_name'] = 'model_name';
+        $insert_base_csv_info[$keycsv]['model_number'] = 'model_number';
+        $keycsv++;
+        $cateogryarray = array();
+
+        try{
+            //$a = $_POST['Buk']['assd'];
+            if (isset($_POST['Bulk'])) {
+
+                $model->action = 'update';
+                $model->attributes = $_POST['Bulk'];
+                if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
+                    $csv = CUploadedFile::getInstance($model, 'csv_file');
+                    if (!empty($csv)) {
+                        if ($csv->size > 30 * 1024 * 1024) {
+                            Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                            $this->render('bulkupload', array('model' => $model));
+                        }
+                        $fileName = 'csvupload/' . $csv->name;
+                        $filenameArr = explode('.', $fileName);
+                        $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
+                        $csv->saveAs($fileName);
+                    } else {
+
+                        Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
+                        $this->render('bulkupload', array('model' => $model));
+                    }
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                    if ($ext != 'csv') {
+                        Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
+                        $this->render('bulkupload', array('model' => $model));
+                    }
+                    if (isset($insert_base_csv_info) && !empty($insert_base_csv_info)) {
+                        $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
+                        $logfile = fopen($csv_filename, "a");
+                        $uploadedFile = fopen($fileName, 'r');
+                        fputcsv($logfile, $logTemplate);
+                        Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                        fclose($logfile);
+                    }
+                }
+            }
+        } catch(Exception $e){
+            Yii::app()->user->setFlash('error','File Upload Failed'.$e->getMessage());
+        }
+
+
+        // @unlink($fileName);
+        $this->render('bulkupload', array(
+            'model' => $model,
+            'logfile' => $logfile,
+            'csv_filename' => $csv_filename,
+            'w_id' => $w_id,
+        ));
+    }
+
+    public function actionUpdateFileDownload(){
+//print_r($_GET);die("here");
+        $date = $_GET['date'];
+        $w_id = $_GET['w_id'];
+        $select = "ih.base_product_id, bp.title,ih.id, wa.name, '".$date."' as date, i.present_inv as 'order inv', i.liquid_inv, i.wastage, i.liquidation_wastage, i.secondary_sale,bp.parent_id";
+        // $dataArray = Inventory::model()->findAllByAttributes(array('warehouse_id' => $w_id , 'date' => $date),array('select' => $select));
+        $sql = 'select '.$select.' from groots_orders.inventory_header ih  left join cb_dev_groots.warehouses as wa on ih.warehouse_id = wa.id 
+        left join groots_orders.inventory i on i.inv_id=ih.id and date = "'.$date.'"
+        left join cb_dev_groots.base_product as bp on ih.base_product_id = bp.base_product_id 
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+        where ih.warehouse_id='.$w_id.' and parent_id != 0 or parent_id is null order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $data = $command->queryAll();
+        //echo $sql;die;
+        if(!isset($data) || empty($data)){
+            //Yii::app()->user->setFlash('error', 'nothing to download...');
+            Yii::app()->controller->redirect("index.php?r=inventory/bulkUpload&w_id=".$w_id);
+        }
+        //$dataArray = $this->arrangeWastageReportData($data);
+        // var_dump($dataArray);die;
+        $fileName = $date."_InvBulkUpload.csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($data['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($data['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($data AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
+
 
 }

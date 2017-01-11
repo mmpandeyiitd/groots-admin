@@ -291,7 +291,7 @@ create trigger groots_orders.order_header_update after update on groots_orders.o
                                       NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
                                       NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,
                                       NEW.shipping_address_id ,NEW.warehouse_id ,NOW() ,'UPDATE');
-
+---------------------------------------------------------------------------------------------------------------------drop old trigger then create this one
 create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
   insert into groots_orders.order_header_log values(
                                      NULL ,OLD.order_id ,OLD.order_number ,OLD.user_id ,OLD.created_date ,OLD.payment_method ,
@@ -727,6 +727,21 @@ insert into employee_department values (null, 1, 1, CURDATE(), null, 1);
 insert into employee_department values (null, 2, 1, CURDATE(), null, 1);
 insert into employee_department values (null, 3, 1, CURDATE(), null, 1);
 insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
+
+alter table groots_orders.order_header add column order_platform enum('Admin', 'Android') DEFAULT 'Admin';
+
+alter table cb_dev_groots.app_versions add column expiry_date date not null;
+insert into app_versions values(null, 1.2, 1, NOW(), NOW(), "2017-01-31");
+insert into api_configs values(null, 2, 999999999, 1.0, 1 ,NOW(),null);
+
+
+---------------------------------------------------2017-01-09
+alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
+insert into cb_dev_groots.collection_agent values(null, 'Warehouse', 0, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Narender', null, null, null, null, null, null, 1, 1, CURDATE(), null, 1);
+insert into employee_department values (null,5, 1, CURDATE(), null, 1);
+alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note','PayTm') NOT NULL DEFAULT 'Cash';
+alter table cb_dev_groots.retailer modify column collection_frequency enum('daily','weekly','fortnight','monthly','45-days', '3-days') DEFAULT 'daily';
 
 
 ----------------------------------------------------------------vendor table edit

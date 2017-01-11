@@ -7,11 +7,16 @@ class QueriesDailyCollection{
          if($w_id < 3){
              $and = " and wa2.id = ".$w_id." ";
          }
-        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as                collection_agent, 
+        $sql = "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as                collection_agent,
+                 case 
+                    when re.status = 1 then 'Active'
+                    when re.status = 0 then 'Inactive'
+                    when re.status = 2 then 'Moderate'
+                end as status,
                 re.total_payable_amount as total_payable_amount,
                 sum(oh.total_payable_amount) as todays_order, re.due_payable_amount, wa.name as warehouse_name,
                 wa2.name as collection_center,
-                 rep.last_paid_amount, rep.last_paid_on, re.last_due_date
+                 rep.last_paid_amount, rep.last_paid_on, re.last_due_date,re.due_date
                 from cb_dev_groots.retailer as re
                 join cb_dev_groots.warehouses as wa2
                 on re.collection_center_id = wa2.id and wa2.status = 1 ".$and."
@@ -93,9 +98,14 @@ public static function todaysCollectionQuery($w_id){
          $and = " and wa2.id = ".$w_id." ";
     }
     $sql =  "SELECT re.name as retailer_name, re.id as id, re.collection_frequency, ca.name as collection_agent,
+                case 
+                    when re.status = 1 then 'Active'
+                    when re.status = 0 then 'Inactive'
+                    when re.status = 2 then 'Moderate'
+                end as status,
                 re.total_payable_amount as total_payable_amount, re.due_payable_amount,
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name,
-                wa2.name as collection_center, sum(rep.paid_amount) as last_paid_amount
+                wa2.name as collection_center, sum(rep.paid_amount) as last_paid_amount,re.due_date
                 FROM cb_dev_groots.retailer as re
                 join cb_dev_groots.warehouses as wa2
                 on re.collection_center_id = wa2.id and wa2.status = 1 ".$and."
@@ -111,7 +121,7 @@ public static function todaysCollectionQuery($w_id){
                 on re.allocated_warehouse_id = wa.id 
                 left join groots_orders.retailer_payments as rep 
                 on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-                where re.total_payable_amount > 0 and re.collection_frequency = 'daily'
+                where re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;
 }

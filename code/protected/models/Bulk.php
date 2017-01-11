@@ -18,6 +18,7 @@ class Bulk extends CActiveRecord {
    
     public $visible;
 	public $action;
+    public $date;
     /**
      * @return string the associated database table name
      */
@@ -135,6 +136,10 @@ class Bulk extends CActiveRecord {
      */
     public static function model($className = __CLASS__) {
         return parent::model($className);
+    }
+
+    public function getDate(){
+        return $this->date;
     }
 
 }

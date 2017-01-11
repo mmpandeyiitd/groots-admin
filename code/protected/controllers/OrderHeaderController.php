@@ -145,6 +145,7 @@ class OrderHeaderController extends Controller {
                 $orderHeader->total_payable_amount =$_POST['finalAmount'];
                 $orderHeader->delivery_date = $_POST['deliveryDate'];
                 $orderHeader->warehouse_id = $_POST['warehouse'];
+                $orderHeader->billing_email = $retailer->email;
                 $orderHeader->order_number = $this->getNextOrderNo();
                 $orderHeader->created_date = date("y-m-d H:i:s");
                 $orderHeader->save();

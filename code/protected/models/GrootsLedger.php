@@ -42,7 +42,7 @@ class GrootsLedger extends CActiveRecord
 			array('user_id, paid_value', 'numerical', 'integerOnly'=>true),
 			array('total_amount, due_amount, paid_amount', 'numerical'),
 			array('order_id, order_number, agent_name', 'length', 'max'=>155),
-			array('inv_created_at, client_start_date, client_end_date', 'safe'),
+			array('inv_created_at', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, order_id, order_number, user_id, agent_name, total_amount, due_amount, paid_amount, paid_value, delivery_date, created_at, inv_created_at', 'safe', 'on'=>'search'),
@@ -240,19 +240,19 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
 
          
       $transaction = Yii::app()->secondaryDb->beginTransaction();
-     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', '".$start_date."' as 'Start Date', '".$end_date."' as 'End Date', r.name AS 'Client Name',r.retailer_type as 'Retailer Type', TRUNCATE((SUM(bp.pack_size_in_gm *ol.product_qty))/1000,2) AS 'Total Ordered Quantity(Kg)', TRUNCATE((SUM(bp.pack_size_in_gm *ol.delivered_qty))/1000,2) AS 'Total Delivered Quantity(Kg)', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
+     $sqlchksubsid = "SELECT oh.user_id AS 'Client ID', oh.`delivery_date` AS 'Delivery Date', r.name AS 'Client Name',r.retailer_type as 'Retailer Type', TRUNCATE((SUM(bp.pack_size_in_gm *ol.product_qty))/1000,2) AS 'Total Ordered Quantity(Kg)', TRUNCATE((SUM(bp.pack_size_in_gm *ol.delivered_qty))/1000,2) AS 'Total Delivered Quantity(Kg)', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount', oh.order_platform as 'Order Platform'
 				FROM `order_header` oh
 			   JOIN order_line AS ol ON ol.`order_id` = oh.`order_id` 
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 			   JOIN  cb_dev_groots.base_product bp on bp.base_product_id=ol.base_product_id
 				WHERE oh.delivery_date >= '".$start_date."'  and oh.delivery_date <= '".$end_date."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id` order by  r.name asc ";
+				GROUP BY oh.`user_id`, oh.delivery_date order by oh.delivery_date desc, r.name asc ";
 
-        $sqlTotalAmount = "SELECT oh.user_id AS 'Client ID', TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount'
+        $sqlTotalAmount = "SELECT oh.user_id AS 'Client ID', oh.delivery_date as date, TRUNCATE(SUM(oh.total_payable_amount),2) AS 'Total Amount', group_concat(oh.order_platform) as 'Order Platform'
 				FROM `order_header` oh
 			   left join cb_dev_groots.retailer r on r.id=oh.user_id
 				WHERE oh.delivery_date  >= '".$start_date."'  and oh.delivery_date <= '".$end_date."' and oh.status not in ('Cancelled')
-				GROUP BY oh.`user_id`";
+				GROUP BY oh.`user_id`, oh.delivery_date ";
 //echo  $sqlchksubsid;die;
         $connection = Yii::app()->secondaryDb;
      try {
@@ -271,10 +271,14 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         }
         $amountMap = array();
         foreach ($totalAmountArray as $value){
-            /*if(!isset($amountMap[$value['Client ID']])){
+            if(!isset($amountMap[$value['Client ID']])){
                 $amountMap[$value['Client ID']] = array();
-            }*/
-            $amountMap[$value['Client ID']] = $value['Total Amount'];
+            }
+            $tmp = array();
+            $tmp['total_amount']=$value['Total Amount'];
+            $tmp['platform']=$value['Order Platform'];
+            //$amountMap[$value['Client ID']][$value['date']] = $value['Total Amount'];
+            $amountMap[$value['Client ID']][$value['date']] = $tmp;
         }
         $fileName = "totalOrderByClient.csv";
         ob_clean();
@@ -292,7 +296,8 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
             $updatecolumn = explode(',', $updatecolumn);
             fputcsv($fp, $updatecolumn);
             foreach ($assocDataArray AS $key => $values) {
-                $values['Total Amount'] = $amountMap[$values['Client ID']];
+                $values['Total Amount'] = $amountMap[$values['Client ID']][$values['Delivery Date']]['total_amount'];
+                $values['Order Platform'] = $amountMap[$values['Client ID']][$values['Delivery Date']]['platform'];
                 fputcsv($fp, $values);
             }
             fclose($fp);
@@ -372,7 +377,69 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
         return $this->client_start_date;
     }
 
-    public function getClientEndDate(){
+    public function getUpdateType(){
         return $this->client_end_date;
+    }
+
+    public function downloadFeedbackReport(){
+        //add status for order, 
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select oh.order_id as "Id", oh.order_number as "Order Number" , oh.user_id as "User Id",r.name as "Client Name", r.mobile as "Contact No", oh.delivery_date as "Delivery Date", oh.order_rating as "Rating", oh.user_comment as "Comment","" as "Feedbacks" , "" as "Avg Rating",wa1.name as "Fulfilling Center", wa2.name as "Procurement Center" from order_header as oh
+        left join cb_dev_groots.retailer as r on r.id = oh.user_id
+        left join cb_dev_groots.warehouses as wa1 on wa1.id = oh.warehouse_id
+        left join cb_dev_groots.warehouses as wa2 on wa2.id = wa1.default_source_warehouse_id
+        where oh.status = "Delivered" order by oh.delivery_date desc limit '.FEEDBACK_LIMIT;
+        
+        $updatecolumn = array('Id', 'Order Number', 'User Id', 'Client Name', 'Contact No', 'Delivery Date', 'Rating','Comment',' Feedbacks','Avg Rating','Fulfilling Center','Procurement Center');      
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $orderIds = array();
+        $userIds = array();
+        foreach ($result as $key => $value) {
+            array_push($orderIds, $value['Id']);
+            if(!in_array($value['User Id'], $userIds)){
+                array_push($userIds, $value['User Id']);
+            }
+        }
+        $orderIds = implode(',', $orderIds);
+        $userIds = implode(',', $userIds);
+        //var_dump($userIds);die;
+        $sql2 = 'select fc.category_name, f.order_id from feedbacks as f left join feedback_categories as fc on fc.category_id = f.feedback_id where f.order_id in ('.$orderIds.')';
+        $command = $connection->createCommand($sql2);
+        $data = $command->queryAll();
+        $feedbackData = array();
+        foreach ($data as $key => $value) {
+            if(isset($feedbackData[$value['order_id']]) && !empty($feedbackData[$value['order_id']])){
+                $feedbackData[$value['order_id']] .= ', '.$value['category_name'];
+            }
+            else $feedbackData[$value['order_id']] = $value['category_name'];
+        }
+        $ratingMap = Utility::avgFiveRatingMap();
+        //var_dump($ratingMap);die;
+        foreach ($result as $key => $value) {
+            if(array_key_exists($value['Id'], $feedbackData)){
+                $value['Feedbacks'] = $feedbackData[$value['Id']];
+            }
+            if(array_key_exists($value['User Id'], $ratingMap)){
+                $value['Avg Rating'] = $ratingMap[$value['User Id']];
+            }
+            $result[$key] = $value;
+        }
+        $fileName = 'feedbackReport.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+            
+        $fp = fopen('php://output', 'w');
+        fputcsv($fp, $updatecolumn);
+        foreach ($result AS $values) {
+            fputcsv($fp, $values);
+        }
+        fclose($fp);
+        ob_flush();
     }
 }
