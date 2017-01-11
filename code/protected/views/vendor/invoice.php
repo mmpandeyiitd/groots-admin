@@ -150,8 +150,9 @@ $text = "";
 
                     <tr>
                         <th style="text-align:left;  padding: 5px; width:12%;"> S.No. </th>
-                        <th colspan = "2" style="text-align:left;  padding: 5px; width:50%;"> Product </th>
+                        <th colspan = "2" style="text-align:left;  padding: 5px; width:34%;"> Product </th>
                         <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "> Total Qty (Kgs.) </th>
+                        <th style="text-align:center; padding: 5px; width:16%;"> Unit Price (Rs.) </th>
                         <th style="text-align:center; padding: 5px; width:17%;"> Total (Rs.) </th>
                     </tr>
 
@@ -220,7 +221,7 @@ $text = "";
                     ?>
 
                 </td>
-                <td colspan = "2" style="text-align:left; width:50%; ">
+                <td colspan = "2" style="text-align:left; width:34%; ">
                     <?php
                     echo $model[$key]['product_name'];
                     ?>
@@ -233,19 +234,19 @@ $text = "";
                     echo round(((float)$quantityInKg), 2);
 
                     ?></td>
-<!--                 <td style="text-align:center;  width: 14%;"><?php echo $model[$key]['unit_price']; ?> </td>
--->                <td style="text-align:center;  width: 17%;"><?php echo $model[$key]['price']; ?></td>
+                 <td style="text-align:center;  width: 16%;"><?php echo $model[$key]['unit_price']; ?> </td>
+                <td style="text-align:center;  width: 17%;"><?php echo $model[$key]['price']; ?></td>
 </tr>
 <?php }
 $ascii++;
 ?>
 <tr>
     <td style="text-align:left; width:12%;"></td>
-    <th colspan = "2" style="text-align:center; padding: 5px; width:50%;">Sub-total</th>
+    <th colspan = "2" style="text-align:center; padding: 5px; width:34%;">Sub-total</th>
 <!--                 <td style="text-align:center; padding: 5px;  width:15%;  "></td>
 -->                <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "><?php echo round($subtotalQty, 2) ?></th>
-<!--                 <td style="text-align:center; padding: 5px; width:14%;" ></td>
--->                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($subTotalAmount, 2) ?></th>
+                 <td style="text-align:center; padding: 5px; width:16%;" ></td>
+                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($subTotalAmount, 2) ?></th>
 </tr>
 
 <?php }
@@ -253,17 +254,18 @@ $ascii++;
 <tr><td colspan="6"><strong></strong></td></tr>
 <tr>
     <td style="text-align:left; width:12%;"></td>
-    <th colspan = "2" style="text-align:center; padding: 5px; width:50%;">Gross Total</th>
+    <th colspan = "2" style="text-align:center; padding: 5px; width:34%;">Gross Total</th>
 <!--                 <td style="text-align:center; padding: 5px;  width:15%;  "></td>
 -->                <th colspan = "2" style="text-align:center; padding: 5px;  width:16%;  "><?php echo round($qtytotal, 2) ?></th>
-<!--                 <td style="text-align:center; padding: 5px; width:14%;" ></td>
--->                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($grossTotal, 2) ?></th>
+                 <td style="text-align:center; padding: 5px; width:16%;" ></td>
+                <th style="text-align:center; padding: 5px; width:17%;"><?php echo round($grossTotal, 2) ?></th>
 </tr>
 
 <tr>
     <td colspan="2" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
     <td></td>
-    <td colspan="1" style="text-align:center;"><strong><?php echo round($grossTotal, 2); ?></strong></td>
+     <td></td>
+    <td colspan="2" style="text-align:center;"><strong><?php echo round($grossTotal, 2); ?></strong></td>
 </tr>
 
 <tr>

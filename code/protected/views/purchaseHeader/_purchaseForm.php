@@ -193,7 +193,6 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'header' => 'show child',
                 'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
                 'value' => function($data){
-
                     if(isset($data->parent_id) && $data->parent_id == 0){
                         return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
                     }
@@ -321,17 +320,17 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             'updated_at',
             */
             array(
-                'header' => 'Price',
+                'header' => 'Unit Price',
                 'type' => 'raw',
                 'value' => function($data) use ($update){
-                    return CHtml::textField('price[]',$data->price, array('style' => 'width:50px;', 'class' => 'price'));
+                    return CHtml::textField('price[]',$data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_'.$data->base_product_id));
                 }
                 ),
             array(
                 'header' => 'Total Price',
                 'type' => 'raw',
                 'value' => function($data) use ($update){
-                    return CHtml::textField('price[]',$data->price, array('style' => 'width:50px;', 'class' => 'totalPrice'));
+                    return CHtml::textField('totalPrice[]',$data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_'.$data->base_product_id));
                 }
                 )
         ),
@@ -453,6 +452,8 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var totalTobeProcured = 0;
         var totalOrder = 0;
         var totalReceived = 0;
+        var netUnit = 0;
+        var netPrice = 0;
         console.log(parent_id);
         $(".item_"+parent_id).each( function() {
             //console.log($(this));
@@ -479,14 +480,24 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             }
 
             var totalPrice = $(this).find('.totalPrice').val();
+            console.log(totalPrice);
             var unitPrice = $(this).find('.price').val()
-            if(unitPrice){
+            if(unitPrice.length > 0){
                 totalPrice = parseFloat(orderQty.trim()) * unitPrice;
                 $(this).find('.totalPrice').val(totalPrice);
             }
 
+            if(totalPrice.length > 0){
+
+                netPrice += parseFloat(totalPrice.trim());
+                console.log(netPrice);
+            }
+            if(unitPrice.length > 0){
+                netUnit += parseFloat(unitPrice.trim());
+            }
+
         });
-        //console.log(totalOrder);
+        console.log(netPrice);
         if($("#tobe-procured_"+parent_id).length > 0){
             $("#tobe-procured_"+parent_id).html(totalTobeProcured);
         }
@@ -495,6 +506,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         }
         if($("#received_"+parent_id).length > 0){
             $("#received_"+parent_id).val(totalReceived);
+        }
+        if($("#price_"+parent_id).length > 0){
+            $("#price_"+parent_id).val(netUnit);
+        }
+        if($("#totalPrice_"+parent_id).length > 0){
+            $("#totalPrice_"+parent_id).val(netPrice);
         }
 
 
@@ -578,6 +595,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 $(this).find('.price').val(price);
             }
         });
+       updateItemTotalRow(parent_id); 
     }
 
 </script>

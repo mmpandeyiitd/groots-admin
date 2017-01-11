@@ -184,7 +184,10 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->received_qty = $receivedQty;
                                 }
                                 if(isset($_POST['price'][$key]) && $_POST['price'][$key] > 0){
-                                    $purchaseLine->price = $_POST['price'][$key];
+                                    $purchaseLine->unit_price = $_POST['price'][$key];
+                                }
+                                if(isset($_POST['totalPrice'][$key]) && $_POST['totalPrice'][$key] > 0){
+                                    $purchaseLine->price = $_POST['totalPrice'][$key];
                                 }
                                 $purchaseLine->created_at = date("y-m-d H:i:s");
                                 $purchaseLine->vendor_id =$_POST['InventoryHeader']['vendor_id'][$key];
@@ -309,6 +312,9 @@ class PurchaseHeaderController extends Controller
                             if(isset($_POST['price'][$key])){
                                 $price = trim($_POST['price'][$key]);
                             }
+                            if(isset($_POST['totalPrice'][$key])){
+                                $totalPrice = trim($_POST['totalPrice'][$key]);
+                            }
                             if(isset($_POST['InventoryHeader']['vendor_id'][$key])){
                                 $vendor_id = trim($_POST['InventoryHeader']['vendor_id'][$key]);
                             }
@@ -332,7 +338,10 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->received_qty = $received_qty;
                                 }
                                 if($price != ''){
-                                    $purchaseLine->price = $price;
+                                    $purchaseLine->unit_price = $price;
+                                }
+                                if($price != ''){
+                                    $purchaseLine->price = $totalPrice;
                                 }
                                 if($vendor_id != ''){
                                     $purchaseLine->vendor_id = $vendor_id;
