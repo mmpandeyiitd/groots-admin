@@ -105,7 +105,7 @@ public static function todaysCollectionQuery($w_id){
                 end as status,
                 re.total_payable_amount as total_payable_amount, re.due_payable_amount,
                 sum(oh.total_payable_amount) as todays_order,wa.name as warehouse_name,
-                wa2.name as collection_center, sum(rep.paid_amount) as last_paid_amount,re.due_date
+                wa2.name as collection_center, rep.last_paid_amount as last_paid_amount, rep.last_paid_on as last_paid_on,re.due_date, re.last_due_date
                 FROM cb_dev_groots.retailer as re
                 join cb_dev_groots.warehouses as wa2
                 on re.collection_center_id = wa2.id and wa2.status = 1 ".$and."
@@ -119,8 +119,17 @@ public static function todaysCollectionQuery($w_id){
                     )
                 left join cb_dev_groots.warehouses as wa
                 on re.allocated_warehouse_id = wa.id 
-                left join groots_orders.retailer_payments as rep 
-                on re.id = rep.retailer_id and rep.status = 1 and rep.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+                left join (
+                            select rep2.retailer_id, rep2.date as last_paid_on,
+                                sum(paid_amount) as last_paid_amount 
+                            from groots_orders.retailer_payments as rep2 
+                            inner join (select retailer_id, max(date) as date 
+                                        from groots_orders.retailer_payments where status =1 group by retailer_id
+                                        ) as rep1
+                            on(rep2.retailer_id = rep1.retailer_id and rep2.date = rep1.date and rep2.status=1)
+                            group by rep2.retailer_id, rep2.date
+                            ) as rep
+                on re.id = rep.retailer_id
                 where re.collection_frequency = 'daily'
                 group by re.id";
     return $sql;

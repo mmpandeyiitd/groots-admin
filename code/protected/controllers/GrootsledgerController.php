@@ -328,6 +328,10 @@ public function actionreport()
       $tmp['warehouse'] = $rowinfo['warehouse_name'];
       $tmp['todays_order_amount'] = $rowinfo['todays_order'];
       $tmp['due_date'] = $rowinfo['due_date'];
+      $tmp['last_due_date'] = $rowinfo['last_due_date'];
+      $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+      $tmp['due_payable_amount'] = $due_payable_amount;
+      $tmp['status'] = $rowinfo['status'];
       array_push($dataprovider, $tmp);
     }
     foreach ($pendingRetailer as $rowinfo) {
@@ -349,6 +353,7 @@ public function actionreport()
       $tmp['last_due_date'] = $rowinfo['last_due_date'];
       $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
       $tmp['due_date'] = $rowinfo['due_date'];
+      $tmp['status'] = $rowinfo['status'];
       array_push($dataprovider2, $tmp);
     }
     $dataprovider = new CArrayDataProvider($dataprovider, array(

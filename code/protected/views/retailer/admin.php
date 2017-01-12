@@ -64,7 +64,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'columns' => array(
         'name',
         'email',
+        'mobile',
         'city',
+        'status_name',
         array(
             'header' => 'Total Payable Amount',
             'value' => function($data){
