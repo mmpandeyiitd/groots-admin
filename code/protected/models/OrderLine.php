@@ -486,8 +486,7 @@ class OrderLine extends CActiveRecord
 
     public static function sgSendMail($mailArray)
     {
-        $emailClient = dirname(__FILE__).'/../utility/EmailClient.php';
-        require_once($emailClient);
+
         $sesEmail = new EmailClient();
         $sesEmail->sendMail($mailArray);
         //$sesEmail->verifyEmailToSes();
