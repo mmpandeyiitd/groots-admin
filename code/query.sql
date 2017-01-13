@@ -747,3 +747,23 @@ alter table cb_dev_groots.retailer modify column collection_frequency enum('dail
 alter table cb_dev_groots.retailer_log modify column collection_frequency enum('daily','weekly','fortnight','monthly','45-days', '3-days') DEFAULT 'daily';
 
 alter table cb_dev_groots.retailer add column delivery_time time not null;
+
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY
+DEFINER VIEW cb_dev_groots.`retailerproductquotation_gridview` AS select
+                                                                    `sp`.`subscribed_product_id` AS `subscribed_product_id`,`sp`.`base_product_id`
+                                                                                                 AS `base_product_id`,`bp`.`title` AS
+                                                                                                    `title`,bp.pack_size,bp.pack_unit,`sp`.`store_price` AS
+                                                                                                    `store_price`,`sp`.`store_offer_price` AS `store_offer_price`,`sp`.`quantity`
+    AS `quantity`,`s`.`store_name` AS
+                                                                                                    `store`,if(isnull(`rp`.`retailer_id`),0,`rp`.`retailer_id`) AS
+                                                                                                    `retailer_id`,if(isnull(`rp`.`effective_price`),' ',`rp`.`effective_price`) AS
+                                                                                                    `effective_price`,if(isnull(`rp`.`discount_per`),0,`rp`.`discount_per`) AS
+                                                                                                    `discount_price`,if(isnull(`rp`.`status`),' 1',`rp`.`status`) AS `status`,
+                                                                    md.media_url, md.thumb_url from (((`subscribed_product` `sp` join
+  `base_product` `bp` on((`bp`.`base_product_id` = `sp`.`base_product_id`)))
+  left join `store` `s` on((`s`.`store_id` = `sp`.`store_id`))) left join
+  `retailer_product_quotation` `rp` on((`rp`.`subscribed_product_id` =
+                                        `sp`.`subscribed_product_id`))) left join media md on
+                                                                                             (md.base_product_id=bp.base_product_id) where ((`sp`.`status` = 1) and
+                                                                                                                                            (`bp`.`status` = 1) and bp.grade != 'Parent' and bp.grade != 'Unsorted' );
