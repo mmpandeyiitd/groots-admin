@@ -62,6 +62,7 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionCreate($vendor_id)
 	{
+		//die('here');
 		$w_id = '';
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
@@ -218,9 +219,13 @@ class VendorPaymentController extends Controller
 				$w_id = Yii::app()->session['w_id'];
 			}
 			if(!$this->checkAccessByData('VendorCreditViewer', array('warehouse_id'=>$w_id))){
-				Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
+				Yii::app()->user->setFlash('premission_info', 'You dont have permission.');
 				Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 			}
+			return true;
+		}
+		else{
+			return false;
 		}
 	}
 }

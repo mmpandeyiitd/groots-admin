@@ -75,7 +75,7 @@ function getAllVendorInitialPending($startDate){
 
 
 
-
+date_default_timezone_set("Asia/Kolkata");
 $username = "root";
 $password = "root";
 $localhost = "localhost";
