@@ -749,6 +749,23 @@ alter table cb_dev_groots.retailer_log modify column collection_frequency enum('
 alter table cb_dev_groots.retailer add column delivery_time time not null;
 
 
+create table cb_dev_groots.retailer_status(
+id int(2) not null,
+status_name varchar(100) not null,
+created_at datetime default now(),
+updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+updated_by int(11) not null,
+primary key (id)
+)ENGINE=InnoDB default CHARSET=latin1; 
+
+alter table retailer modify column status int(2) not null default 1;
+
+insert into cb_dev_groots.retailer_status values(0, 'Inactive', null, null, 1);
+insert into cb_dev_groots.retailer_status values(1, 'Active', null, null, 1);
+insert into cb_dev_groots.retailer_status values(2, 'Moderate', null, null, 1);
+
+alter table cb_dev_groots.retailer add constraint fk_retailer_2 foreign key (status) REFERENCES cb_dev_groots.retailer_status (id);
+
 
 ----------------------------------------------------------------vendor table edit
 alter table cb_dev_groots.vendors drop column geolocation, drop product_categories, drop categories_of_interest, drop store_size, drop min_order_price, drop shipping_charge;
