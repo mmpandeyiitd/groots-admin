@@ -26,6 +26,7 @@
 * @property string $price
 */
 
+
 class OrderLine extends CActiveRecord
 {
     /**
