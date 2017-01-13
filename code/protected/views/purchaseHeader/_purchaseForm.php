@@ -454,10 +454,10 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var totalReceived = 0;
         var netUnit = 0;
         var netPrice = 0;
-        console.log(parent_id);
+        //console.log(parent_id);
         $(".item_"+parent_id).each( function() {
             //console.log($(this));
-            console.log($(this).find('.inputs').val());
+            //console.log($(this).find('.inputs').val());
             var orderQty = $(this).find('.inputs').val();
             var receivedQty = $(this).find('.received-inputs').val()
             var bp_id = $(this).attr('id').split("_")[1];
@@ -478,26 +478,21 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             if(receivedQty.length > 0){
                 totalReceived += parseFloat(receivedQty.trim());
             }
-
-            var totalPrice = $(this).find('.totalPrice').val();
-            console.log(totalPrice);
+            var totalPrice = 0;
+            
             var unitPrice = $(this).find('.price').val()
             if(unitPrice.length > 0){
                 totalPrice = parseFloat(orderQty.trim()) * unitPrice;
                 $(this).find('.totalPrice').val(totalPrice);
             }
-
-            if(totalPrice.length > 0){
-
-                netPrice += parseFloat(totalPrice.trim());
-                console.log(netPrice);
+            if(parseFloat(totalPrice) > 0){
+                netPrice += parseFloat(totalPrice);
             }
             if(unitPrice.length > 0){
                 netUnit += parseFloat(unitPrice.trim());
             }
 
         });
-        console.log(netPrice);
         if($("#tobe-procured_"+parent_id).length > 0){
             $("#tobe-procured_"+parent_id).html(totalTobeProcured);
         }
