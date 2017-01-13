@@ -283,7 +283,7 @@ foreach ($model as $value) {
                     }
             }
             elseif($type == "dc"){
-                $quantityInPacks = $model[$key]['product_qty'];
+                $quantityInPacks = $model[$key]['delivered_qty'];
                 if($model[$key]['pack_unit']=='g'){
                        $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
                        $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
