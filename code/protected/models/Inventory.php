@@ -328,12 +328,13 @@ class Inventory extends CActiveRecord
                 $base_product_id = $row[0];
                 $inv_id = $row[2];
                 $date = $row[4];
-                $present_inv = ($row[5] == '') ? 0: round(trim($row[5]));
-                $liquid_inv = ($row[6] == '') ? 0: round(trim($row[6]));
-                $wastage = ($row[7] == '') ? 0: round(trim($row[7]));
-                $liquidation_wastage = ($row[8] == '') ? 0: round(trim($row[8]));
-                $secondary_sale = ($row[9] == '') ? 0: round(trim($row[9]));
-                $parent_id = $row[10];                
+                $present_inv = ($row[5] == '') ? 0: round(trim($row[5]),2);
+                $liquid_inv = ($row[6] == '') ? 0: round(trim($row[6]),2);
+                $wastage = ($row[7] == '') ? 0: round(trim($row[7]),2);
+                $liquidation_wastage = ($row[8] == '') ? 0: round(trim($row[8]),2);
+                $secondary_sale = ($row[9] == '') ? 0: round(trim($row[9]),2);
+                $parent_id = $row[10];
+                //var_dump($present_inv, $liquid_inv, $wastage,$liquidation_wastage);die;               
                 
                 $action = '';
                 $inv = Inventory::model()->findByAttributes(array('warehouse_id' => $w_id, 'base_product_id' => $base_product_id, 'date' => $date));
