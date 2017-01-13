@@ -107,6 +107,11 @@ foreach ($model as $value) {
         $challanNoText = "Invoice No";
         $text = "";
     }
+    if($type == "email-invoice"){
+        $title = "Invoice";
+        $challanNoText = "Invoice No";
+        $text = "";
+    }
 
 
 ?>

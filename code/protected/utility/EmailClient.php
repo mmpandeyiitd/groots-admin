@@ -7,6 +7,7 @@ use Aws\Ses\SesClient;
  * Time: 12:47 PM
  */
 require_once( dirname(__FILE__) . '/../extensions/aws/aws-autoloader.php');
+require_once( dirname(__FILE__).'/SESUtils.php');
 class EmailClient
 {
 
@@ -20,7 +21,7 @@ class EmailClient
             'credentials' => array(
                 'key' => AWS_KEY,
                 'secret'  => AWS_SECRET_KEY,
-            )
+                )
 
         )); //Change this to instantiate the module you want. Look at the documentation to find out what parameters you need.
 
@@ -87,4 +88,40 @@ class EmailClient
     }
 
 
-}
+    public function sendEmailWithInvoices($mailArray){
+        $subject = $mailArray['subject'];
+        $text = $mailArray['text'];
+        $html = $mailArray['html'];
+        if(isset($mailArray['pdf']) && !empty($mailArray['pdf'])){
+            $dir = dirname(__FILE__) . '/../../../../dump/';
+            $pdf = $mailArray['pdf']['pdf'];
+            $name =$mailArray['pdf']['name'];
+            $fullName = $dir.$name;
+            $params = array(
+                'to' => 'ashu@gogroots.com',
+                'cc' => 'ashudogra20@gmail.com',
+                'from' => EMAIL_SENDER,
+                'subject' => $subject,
+                'message' => $html,
+                'files' =>array('0'=> array(
+                    'name' => $name,
+                    'filepath'=>$fullName,
+                    'mime' => 'application/pdf'
+                    )
+                )
+            );
+            try{
+                $result = SESUtils::sendMail($params);
+                $messageId = $result->message_id;
+                $resultText = $result->result_text;
+                 echo("Email sent! Message ID: $messageId"."\n");    
+            } catch (Exception $e){
+                echo("The email was not sent. Error message: ");
+                echo($e->getMessage()."\n");
+            }
+            
+        }
+
+    }
+
+    }
