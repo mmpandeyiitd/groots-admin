@@ -569,11 +569,8 @@ class OrderLine extends CActiveRecord
 
     public static function awsAttachmentMail($mailArray)
     {
-        $emailClient = dirname(__FILE__).'/../utility/EmailClient.php';
-        require_once($emailClient);
         $sesEmail = new EmailClient();
         $sesEmail->sendEmailWithInvoices($mailArray);
-        //$sesEmail->verifyEmailToSes();
     }
 
 }

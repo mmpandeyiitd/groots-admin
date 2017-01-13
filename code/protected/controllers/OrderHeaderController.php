@@ -2097,7 +2097,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (' . $order_id . ') is has been delivered and the Invoice is attached in this Mail '. 'If you have a feedback, please email your concern to <br>
+            Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
                 Thank you for choosing Groots!<br>
           </span>
           <br>

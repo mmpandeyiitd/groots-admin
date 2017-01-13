@@ -267,4 +267,42 @@ class Utility
     }
 
 
+    public static function clean_filename($str, $limit = 0, $replace=array(), $delimiter='-') {
+        if( !empty($replace) ) {
+            $str = str_replace((array)$replace, ' ', $str);
+        }
+
+        $clean = iconv('UTF-8', 'ASCII//TRANSLIT', $str);
+        $clean = preg_replace("/[^a-zA-Z0-9\.\/_| -]/", '', $clean);
+        $clean = preg_replace("/[\/| -]+/", '-', $clean);
+        
+        if ($limit > 0) {
+            //don't truncate file extension
+            $arr = explode(".", $clean);
+            $size = count($arr);
+            $base = "";
+            $ext = "";
+            if ($size > 0) {
+                for ($i = 0; $i < $size; $i++) {
+                    if ($i < $size - 1) { //if it's not the last item, add to $bn
+                        $base .= $arr[$i];
+                        //if next one isn't last, add a dot
+                        if ($i < $size - 2)
+                            $base .= ".";
+                    } else {
+                        if ($i > 0)
+                            $ext = ".";
+                        $ext .= $arr[$i];
+                    }
+                }
+            }
+            $bn_size = mb_strlen($base);
+            $ex_size = mb_strlen($ext);
+            $bn_new = mb_substr($base, 0, $limit - $ex_size);
+            // doing again in case extension is long
+            $clean = mb_substr($bn_new.$ext, 0, $limit); 
+        }
+        return $clean;
+    }
+
 }
