@@ -2038,6 +2038,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
     }
 
     private function sendMailToRetailer($pdfArray){
+        $array = array();
         //var_dump($pdfArray);die;
         foreach ($pdfArray as $each){
             $pdf = $each['pdf'];
@@ -2047,7 +2048,7 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             $sql = "SELECT billing_email FROM order_header WHERE order_id ='" . $order_id. "'";
             $command = $connection->createCommand($sql);
             $command->execute();
-            $emai_id = $command->queryAll();
+            $emai_id = $command->queryScalar();
 
 
 
@@ -2056,10 +2057,12 @@ Sales: '. SALES_SUPPORT_NO. '</span>
             //var_dump($buyername);die;
             $csv_name = 'order_' . $order_id . '.pdf';
             $csv_filename = "feeds/order_csv/" . $csv_name;
-            $from_email = 'grootsadmin@groots.in';
+            $from_email = EMAIL_SENDER;
+            $replyto = REPLY_TO_EMAIL;
+            $cc_group = INVOICE_CC_GROUP;
             $from_name = 'Groots Dashboard Admin';
             $subject = 'Order Invoice';
-            $urldata = Yii::app()->params['email_app_url'];
+            //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
@@ -2094,13 +2097,12 @@ Sales: '. SALES_SUPPORT_NO. '</span>
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (' . $order_id . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in<br>
+            Your order (' . $order_id . ') is has been delivered and the Invoice is attached in this Mail '. 'If you have a feedback, please email your concern to <br>
                 Thank you for choosing Groots!<br>
-           <!-- <br/> <a href =' . $urldata . $order_id . '_' . md5('Order' . $order_id) . '.' . 'pdf' . '> Click here to download invoice </a><br/> -->
           </span>
           <br>
 
-        <a href="' . $urldata . '">
+        <a href="' . APP_LINK . '">
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
@@ -2132,21 +2134,30 @@ Sales: '. SALES_SUPPORT_NO. '</span>
 
             $body_text = '';
             $mailArray = array(
-                'to' => array(
-                    '0' => array(
-                        'email' => 'ashu@gogroots.com',
-                    )
-                ),
+                'to' => $emai_id,
                 'from' => $from_email,
                 'fromname' => $from_name,
                 'subject' => $subject,
                 'html' => $body_html,
                 'text' => $body_text,
-                'replyto' => $from_email,
-                'pdf' => $pdf
+                'replyTo' => $replyto,
+                'pdf' => $pdf,
+                'cc' => $cc_group,
             );
-            $mailsend = new OrderLine();
-            $resp = $mailsend->awsAttachmentMail($mailArray);
+            array_push($array, $mailArray);
+
+            
+        }
+        $mailsend = new OrderLine();
+        try{
+            $resp = $mailsend->awsAttachmentMail($array);
+            Yii::app()->user->setFlash('success','Email Sent Successfully' );
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin");    
+        } catch (Exception $e){
+            $x = "The email was not sent. Error message: ";
+            $x .= $e->getMessage()."\n";
+            Yii::app()->user->setFlash('error', $x);
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin");  
         }
     }
 

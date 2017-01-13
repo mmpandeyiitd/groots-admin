@@ -88,40 +88,46 @@ class EmailClient
     }
 
 
-    public function sendEmailWithInvoices($mailArray){
-        $subject = $mailArray['subject'];
-        $text = $mailArray['text'];
-        $html = $mailArray['html'];
-        if(isset($mailArray['pdf']) && !empty($mailArray['pdf'])){
-            $dir = dirname(__FILE__) . '/../../../../dump/';
-            $pdf = $mailArray['pdf']['pdf'];
-            $name =$mailArray['pdf']['name'];
-            $fullName = $dir.$name;
-            $params = array(
-                'to' => 'ashu@gogroots.com',
-                'cc' => 'ashudogra20@gmail.com',
-                'from' => EMAIL_SENDER,
-                'subject' => $subject,
-                'message' => $html,
-                'files' =>array('0'=> array(
+    public function sendEmailWithInvoices($mailArrays){
+        //var_dump($mailArrays);die;
+        foreach ($mailArrays as $key => $mailArray) {
+            $subject = $mailArray['subject'];
+            $text = $mailArray['text'];
+            $html = $mailArray['html'];
+            $params = array();
+            $params['to'] = $mailArray['to'];
+            $params['subject'] = $subject;
+            $params['message'] = $html;
+            $params['from'] = $mailArray['from'];
+            $params['cc'] = $mailArray['cc'];
+            $params['replyTo'] = $mailArray['replyTo'];
+
+            if(isset($mailArray['pdf']) && !empty($mailArray['pdf'])){
+                $params['files'] = array();
+                $dir = dirname(__FILE__) . '/../../../../dump/';
+                $value = $mailArray['pdf'];
+                $pdf = $value['pdf'];
+                $name =$value['name'];
+                $fullName = $dir.$name;
+                file_put_contents($fullName, $pdf);
+                $temp = array(
                     'name' => $name,
-                    'filepath'=>$fullName,
+                    'filepath' => $fullName,
                     'mime' => 'application/pdf'
-                    )
-                )
-            );
+                    );
+                $params['files'][0] = $temp;
+            }
             try{
                 $result = SESUtils::sendMail($params);
                 $messageId = $result->message_id;
                 $resultText = $result->result_text;
-                 echo("Email sent! Message ID: $messageId"."\n");    
+                echo("Email sent! Message ID: $messageId"."\n");    
             } catch (Exception $e){
-                echo("The email was not sent. Error message: ");
-                echo($e->getMessage()."\n");
+                throw $e;
             }
-            
+
+
         }
-
     }
 
-    }
+}

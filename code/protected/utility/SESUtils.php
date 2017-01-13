@@ -96,15 +96,10 @@ class SESUtils {
         }
 
         //make cc string
-        if(is_array($cc)){
-            $cc_str = rtrim(implode(',', $cc), ',');
-        } else {
-            $cc_str = $cc;
-        }
 
         $msg = "To: $to_str\n";
-        if($cc_str){
-            $msg .= "Cc: $cc_str\n";    
+        if($cc){
+            $msg .= "Cc: $cc\n";    
         }
         $msg .= "From: $from\n";
         if ($replyTo) {

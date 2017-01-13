@@ -763,4 +763,3 @@ insert into cb_dev_groots.retailer_status values(1, 'Active', null, null, 1);
 insert into cb_dev_groots.retailer_status values(2, 'Moderate', null, null, 1);
 
 alter table cb_dev_groots.retailer add constraint fk_retailer_2 foreign key (status) REFERENCES cb_dev_groots.retailer_status (id);
-
