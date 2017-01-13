@@ -62,15 +62,35 @@ $this->widget('zii.widgets.grid.CGridView', array(
     'dataProvider' => $model->search(),
     'filter' => $model,
     'columns' => array(
+        //'id',
+        array(
+            'header' => 'Id',
+            'name' => 'id',
+            'htmlOptions' => array('style' => 'width:50px;'),
+        ),
         'name',
         'email',
-        'city',
         array(
-            'header' => 'Total Payable Amount',
-            'value' => function($data){
-                echo round(Utility::calTotPayAmoByRetailer($data->id), 2);
-                }
-            ),
+            'header' => 'Mobile',
+            'name' => 'mobile',
+            'htmlOptions' => array('style' => 'width:90px;'),
+        ),
+        array(
+            'header' => 'City',
+            'name' => 'city',
+            'htmlOptions' => array('style' => 'width:90px;'),
+        ),
+        array(
+            'header' => 'Status',
+            'name' => 'status_name',
+            'htmlOptions' => array('style' => 'width:90px;'),
+        ),
+        // array(
+        //     'header' => 'Total Payable Amount',
+        //     'value' => function($data){
+        //         echo round(Utility::calTotPayAmoByRetailer($data->id), 2);
+        //         }
+        //     ),
         //'status',
         'link' => array(
             'header' => 'Action',

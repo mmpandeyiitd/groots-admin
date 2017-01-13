@@ -33,11 +33,24 @@ $base_url = Yii::app()->getBaseUrl(true);
 
 <?php
 $this->widget('zii.widgets.grid.CGridView', array(
-		'id'=>'id',
+		'id'=>'todayscollection',
 		'dataProvider'=> $data,
 		'columns' => array(
 			'id',
-			'name',
+			'status',
+      array(
+        'header' => 'Name',
+        'type' => 'raw',
+        'value' => function($data) use ($paidAmountMap){
+          if(strtotime($data['last_due_date']) > strtotime($data['last_paid_on'])){
+            return CHtml::label($data['name'], 'todayscollection', array('class' => 'defaulter'));
+          }
+          else if(isset($paidAmountMap[$data['id']]) && $paidAmountMap[$data['id']]['paid_amount']/$data['due_payable_amount'] <  0.9){
+            return CHtml::label($data['name'], 'todayscollection', array('class' => 'defaulter')); 
+          }
+          else return CHtml::label($data['name'], 'todayscollection');
+        }
+        ),
       'collection_frequency',
       'collection_agent',
       'collection_center',
@@ -109,6 +122,7 @@ $(document).ready(function() {
     'dataProvider'=> $data2,
     'columns' => array(
       'id',
+      'status',
       array(
         'header' => 'Name',
         'type' => 'raw',

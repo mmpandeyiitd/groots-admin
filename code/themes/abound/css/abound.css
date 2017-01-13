@@ -2272,3 +2272,6 @@ nav.vertical li.ex1:hover > ul{
 #prevDayPaymentUnfulfilled .defaulter{
     background-color: red; 
 }
+#todayscollection .defaulter{
+    background-color: red; 
+}

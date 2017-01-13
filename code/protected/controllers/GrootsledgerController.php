@@ -16,7 +16,7 @@ class GrootsledgerController extends Controller
 		return array(
 			'accessControl', // perform access control for CRUD operations
 			'postOnly + delete', // we only allow deletion via POST request
-		);
+      );
 	}
 
 	/**
@@ -30,19 +30,19 @@ class GrootsledgerController extends Controller
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','admin','report'),
 				'users'=>array('*'),
-			),
+       ),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update','admin','report','adminOld','createPayment', 'updatePayment','dailyCollection','totalpayable'),
 				'users'=>array('@'),
-			),
+       ),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
 				'users'=>array('admin'),
-			),
+       ),
 			array('deny',  // deny all users
 				'users'=>array('*'),
-			),
-		);
+       ),
+      );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class GrootsledgerController extends Controller
 	{
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
-		));
+      ));
 	}
 
 	/**
@@ -76,7 +76,7 @@ class GrootsledgerController extends Controller
 
 		$this->render('create',array(
 			'model'=>$model,
-		));
+      ));
 	}
 
 	/**
@@ -90,103 +90,103 @@ class GrootsledgerController extends Controller
 
        //..................select info ledger.............//
 
-         $ledger=new GrootsLedger();
-         $ledgerinfo=$ledger->getinfo($_POST['pk']);
+   $ledger=new GrootsLedger();
+   $ledgerinfo=$ledger->getinfo($_POST['pk']);
 
 
-          if(!is_numeric($_POST['value']))
-          {
-               
-                        echo CJSON::encode(array('success' => false, 'msg' => 'Please Enter Only Numeric value.'));
-                    return;
-                
-                
-          }
-          else
-         {
-         if(isset($ledgerinfo[0]['due_amount']))
-         {
+   if(!is_numeric($_POST['value']))
+   {
+
+    echo CJSON::encode(array('success' => false, 'msg' => 'Please Enter Only Numeric value.'));
+    return;
+
+
+  }
+  else
+  {
+   if(isset($ledgerinfo[0]['due_amount']))
+   {
          //..................inset into ledege..............//
 
-         	if($_POST['value'] > $ledgerinfo[0]['due_amount'])
-         	{
-                echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must  less than or equal to Due Amount.'));
-                    return;
-         	}
-         	else
-         	{
-              $dueamount='';
-              $posvalue='';
-              if($_POST['value'] < 0)
-              {
-              	$posvalue=$_POST['value'];
-              	$_POST['value']=-$_POST['value'];
-              	$dueamount=$ledgerinfo[0]['due_amount']+$_POST['value']; 
-              	if($dueamount > $ledgerinfo[0]['total_amount'])
-              	{
-              		echo CJSON::encode(array('success' => false, 'msg' => 'Due Amount must  less than or equal to total_payable_amount.'));
-                    return;
-              	}
-              }
-              else
-              {
-                 $dueamount=$ledgerinfo[0]['due_amount']-$_POST['value'];
-                 $posvalue= $_POST['value'];  
-              }         
-	           
-	           if($posvalue < 0)  
-	           {
-	           	$ledger->putreturninfo($ledgerinfo[0]['id'],$_POST['value'],$dueamount);
-	           }  
-	           else
-	           {
-	           	$ledger->putinfo($ledgerinfo[0]['id'],$posvalue,$dueamount);
-	           }  
-	             
-	       }
-         //............................end.......................//
-        }
-        else
-        {
-
-         $ledgero=new OrderHeader();
-         $ledgerinfoo=$ledgero->getinfo($_POST['pk']);  
-         if($_POST['value'] > $ledgerinfoo[0]['total_payable_amount'])
-         	{
-                echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must greater less than or equal to Total Amount.'));
-                    return;
-         	}
-         	elseif($_POST['value'] < 0)
-	          {
-	          	  echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must greater than 0.'));
-	                    return;
-	          }
-         	else
-         	{
-
-	         $ledgerr=new GrootsLedger();   	
-	         $ledgerr->putinfonew($ledgerinfoo,$_POST['value']);
-            }
-
-        }
-           echo CJSON::encode(array('success' => true, 'msg' => 'ok done.'));
-                    return;
+    if($_POST['value'] > $ledgerinfo[0]['due_amount'])
+    {
+      echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must  less than or equal to Due Amount.'));
+      return;
     }
+    else
+    {
+      $dueamount='';
+      $posvalue='';
+      if($_POST['value'] < 0)
+      {
+       $posvalue=$_POST['value'];
+       $_POST['value']=-$_POST['value'];
+       $dueamount=$ledgerinfo[0]['due_amount']+$_POST['value']; 
+       if($dueamount > $ledgerinfo[0]['total_amount'])
+       {
+        echo CJSON::encode(array('success' => false, 'msg' => 'Due Amount must  less than or equal to total_payable_amount.'));
+        return;
+      }
+    }
+    else
+    {
+     $dueamount=$ledgerinfo[0]['due_amount']-$_POST['value'];
+     $posvalue= $_POST['value'];  
+   }         
 
-      
+   if($posvalue < 0)  
+   {
+     $ledger->putreturninfo($ledgerinfo[0]['id'],$_POST['value'],$dueamount);
+   }  
+   else
+   {
+     $ledger->putinfo($ledgerinfo[0]['id'],$posvalue,$dueamount);
+   }  
+
+ }
+         //............................end.......................//
+}
+else
+{
+
+ $ledgero=new OrderHeader();
+ $ledgerinfoo=$ledgero->getinfo($_POST['pk']);  
+ if($_POST['value'] > $ledgerinfoo[0]['total_payable_amount'])
+ {
+  echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must greater less than or equal to Total Amount.'));
+  return;
+}
+elseif($_POST['value'] < 0)
+{
+  echo CJSON::encode(array('success' => false, 'msg' => 'Paid Amount is must greater than 0.'));
+  return;
+}
+else
+{
+
+  $ledgerr=new GrootsLedger();   	
+  $ledgerr->putinfonew($ledgerinfoo,$_POST['value']);
+}
+
+}
+echo CJSON::encode(array('success' => true, 'msg' => 'ok done.'));
+return;
+}
+
+
 
 
        //...................end.........................//
 
 
-	}
+}
 
-	public function actionreport()
-	{    
+public function actionreport()
+{    
 
 
-      $this->render('report');
-	}
+  $this->render('report');
+}
 
 
 	/**
@@ -211,313 +211,325 @@ class GrootsledgerController extends Controller
 		$dataProvider=new CActiveDataProvider('Grootsledger');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
-		));
+      ));
 	}
 
-    public function actionCreatePayment(){
+  public function actionCreatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
-        $w_id = $_GET['w_id'];
-      $retailerPayment = new RetailerPayment();
-        $retailerId = $_GET['retailerId'];
-         $retailer = Retailer::model()->findByPk($retailerId);
-        if(isset($_POST['create'])){
-            $transaction = Yii::app()->db->beginTransaction();
-            try {
+    $w_id = $_GET['w_id'];
+    $retailerPayment = new RetailerPayment();
+    $retailerId = $_GET['retailerId'];
+    $retailer = Retailer::model()->findByPk($retailerId);
+    if(isset($_POST['create'])){
+      $transaction = Yii::app()->db->beginTransaction();
+      try {
                 //$retailerPayment = new RetailerPayment();
                 //$retailerPayment->load($_POST['RetailerPayment']);
-                    GrootsledgerDao::saveCreatePayment($retailer, $_POST['RetailerPayment'], $retailerPayment);
-                    $transaction->commit();
-                    Yii::app()->user->setFlash('success', 'Payment has been saved');
+        GrootsledgerDao::saveCreatePayment($retailer, $_POST['RetailerPayment'], $retailerPayment);
+        $transaction->commit();
+        Yii::app()->user->setFlash('success', 'Payment has been saved');
                     //$this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
-                $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
-            }
-            catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::app()->user->setFlash('error', 'Payment could not be saved.');
-                throw $e;
-            }
+        $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        Yii::app()->user->setFlash('error', 'Payment could not be saved.');
+        throw $e;
+      }
 
-        }
-        $retailerPayment->retailer_id = $retailerId;
-        $retailerPayment->retailerName = $retailer->name;
-        $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
+    }
+    $retailerPayment->retailer_id = $retailerId;
+    $retailerPayment->retailerName = $retailer->name;
+    $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
         //print_r($retailerPayment);die;
 
         //echo "here", die;
-        $this->render('payment',array(
-            'model'=>$retailerPayment,
-            'retailerId' => $retailerId,
-            'w_id' => $w_id,
-        ));
-    }
+    $this->render('payment',array(
+      'model'=>$retailerPayment,
+      'retailerId' => $retailerId,
+      'w_id' => $w_id,
+      ));
+  }
 
-    public function actionUpdatePayment(){
+  public function actionUpdatePayment(){
         //print("<pre>");
         //print_r($_POST);die;
-        $w_id = $_GET['w_id'];
-        if(isset($_POST['update'])){
-            $transaction = Yii::app()->db->beginTransaction();
-            try {
+    $w_id = $_GET['w_id'];
+    if(isset($_POST['update'])){
+      $transaction = Yii::app()->db->beginTransaction();
+      try {
                 //$retailerPayment = new RetailerPayment();
-                $retailerPayment = GrootsledgerDao::saveUpdatePayment($_POST['RetailerPayment']);
-                    $transaction->commit();
-                    Yii::app()->user->setFlash('success', 'Payment has been saved');
+        $retailerPayment = GrootsledgerDao::saveUpdatePayment($_POST['RetailerPayment']);
+        $transaction->commit();
+        Yii::app()->user->setFlash('success', 'Payment has been saved');
                     //$this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id)));
-                $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
-            }
-            catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::app()->user->setFlash('error', 'Payment could not be saved.');
-                throw $e;
-            }
+        $this->redirect($this->createUrl('Grootsledger/admin', array('retailerId' => $retailerPayment->retailer_id, 'w_id'=> $w_id)));
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        Yii::app()->user->setFlash('error', 'Payment could not be saved.');
+        throw $e;
+      }
 
-        }
-        $paymentId = $_GET['id'];
-        if(!isset($retailerPayment)){
-            $retailerPayment = RetailerPayment::model()->findByPk($paymentId);
-        }
-        if(!isset($retailer)) {
-            $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
-        }
+    }
+    $paymentId = $_GET['id'];
+    if(!isset($retailerPayment)){
+      $retailerPayment = RetailerPayment::model()->findByPk($paymentId);
+    }
+    if(!isset($retailer)) {
+      $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+    }
 
-        $retailerPayment->retailerName = $retailer->name;
-        $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
+    $retailerPayment->retailerName = $retailer->name;
+    $retailerPayment->totalPayableAmount = $retailer->total_payable_amount;
         //print_r($retailerPayment);die;
         //echo "here", die;
-        $this->render('payment',array(
-            'model'=>$retailerPayment,
-            'update' => true,
-            'w_id' => $w_id,
-        ));
-    }
+    $this->render('payment',array(
+      'model'=>$retailerPayment,
+      'update' => true,
+      'w_id' => $w_id,
+      ));
+  }
 
-    public function actiondailyCollection(){
+  public function actiondailyCollection(){
       // var_dump($_POST);
       // die();
-      $paidAmountMap = RetailerPayment::SumPaidAmountByRetailer();
-        $w_id = $_GET['w_id'];
-      if(isset($_POST['update'])){
-        self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
-      }
+    $paidAmountMap = RetailerPayment::SumPaidAmountByRetailer();
+    $w_id = $_GET['w_id'];
+    if(isset($_POST['update'])){
+      self::updateDaily($_POST['retailer_id'], $_POST['collected_amount']);
+    }
       //die('here');
-      if(isset($_POST['update2'])){
-          self::updateDaily($_POST['pending_retailer_id'],$_POST['pending_collection']);
-      }
-      $retailers = QueriesDailyCollection::todaysCollection($w_id);
-      $dataprovider = array();
-      $dataprovider2 = array();
-      $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection($w_id);
-      $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
-      $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
-      $total_due_amount = 0;
-      $amount_to_be_collected = 0;
-      foreach ($retailers as $rowinfo) {
-        $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
-        $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
-        $amount_to_be_collected += $total_payable_amount;
-        $total_due_amount += $due_payable_amount;
-        $tmp = array();
-        $tmp['yesterday_payment_received'] = $rowinfo['last_paid_amount'];
-        $tmp['id'] = $rowinfo['id'];
-        $tmp['name'] = $rowinfo['retailer_name'];
-        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
-        $tmp['collection_agent'] = $rowinfo['collection_agent'];
-        $tmp['total_payable_amount'] = round($total_payable_amount, 2);
-        $tmp['collection_center'] = $rowinfo['collection_center'];
-        $tmp['warehouse'] = $rowinfo['warehouse_name'];
-        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
-        $tmp['due_date'] = $rowinfo['due_date'];
-        array_push($dataprovider, $tmp);
-      }
-      foreach ($pendingRetailer as $rowinfo) {
-        $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
-        $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
-        $total_due_amount += $due_payable_amount;
-        $amount_to_be_collected += $total_payable_amount;
-        $tmp = array();
-        $tmp['id'] = $rowinfo['id'];
-        $tmp['name'] = $rowinfo['retailer_name'];
-        $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
-        $tmp['collection_agent'] = $rowinfo['collection_agent'];
-        $tmp['warehouse'] = $rowinfo['warehouse_name'];
-        $tmp['total_payable_amount'] = round($total_payable_amount, 2);
-        $tmp['due_payable_amount'] = round($due_payable_amount, 2);
-        $tmp['collection_center'] = $rowinfo['collection_center'];
-        $tmp['todays_order_amount'] = $rowinfo['todays_order'];
-        $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
-        $tmp['last_due_date'] = $rowinfo['last_due_date'];
-        $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
-        $tmp['due_date'] = $rowinfo['due_date'];
-        array_push($dataprovider2, $tmp);
-      }
-      $dataprovider = new CArrayDataProvider($dataprovider, array(
+    if(isset($_POST['update2'])){
+      self::updateDaily($_POST['pending_retailer_id'],$_POST['pending_collection']);
+    }
+    $retailers = QueriesDailyCollection::todaysCollection($w_id);
+    $dataprovider = array();
+    $dataprovider2 = array();
+    $pendingRetailer = QueriesDailyCollection::yesterdayPendingCollection($w_id);
+    $total_paid_yesterday = QueriesDailyCollection::totalPaidAmount();
+    $total_paid_yesterday = $total_paid_yesterday['0']['total_paid_yesterday'];
+    $total_due_amount = 0;
+    $amount_to_be_collected = 0;
+    foreach ($retailers as $rowinfo) {
+      $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
+      $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
+      $amount_to_be_collected += $total_payable_amount;
+      $total_due_amount += $due_payable_amount;
+      $tmp = array();
+      $tmp['yesterday_payment_received'] = $rowinfo['last_paid_amount'];
+      $tmp['id'] = $rowinfo['id'];
+      $tmp['name'] = $rowinfo['retailer_name'];
+      $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+      $tmp['collection_agent'] = $rowinfo['collection_agent'];
+      $tmp['total_payable_amount'] = round($total_payable_amount, 2);
+      $tmp['collection_center'] = $rowinfo['collection_center'];
+      $tmp['warehouse'] = $rowinfo['warehouse_name'];
+      $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+      $tmp['due_date'] = $rowinfo['due_date'];
+      $tmp['last_due_date'] = $rowinfo['last_due_date'];
+      $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+      $tmp['due_payable_amount'] = $due_payable_amount;
+      $tmp['status'] = $rowinfo['status'];
+      array_push($dataprovider, $tmp);
+    }
+    foreach ($pendingRetailer as $rowinfo) {
+      $total_payable_amount = Utility::calTotPayAmoByRetailer($rowinfo['id']);
+      $due_payable_amount = Utility::calLastPayAmoByRetailer($rowinfo['id']);
+      $total_due_amount += $due_payable_amount;
+      $amount_to_be_collected += $total_payable_amount;
+      $tmp = array();
+      $tmp['id'] = $rowinfo['id'];
+      $tmp['name'] = $rowinfo['retailer_name'];
+      $tmp['collection_frequency'] = $rowinfo['collection_frequency'];
+      $tmp['collection_agent'] = $rowinfo['collection_agent'];
+      $tmp['warehouse'] = $rowinfo['warehouse_name'];
+      $tmp['total_payable_amount'] = round($total_payable_amount, 2);
+      $tmp['due_payable_amount'] = round($due_payable_amount, 2);
+      $tmp['collection_center'] = $rowinfo['collection_center'];
+      $tmp['todays_order_amount'] = $rowinfo['todays_order'];
+      $tmp['last_paid_amount'] = $rowinfo['last_paid_amount'];
+      $tmp['last_due_date'] = $rowinfo['last_due_date'];
+      $tmp['last_paid_on'] = $rowinfo['last_paid_on'];
+      $tmp['due_date'] = $rowinfo['due_date'];
+      $tmp['status'] = $rowinfo['status'];
+      array_push($dataprovider2, $tmp);
+    }
+    $dataprovider = new CArrayDataProvider($dataprovider, array(
 
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','due_payable_amount','collection_center',
-                        ),
-                    ),'pagination'=>array('pageSize'=>100)));
+      'sort'=>array(
+        'attributes'=>array(
+          'warehouse','name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','id','due_payable_amount','collection_center',
+          ),
+        ),'pagination'=>array('pageSize'=>100)));
 
-      $dataprovider2 = new CArrayDataProvider($dataprovider2, array(
+    $dataprovider2 = new CArrayDataProvider($dataprovider2, array(
 
-                    'sort'=>array(
-                        'attributes'=>array(
-                            'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','due_payable_amount','collection_center',
-                        ),
-                    ),'pagination'=>array('pageSize'=>100)));
-      
+      'sort'=>array(
+        'attributes'=>array(
+          'name','collection_frequency','collection_agent','total_payable_amount','todays_order_amount','last_paid_on','last_paid_amount','last_due_date','id','warehouse','due_payable_amount','collection_center',
+          ),
+        ),'pagination'=>array('pageSize'=>100)));
+
 // die("here");
-      if(isset($_GET['download']) && $_GET['download']==true){
+    if(isset($_GET['download']) && $_GET['download']==true){
       ob_clean();
-          QueriesDailyCollection::downloadDailyCollectionCsv($w_id);
-            ob_flush();
-            exit();
-        }
-
-        if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
-      ob_clean();
-          QueriesDailyCollection::downloadBackDateCollectionCsv($w_id);
-            ob_flush();
-            exit();
-        }
-        $due_payable_amount_yesterday = self::get_due_payable_amount_yesterday();
-       $this->render('dailyCollection',array(
-          'data' => $dataprovider,
-          'data2' => $dataprovider2,
-          'amount_to_be_collected' => $amount_to_be_collected,
-          'total_paid_yesterday' => $total_paid_yesterday,
-          'total_due_amount' => $total_due_amount,
-          'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
-           'w_id'=>$w_id,
-           'paidAmountMap' => $paidAmountMap,
-          ));
+      QueriesDailyCollection::downloadDailyCollectionCsv($w_id);
+      ob_flush();
+      exit();
     }
 
-       
+    if(isset($_GET['downloadPending']) && $_GET['downloadPending']==true){
+      ob_clean();
+      QueriesDailyCollection::downloadBackDateCollectionCsv($w_id);
+      ob_flush();
+      exit();
+    }
+    $due_payable_amount_yesterday = self::get_due_payable_amount_yesterday();
+    $this->render('dailyCollection',array(
+      'data' => $dataprovider,
+      'data2' => $dataprovider2,
+      'amount_to_be_collected' => $amount_to_be_collected,
+      'total_paid_yesterday' => $total_paid_yesterday,
+      'total_due_amount' => $total_due_amount,
+      'due_payable_amount_yesterday' => $due_payable_amount_yesterday,
+      'w_id'=>$w_id,
+      'paidAmountMap' => $paidAmountMap,
+      ));
+  }
 
-    public function actionAdmin()
-    {
+
+
+  public function actionAdmin()
+  {
         //print("<pre>");
-        $w_id = $_GET['w_id'];
-        $retailer= new Retailer();
-        $model = new OrderHeader();
-        $retailerOrders ='';
-        $retailerPayments = '';
-        $dataprovider = array();
-        if(isset($_POST['retailer-dd'])){
-            $retailerId = $_POST['retailer-dd'];
-        }
+    $w_id = $_GET['w_id'];
+    $retailer= new Retailer();
+    $model = new OrderHeader();
+    $retailerOrders ='';
+    $retailerPayments = '';
+    $dataprovider = array();
+    if(isset($_POST['retailer-dd'])){
+      $retailerId = $_POST['retailer-dd'];
+    }
 
-        if(!isset($retailerId) || empty($retailerId) ){
-            if(isset($_GET['retailerId'])){
-                $retailerId = $_GET['retailerId'];
-            } 
-        }
+    if(!isset($retailerId) || empty($retailerId) ){
+      if(isset($_GET['retailerId'])){
+        $retailerId = $_GET['retailerId'];
+      } 
+    }
 //echo $retailerId;die;
 //print_r($_POST);die;
-        if (isset($retailerId) || !empty($retailerId)) {
+    if (isset($retailerId) || !empty($retailerId)) {
 
 
-            if($retailerId>0) {
-                $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
-                $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
-                $retailer = Retailer::model()->findByPk($retailerId);
-                $retailerStatusMap = Retailer::getRetailerLog($retailerId);
-                $dateArr = array_keys($retailerStatusMap);
+      if($retailerId>0) {
+        $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
+        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'(status != 0 or payment_type = "Cheque") and date >= "2016-09-01"', 'order'=> 'date ASC'));
+        $retailer = Retailer::model()->findByPk($retailerId);
+        $retailerStatusMap = Retailer::getRetailerLog($retailerId);
+        $dateArr = array_keys($retailerStatusMap);
                 //print_r($retailerStatusMap);die;
-                $outstanding = $retailer->initial_payable_amount;
-                foreach ($retailerOrders as $order){
-                    $tmp = array();
-                    $tmp['id'] = $order->order_id;
-                    $tmp['date'] = substr($order->delivery_date,0,10);
-                    $tmp['type'] = "Order";
-                    $tmp['invoiceAmount'] = $order->total_payable_amount;
-                    $tmp['paymentAmount'] = '';
-                    $tmp['outstanding'] = '';
+        $outstanding = $retailer->initial_payable_amount;
+        foreach ($retailerOrders as $order){
+          $tmp = array();
+          $tmp['id'] = $order->order_id;
+          $tmp['date'] = substr($order->delivery_date,0,10);
+          $tmp['type'] = "Order";
+          $tmp['invoiceAmount'] = $order->total_payable_amount;
+          $tmp['paymentAmount'] = '';
+          $tmp['outstanding'] = '';
 
-                    $tmp['update_url'] = 'OrderHeader/update';
+          $tmp['update_url'] = 'OrderHeader/update';
                     //get retailer status at the time of order
-                    $statusChangeDate='';
-                    foreach ($dateArr as $d){
-                        if ($d <= $order->delivery_date) {
-                            $statusChangeDate = $d;
-                            break;
-                        }
-                    }
-                    $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
-                    $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
-                    array_push($dataprovider, $tmp);
-                }
+          $statusChangeDate='';
+          foreach ($dateArr as $d){
+            if ($d <= $order->delivery_date) {
+              $statusChangeDate = $d;
+              break;
+            }
+          }
+          $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
+          $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
+          array_push($dataprovider, $tmp);
+        }
 
-                foreach ($retailerPayments as $payment){
-                    $tmp = array();
-                    $tmp['id'] = $payment->id;
-                    $tmp['date'] = substr($payment->date, 0,10);
-                    $tmp['type'] = "Payment";
-                    $tmp['payment_type'] = $payment->payment_type;
-                    $tmp['cheque_no'] = $payment->cheque_no;
-                    $tmp['invoiceAmount'] = '';
-                    $tmp['paymentAmount'] = $payment->paid_amount;
-                    $tmp['update_url'] = 'Grootsledger/UpdatePayment';
+        foreach ($retailerPayments as $payment){
+          $tmp = array();
+          $tmp['id'] = $payment->id;
+          $tmp['date'] = substr($payment->date, 0,10);
+          $tmp['type'] = "Payment";
+          $tmp['payment_type'] = $payment->payment_type;
+          $tmp['cheque_no'] = $payment->cheque_no;
+          $tmp['cheque_status'] = '';
+          if($payment->payment_type == 'Cheque'){
+            $tmp['cheque_status'] = $payment->cheque_status;
+          }
+          $tmp['invoiceAmount'] = '';
+          $tmp['paymentAmount'] = $payment->paid_amount;
+          $tmp['update_url'] = 'Grootsledger/UpdatePayment';
 
                     //get retailer status at the time of payment
-                    $statusChangeDate='';
-                    foreach ($dateArr as $d){
-                        if ($d <= $payment->date) {
-                            $statusChangeDate = $d;
-                            break;
-                        }
-                    }
-                    $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
-                    $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
-
-                    array_push($dataprovider, $tmp);
-                }
-                foreach ($dataprovider as $key => $value) {
-                  $type[$key] = $value['type'];
-                  $date[$key] = $value['date'];
-                }
-                //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
-                if(!empty($dataprovider)){
-                  array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
-                }
-                foreach ($dataprovider as $key=>$data){
-                    if($data['type'] == 'Order'){
-                        $outstanding += $data['invoiceAmount'];
-                    }
-                    elseif($data['type'] == 'Payment'){
-                        $outstanding -= $data['paymentAmount'];
-                    }
-                    $data['outstanding'] = number_format((float)$outstanding,2, '.','');
-                    $dataprovider[$key] = $data;
-                }
-                $dataprovider = new CArrayDataProvider($dataprovider, array(
-                    'id'=>'id',
-                    'pagination'=>array(
-                        'pageSize'=>500,
-                    ),
-                ));
+          $statusChangeDate='';
+          foreach ($dateArr as $d){
+            if ($d <= $payment->date) {
+              $statusChangeDate = $d;
+              break;
             }
+          }
+          $retailer_status = $statusChangeDate == '' ? $retailer->status : $retailerStatusMap[$statusChangeDate];
+          $tmp['retailer_status'] = Retailer::$intTostatusMap[$retailer_status];
+
+          array_push($dataprovider, $tmp);
+        }
+        foreach ($dataprovider as $key => $value) {
+          $type[$key] = $value['type'];
+          $date[$key] = $value['date'];
+        }
+                //$dataprovider = Utility::array_sort($dataprovider, 'date', SORT_ASC);
+        if(!empty($dataprovider)){
+          array_multisort($date, SORT_ASC, $type , SORT_ASC, $dataprovider);
+        }
+        foreach ($dataprovider as $key=>$data){
+          if($data['type'] == 'Order'){
+            $outstanding += $data['invoiceAmount'];
+          }
+          elseif($data['type'] == 'Payment'){
+            if(!($data['payment_type'] == "Cheque" && $data['cheque_status'] != "Cleared")){
+              $outstanding -= $data['paymentAmount'];
+            } 
+
+          }
+          $data['outstanding'] = number_format((float)$outstanding,2, '.','');
+          $dataprovider[$key] = $data;
+        }
+        $dataprovider = new CArrayDataProvider($dataprovider, array(
+          'id'=>'id',
+          'pagination'=>array(
+            'pageSize'=>500,
+            ),
+          ));
+      }
             //print_r($dataprovider);
             //die;
             /*foreach ($retailerProducts as $retailerProduct) {
            # code...
             }*/
-        }
+          }
 
 
 
 
 
 
-        $this->render('list',array(
+          $this->render('list',array(
            'model'=>$model,
-            'retailer' => $retailer,
-            'data' => $dataprovider,
-            'w_id' => $w_id,
-        ));
-    }
+           'retailer' => $retailer,
+           'data' => $dataprovider,
+           'w_id' => $w_id,
+           ));
+        }
 
 
 	/**
@@ -530,21 +542,21 @@ class GrootsledgerController extends Controller
 		if(isset($_GET['Grootsledger']))
 			$model->attributes=$_GET['Grootsledger'];
 
-     
-       if(isset($_REQUEST['downloadbutton']))
-       {
-         ob_clean();
-          $data= $model->downloadCSVByIDs();
-            ob_flush();
-            exit();
-       }
 
-		
+   if(isset($_REQUEST['downloadbutton']))
+   {
+     ob_clean();
+     $data= $model->downloadCSVByIDs();
+     ob_flush();
+     exit();
+   }
 
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
+
+
+   $this->render('admin',array(
+     'model'=>$model,
+     ));
+ }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
@@ -591,33 +603,33 @@ class GrootsledgerController extends Controller
         }
 
         return true;
-    }*/
-    protected function beforeAction() {
+      }*/
+      protected function beforeAction() {
         return parent::beforeAction();
-    }
+      }
 
-    public static function updateDaily($retailerIds, $payments){
-      foreach ($retailerIds as $key => $retailerId) {
-        $retailerPayment = new RetailerPayment();
-         $retailer = Retailer::model()->findByPk($retailerId);
-         $paymentAmount = $payments[$key];
+      public static function updateDaily($retailerIds, $payments){
+        foreach ($retailerIds as $key => $retailerId) {
+          $retailerPayment = new RetailerPayment();
+          $retailer = Retailer::model()->findByPk($retailerId);
+          $paymentAmount = $payments[$key];
           if(isset($paymentAmount) and $paymentAmount > 0){
             $paymentValues= array('retailer_id' => $retailerId, 'paid_amount' => $paymentAmount , 'date' => date('Y-m-d'));
             GrootsledgerDao::saveCreatePayment($retailer, $paymentValues, $retailerPayment);
           }
 
         }
-    }
+      }
 
 
-    public function actiontotalpayable(){
-      $retailer= Retailer::model()->findAll();
+      public function actiontotalpayable(){
+        $retailer= Retailer::model()->findAll();
       //var_dump($retailer);
         foreach ($retailer as $current_retailer) {
-        $retailerId = $current_retailer->id;
+          $retailerId = $current_retailer->id;
           if($retailerId>0) {
-                        $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
-                        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
+            $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
+            $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
             $outstanding = $current_retailer->initial_payable_amount;
             foreach ($retailerOrders as $order) {
               $outstanding += $order->total_payable_amount;
@@ -631,37 +643,37 @@ class GrootsledgerController extends Controller
             echo "<br>";
             echo "<br>";
             if($current_retailer->total_payable_amount != $outstanding)
-            $current_retailer->total_payable_amount = $outstanding;
+              $current_retailer->total_payable_amount = $outstanding;
             
             $current_retailer->save();
           }
         }
-  }
+      }
 
-  public function get_due_payable_amount_yesterday(){
-    $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
+      public function get_due_payable_amount_yesterday(){
+        $sql = 'select due_payable_amount from cb_dev_groots.collection_log where date = (CURDATE()- INTERVAL 1 DAY);';
     //echo $sql;
-    $connection = Yii::app()->secondaryDb;
-    $command = $connection->createCommand($sql);
-    $command->execute();
-    $result = $command->queryAll();
-    if(isset($ressult) && !empty($result)){
-      return $result[0]['due_payable_amount'];
-    }
-    else return 0;
-  }
-  public static function savePayment($retailer, $paid_amount){
-    $retailer->total_payable_amount -= $paid_amount;
-    $retailer->due_payable_amount -= $paid_amount;
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $command->execute();
+        $result = $command->queryAll();
+        if(isset($ressult) && !empty($result)){
+          return $result[0]['due_payable_amount'];
+        }
+        else return 0;
+      }
+      public static function savePayment($retailer, $paid_amount){
+        $retailer->total_payable_amount -= $paid_amount;
+        $retailer->due_payable_amount -= $paid_amount;
         if($retailer->due_payable_amount <= 0){
-            $retailer->due_payable_amount = 0;
-            $retailer->collection_fulfilled = true;
+          $retailer->due_payable_amount = 0;
+          $retailer->collection_fulfilled = true;
         }
         else{
           $retailer->collection_fulfilled = false; 
         }
         $retailer->save();
        //var_dump($retailer->getErrors());die;
-  }
+      }
 
-}
+    }
