@@ -26,7 +26,7 @@
 * @property string $price
 */
 
-use EmailClient;
+
 class OrderLine extends CActiveRecord
 {
     /**
@@ -565,5 +565,11 @@ class OrderLine extends CActiveRecord
         return $this->product_name;
     }
 
+
+    public static function awsAttachmentMail($mailArray)
+    {
+        $sesEmail = new EmailClient();
+        $sesEmail->sendEmailWithInvoices($mailArray);
+    }
 
 }

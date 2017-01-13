@@ -15,14 +15,19 @@ class GrootsledgerDao{
         $retailer->updated_at = date("Y-m-d H:i:s");
         $retailer->save();
         //print_r($retailer->getErrors());die;
-	}
+    }
 
     public function saveCreatePayment($retailer, $post_payment ,$retailerPayment){
         $retailerPayment->attributes = $post_payment;
         $retailerPayment->created_at = date('Y-m-d');
-        if ($retailerPayment->save()) {
-            self::savePayment($retailer, $retailerPayment->paid_amount);
+        if($retailerPayment->payment_type == 'Cheque' && $retailerPayment->cheque_status != 'Cleared'){
+            $retailerPayment->status = 0;
+            $retailerPayment->save();
         }
+        else if ($retailerPayment->save()) {
+            self::savePayment($retailer, $retailerPayment->paid_amount);
+        }    
+        
     }
 
     public static function saveUpdatePayment($post){
@@ -33,28 +38,37 @@ class GrootsledgerDao{
         $retailerPayment->attributes = $post;
         //var_dump(Yii::app()->request());die;
         //$retailerPayment = $retailerPayment->load(Yii::app()->request->post('RetailerPayment'));
-        //print_r($retailerPayment);die;
+        //var_dump($retailerPayment);die;
         $retailerPayment->paid_amount = $post['paid_amount'];
         $retailerPayment->date = $post['date'];
         $retailerPayment->payment_type = $post['payment_type'];
         $retailerPayment->cheque_no = $post['cheque_no'];
         $retailerPayment->status = $post['status'];
         $retailerPayment->comment = $post['comment'];
+        if($retailerPayment->payment_type == 'Cheque'){
+            if($retailerPayment->cheque_status != 'Cleared'){
+                $retailerPayment->status = 0;
+            }
+            else{
+                $retailerPayment->status = 1;
+            }
+            
+        }
         if ($retailerPayment->save()) {
 
-        $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
-        $retailer->total_payable_amount += $paid_amount;
-        $retailer->due_payable_amount += $paid_amount;
-        if($intial_status == $retailerPayment->status){
-            self::savePayment($retailer, $retailerPayment->paid_amount);
-        }
-        else{
-          $retailer->collection_fulfilled = ($retailer->due_payable_amount <= 0);
-        }
-        }
-        $retailer->updated_at = date("Y-m-d H:i:s");
-        $retailer->save();
-        return $retailerPayment;
-    }
+            $retailer = Retailer::model()->findByPk($retailerPayment->retailer_id);
+            $retailer->total_payable_amount += $paid_amount;
+            $retailer->due_payable_amount += $paid_amount;
+            if($intial_status == $retailerPayment->status){
+                self::savePayment($retailer, $retailerPayment->paid_amount);
+            }
+            else{
+              $retailer->collection_fulfilled = ($retailer->due_payable_amount <= 0);
+          }
+      }
+      $retailer->updated_at = date("Y-m-d H:i:s");
+      $retailer->save();
+      return $retailerPayment;
+  }
 }
 ?>

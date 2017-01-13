@@ -516,7 +516,7 @@ Sales: +91-11-3958-9895</span>
 
     public function actionAdmin() {
         // $model = new BaseProduct('search');
-
+        //var_dump($_GET);die;
         $model = new Retailer();
         // $model->unsetAttributes();
         //  $record = $model->getRecordById($id);
@@ -534,8 +534,9 @@ Sales: +91-11-3958-9895</span>
         } else {*/
             $model->unsetAttributes();
             $model->unsetAttributes();  // clear any default values
-            if (isset($_GET['Retailer']))
+            if (isset($_GET['Retailer'])){
                 $model->attributes = $_GET['Retailer'];
+            }
             $this->render('admin', array(
                 'model' => $model,
             ));
