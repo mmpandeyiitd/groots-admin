@@ -1257,7 +1257,8 @@ Sales: '. SALES_SUPPORT_NO. '</span>
                     
                 }
                 if($type=='email-invoice'){
-                    //$this->sendMailToRetailer($pdfArray);
+                    $this->sendMailToRetailer($pdfArray);
+                    Yii::app()->controller->redirect("index.php?r=orderHeader/admin&w_id=".$w_id);
                 }
                 else{
                     $zipFileName=$type.".zip";
@@ -2037,26 +2038,31 @@ Sales: '. SALES_SUPPORT_NO. '</span>
     }
 
     private function sendMailToRetailer($pdfArray){
+        $array = array();
+        //var_dump($pdfArray);die;
         foreach ($pdfArray as $each){
             $pdf = $each['pdf'];
             $order_id = $each['order_id'];
 
             $connection = Yii::app()->secondaryDb;
-            $sql = "SELECT billing_email FROM order_header WHERE order_id ='" . $_POST['selectedIds'][$i] . "'";
+            $sql = "SELECT billing_email FROM order_header WHERE order_id ='" . $order_id. "'";
             $command = $connection->createCommand($sql);
             $command->execute();
-            $emai_id = $command->queryAll();
+            $emai_id = $command->queryScalar();
 
 
 
             $modelOrderline = new OrderLine;
-            $buyername = $modelOrderline->buyernamegrid($_POST['selectedIds'][$i]);
-            $csv_name = 'order_' . $_POST['selectedIds'][$i] . '.pdf';
+            $buyername = $modelOrderline->buyernamegrid($order_id);
+            //var_dump($buyername);die;
+            $csv_name = 'order_' . $order_id . '.pdf';
             $csv_filename = "feeds/order_csv/" . $csv_name;
-            $from_email = 'grootsadmin@groots.in';
+            $from_email = EMAIL_SENDER;
+            $replyto = REPLY_TO_EMAIL;
+            $cc_group = INVOICE_CC_GROUP;
             $from_name = 'Groots Dashboard Admin';
-            $subject = 'Groots Buyer Account';
-            $urldata = Yii::app()->params['email_app_url'];
+            $subject = 'Order Invoice';
+            //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
@@ -2091,13 +2097,12 @@ Sales: '. SALES_SUPPORT_NO. '</span>
           <strong>Hi ' . $buyername . '</strong>
           <br> 
           <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-            Your order (' . $order_number . ') is has been ' . $_POST['status1'] . '. If you have a feedback, please email your concern to help@gogroots.in<br>
+            Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
                 Thank you for choosing Groots!<br>
-           <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> Click here to download invoice </a><br/>
           </span>
           <br>
 
-        <a href="' . $urldata . '">
+        <a href="' . APP_LINK . '">
              <img src="' . $emailurldata . 'emailimage/android.png" alt="call" width="225" style= text-indent:-2000px; display:block;"> 
             </a>
             <br>
@@ -2129,20 +2134,30 @@ Sales: '. SALES_SUPPORT_NO. '</span>
 
             $body_text = '';
             $mailArray = array(
-                'to' => array(
-                    '0' => array(
-                        'email' => "$email",
-                    )
-                ),
+                'to' => $emai_id,
                 'from' => $from_email,
                 'fromname' => $from_name,
                 'subject' => $subject,
                 'html' => $body_html,
                 'text' => $body_text,
-                'replyto' => $from_email,
+                'replyTo' => $replyto,
+                'pdf' => $pdf,
+                'cc' => $cc_group,
             );
-            $mailsend = new OrderLine();
-            $resp = $mailsend->sgSendMail($mailArray);
+            array_push($array, $mailArray);
+
+            
+        }
+        $mailsend = new OrderLine();
+        try{
+            $resp = $mailsend->awsAttachmentMail($array);
+            Yii::app()->user->setFlash('success','Email Sent Successfully' );
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin");    
+        } catch (Exception $e){
+            $x = "The email was not sent. Error message: ";
+            $x .= $e->getMessage()."\n";
+            Yii::app()->user->setFlash('error', $x);
+            Yii::app()->controller->redirect("index.php?r=orderHeader/admin");  
         }
     }
 

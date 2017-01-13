@@ -112,6 +112,11 @@ class RetailerController extends Controller {
             return;
         }*/
         if (isset($_POST['Retailer'])) {
+            $checked = self::validateTime($_POST['Retailer']['delivery_time']);
+            if(!$checked){
+                Yii::app()->user->setFlash('error', 'Time Format Not Correct');
+                $this->redirect(array('create'));
+            }
             $data_pass= $_POST['Retailer']['password'];
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
@@ -325,6 +330,11 @@ Sales: +91-11-3958-9895</span>
             return;
         }*/
         if (isset($_POST['Retailer'])) {
+            $checked = self::validateTime($_POST['Retailer']['delivery_time']);
+            if(!$checked){
+                Yii::app()->user->setFlash('error', 'Time Format Not Correct');
+                $this->redirect(array('update', 'id' => $model->id));
+            }
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
             $images = CUploadedFile::getInstancesByName('images');
@@ -506,7 +516,7 @@ Sales: +91-11-3958-9895</span>
 
     public function actionAdmin() {
         // $model = new BaseProduct('search');
-
+        //var_dump($_GET);die;
         $model = new Retailer();
         // $model->unsetAttributes();
         //  $record = $model->getRecordById($id);
@@ -524,8 +534,9 @@ Sales: +91-11-3958-9895</span>
         } else {*/
             $model->unsetAttributes();
             $model->unsetAttributes();  // clear any default values
-            if (isset($_GET['Retailer']))
+            if (isset($_GET['Retailer'])){
                 $model->attributes = $_GET['Retailer'];
+            }
             $this->render('admin', array(
                 'model' => $model,
             ));
@@ -555,6 +566,15 @@ Sales: +91-11-3958-9895</span>
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
+    }
+
+    public function validateTime($time){
+        $date = date('Y-m-d');
+        $datetime = DateTime::createFromFormat('Y-m-d H:i:s', $date.$time);
+        if($datetime!== false){
+            return true;
+        }
+        else return false;
     }
 
 }

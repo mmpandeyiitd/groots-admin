@@ -107,6 +107,11 @@ foreach ($model as $value) {
         $challanNoText = "Invoice No";
         $text = "";
     }
+    if($type == "email-invoice"){
+        $title = "Invoice";
+        $challanNoText = "Invoice No";
+        $text = "";
+    }
 
 
 ?>
@@ -175,6 +180,13 @@ foreach ($model as $value) {
                                         <?php
                                         echo substr($modelOrder->attributes['delivery_date'],0,10);
                                         ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td style="border-bottom:1pt solid black;">
+                                        <span style="float:left;">
+                                        <strong>Delivery Time: </strong><b><?php echo $retailer->delivery_time; ?></b>
                                         </span>
                                     </td>
                                 </tr>
@@ -276,7 +288,7 @@ foreach ($model as $value) {
                     }
             }
             elseif($type == "dc"){
-                $quantityInPacks = $model[$key]['product_qty'];
+                $quantityInPacks = $model[$key]['delivered_qty'];
                 if($model[$key]['pack_unit']=='g'){
                        $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
                        $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;

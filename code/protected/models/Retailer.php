@@ -31,6 +31,7 @@
  */
 class Retailer extends CActiveRecord {
 
+
     /**
      * @return string the associated database table name
      */
@@ -39,6 +40,8 @@ class Retailer extends CActiveRecord {
     }
 
     private $oldAttrs = array();
+    public $status_name;
+    //public $warehouse_name;
 
     /**
      * @return array validation rules for model attributes.
@@ -63,11 +66,11 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency, sales_rep_id', 'safe'),
+            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id, retailer_type, sales_rep_id',
+            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id, retailer_type, sales_rep_id,delivery_time',
              'safe', 'on' => 'search'),
         );
     }
@@ -123,7 +126,8 @@ class Retailer extends CActiveRecord {
             'min_order_price'=>'min_order_price',
             'collection_agent_id' => 'collection_agent_id',
             'retailer_type => Retailer Type',
-            'sales_rep_id' => 'Sales Representative'
+            'sales_rep_id' => 'Sales Representative',
+            'delivery_time' => 'Delivery Time',
         );
     }
 
@@ -141,9 +145,9 @@ class Retailer extends CActiveRecord {
      */
     public function search() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-
         $criteria = new CDbCriteria;
-
+        $criteria->select = 't.*, rs.status_name';
+        $criteria->join = 'left join cb_dev_groots.retailer_status as rs on t.status = rs.id';
         $criteria->compare('id', $this->id);
         $criteria->order = "id DESC";
         $criteria->compare('name', $this->name, true);
@@ -166,7 +170,7 @@ class Retailer extends CActiveRecord {
 //        $criteria->compare('categories_of_interest', $this->categories_of_interest, true);
 //        $criteria->compare('store_size', $this->store_size);
         //$criteria->compare('status', $this->status);
-        $criteria->compare('status', 1);
+        $criteria->compare('status', $this->status, true);
         //$criteria->compare('request_status',$this->request_status);
         $criteria->compare('created_date', $this->created_date, true);
         $criteria->compare('modified_date', $this->modified_date, true);
@@ -180,6 +184,8 @@ class Retailer extends CActiveRecord {
         $criteria->compare('allocated_warehouse_id', $this->allocated_warehouse_id, true);
         $criteria->compare('retailer_type', $this->retailer_type, true);
         $criteria->compare('sales_rep_id', $this->sales_rep_id, true);
+        $criteria->compare('delivery_time', $this->delivery_time, true);
+        $criteria->compare('rs.status_name', $this->status_name, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -464,5 +470,6 @@ class Retailer extends CActiveRecord {
         //var_dump($result);die;
         return $result;
     }
+
 
 }
