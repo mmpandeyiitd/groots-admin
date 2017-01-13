@@ -26,10 +26,8 @@
 * @property string $price
 */
 
-
 class OrderLine extends CActiveRecord
 {
-    
     /**
     * @return string the associated database table name
     */

@@ -730,10 +730,11 @@ insert into employee_department values (null, 4, 1, CURDATE(), null, 1);
 
 alter table groots_orders.order_header add column order_platform enum('Admin', 'Android') DEFAULT 'Admin';
 
-alter table cb_dev_groots.app_versions add column expiry_date date not null;
-insert into app_versions values(null, 1.2, 1, NOW(), NOW(), "2017-01-31");
-insert into api_configs values(null, 2, 999999999, 1.0, 1 ,NOW(),null);
-
+alter table cb_dev_groots.app_versions add column expiry_date datetime default null;
+insert into cb_dev_groots.app_versions values(null, 1.2, 1, "2016-12-23 00:00:00", NULL, "2017-01-31 00:00:00");
+insert into cb_dev_groots.app_versions values(null, 1.3, 1, NOW(), NULL, NULL);
+insert into cb_dev_groots.api_configs values(null, 2, 999999999, 1.0, 1 ,NOW(),NOW());
+insert into cb_dev_groots.api_configs values(null, 3, 999999999, 1.0, 1 ,NOW(),NOW());
 
 ---------------------------------------------------2017-01-09
 alter table cb_dev_groots.collection_agent modify column id int(11) not null AUTO_INCREMENT;
@@ -741,8 +742,9 @@ insert into cb_dev_groots.collection_agent values(null, 'Warehouse', 0, 1);
 insert into cb_dev_groots.groots_employee values(null, 'Narender', null, null, null, null, null, null, 1, 1, CURDATE(), null, 1);
 insert into employee_department values (null,5, 1, CURDATE(), null, 1);
 alter table groots_orders.retailer_payments modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note','PayTm') NOT NULL DEFAULT 'Cash';
+alter table groots_orders.retailer_payments_log modify column payment_type enum('Cash','Cheque','DemandDraft','OnlineTransfer','Debit Note','PayTm') NOT NULL DEFAULT 'Cash';
 alter table cb_dev_groots.retailer modify column collection_frequency enum('daily','weekly','fortnight','monthly','45-days', '3-days') DEFAULT 'daily';
-
+alter table cb_dev_groots.retailer_log modify column collection_frequency enum('daily','weekly','fortnight','monthly','45-days', '3-days') DEFAULT 'daily';
 
 alter table cb_dev_groots.retailer add column delivery_time time not null;
 
