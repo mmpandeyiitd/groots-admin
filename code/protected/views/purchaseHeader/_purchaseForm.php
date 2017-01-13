@@ -260,7 +260,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'type' => 'raw',
                 'value' => function($data) use ($priceMap){
                     $array = json_encode($priceMap);
-                    return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown'));
+                    if(isset($data->parent_id) && $data->parent_id == 0){
+                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)),'disabled'=>'disabled', 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown')); 
+                    }
+                    else{
+                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown'));     
+                    }
+                   
                 }
                 ),
 
