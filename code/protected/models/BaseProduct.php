@@ -89,7 +89,7 @@ class BaseProduct extends CActiveRecord {
             //array('specofic_keys', 'length', 'max' => 1500),
             //array('order_placement_cut_off_date,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
             // array('admin_type', 'length', 'max' => 250),
-            array('created_date, modified_date,parent_id', 'safe'),
+            array('created_date, modified_date,parent_id,base_title', 'safe'),
             // The following rule is used by search().
 // @todo Please remove those attributes that should not be searched.
             //   array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
