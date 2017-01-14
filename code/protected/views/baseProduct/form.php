@@ -219,6 +219,12 @@ $count = 0;
         'dataProvider'=> $inv_header->searchBaseProduct($model->base_product_id),
         'columns' => array(
             array(
+                'header' => 'Add Rows',
+                'value' => function($data) use ($model){
+                    return CHtml::button('+', array('onclick' => 'addRows($model->base_product_id)'));
+                }
+                ),
+            array(
                 'header' => 'warehouse',
                 'type' => 'raw',
                 'value' => function($data){
@@ -494,6 +500,11 @@ $count = 0;
             document.getElementById('color_mainids').value = get_color_code;
         }
         //........End Color picker...........||
+
+
+        function addRows(bp_id){
+            
+        }
     </SCRIPT>
     <style type="text/css">
         .miniColors-trigger { display: none;} 
