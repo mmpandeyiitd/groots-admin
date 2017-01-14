@@ -117,7 +117,7 @@ class EmailClient
                 $temp = array(
                     'name' => $name,
                     'filepath' => $fullName,
-                    'mime' => 'application/csv'
+                    'mime' => 'application/pdf'
                     );
                 $params['files'][0] = $temp;
             }
