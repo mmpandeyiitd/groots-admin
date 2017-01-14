@@ -211,6 +211,37 @@ $count = 0;
                 <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
                 <input type="text" name="LengthUnit"  maxlength="10" value="<?php echo $LengthUnit; ?>"/>
             </div>
+
+            <?php 
+        $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'productWarehouses',
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'dataProvider'=> $inv_header->searchBaseProduct($model->base_product_id),
+        'columns' => array(
+            array(
+                'header' => 'warehouse',
+                'type' => 'raw',
+                'value' => function($data){
+                    $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+                    $list = CHtml::listData($warehouse, 'id', 'name');
+                    return CHtml::dropDownList('warehouse_id', $data, $list);
+                }),
+            array(
+                'header' => 'Procurement',
+                'type' => 'raw',
+                'value' => function($data){
+                    $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+                    $list = CHtml::listData($warehouse, 'id', 'name');
+                    return CHtml::dropDownList('procurement_center_id', $data, $list);
+                }
+                )
+            
+            )
+        )
+        );
+    
+
+        ?>
         </div>
         <div class="">
             <?php

@@ -393,5 +393,14 @@ class InventoryHeader extends CActiveRecord
         return $scheduleInvTypes;
     }
 
+    public function searchBaseProduct($bp_id){
+        $criteria = new CDbCriteria();
+        $criteria->condition = 'base_product_id = '.$bp_id;
+        $criteria->limit = '1';
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+        ));
+    }
+
 
 }

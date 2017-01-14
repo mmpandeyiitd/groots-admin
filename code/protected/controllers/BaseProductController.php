@@ -471,6 +471,7 @@ class BaseProductController extends Controller {
                 Yii::app()->user->setFlash('error', 'Product not save,Please select at least one category');
             }
         }
+        $inv_header = new InventoryHeader('search');
         $this->render('create', array(
             'model' => $model,
             'mrp' => $mrp,
@@ -483,6 +484,7 @@ class BaseProductController extends Controller {
             'Length' => $Length,
             'LengthUnit' => $LengthUnit,
             'specific_keyfield' => $specific_keyfield,
+            'inv_header' => $inv_header
         ));
     }
 
@@ -743,6 +745,7 @@ class BaseProductController extends Controller {
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
+
                 $this->render('update', array(
                     'a' => $a['0']['grade'],
                     'new_data' => $a['0']['grade'],
@@ -1051,6 +1054,7 @@ class BaseProductController extends Controller {
         $LengthUnit1 = $model_subscribe->getdatarecords_data3($id);
 
         //\   echo '<pre>';  print_r($Weight1);die;
+        $inv_header = new InventoryHeader('search');
         $this->render('update', array(
             'a' => $a['0']['grade'],
             'new_data' => $new_data['0']['diameter'],
@@ -1065,6 +1069,7 @@ class BaseProductController extends Controller {
             'Length' => $Length1[0]['length'],
             'LengthUnit' => $LengthUnit1[0]['length_unit'],
             'specific_keyfield' => $specific_keyfield,
+            'inv_header' => $inv_header
         ));
     }
 
