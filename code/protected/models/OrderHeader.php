@@ -735,6 +735,24 @@ LEFT JOIN  `dev_groots`.base_product bp ON bp.base_product_id = ol.subscribed_pr
     $command->execute();
    }
 
+   public function ordersStatusDeliverd($orderIds){
+    $orderIdString = implode(',', $orderIds);
+    $connection = Yii::app()->secondaryDb;
+    $sql = 'select status from order_header where order_id in ('.$orderIdString.')';
+    $command = $connection->createCommand($sql);
+    $command->execute();
+    $result = $command->queryAll();
+    //var_dump($result);die;
+    $flag = 1;
+    foreach ($result as $key => $value) {
+        if($value['status'] != "Delivered"){
+            $flag = 0;
+            break;
+        }
+    }
+    return $flag;
+   }
+
 }
 
 
