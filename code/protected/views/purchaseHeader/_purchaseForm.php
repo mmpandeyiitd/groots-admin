@@ -73,7 +73,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <?php echo $form->errorSummary($model->errors); ?>
 
-<div class="row" style="display: inline;">
+<!-- <div class="row" style="display: inline;">
     <?php echo $form->labelEx($model,'vendor_id'); ?>
     <?php echo $form->dropDownList($model,
     'vendor_id',
@@ -82,7 +82,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
     );
     ?>
     <?php echo $form->error($model,'vendor_id'); ?>
-</div>
+</div> -->
 
 <!--<div class="row" >
     <?php /*echo $form->labelEx($model,'paid_amount'); */?>
