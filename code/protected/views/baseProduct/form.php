@@ -217,11 +217,13 @@ $count = 0;
         'id'=>'productWarehouses',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'dataProvider'=> $inv_header->searchBaseProduct($model->base_product_id),
+        'rowCssClassExpression' => '$data->getRowCssProductClass()',
         'columns' => array(
             array(
                 'header' => 'Add Rows',
+                'type' => 'raw',
                 'value' => function($data) use ($model){
-                    return CHtml::button('+', array('onclick' => 'addRows($model->base_product_id)'));
+                    return CHtml::button('+', array('onclick' => 'addRows('.$data->base_product_id.','.$data->warehouse_id.')', 'style' => 'width:20px;'));
                 }
                 ),
             array(
@@ -230,7 +232,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('warehouse_id', $data, $list);
+                    return CHtml::dropDownList('warehouse_id', $data, $list, array('style' => 'width:300px;'));
                 }),
             array(
                 'header' => 'Procurement',
@@ -238,7 +240,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('procurement_center_id', $data, $list);
+                    return CHtml::dropDownList('procurement_center_id', $data, $list,array('style' => 'width:300px;'));
                 }
                 )
             
@@ -502,8 +504,14 @@ $count = 0;
         //........End Color picker...........||
 
 
-        function addRows(bp_id){
-            
+        function addRows(bp_id, w_id){
+            var cls = bp_id+''+w_id;
+            var row = $('.cls');
+            console.log(row);
+            var clone = row.clone();
+            console.log(clone);
+            clone.id = row.id;
+            clone.after(row);        
         }
     </SCRIPT>
     <style type="text/css">

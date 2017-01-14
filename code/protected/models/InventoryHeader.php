@@ -402,5 +402,11 @@ class InventoryHeader extends CActiveRecord
         ));
     }
 
+    public function getRowCssProductClass(){
+        $class = $this->base_product_id;
+        $class.= $this->warehouse_id;
+        return $class;
+    }
+
 
 }
