@@ -1297,7 +1297,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit', 'Effective Price Date');
-                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id', 'grade', 'priority', 'base_title');
+                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id', 'grade', 'priority', 'baseTitle');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Base Product ID');
