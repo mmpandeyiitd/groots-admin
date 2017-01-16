@@ -186,7 +186,7 @@ class VendorController extends Controller
 			Yii::app()->user->setFlash('error', 'Either Vendor Id Wrong or Vendor Inactive');
 			Yii::app()->controller->redirect('index.php?r=vendor/admin');
 		}
-		$products = VendorDao::getVendorProductDetails($vendor_id);
+		
 		$data = new BaseProduct('search');
 		$data->unsetAttributes();
 
@@ -203,13 +203,14 @@ class VendorController extends Controller
 				Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 			}
 			$baseProductIds = array();
-			$postPrice = array();
 			if(isset($_POST['baseProductIds']) && !empty($_POST['baseProductIds'])){
 				$baseProductIds = $_POST['baseProductIds'];
 			}
+			$postPrice = array();
 			if(isset($_POST['price']) && !empty($_POST['price'])){
 				$postPrice = $_POST['price'];
 			}
+			$products = VendorDao::getVendorProductByIds(implode(',', $baseProductIds), $vendor_id);
 			$newProducts = array();
 			foreach ($_POST as $key => $value) {
 				if(substr($key, 0, 9) == 'checkedId'){

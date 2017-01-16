@@ -280,6 +280,20 @@ class VendorDao{
         return $result; 
     }
 
+    public function getVendorProductByIds($prodIds, $vendorId){
+        $connection = Yii::app()->db;
+        $sql = 'select id, base_product_id, price from vendor_product_mapping where vendor_id = '.$vendorId.' and  base_product_id in ('.$prodIds.')';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $map = array();
+        if(isset($result)){
+            foreach ($result as $key => $value) {
+                $map[$value['base_product_id']] = $value;
+            }
+        }
+        return $map;
+    }
+
 }
 
 
