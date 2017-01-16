@@ -772,8 +772,10 @@ alter table groots_orders.inventory_header add column procurement_center_id int(
 
 alter table cb_dev_groots.warehouses add column email_group varchar(100) default null;
 
-update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 1;
-update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 2;
+update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' where id = 1;
+update cb_dev_groots.warehouses set email_group = 'invoices.a@gogroots.com' where id = 2;
 update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 3;
   
 alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;
+
+-- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
