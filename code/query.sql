@@ -775,6 +775,5 @@ alter table cb_dev_groots.warehouses add column email_group varchar(100) default
 update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 1;
 update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 2;
 update cb_dev_groots.warehouses set email_group = 'invoices@gogroots.com' where id = 3;
-
-SELECT oh.billing_email, oh.user_id, oh.delivery_date, re.name, wa.email_group FROM order_header left join cb_dev_groots.retailer re on re.id = oh.user_id left join cb_dev_groots.warehouses as wa 
-on wa.id = re.allocated_warehouse_id WHERE order_id = 3784 
+  
+alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;

@@ -214,11 +214,10 @@ $count = 0;
             <div>
             <?php 
         $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'productWarehouses',
+        'id'=>'productWarehousesUpdate',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'dataProvider'=> $inv_header->searchBaseProductUpdate($model->base_product_id),
-        'rowCssClassExpression' => '$data->getRowCssProductClass()',
-        'rowHtmlOptionsExpression' => 'array("id" => "id_".$data->getRowCssProductClass())',
+        'rowHtmlOptionsExpression' => 'array("id" => "id_".$data->getRowCssProductId())',
         'columns' => array(
             array(
                 'header' => 'Add Rows',

@@ -177,15 +177,16 @@ $count = 0;
             </div>
         <?php 
         $this->widget('zii.widgets.grid.CGridView', array(
-        'id'=>'todayscollection',
+        'id'=>'productWarehousesCreate',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'rowHtmlOptionsExpression' => 'array("id" => "id_".$data["id"])',
         'dataProvider'=> $inv_header->searchBaseProductCreate(),
         'columns' => array(
             array(
                 'header' => 'Add Rows',
                 'type' => 'raw',
                 'value' => function($data){
-                    return CHtml::button('+', array('style' => 'width:20px;'));
+                    return CHtml::button('+', array('style' => 'width:20px;', 'onclick' => 'addRows('.$data['id'].')'));
                 }
                 ),
             array(
@@ -194,7 +195,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('warehouse_id', $data, $list);
+                    return CHtml::dropDownList('warehouse_id[]', $data, $list, array('class' => 'warehouse','empty' => 'Select A Warehouse'));
                 }),
             array(
                 'header' => 'Procurement',
@@ -202,7 +203,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('procurement_center_id', $data, $list);
+                    return CHtml::dropDownList('procurement_center_id[]', $data, $list, array('class' => 'procurement', 'empty'=> 'Select A warehouse'));
                 }
                 )
             
@@ -442,6 +443,19 @@ $count = 0;
         document.getElementById('color_mainids').value = get_color_code;
     }
     //........End Color picker...........||
+
+    function addRows(id){
+        //var table = $('#productWarehousesCreate');
+        var row = $('#id_'+id);
+        console.log(row);
+        var clone = row.clone();
+        console.log(clone);
+        clone.find('.warehouse').val(0);
+        clone.find('.procurement').val(0);
+        clone.id = row.id;
+        clone.insertAfter(row); 
+        console.log('12');       
+    }
 </SCRIPT>
 <style type="text/css">
     .miniColors-trigger { display: none;} 

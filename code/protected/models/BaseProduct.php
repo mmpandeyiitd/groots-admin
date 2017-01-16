@@ -77,7 +77,7 @@ class BaseProduct extends CActiveRecord {
 // NOTE: you should only define rules for those attributes that
 // will receive user inputs.
         return array(
-            array('title,store_id,pack_size,pack_unit', 'required'),
+            array('title,pack_size,pack_unit', 'required'),
             array('store_id,status', 'numerical', 'integerOnly' => true),
             array('title', 'match', 'pattern' => '/^[a-zA-Z0-9-_)(\s]+$/', 'message' => 'Invalid characters in Product title.'),
             array('pack_unit', 'match', 'pattern' => '/^[a-zA-Z\s]+$/', 'message' => 'Invalid characters in pack unit.'),
@@ -87,7 +87,7 @@ class BaseProduct extends CActiveRecord {
             array('color', 'length', 'min' => 2),
             array('description', 'length', 'max' => 2000),
             //array('specofic_keys', 'length', 'max' => 1500),
-            //array('order_placement_cut_off_date,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
+            //array('order_placement_cut_off_dat,delevry_date', 'date', 'format' => 'dd/mm/yyyy'),
             // array('admin_type', 'length', 'max' => 250),
             array('created_date, modified_date,parent_id,base_title', 'safe'),
             // The following rule is used by search().
@@ -1054,8 +1054,18 @@ class BaseProduct extends CActiveRecord {
 
     }
 
-    public function updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id, $base_product_id){
-        
+    public function validateInventoryHeaderData($warehouseIds, $procIds){
+        $flag = 0;
+        foreach ($warehouseIds as $key => $value) {
+            if($value!= 0 && is_numeric($value) && $procIds[$key] != 0 && is_numeric($procIds[$key])){
+                $flag = 1;
+            }
+            else{
+                $flag = 0;
+                break;
+            }
+        }
+        return $flag;
     }
 
 }

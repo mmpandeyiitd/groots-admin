@@ -96,6 +96,7 @@ class BaseProductController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+        //var_dump($_POST);die;
         // echo '<pre>';print_r($_POST);die;
 
 
@@ -105,6 +106,7 @@ class BaseProductController extends Controller {
         }*/
 
         set_time_limit(0);
+        $inv_header = new InventoryHeader('search');
         $model = new BaseProduct;
         $mrp = '';
         $wsp = '';
@@ -236,6 +238,7 @@ class BaseProductController extends Controller {
                         'WeightUnit' => $WeightUnit,
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
+                        'inv_header' => $inv_header
                     ));
                     exit();
                 }
@@ -253,6 +256,7 @@ class BaseProductController extends Controller {
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
+                        'inv_header' => $inv_header
                     ));
                     exit();
                 }
@@ -270,6 +274,7 @@ class BaseProductController extends Controller {
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
+                        'inv_header'=> $inv_header
                     ));
                     exit();
                 }
@@ -288,6 +293,7 @@ class BaseProductController extends Controller {
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
+                        'inv_header' => $inv_header
                     ));
                     exit();
                 }
@@ -308,6 +314,7 @@ class BaseProductController extends Controller {
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
+                        'inv_header'=> $inv_header
                     ));
                     exit();
                 }
@@ -328,6 +335,7 @@ class BaseProductController extends Controller {
                         'Length' => $Length,
                         'LengthUnit' => $LengthUnit,
                         'specific_keyfield' => $specific_keyfield,
+                        'inv_header' => $inv_header
                     ));
                     exit();
                 }
@@ -356,8 +364,25 @@ class BaseProductController extends Controller {
                   exit();
                   } */
 
-//echo '<pre>';print_r(model);die;
+//echo '<pre>';print_r($model);die;
+                  if(!isset($model->store_id) && empty($model->store_id)){
+                    $model->store_id = 1;
+                  }
                 if ($model->save()) {
+
+                  if(isset($_POST['warehouse_id']) && isset($_POST['procurement_center_id'])){
+                        $flag = BaseProduct::validateInventoryHeaderData($_POST['warehouse_id'], $_POST['procurement_center_id']);
+                        if($flag == 1){
+                            $warehouse_id = $_POST['warehouse_id'];
+                            $procurement_center_id = $_POST['procurement_center_id'];
+                            InventoryHeader::updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id,$model->base_product_id);    
+                        }
+                        else{
+                            Yii::app()->user->setFlash('error', 'Cannot Update Warehouse Mapping. Data Not Correct. Please Select Valid Warehouses.');
+                        }
+                            
+                    }  
+
 //               echo'<pre>';
 //               
 //               echo $_POST['MRP'];die;
@@ -471,7 +496,7 @@ class BaseProductController extends Controller {
                 Yii::app()->user->setFlash('error', 'Product not save,Please select at least one category');
             }
         }
-        $inv_header = new InventoryHeader('search');
+        
         $this->render('create', array(
             'model' => $model,
             'mrp' => $mrp,
@@ -494,7 +519,7 @@ class BaseProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-        var_dump($_POST);die;
+        //var_dump($_POST);die;
         //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
@@ -524,6 +549,7 @@ class BaseProductController extends Controller {
         $model->description=trim($model->description);
         $model->color=trim($model->color);
         $model->pack_unit=trim($model->pack_unit);
+        $inv_header = new InventoryHeader('search');
 
         if (isset($_POST['BaseProduct'])) {
            $model->attributes = $_POST['BaseProduct'];
@@ -743,7 +769,6 @@ class BaseProductController extends Controller {
               ));
               exit();
               } */
-              $inv_header = new InventoryHeader('search');
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
@@ -811,6 +836,18 @@ class BaseProductController extends Controller {
                         //$quantity=$qunt['0']['quantity'];
                     }
 
+                    if(isset($_POST['warehouse_id']) && isset($_POST['procurement_center_id'])){
+                        $flag = BaseProduct::validateInventoryHeaderData($_POST['warehouse_id'], $_POST['procurement_center_id']);
+                        if($flag == 1){
+                            $warehouse_id = $_POST['warehouse_id'];
+                            $procurement_center_id = $_POST['procurement_center_id'];
+                            InventoryHeader::updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id,$_GET['id']);    
+                        }
+                        else{
+                            Yii::app()->user->setFlash('error', 'Cannot Update Warehouse Mapping. Data Not Correct. Please Select Valid Warehouses.');
+                        }
+                            
+                    }
 
                     $model_subscribe->update_mrp_wsp($mrp, $wsp, $diameter, $grade, $store_id, $base_product_id, $quantity, $Weight, $WeightUnit, $Length, $LengthUnit, $model->status);
 
@@ -1058,7 +1095,7 @@ class BaseProductController extends Controller {
 
         //\   echo '<pre>';  print_r($Weight1);die;
 
-        BaseProduct::updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id,$_GET['id']);
+        //BaseProduct::updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id,$_GET['id']);
         
         $this->render('update', array(
             'a' => $a['0']['grade'],
