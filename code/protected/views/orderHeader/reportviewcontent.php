@@ -298,6 +298,17 @@ foreach ($model as $value) {
                         $subtotalQty += ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
                     }
             }
+            else if($type == "email-invoice"){
+                $quantityInPacks = $model[$key]['delivered_qty'];
+                if($model[$key]['pack_unit']=='g'){
+                       $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
+                       $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
+                    }
+                    else{
+                        $qtytotal +=  ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
+                        $subtotalQty += ((float)$quantityInPacks) * ((float)$model[$key]['pack_size']);
+                    }
+            }
             ?>  
 
             <tr>
