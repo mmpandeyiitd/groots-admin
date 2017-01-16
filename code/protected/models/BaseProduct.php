@@ -1054,4 +1054,8 @@ class BaseProduct extends CActiveRecord {
 
     }
 
+    public function updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id, $base_product_id){
+        
+    }
+
 }

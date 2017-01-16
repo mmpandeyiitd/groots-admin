@@ -178,8 +178,16 @@ $count = 0;
         <?php 
         $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'todayscollection',
-        'dataProvider'=> $inv_header->searchBaseProduct(),
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'dataProvider'=> $inv_header->searchBaseProductCreate(),
         'columns' => array(
+            array(
+                'header' => 'Add Rows',
+                'type' => 'raw',
+                'value' => function($data){
+                    return CHtml::button('+', array('style' => 'width:20px;'));
+                }
+                ),
             array(
                 'header' => 'warehouse',
                 'type' => 'raw',

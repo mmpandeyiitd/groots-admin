@@ -211,12 +211,12 @@ $count = 0;
                 <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
                 <input type="text" name="LengthUnit"  maxlength="10" value="<?php echo $LengthUnit; ?>"/>
             </div>
-
+            <div>
             <?php 
         $this->widget('zii.widgets.grid.CGridView', array(
         'id'=>'productWarehouses',
         'itemsCssClass' => 'table table-striped table-bordered table-hover',
-        'dataProvider'=> $inv_header->searchBaseProduct($model->base_product_id),
+        'dataProvider'=> $inv_header->searchBaseProductUpdate($model->base_product_id),
         'rowCssClassExpression' => '$data->getRowCssProductClass()',
         'rowHtmlOptionsExpression' => 'array("id" => "id_".$data->getRowCssProductClass())',
         'columns' => array(
@@ -233,7 +233,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('warehouse_id', $data, $list, array('style' => 'width:300px;', 'class' => 'warehouse'));
+                    return CHtml::dropDownList('warehouse_id[]', $data, $list, array('empty' => 'Select A Warehouse', 'options' => array($data->warehouse_id => array('selected' => true)) ,'style' => 'width:300px;', 'class' => 'warehouse'));
                 }),
             array(
                 'header' => 'Procurement',
@@ -241,7 +241,7 @@ $count = 0;
                 'value' => function($data){
                     $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
                     $list = CHtml::listData($warehouse, 'id', 'name');
-                    return CHtml::dropDownList('procurement_center_id', $data, $list,array('style' => 'width:300px;', 'class' => 'procurement'));
+                    return CHtml::dropDownList('procurement_center_id[]', $data, $list,array('empty' => 'Select A Warehouse', 'options' => array($data->procurement_center_id => array('selected' => true)) ,'style' => 'width:300px;', 'class' => 'warehouse'));
                 }
                 )
             
@@ -251,6 +251,7 @@ $count = 0;
     
 
         ?>
+        </div>
         </div>
         <div class="">
             <?php
@@ -506,13 +507,15 @@ $count = 0;
 
 
         function addRows(bp_id, w_id){
-            var rowId = 'id_'+bp_id+''+w_id;
-            var row = $('#rowId');
+            var row = $('#id_'+bp_id+''+w_id);
             console.log(row);
             var clone = row.clone();
             console.log(clone);
-            clone.id = row.id;
-            clone.insertAfter(row);        
+            clone.find('.warehouse').val(0);
+            clone.find('.procurement').val(0);
+            //clone.id = row.id;
+            clone.insertAfter(row); 
+            console.log('12');       
         }
     </SCRIPT>
     <style type="text/css">

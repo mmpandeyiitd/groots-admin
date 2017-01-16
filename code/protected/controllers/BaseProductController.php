@@ -494,6 +494,7 @@ class BaseProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        var_dump($_POST);die;
         //   echo Yii::app()->session['premission_info']['module_info']['baseproduct'];die;
         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['baseproduct'], 'U') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
@@ -742,6 +743,7 @@ class BaseProductController extends Controller {
               ));
               exit();
               } */
+              $inv_header = new InventoryHeader('search');
             if (isset($mrp) && isset($wsp) && $mrp < $wsp) {
 
                 Yii::app()->user->setFlash('WSP', 'Store price must be Greater than or equal to Store Offer price.');
@@ -760,6 +762,7 @@ class BaseProductController extends Controller {
                     'Length' => $Length,
                     'LengthUnit' => $LengthUnit,
                     'specific_keyfield' => $specific_keyfield,
+                    'inv_header' => $inv_header
                 ));
                 exit();
             }
@@ -1054,7 +1057,9 @@ class BaseProductController extends Controller {
         $LengthUnit1 = $model_subscribe->getdatarecords_data3($id);
 
         //\   echo '<pre>';  print_r($Weight1);die;
-        $inv_header = new InventoryHeader('search');
+
+        BaseProduct::updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id,$_GET['id']);
+        
         $this->render('update', array(
             'a' => $a['0']['grade'],
             'new_data' => $new_data['0']['diameter'],
