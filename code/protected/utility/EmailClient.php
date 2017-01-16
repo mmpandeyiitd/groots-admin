@@ -155,9 +155,9 @@ public function sendMail2($params) {
         //make cc string
 
     $msg = "To: $to_str\n";
-    // if($cc){
-    //     $msg .= "Cc: $cc\n";    
-    // }
+    if($cc){
+        $msg .= "Cc: $cc\n";    
+    }
     $msg .= "From: GROOTS<$from>\n";
     if ($replyTo) {
         $msg .= "Reply-To: $replyTo\n";
