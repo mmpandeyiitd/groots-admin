@@ -2,7 +2,7 @@
 
 function getAllVendorPayableAmount($startDate, $endDate){
     $username = "root";
-	$password = "root";
+	$password = "mmp@root";
 	$localhost = "localhost";
 	$connection = mysql_connect($localhost,$username, $password);
     $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from groots_orders.purchase_header as h left join groots_orders.purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
@@ -50,7 +50,7 @@ function getAllVendorPayableAmount($startDate, $endDate){
 
 function getAllVendorInitialPending($startDate){
    	$username = "root";
-	$password = "root";
+	$password = "mmp@root";
 	$localhost = "localhost";
 	$connection = mysql_connect($localhost,$username, $password);
     $map = array();
@@ -77,7 +77,7 @@ function getAllVendorInitialPending($startDate){
 
 date_default_timezone_set("Asia/Kolkata");
 $username = "root";
-$password = "root";
+$password = "mmp@root";
 $localhost = "localhost";
 $connection = mysql_connect($localhost,$username, $password);
 mysql_select_db('cb_dev_groots');
