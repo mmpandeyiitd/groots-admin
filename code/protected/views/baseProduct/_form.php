@@ -43,11 +43,6 @@ $count = 0;
 ?>
 
 
-<?php
-    $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
-    $list = CHtml::listData($warehouse, 'id', 'name');
-?>
-
 <script language="javascript">
     $(document).ready(function () {
         $("#datepicker").datepicker({
