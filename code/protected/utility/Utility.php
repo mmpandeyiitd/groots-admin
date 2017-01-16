@@ -221,7 +221,8 @@ class Utility
             $outstanding += $value['total_payable_amount'];
         }
         foreach ($retailerPayments as $key => $value) {
-            $outstanding -= $value['paid_amount'];
+            if(!($value['payment_type'] == "Cheque" && $value['cheque_status'] != "Cleared"))
+                $outstanding -= $value['paid_amount'];
         }
         return $outstanding;
     }
@@ -235,7 +236,8 @@ class Utility
             $outstanding += $value['total_payable_amount'];
         }
         foreach ($retailerPayments as $key => $value) {
-            $outstanding -= $value['paid_amount'];
+            if(!($value['payment_type'] == "Cheque" && $value['cheque_status'] != "Cleared"))
+                $outstanding -= $value['paid_amount'];
         }
         return $outstanding;
     }

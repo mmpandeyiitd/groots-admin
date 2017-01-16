@@ -765,3 +765,17 @@ insert into cb_dev_groots.retailer_status values(1, 'Active', now(), null, 1);
 insert into cb_dev_groots.retailer_status values(2, 'Moderate', now(), null, 1);
 
 alter table cb_dev_groots.retailer add constraint fk_retailer_2 foreign key (status) REFERENCES cb_dev_groots.retailer_status (id);
+
+
+alter table groots_orders.inventory_header add column procurement_center_id int(11) unsigned NOT NULL;
+
+
+alter table cb_dev_groots.warehouses add column email_group varchar(100) default null;
+
+update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' where id = 1;
+update cb_dev_groots.warehouses set email_group = 'invoices.a@gogroots.com' where id = 2;
+update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' where id = 3;
+  
+alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;
+
+-- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;

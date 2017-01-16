@@ -113,6 +113,7 @@ class EmailClient
                 $name =$value['name'];
                 $fullName = $dir.$name;
                 $pdf->Output($fullName, 'F');
+                //die;
                         //file_put_contents($fullName );
                 $temp = array(
                     'name' => $name,
@@ -157,10 +158,11 @@ public function sendMail2($params) {
     if($cc){
         $msg .= "Cc: $cc\n";    
     }
-    $msg .= "From: $from\n";
+    $msg .= "From: GROOTS<$from>\n";
     if ($replyTo) {
         $msg .= "Reply-To: $replyTo\n";
     }
+    //$msg .= "From-Name: GROOTS\n";
 
         // in case you have funny characters in the subject
     $subject = mb_encode_mimeheader($subject, 'UTF-8');

@@ -211,6 +211,46 @@ $count = 0;
                 <label for="BaseProduct_size"><?php echo 'Indicated Length Unit' ?></label>
                 <input type="text" name="LengthUnit"  maxlength="10" value="<?php echo $LengthUnit; ?>"/>
             </div>
+            <div>
+            <?php 
+        $this->widget('zii.widgets.grid.CGridView', array(
+        'id'=>'productWarehousesUpdate',
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'dataProvider'=> $inv_header->searchBaseProductUpdate($model->base_product_id),
+        'rowHtmlOptionsExpression' => 'array("id" => "id_".$data->getRowCssProductId())',
+        'columns' => array(
+            array(
+                'header' => 'Add Rows',
+                'type' => 'raw',
+                'value' => function($data) use ($model){
+                    return CHtml::button('+', array('onclick' => 'addRows('.$data->base_product_id.','.$data->warehouse_id.')', 'style' => 'width:20px;'));
+                }
+                ),
+            array(
+                'header' => 'warehouse',
+                'type' => 'raw',
+                'value' => function($data){
+                    $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+                    $list = CHtml::listData($warehouse, 'id', 'name');
+                    return CHtml::dropDownList('warehouse_id[]', $data, $list, array('empty' => 'Select A Warehouse', 'options' => array($data->warehouse_id => array('selected' => true)) ,'style' => 'width:300px;', 'class' => 'warehouse'));
+                }),
+            array(
+                'header' => 'Procurement',
+                'type' => 'raw',
+                'value' => function($data){
+                    $warehouse = Warehouse::model()->findAll(array('order' => 'name'));
+                    $list = CHtml::listData($warehouse, 'id', 'name');
+                    return CHtml::dropDownList('procurement_center_id[]', $data, $list,array('empty' => 'Select A Warehouse', 'options' => array($data->procurement_center_id => array('selected' => true)) ,'style' => 'width:300px;', 'class' => 'warehouse'));
+                }
+                )
+            
+            )
+        )
+        );
+    
+
+        ?>
+        </div>
         </div>
         <div class="">
             <?php
@@ -463,6 +503,19 @@ $count = 0;
             document.getElementById('color_mainids').value = get_color_code;
         }
         //........End Color picker...........||
+
+
+        function addRows(bp_id, w_id){
+            var row = $('#id_'+bp_id+''+w_id);
+            console.log(row);
+            var clone = row.clone();
+            console.log(clone);
+            clone.find('.warehouse').val(0);
+            clone.find('.procurement').val(0);
+            //clone.id = row.id;
+            clone.insertAfter(row); 
+            console.log('12');       
+        }
     </SCRIPT>
     <style type="text/css">
         .miniColors-trigger { display: none;} 

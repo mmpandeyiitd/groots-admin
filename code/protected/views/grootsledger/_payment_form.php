@@ -85,7 +85,7 @@
     <div class="row">
         <?php echo $form->labelEx($model,'cheque_status'); ?>
         <?php echo $form->dropDownList($model,'cheque_status',
-            CHtml::listData(RetailerPayment::getRetPayChequeDropData(),'value', 'value'), array('style'=>'width:222px;'));
+            CHtml::listData(RetailerPayment::getRetPayChequeDropData(),'value', 'value'), array('style'=>'width:222px;', 'empty' => 'Select Cheque Status'));
 
         ?>
         <?php echo $form->error($model,'status'); ?>
