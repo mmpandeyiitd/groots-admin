@@ -46,11 +46,11 @@ class BaseProductController extends Controller {
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'report', 'Ajax', 'update', 'Admin_1', 'Admin_2', 'addedstyle', 'subscribegrid', 'bulkupload', 'CreateFileDownload', 'UpdateFileDownload', 'export', 'media', 'MediaFileDownload', 'configurablegrid', 'createconfigurable'),
+                'actions' => array('create', 'report', 'Ajax', 'update', 'Admin_1', 'Admin_2', 'addedstyle', 'subscribegrid', 'bulkupload', 'CreateFileDownload', 'UpdateFileDownload', 'export', 'media', 'MediaFileDownload', 'configurablegrid', 'createconfigurable', 'ProductWarehouseMappingTemplate', 'BulkProductWarehouseMapping'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'report', 'delete', 'CreateFileDownload', 'UpdateFileDownload', 'export', 'media', 'MediaFileDownload', 'create', 'configurablegrid', 'createconfigurable'),
+                'actions' => array('admin', 'report', 'delete', 'CreateFileDownload', 'UpdateFileDownload', 'export', 'media', 'MediaFileDownload', 'create', 'configurablegrid', 'createconfigurable', 'ProductWarehouseMappingTemplate', 'BulkProductWarehouseMapping'),
                 'users' => array('admin', '*'),
             ),
             array('deny', // deny all users
@@ -1257,6 +1257,7 @@ class BaseProductController extends Controller {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
         }*/
+        //var_dump($_FILES);die;
         set_time_limit(0);
         $logfile = '';
         $baseid = '';
@@ -2603,5 +2604,96 @@ class BaseProductController extends Controller {
             echo CJSON::encode($data);
         }
     }
+
+    public function actionProductWarehouseMappingTemplate(){
+        $file_name = 'Bulk_product_warehouse_mapping.csv';
+        $file_data = 'Product Id, SKU Name, Active at Azadpur [ID 2], Corresponding Procuring Warehouse, Active at Basai [ID 1], Corresponding Procuring Warehouse';
+        $sql = 'select base_product_id, title from base_product where parent_id != 0 or parent_id is null';
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $products = $command->queryAll();
+        //var_dump($file_data);die;
+        //$size_of_file = strlen($file_data);
+        //$size_of_file = 10000000;
+        foreach ($products as $key => $value) {
+            $file_data.="\n";
+            $file_data.= $value['base_product_id'].','.$value['title'].',"",2,"",1';
+        }
+        $this->renderPartial('fileDownload', array(
+            'file_name' => $file_name,
+            'file_data' => $file_data,
+        ));
+
+    }
+
+    public function actionBulkProductWarehouseMapping(){
+        var_dump($_POST, $_FILES);die;
+        $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
+        set_time_limit(0);
+        $logfile = '';
+        $baseid = '';
+        $model = new Bulk();
+        $keycsv = 1;
+        $csv_filename = '';
+        $insert_base_csv_info = array();
+        $insert_base_csv_info[$keycsv]['base_product_id'] = 'base_product_id';
+        $insert_base_csv_info[$keycsv]['model_name'] = 'model_name';
+        $insert_base_csv_info[$keycsv]['model_number'] = 'model_number';
+        $keycsv++;
+        $cateogryarray = array();
+
+        try{
+            //$a = $_POST['Buk']['assd'];
+            if (isset($_POST['Bulk'])) {
+
+                $model->action = 'update';
+                $model->attributes = $_POST['Bulk'];
+                if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
+                    $csv = CUploadedFile::getInstance($model, 'csv_file');
+                    if (!empty($csv)) {
+                        if ($csv->size > 30 * 1024 * 1024) {
+                            Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                            $this->render('bulkupload', array('model' => $model));
+                        }
+                        $fileName = 'csvupload/' . $csv->name;
+                        $filenameArr = explode('.', $fileName);
+                        $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
+                        $csv->saveAs($fileName);
+                    } else {
+
+                        Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
+                        $this->render('bulkupload', array('model' => $model));
+                    }
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                    if ($ext != 'csv') {
+                        Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
+                        $this->render('bulkupload', array('model' => $model));
+                    }
+                    if (isset($insert_base_csv_info) && !empty($insert_base_csv_info)) {
+                        $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
+                        $logfile = fopen($csv_filename, "a");
+                        $uploadedFile = fopen($fileName, 'r');
+                        fputcsv($logfile, $logTemplate);
+                        Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                        fclose($logfile);
+                    }
+                }
+            }
+        } catch(Exception $e){
+            Yii::app()->user->setFlash('error','File Upload Failed'.$e->getMessage());
+        }
+
+
+        // @unlink($fileName);
+        $this->render('bulkupload', array(
+            'model' => $model,
+            'logfile' => $logfile,
+            'csv_filename' => $csv_filename,
+            'w_id' => $w_id,
+        ));
+    }
+
+
 
 }

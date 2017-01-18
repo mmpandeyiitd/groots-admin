@@ -67,6 +67,20 @@ if ($issuperadmin == 1) {
 <?php echo '<br />'; ?>
 </div>
 </div>
+
+<div class="bulkupload_btn">
+    <?php echo CHtml::button('Product Warehouse Mapping Template', array('onclick' => 'js:document.location.href="index.php?r=baseProduct/ProductWarehouseMappingTemplate"'));
+   ?> 
+   <?php echo $form->labelEx($model, 'csv_file'); ?>
+    <?php echo $form->fileField($model, 'csv_file'); ?>
+    <?php echo $form->error($model, 'csv_file'); ?>
+</div>
+<div class="buttons">
+<?php echo CHtml::button('Upload mapping', array("class" => "Bulk btn", 'onclick' =>'js:document.location.href="index.php?r=baseProduct/bulkProductWarehouseMapping"' )); ?>
+<?php echo $form->errorSummary($model); ?><div class="Csv">
+<?php echo '<br />'; ?>
+</div>
+
 </div>
     <?php if (Yii::app()->user->hasFlash('success')): ?>
         <div class="Csv" style="color:green">
@@ -81,6 +95,7 @@ if ($issuperadmin == 1) {
 </div>
    
 </div>
+
 
 <?php
 $this->endWidget();

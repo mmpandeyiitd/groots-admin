@@ -5,6 +5,9 @@ header('Content-Transfer-Encoding: binary');
 header('Expires: 0');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Pragma: public');
-header('Content-Length: ' . $size_of_file);
+if(isset($size_of_file) && !empty($size_of_file)){
+	header('Content-Length: ' . $size_of_file);	
+}
+
 echo $file_data;
 ?>
