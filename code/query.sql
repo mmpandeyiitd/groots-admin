@@ -752,20 +752,33 @@ alter table cb_dev_groots.retailer add column delivery_time time not null;
 create table cb_dev_groots.retailer_status(
 id int(2) not null,
 status_name varchar(100) not null,
-created_at datetime default now(),
+created_at datetime not null,
 updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 updated_by int(11) not null,
 primary key (id)
 )ENGINE=InnoDB default CHARSET=latin1; 
 
-alter table retailer modify column status int(2) not null default 1;
+alter table cb_dev_groots.retailer modify column status int(2) not null default 1;
 
-insert into cb_dev_groots.retailer_status values(0, 'Inactive', null, null, 1);
-insert into cb_dev_groots.retailer_status values(1, 'Active', null, null, 1);
-insert into cb_dev_groots.retailer_status values(2, 'Moderate', null, null, 1);
+insert into cb_dev_groots.retailer_status values(0, 'Inactive', now(), null, 1);
+insert into cb_dev_groots.retailer_status values(1, 'Active', now(), null, 1);
+insert into cb_dev_groots.retailer_status values(2, 'Moderate', now(), null, 1);
 
 alter table cb_dev_groots.retailer add constraint fk_retailer_2 foreign key (status) REFERENCES cb_dev_groots.retailer_status (id);
 
+
+alter table groots_orders.inventory_header add column procurement_center_id int(11) unsigned NOT NULL;
+
+
+alter table cb_dev_groots.warehouses add column email_group varchar(100) default null;
+
+update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' where id = 1;
+update cb_dev_groots.warehouses set email_group = 'invoices.a@gogroots.com' where id = 2;
+update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' where id = 3;
+  
+alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;
+
+-- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
 
 ----------------------------------------------------------------vendor table edit
 alter table cb_dev_groots.vendors drop column geolocation, drop product_categories, drop categories_of_interest, drop store_size, drop min_order_price, drop shipping_charge;

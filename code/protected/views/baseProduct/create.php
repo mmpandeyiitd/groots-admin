@@ -45,7 +45,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
      if(!empty($cat_all)){    }else{  $cat_all=''; }
       if(!empty($specific_keyfield)){    }else{  $specific_keyfield=''; }
     
-    $this->renderPartial('_form', array('model' => $model,'mrp'=>$mrp,'wsp'=>$wsp, 'cat_all' => $cat_all, 'specific_keyfield' => $specific_keyfield,'grade' => $grade,'diameter' => $diameter,'qunt' => $qunt,'Weight' => $Weight,'WeightUnit' => $WeightUnit,'Length' => $Length,'LengthUnit' => $LengthUnit,)); ?>
+    $this->renderPartial('_form', array('model' => $model,'mrp'=>$mrp,'wsp'=>$wsp, 'cat_all' => $cat_all, 'specific_keyfield' => $specific_keyfield,'grade' => $grade,'diameter' => $diameter,'qunt' => $qunt,'Weight' => $Weight,'WeightUnit' => $WeightUnit,'Length' => $Length,'LengthUnit' => $LengthUnit,'inv_header' => $inv_header)); ?>
 </div>
 </div>
 

@@ -67,7 +67,7 @@ class EmailClient
         try {
             $result = $this->sesClient->sendEmail($request);
             $messageId = $result->get('MessageId');
-            echo("Email sent! Message ID: $messageId"."\n");
+            //echo("Email sent! Message ID: $messageId"."\n");
 
         } catch (Exception $e) {
             echo("The email was not sent. Error message: ");
@@ -103,11 +103,18 @@ class EmailClient
             if(isset($mailArray['pdf']) && !empty($mailArray['pdf'])){
                 $params['files'] = array();
                 $dir = dirname(__FILE__) . '/../../../../dump/';
+                $files = glob($dir."*"); // get all file names
+                foreach($files as $file){ // iterate files
+                    if(is_file($file))
+                    unlink($file); // delete file
+                }
                 $value = $mailArray['pdf'];
                 $pdf = $value['pdf'];
                 $name =$value['name'];
                 $fullName = $dir.$name;
-                file_put_contents($fullName, $pdf);
+                $pdf->Output($fullName, 'F');
+                //die;
+                        //file_put_contents($fullName );
                 $temp = array(
                     'name' => $name,
                     'filepath' => $fullName,
@@ -122,47 +129,46 @@ class EmailClient
                 echo("Email sent! Message ID: $messageId"."\n");    
             } catch (Exception $e){
                 throw $e;
-            }
-
-
         }
     }
+}
 
-    public function sendMail2($params) {
+public function sendMail2($params) {
        // die('here');
-        $to = self::getParam($params, 'to', true);
-        $subject = self::getParam($params, 'subject', true);
-        $body = self::getParam($params, 'message', true);
-        $from = self::getParam($params, 'from', true);
-        $replyTo = self::getParam($params, 'replyTo');
-        $files = self::getParam($params, 'files');
-        $cc = self::getParam($params, 'cc');
+    $to = self::getParam($params, 'to', true);
+    $subject = self::getParam($params, 'subject', true);
+    $body = self::getParam($params, 'message', true);
+    $from = self::getParam($params, 'from', true);
+    $replyTo = self::getParam($params, 'replyTo');
+    $files = self::getParam($params, 'files');
+    $cc = self::getParam($params, 'cc');
 
-        $res = new ResultHelper();
+    $res = new ResultHelper();
 
         // build the message
-        if (is_array($to)) {
-            $to_str = rtrim(implode(',', $to), ',');
-        } else {
-            $to_str = $to;
-        }
+    if (is_array($to)) {
+        $to_str = rtrim(implode(',', $to), ',');
+    } else {
+        $to_str = $to;
+    }
 
         //make cc string
 
-        $msg = "To: $to_str\n";
-        if($cc){
-            $msg .= "Cc: $cc\n";    
-        }
-        $msg .= "From: $from\n";
-        if ($replyTo) {
-            $msg .= "Reply-To: $replyTo\n";
-        }
+    $msg = "To: $to_str\n";
+    if($cc){
+        $msg .= "Cc: $cc\n";    
+    }
+    $msg .= "From: GROOTS<$from>\n";
+    if ($replyTo) {
+        $msg .= "Reply-To: $replyTo\n";
+    }
+    //$msg .= "From-Name: GROOTS\n";
 
         // in case you have funny characters in the subject
-        $subject = mb_encode_mimeheader($subject, 'UTF-8');
-        $msg .= "Subject: $subject\n";
-        $msg .= "MIME-Version: 1.0\n";
-        $msg .= "Content-Type: multipart/mixed;\n";
+    $subject = mb_encode_mimeheader($subject, 'UTF-8');
+    $msg .= "Subject: $subject\n";
+    $msg .= "MIME-Version: 1.0\n";
+    $msg .= "Content-Type: multipart/mixed;\n";
         $boundary = uniqid("_Part_".time(), true); //random unique string
         $boundary2 = uniqid("_Part2_".time(), true); //random unique string
         $msg .= " boundary=\"$boundary\"\n";
@@ -217,15 +223,15 @@ class EmailClient
         //var_dump($msg);die;
         try {
             $ses_result = $this->sesClient->sendRawEmail(
-                    array(
-                'RawMessage' => array(
-                    'Data' => $msg
-                )
+                array(
+                    'RawMessage' => array(
+                        'Data' => $msg
+                        )
                     ), array(
-                'Source' => $from,
-                'Destinations' => $to_str
+                    'Source' => $from,
+                    'Destinations' => $to_str
                     )
-            );
+                    );
             if ($ses_result) {
                 $res->message_id = $ses_result->get('MessageId');
             } else {
@@ -235,7 +241,7 @@ class EmailClient
         } catch (Exception $e) {
             $res->success = false;
             $res->result_text = $e->getMessage().
-                    " - To: $to_str, Sender: $from, Subject: $subject";
+            " - To: $to_str, Sender: $from, Subject: $subject";
         }
         return $res;
     }
