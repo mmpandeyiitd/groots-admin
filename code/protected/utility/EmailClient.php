@@ -67,7 +67,7 @@ class EmailClient
         try {
             $result = $this->sesClient->sendEmail($request);
             $messageId = $result->get('MessageId');
-            echo("Email sent! Message ID: $messageId"."\n");
+            //echo("Email sent! Message ID: $messageId"."\n");
 
         } catch (Exception $e) {
             echo("The email was not sent. Error message: ");
@@ -118,7 +118,7 @@ class EmailClient
                 $temp = array(
                     'name' => $name,
                     'filepath' => $fullName,
-                    'mime' => 'application/csv'
+                    'mime' => 'application/pdf'
                     );
                 $params['files'][0] = $temp;
             }
