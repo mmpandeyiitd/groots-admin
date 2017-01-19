@@ -2607,17 +2607,45 @@ class BaseProductController extends Controller {
 
     public function actionProductWarehouseMappingTemplate(){
         $file_name = 'Bulk_product_warehouse_mapping.csv';
-        $file_data = 'Product Id, SKU Name, Active at Azadpur [ID 2], Corresponding Procuring Warehouse, Active at Basai [ID 1], Corresponding Procuring Warehouse';
-        $sql = 'select base_product_id, title from base_product where parent_id != 0 or parent_id is null';
+        $warehouses = Warehouse::model()->findAll();
+        $sql = 'select bp.base_product_id, bp.title, ih.warehouse_id, ih.procurement_center_id from base_product as bp left join groots_orders.inventory_header as ih on bp.base_product_id = ih.base_product_id 
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where ih.status = 1 and (bp.parent_id is null or parent_id != 0) order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $products = $command->queryAll();
-        //var_dump($file_data);die;
-        //$size_of_file = strlen($file_data);
-        //$size_of_file = 10000000;
+        $file_data = 'Product Id, SKU Name';
+        $i = 2;
+        $indexMap = array();
+        foreach ($warehouses as $key => $value) {
+            $name = explode(',', $value['name']);
+            $name = $name[0];
+            $file_data .= ', Active At ~'.$name.'[ID'.$value['id'].']'.', Corresponding Procuring Warehouse';
+            $indexMap[$value['id']] = array();
+            $indexMap[$value['id']]['first'] = $i;
+            $i++;
+            $indexMap[$value['id']]['second'] = $i;
+            $i++;
+
+        }
+
+        $newProducts= array();
+        $arraySize = (2*count($warehouses)) + 2;
         foreach ($products as $key => $value) {
-            $file_data.="\n";
-            $file_data.= $value['base_product_id'].','.$value['title'].',"",2,"",1';
+            $indexes = $indexMap[$value['warehouse_id']];
+            if(!array_key_exists($value['base_product_id'], $newProducts)){
+                $newProducts[$value['base_product_id']] = array_fill(0, $arraySize, 0);
+                $newProducts[$value['base_product_id']][0] = $value['base_product_id'];
+                $newProducts[$value['base_product_id']][1] = $value['title'];
+            }
+            $newProducts[$value['base_product_id']][$indexes['first']] = 1;
+            $newProducts[$value['base_product_id']][$indexes['second']] = $value['procurement_center_id'];
+        }
+        
+        foreach ($newProducts as $key => $value) {
+            $temp = implode(',', $value);
+            $file_data .= "\n";
+            $file_data .= $temp;
         }
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
@@ -2627,7 +2655,18 @@ class BaseProductController extends Controller {
     }
 
     public function actionBulkProductWarehouseMapping(){
-        var_dump($_POST, $_FILES);die;
+        $warehouses = Warehouse::model()->findAll();
+        $indexMap = array();
+        $i=2;
+        foreach ($warehouses as $key => $value) {
+            $indexMap[$value['id']] = array();
+            $indexMap[$value['id']]['first'] = $i;
+            $i++;
+            $indexMap[$value['id']]['second'] = $i;
+            $i++;
+
+        }
+        //var_dump($_POST, $_FILES);die;
         $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
         set_time_limit(0);
         $logfile = '';
@@ -2674,7 +2713,7 @@ class BaseProductController extends Controller {
                         $logfile = fopen($csv_filename, "a");
                         $uploadedFile = fopen($fileName, 'r');
                         fputcsv($logfile, $logTemplate);
-                        Inventory::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        InventoryHeader::productWarehouseMappingUpload($uploadedFile, $logfile, $indexMap);
                         Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
                         fclose($logfile);
                     }
@@ -2690,7 +2729,7 @@ class BaseProductController extends Controller {
             'model' => $model,
             'logfile' => $logfile,
             'csv_filename' => $csv_filename,
-            'w_id' => $w_id,
+            'map' => true
         ));
     }
 

@@ -778,4 +778,7 @@ update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' wher
   
 alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;
 
--- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
+alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
+
+alter table groots_orders.inventory_header add column status tinyint(1) not null;
+update inventory_header set status = 1;

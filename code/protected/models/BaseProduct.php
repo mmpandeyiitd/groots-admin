@@ -1068,4 +1068,6 @@ class BaseProduct extends CActiveRecord {
         return $flag;
     }
 
+    
+
 }
