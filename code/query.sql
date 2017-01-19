@@ -782,3 +782,12 @@ alter table retailer_payments modify column cheque_status enum('Cleared','Pendin
 
 alter table groots_orders.inventory_header add column status tinyint(1) not null;
 update inventory_header set status = 1;
+----------------------------
+alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
+alter table groots_orders.purchase_header drop column vendor_id ;
+alter table cb_dev_groots.retailer drop column time_of_delivery;
+
+alter table groots_orders.order_header add column expected_delivery_time time not null;
+alter table groots_orders.order_header add column actual_delivery_time time not null;
+
+update groots_orders.order_header oh left join cb_dev_groots.retailer as re on re.id = oh.user_id set oh.expected_delivery_time = re.delivery_time where re.delivery_time is not null;
