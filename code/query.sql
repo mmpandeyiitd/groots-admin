@@ -886,3 +886,7 @@ insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
 
 update groots_orders.purchase_line as l join base_product as b on b.base_product_id = l.base_product_id set l.pack_unit = b.pack_unit, l.pack_size = b.pack_size;
 
+alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
+
+alter table groots_orders.purchase_header drop column vendor_id ;
+

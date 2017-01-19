@@ -73,16 +73,6 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
 
 <?php echo $form->errorSummary($model->errors); ?>
 
-<!-- <div class="row" style="display: inline;">
-    <?php echo $form->labelEx($model,'vendor_id'); ?>
-    <?php echo $form->dropDownList($model,
-    'vendor_id',
-    CHtml::listData(Vendor::model()->findAllByAttributes(array('allocated_warehouse_id' => $w_id, 'status'=>1), array('select'=>'id,name','order' => 'name')),'id','name'),
-    array( 'options'=>array($model->vendor_id=>array('selected'=>'selected')))
-    );
-    ?>
-    <?php echo $form->error($model,'vendor_id'); ?>
-</div> -->
 
 <!--<div class="row" >
     <?php /*echo $form->labelEx($model,'paid_amount'); */?>
