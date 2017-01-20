@@ -791,3 +791,6 @@ alter table groots_orders.order_header add column expected_delivery_time time no
 alter table groots_orders.order_header add column actual_delivery_time time not null;
 
 update groots_orders.order_header oh left join cb_dev_groots.retailer as re on re.id = oh.user_id set oh.expected_delivery_time = re.delivery_time where re.delivery_time is not null;
+
+alter table cb_dev_groots.base_product modify column pack_unit enum ("piece", "dozen", "kg", "gm") default null;
+update cb_dev_groots.base_product set pack_unit = "gm" where pack_unit = "g";
