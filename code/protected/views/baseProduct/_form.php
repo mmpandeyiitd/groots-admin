@@ -123,7 +123,7 @@ $count = 0;
             <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_unit');
-                echo $form->textField($model, 'pack_unit', array('maxlength' => 4));
+                echo $form->textField($model, 'pack_unit', array('maxlength' => 20));
                 echo $form->error($model, 'pack_unit');
                 ?>
             </div>
