@@ -796,3 +796,10 @@ update cb_dev_groots.base_product set pack_unit = "g" where pack_unit = "gm";
 alter table cb_dev_groots.base_product modify column pack_unit enum ("piece", "dozen", "kg", "g") default null;
 update groots_orders.order_line set pack_unit = "g" where pack_unit = "gm";
 alter table groots_orders.order_line modify column pack_unit enum ("piece", "dozen", "kg", "g") default null;
+
+update cb_dev_groots.retailer set due_date = CURDATE() where due_date is null and status != 0;
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 DAY) where collection_frequency = 'daily';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 3 DAY) where collection_frequency = '3-days';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 WEEK) where collection_frequency = 'weekly';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 MONTH) where collection_frequency = 'monthly';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 45 DAY) where collection_frequency = 'fortnight';
