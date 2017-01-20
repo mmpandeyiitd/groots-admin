@@ -9,7 +9,7 @@ $meunAuthItemMap = array(
     'category' => array('SuperAdmin'),
     'product' => array('SuperAdmin'),
     'order' => array('SuperAdmin'),
-    'dashboard' => array('SuperAdmin'),
+    'dashboard' => array('SuperAdmin', 'warehouseEditorAzd', 'warehouseEditor'),
     'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'warehouseOrder' => array('OrderViewer'),
     'warehouseInventory' => array('InventoryViewer'),
@@ -23,15 +23,19 @@ $isBuyerVisible = isMenuVisible($meunAuthItemMap['buyer']);
 $isCategoryVisible = isMenuVisible($meunAuthItemMap['category']);
 $isProductVisible = isMenuVisible($meunAuthItemMap['product']);
 $isOrderVisible = isMenuVisible($meunAuthItemMap['order']);
-$isDashboardVisible = isMenuVisible($meunAuthItemMap['dashboard']);
+//$isDashboardVisible = isDashboardVisible();
 //$isWarehouseVisible = isMenuVisible($meunAuthItemMap['warehouse'], array('warehouse_id'=>1));
 //$isReportVisible = true;
 //var_dump($this->context);die("here");
 //die("123");
+$access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
+$basaiAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
+$azdAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
+$isDashboardVisible = $access0||$basaiAccess||$azdAccess;
+
 function isMenuVisible($authItemArr, $data=null){
     foreach ($authItemArr as $item){
         $access = Yii::app()->user->checkAccess($item, $data, false);
-        //echo $access; die;
         if($access){
             return true;
         }
@@ -121,17 +125,15 @@ function generateWarehouseItems($w_id, $meunAuthItemMap){
     return $warehouseItems;
 }
 
-$access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
-$access1 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
-$access2 = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
+
 $collectionUrl = '';
 if($access0){
     $collectionUrl = array('/Grootsledger/admin&w_id=3');
 }
-elseif($access1){
+elseif($basaiAccess){
     $collectionUrl = array('/Grootsledger/admin&w_id=1');
 }
-elseif($access2){
+elseif($azdAccess){
     $collectionUrl = array('/Grootsledger/admin&w_id=2');
 }
 
