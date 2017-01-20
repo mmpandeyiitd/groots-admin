@@ -129,6 +129,8 @@ class RetailerController extends Controller {
                 $model->status = 1;
             }
               $model->date_of_onboarding = date('Y-m-d H:i:s');
+              $model->updated_at = date('Y:m:d H:i:s');
+              $model->update_by = Yii::app()->user->id;
 //             if ($_POST['Retailer']['date_of_onboarding']!='') {
 //                $model->date_of_onboarding = date("Y-m-d H:i:s", strtotime($_POST['Retailer']['date_of_onboarding']));
 //            } else {
@@ -344,6 +346,8 @@ Sales: +91-11-3958-9895</span>
                     $mediaremove = $model_media->deleteMediaByMediaId($valuerm);
                 }
             }
+            $model->update_at = date('Y-m-d H:i:s');
+            $model->update_by = Yii::app()->user->id;
             if ($model->save()) {
                 if (isset($images) && count($images) > 0) {
                     foreach ($images as $image => $pic) {

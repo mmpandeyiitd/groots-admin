@@ -20,6 +20,8 @@ class GrootsledgerDao{
     public function saveCreatePayment($retailer, $post_payment ,$retailerPayment){
         $retailerPayment->attributes = $post_payment;
         $retailerPayment->created_at = date('Y-m-d');
+        $retailerPayment->updated_at = date('Y-m-d H:i:s');
+        $retailerPayment->updated_by = Yii::app()->user->id;
         if($retailerPayment->payment_type == 'Cheque' && $retailerPayment->cheque_status != 'Cleared'){
             $retailerPayment->status = 0;
             $retailerPayment->save();
@@ -45,6 +47,8 @@ class GrootsledgerDao{
         $retailerPayment->cheque_no = $post['cheque_no'];
         $retailerPayment->status = $post['status'];
         $retailerPayment->comment = $post['comment'];
+        $retailerPayment->updated_at = date('Y-m-d H:i:s');
+        $retailerPayment->updated_by = Yii::app()->user->id;
         if($retailerPayment->payment_type == 'Cheque'){
             if($retailerPayment->cheque_status != 'Cleared'){
                 $retailerPayment->status = 0;
