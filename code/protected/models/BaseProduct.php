@@ -1068,6 +1068,10 @@ class BaseProduct extends CActiveRecord {
         return $flag;
     }
 
-    
+    public function getPackUnitTypes(){
+        $connection = Yii::app()->db;
+        $packUnitType = Utility::get_enum_values($connection, self::tableName(), 'pack_unit' );
+        return $packUnitType;
+    }
 
 }

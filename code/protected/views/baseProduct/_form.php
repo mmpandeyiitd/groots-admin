@@ -123,7 +123,8 @@ $count = 0;
             <div class="row">
                 <?php
                 echo $form->labelEx($model, 'pack_unit');
-                echo $form->textField($model, 'pack_unit', array('maxlength' => 20));
+                $list = Chtml::listData(BaseProduct::getPackUnitTypes(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'pack_unit', $list,array('empty' => 'Select Pack Unit', 'options' => array($model->pack_unit => array('selected' => true))));
                 echo $form->error($model, 'pack_unit');
                 ?>
             </div>
