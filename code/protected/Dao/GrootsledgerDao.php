@@ -13,6 +13,7 @@ class GrootsledgerDao{
         	$retailer->collection_fulfilled = false; 
         }
         $retailer->updated_at = date("Y-m-d H:i:s");
+        $retailer->updated_by = Yii::app()->user->id;
         $retailer->save();
         //print_r($retailer->getErrors());die;
     }
@@ -71,6 +72,7 @@ class GrootsledgerDao{
           }
       }
       $retailer->updated_at = date("Y-m-d H:i:s");
+      $retailer->updated_by = Yii::app()->user->id;
       $retailer->save();
       return $retailerPayment;
   }

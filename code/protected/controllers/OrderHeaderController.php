@@ -153,7 +153,6 @@ class OrderHeaderController extends Controller {
                 //var_dump($retailer->delivery_time);die;
                 $orderHeader->expected_delivery_time = $retailer->delivery_time;
                 $orderHeader->actual_delivery_time = '00:00:00';
-                $orderHeader->updated_at = date('Y-m-d H:i:s');
                 $orderHeader->updated_by = Yii::app()->user->id;
                 //var_dump($orderHeader);die;
                 $orderHeader->save();
@@ -175,6 +174,7 @@ class OrderHeaderController extends Controller {
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
                 if($orderHeader->status == 'Delivered')
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                    $retailer->updated_by = Yii::app()->user->id;
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin&w_id='.$w_id));
@@ -312,7 +312,6 @@ class OrderHeaderController extends Controller {
                     if(isset($_POST['OrderHeader']['expected_delivery_time']) && !empty($_POST['OrderHeader']['expected_delivery_time'])){
                         $orderHeader->expected_delivery_time = $_POST['OrderHeader']['expected_delivery_time'];
                     }
-                    $orderHeader->updated_at = date('Y-m-d H:i:s');
                     $orderHeader->updated_by = Yii::app()->user->id;
                     $orderHeader->save();
                     foreach ($_POST['quantity'] as $key => $quantity) {
@@ -367,6 +366,7 @@ class OrderHeaderController extends Controller {
                     else{
                         OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
                     }
+                    $retailer->updated_by = Yii::app()->user->id;
                     $retailer->save();
                     $transaction->commit();
                 //$this->redirect(array('OrderHeader/admin&w_id='.$w_id));
