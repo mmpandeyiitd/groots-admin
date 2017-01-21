@@ -358,6 +358,7 @@ class Inventory extends CActiveRecord
                 $inv->liquidation_wastage = $liquidation_wastage;
                 $inv->secondary_sale = $secondary_sale;
                 $inv->balance = self::getBalanceForCurrentProduct($quantitiesMap, $inv);
+                $inv->updated_by = Yii::app()->user->id;
                 if($inv->save()){
                     $log= array($inv->id,$row[0], $action, 'Success', 0);
                     $idMap[$inv->base_product_id] = $inv->id;
@@ -403,6 +404,7 @@ class Inventory extends CActiveRecord
             $inv->liquidation_wastage = $value['liquidation_wastage'];
             $inv->secondary_sale = $value['secondary_sale'];
             $inv->balance = self::getBalanceForCurrentProduct($quantitiesMap, $inv);
+            $inv->updated_by = Yii::app()->user->id;
             if($inv->save()){
                 $log = array($inv->id, $inv->base_product_id,$action, 'Success', 0);
                 $idMap[$inv->base_product_id] = $inv->id;

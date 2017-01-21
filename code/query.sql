@@ -978,6 +978,5 @@ update cb_dev_groots.retailer set delivery_time = '10:00:00' where delivery_time
 update groots_orders.order_header oh left join cb_dev_groots.retailer as re on re.id = oh.user_id set oh.expected_delivery_time = re.delivery_time where re.delivery_time is not null;
 
 
-
-
-
+alter table groots_orders.inventory_header add column updated_by int(11) not null;
+alter table groots_orders.inventory add column updated_by int(11) not null;

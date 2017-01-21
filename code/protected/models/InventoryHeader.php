@@ -431,6 +431,7 @@ class InventoryHeader extends CActiveRecord
             $model->extra_inv = 0;
             $model->created_at = date('Y-m-d H:i:s');
             $model->procurement_center_id = $procurement_center_id[$key];
+            $model->updated_by = Yii::app()->user->id;
         }
         $model->save();
     }
@@ -481,7 +482,8 @@ class InventoryHeader extends CActiveRecord
               $model->created_at = date('Y-m-d H:i:s');
               $model->procurement_center_id = $procurement_center_id; 
               $model->status = 1;
-              $action = 'Insert'; 
+              $model->updated_by = Yii::app()->user->id;
+              $action = 'Insert';
             }
             try{
                 $model->save();
