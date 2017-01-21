@@ -104,7 +104,7 @@ class OrderHeader extends CActiveRecord {
 //            array('cron_processed_flag', 'length', 'max' => 1),
 //            array('source_name', 'length', 'max' => 254),
             array('order_type', 'length', 'max' => 150),
-            array('created_date,delivery_date,billing_address, shipping_address, timestamp,status,transaction_time', 'safe'),
+            array('created_date,delivery_date,billing_address, shipping_address, timestamp,status,transaction_time expected_delivery_time , actual_delivery_time', 'safe'),
             // The following rule is used by search().
             array('store_id', 'safe', 'on' => 'search'),
             // @todo Please remove those attributes that should not be searched.
@@ -169,6 +169,8 @@ class OrderHeader extends CActiveRecord {
             'payment_mod' => 'Payment Mod',
             'bankname' => 'Bankname',
             'status' => 'Status',
+            'expected_delivery_time' => 'Expected Delivery Time',
+            'actual_delivery_time' => 'Actual Delivery Time',
            
 //            'cron_processed_flag' => 'Cron Processed Flag',
 //            'source_url' => 'Source Url',

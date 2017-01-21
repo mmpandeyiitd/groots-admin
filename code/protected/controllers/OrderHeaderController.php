@@ -91,6 +91,7 @@ class OrderHeaderController extends Controller {
     public function actionCreate()
     {
         //print("<pre>");
+        //var_dump($_POST);die;
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -115,6 +116,7 @@ class OrderHeaderController extends Controller {
                 $retailerProducts = RetailerproductquotationGridview::model()->findAllByAttributes(array('retailer_id' => $retailerId), array('order'=> 'title ASC'));
                 $retailer = Retailer::model()->findByPk($retailerId);
                 $warehouses = Warehouse::model()->findAll();
+                $model->expected_delivery_time = $retailer->delivery_time;
             }
             elseif(!self::checkCreditLimit($retailerId)){
                 Yii::app()->user->setFlash('error', 'Credit Limit Exceeded.');
@@ -148,6 +150,11 @@ class OrderHeaderController extends Controller {
                 $orderHeader->billing_email = $retailer->email;
                 $orderHeader->order_number = $this->getNextOrderNo();
                 $orderHeader->created_date = date("y-m-d H:i:s");
+                //var_dump($retailer->delivery_time);die;
+                $orderHeader->expected_delivery_time = $retailer->delivery_time;
+                $orderHeader->actual_delivery_time = '00:00:00';
+                $orderHeader->updated_by = Yii::app()->user->id;
+                //var_dump($orderHeader);die;
                 $orderHeader->save();
                 foreach ($_POST['quantity'] as $key => $quantity) {
                     if ($quantity > 0) {
@@ -167,6 +174,7 @@ class OrderHeaderController extends Controller {
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
                 if($orderHeader->status == 'Delivered')
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                    $retailer->updated_by = Yii::app()->user->id;
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin&w_id='.$w_id));
@@ -215,6 +223,7 @@ class OrderHeaderController extends Controller {
         public  function  actionUpdate($id){
 //print("<pre>");
 //        print_r($_POST);die;
+            //var_dump($_POST);die;
             $w_id = '';
             if(isset($_GET['w_id'])){
                 $w_id = $_GET['w_id'];
@@ -297,6 +306,13 @@ class OrderHeaderController extends Controller {
                     $orderHeader->total_payable_amount = $_POST['finalAmount'];
                     $orderHeader->delivery_date = $_POST['deliveryDate'];
                     $orderHeader->warehouse_id = $_POST['warehouse'];
+                    if(isset($_POST['OrderHeader']['actual_delivery_time']) && !empty($_POST['OrderHeader']['actual_delivery_time'])){
+                        $orderHeader->actual_delivery_time = $_POST['OrderHeader']['actual_delivery_time'];
+                    }
+                    if(isset($_POST['OrderHeader']['expected_delivery_time']) && !empty($_POST['OrderHeader']['expected_delivery_time'])){
+                        $orderHeader->expected_delivery_time = $_POST['OrderHeader']['expected_delivery_time'];
+                    }
+                    $orderHeader->updated_by = Yii::app()->user->id;
                     $orderHeader->save();
                     foreach ($_POST['quantity'] as $key => $quantity) {
 
@@ -319,6 +335,7 @@ class OrderHeaderController extends Controller {
                             $orderLine->unit_price = $_POST['store_offer_price'][$key];
                             $orderLine->price = $_POST['amount'][$key];
                             $orderLine->store_id = 1;
+                            $orderLine->unsetAttributes(array('updated_at'));
                             $orderLine->save();
                         }
                         else{
@@ -349,6 +366,7 @@ class OrderHeaderController extends Controller {
                     else{
                         OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
                     }
+                    $retailer->updated_by = Yii::app()->user->id;
                     $retailer->save();
                     $transaction->commit();
                 //$this->redirect(array('OrderHeader/admin&w_id='.$w_id));

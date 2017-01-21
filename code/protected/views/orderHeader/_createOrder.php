@@ -40,7 +40,7 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 //echo "<pre>";
 //print_r($orderline_detail[0]['min_order_price']);die;
 
-
+$updateVariable = false;
 $isAdmin = false;
 if($this->checkAccess('SuperAdmin')){
     $isAdmin = true;
@@ -48,6 +48,7 @@ if($this->checkAccess('SuperAdmin')){
 
 $setShippingCharge = '';
 if(isset($update)){
+    $updateVariable = true;
     $setShippingCharge = $initialShippingCharge;
 }
 else{
@@ -150,6 +151,52 @@ else{
                             <option value="Paid" <?php if($model->status=='Paid') {echo "selected='selected' ";} ?> >Paid</option>
                         </select>
                     </span>
+                    <div class="row">
+                        <?php echo $form->labelEx($model, 'expected_delivery_time'); ?>
+                        <?php $this->widget('application.extensions.timepicker.timepicker', array(
+                            'id'=>'expected_delivery_time',
+                            'model'=>$model,
+                            'name'=>'expected_delivery_time',
+                            'select'=> 'time',
+                            'options' => array(
+                                'showOn'=>'focus',
+                                'dateFormat' => 'yy-mm-dd',
+                                'timeFormat'=>'hh:mm:ss',
+                                'showSecond' => 'true',
+                        //'hourMin'=> (int) $hourMin,
+                        //'hourMax'=> (int) $hourMax,
+                                //'hourGrid'=>2,
+                                //'minuteGrid'=>10,
+                                ),
+                            )
+                        );
+                        ?>
+                        <?php echo $form->error($model, 'expected_delivery_time'); ?>
+                    </div>
+                    <div class="row">
+                        <?php echo $form->labelEx($model, 'actual_delivery_time'); ?>
+                        <?php $this->widget('application.extensions.timepicker.timepicker', array(
+                            'id'=>'actual_delivery_time',
+                            'model'=>$model,
+                            'name'=>'actual_delivery_time',
+                            'select'=> 'time',
+                            'options' => array(
+                                //'value'=>$retailer->delivery_time,
+                                'showOn'=>'focus',
+                                'dateFormat' => 'yy-mm-dd',
+                                'timeFormat'=>'hh:mm:ss',
+                                'showSecond' => 'true',
+                        //'hourMin'=> (int) $hourMin,
+                        //'hourMax'=> (int) $hourMax,
+                                //'hourGrid'=>2,
+                                //'minuteGrid'=>10,
+                                ),
+                            )
+                        );
+                        ?>
+                        <?php echo $form->error($model, 'actual_delivery_time'); ?>
+                    </div>
+
                     <div class="clearfix"></div>
                     <label>Comment:</label> <textarea name='comment' rows="4" cols="150" width="250px"><?php echo $model->user_comment ?></textarea>
                     <div class="clearfix"></div>
