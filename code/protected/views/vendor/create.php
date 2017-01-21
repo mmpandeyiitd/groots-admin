@@ -1,7 +1,11 @@
 <?php
 /* @var $this VendorController */
 /* @var $model Vendor */
-
+if (Yii::app()->user->hasFlash('error')): ?>
+        <span class="Csv" style="color:red">
+            <?php echo Yii::app()->user->getFlash('error'); ?>
+        </span>
+    <?php endif;
 $this->breadcrumbs=array(
 	'Vendors'=>array('index'),
 	'Create',
@@ -19,4 +23,4 @@ $this->menu=array(
         <?php echo Yii::app()->user->getFlash('premission_info'); ?>
     </span>
 <?php endif; ?>
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'update' => false)); ?>

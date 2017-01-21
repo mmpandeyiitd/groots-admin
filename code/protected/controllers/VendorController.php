@@ -73,13 +73,20 @@ class VendorController extends Controller
 		
 		$model=new Vendor;
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Vendor']))
 		{
 			$model->attributes=$_POST['Vendor'];
+			//var_dump($model);die;
+			// if($model->payment_days_range >= $model->credit_days){
+			// 	Yii::app()->user->setFlash('error', 'Credit Days must be greater than Payment Days Range!');
+			// 	$this->redirect(array('create'));
+
+			// }
 			$model->due_date = date('Y-m-d', strtotime($model->payment_start_date.' + '.$model->credit_days.' days'));
 			$model->created_date = date('Y-m-d H:i:s');
+			$model->allocated_warehouse_id = $w_id;
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -108,7 +115,7 @@ class VendorController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Vendor']))
 		{

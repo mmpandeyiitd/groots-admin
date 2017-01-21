@@ -12,7 +12,7 @@
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
 	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>false,
+	'enableAjaxValidation'=>true,
 )); ?>
  	<p class="note">Fields with <span class="required">*</span> are required.</p>
 
@@ -30,9 +30,9 @@
 	</div>
 
 	<!-- <div class="row">
-		<?php echo $form->labelEx($model,'vendor_code'); ?>
-		<?php echo $form->textField($model,'vendor_code',array('size'=>10,'maxlength'=>10)); ?>
-		<?php echo $form->error($model,'vendor_code'); ?>
+		<?php //echo $form->labelEx($model,'vendor_code'); ?>
+		<?php //echo $form->textField($model,'vendor_code',array('size'=>10,'maxlength'=>10)); ?>
+		<?php //echo $form->error($model,'vendor_code'); ?>
 	</div>
  -->
  	<div class="row">
@@ -61,7 +61,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'mobile'); ?>
-		<?php echo $form->textField($model,'mobile',array('size'=>60,'maxlength'=>100)); ?>
+		<?php echo $form->textField($model,'mobile',array('size'=>12,'maxlength'=>12)); ?>
 		<?php echo $form->error($model,'mobile'); ?>
 	</div>
 
@@ -102,9 +102,9 @@
 	</div>
 
 	<!-- <div class="row">
-		<?php echo $form->labelEx($model,'time_of_delivery'); ?>
-		<?php echo $form->textField($model,'time_of_delivery',array('size'=>60,'maxlength'=>255)); ?>
-		<?php echo $form->error($model,'time_of_delivery'); ?>
+		<?php //echo $form->labelEx($model,'time_of_delivery'); ?>
+		<?php //echo $form->textField($model,'time_of_delivery',array('size'=>60,'maxlength'=>255)); ?>
+		<?php //echo $form->error($model,'time_of_delivery'); ?>
 	</div> -->
 
 	<div class="row">
@@ -240,22 +240,23 @@
 	</div>
 
 	<!-- <div class="row">
-		<?php echo $form->labelEx($model,'created_date'); ?>
-		<?php echo $form->textField($model,'created_date'); ?>
-		<?php echo $form->error($model,'created_date'); ?>
+		<?php //echo $form->labelEx($model,'created_date'); ?>
+		<?php //echo $form->textField($model,'created_date'); ?>
+		<?php //echo $form->error($model,'created_date'); ?>
 	</div> -->
 
 	<!-- <div class="row">
-		<?php echo $form->labelEx($model,'updated_at'); ?>
-		<?php echo $form->textField($model,'updated_at'); ?>
-		<?php echo $form->error($model,'updated_at'); ?>
+		<?php //echo $form->labelEx($model,'updated_at'); ?>
+		<?php //echo $form->textField($model,'updated_at'); ?>
+		<?php //echo $form->error($model,'updated_at'); ?>
 	</div> -->
-
+<?php if($update){ ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'allocated_warehouse_id'); ?>
 		<?php echo CHtml::activeDropDownList($model	, 'allocated_warehouse_id', WarehouseDao::getWarehouseDropdownData(), array('options' => array($model->allocated_warehouse_id=>array('selected'=>true)), 'style' => 'width:220.5px;')); ?>
 		<?php echo $form->error($model,'allocated_warehouse_id'); ?>
 	</div>
+	<?php } ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'initial_pending_amount'); ?>

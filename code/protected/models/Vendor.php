@@ -62,12 +62,13 @@ class Vendor extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('credit_days', 'compare', 'compareAttribute'=>'payment_days_range', 'operator'=>'>=', 'message'=>'Credit Days must be greater than Payment Days Range!'),
 			array('name, mobile, address, date_of_onboarding, credit_limit, bussiness_name, payment_start_date, proc_exec_id, vendor_type, payment_days_range, credit_days', 'required'),
 			array('status, credit_limit, proc_exec_id', 'numerical', 'integerOnly'=>true),
 			array('name, email, password, owner_email, settlement_days, time_of_delivery, bussiness_name', 'length', 'max'=>255),
 			array('vendor_code, pincode, owner_phone, initial_pending_amount, total_pending_amount', 'length', 'max'=>10),
 			array('VAT_number', 'length', 'max'=>50),
-			array('mobile', 'length', 'max'=>100),
+			array('mobile', 'length', 'max'=>12),
 			array('telephone', 'length', 'max'=>15),
 			array('address', 'length', 'max'=>300),
 			array('city', 'length', 'max'=>200),
@@ -335,5 +336,6 @@ class Vendor extends CActiveRecord
                         'attributes'=>array('id','date','paid_amount','order_amount', 'order_quantity'),
                     ),'pagination'=>array('pageSize'=>100)));
     }
+
 
 }

@@ -25,4 +25,4 @@ $this->menu=array(
 <?php endif; ?>
 
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'update'=>true)); ?>
