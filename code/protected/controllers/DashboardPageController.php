@@ -256,6 +256,12 @@ class DashboardPageController extends Controller {
                 //die("here0");
                 return true;
             }
+            else if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>1))){
+                return true;
+            }
+            else if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>2))){
+                return true;
+            }
             else{
                 //die("here1");
                 Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');

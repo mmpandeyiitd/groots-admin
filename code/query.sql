@@ -778,4 +778,201 @@ update cb_dev_groots.warehouses set email_group = 'invoices.b@gogroots.com' wher
   
 alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 1;
 
--- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
+alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
+
+alter table groots_orders.inventory_header add column status tinyint(1) not null;
+update inventory_header set status = 1;
+----------------------------
+alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
+alter table groots_orders.purchase_header drop column vendor_id ;
+alter table cb_dev_groots.retailer drop column time_of_delivery;
+
+alter table groots_orders.order_header add column expected_delivery_time time not null;
+alter table groots_orders.order_header add column actual_delivery_time time not null;
+
+
+update cb_dev_groots.base_product set pack_unit = "g" where pack_unit = "gm";
+alter table cb_dev_groots.base_product modify column pack_unit enum ("piece", "dozen", "kg", "g") default null;
+update groots_orders.order_line set pack_unit = "g" where pack_unit = "gm";
+alter table groots_orders.order_line modify column pack_unit enum ("piece", "dozen", "kg", "g") default null;
+
+update cb_dev_groots.retailer set due_date = CURDATE() where due_date is null and status != 0;
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 DAY) where collection_frequency = 'daily';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 3 DAY) where collection_frequency = '3-days';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 WEEK) where collection_frequency = 'weekly';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 1 MONTH) where collection_frequency = 'monthly';
+update cb_dev_groots.retailer set last_due_date = DATE_SUB(due_date, INTERVAL 45 DAY) where collection_frequency = 'fortnight';
+-----------------
+alter table cb_dev_groots.retailer add column updated_by int(11) not null;
+alter table groots_orders.order_header add column updated_by int(11) not null;
+alter table groots_orders.retailer_payments add column updated_by int(11) not null;
+alter table groots_orders.order_header add column updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+
+
+------logs
+alter table groots_orders.order_header_log add column `feedback_status` enum('Not Required','Pending','Submitted') NOT NULL DEFAULT 'Not Required' after warehouse_id;
+alter table groots_orders.order_header_log add column `order_rating` tinyint(1) DEFAULT NULL after feedback_status;
+alter table groots_orders.order_header_log add column `order_platform` enum('Admin','Android') DEFAULT 'Admin' after order_rating;
+alter table groots_orders.order_header_log add column  `expected_delivery_time` time NOT NULL after order_platform;
+alter table groots_orders.order_header_log add column  `actual_delivery_time` time NOT NULL after expected_delivery_time;
+alter table groots_orders.order_header_log add column `updated_at` timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;
+alter table groots_orders.order_header_log add column updated_by int(11) not null after created_at;
+
+alter table groots_orders.retailer_payments_log add column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT NULl after status;
+alter table groots_orders.retailer_payments_log add column updated_by int(11) not null after cheque_status;
+
+alter table cb_dev_groots.retailer_log add column `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+  add column `retailer_type` enum('GA','GB','GC','GD','Contract Price') DEFAULT NULL,
+  add column `sales_rep_id` int(11) DEFAULT NULL,
+  add column `delivery_time` time NOT NULL;
+alter table cb_dev_groots.retailer_log add column updated_by int(11) not null;
+
+drop trigger order_header_insert;
+
+create trigger groots_orders.order_header_insert after insert on groots_orders.order_header for each row
+  insert into groots_orders.order_header_log (id,order_id,order_number,user_id,created_date,payment_method,payment_status,
+    billing_name,billing_phone,billing_email,billing_address,billing_state,billing_city,billing_pincode,shipping_name,
+    shipping_phone,shipping_email,shipping_address,shipping_state,shipping_city,shipping_pincode,shipping_charges,tax,
+    total,total_payable_amount,total_paid_amount,discount_amt,coupon_code,payment_ref_id,payment_gateway_name,payment_type,
+    payment_source,timestamp,transaction_id,bank_transaction_id,transaction_time,payment_mod,bankname,status,delivery_date,
+    user_comment,order_type,invoice_number,agent_name,billing_address_id,shipping_address_id,warehouse_id,feedback_status,
+    order_rating,order_platform,expected_delivery_time,actual_delivery_time,created_at,updated_by,action,updated_at)
+  values (NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,NEW.payment_status ,
+    NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,NEW.billing_state ,NEW.billing_city ,
+    NEW.billing_pincode ,NEW.shipping_name ,NEW.shipping_phone ,NEW.shipping_email ,NEW.shipping_address ,
+    NEW.shipping_state ,NEW.shipping_city ,NEW.shipping_pincode ,NEW.shipping_charges ,NEW.tax ,NEW.total ,
+    NEW.total_payable_amount ,NEW.total_paid_amount ,NEW.discount_amt ,NEW.coupon_code ,NEW.payment_ref_id ,
+    NEW.payment_gateway_name ,NEW.payment_type ,NEW.payment_source ,NEW.timestamp ,NEW.transaction_id ,
+    NEW.bank_transaction_id ,NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
+    NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,NEW.shipping_address_id ,
+    NEW.warehouse_id ,NEW.feedback_status ,NEW.order_rating ,NEW.order_platform ,NEW.expected_delivery_time ,
+    NEW.actual_delivery_time ,NOW() ,NEW.updated_by ,'INSERT' ,NEW.updated_at);
+
+drop trigger groots_orders.order_header_update;
+
+create trigger groots_orders.order_header_update after update on groots_orders.order_header for each row
+  insert into groots_orders.order_header_log (id,order_id,order_number,user_id,created_date,payment_method,payment_status,
+    billing_name,billing_phone,billing_email,billing_address,billing_state,billing_city,billing_pincode,shipping_name,
+    shipping_phone,shipping_email,shipping_address,shipping_state,shipping_city,shipping_pincode,shipping_charges,tax,
+    total,total_payable_amount,total_paid_amount,discount_amt,coupon_code,payment_ref_id,payment_gateway_name,payment_type,
+    payment_source,timestamp,transaction_id,bank_transaction_id,transaction_time,payment_mod,bankname,status,delivery_date,
+    user_comment,order_type,invoice_number,agent_name,billing_address_id,shipping_address_id,warehouse_id,feedback_status,
+    order_rating,order_platform,expected_delivery_time,actual_delivery_time,created_at,updated_by,action,updated_at)
+  values (NULL ,NEW.order_id ,NEW.order_number ,NEW.user_id ,NEW.created_date ,NEW.payment_method ,NEW.payment_status ,
+    NEW.billing_name ,NEW.billing_phone ,NEW.billing_email ,NEW.billing_address ,NEW.billing_state ,NEW.billing_city ,
+    NEW.billing_pincode ,NEW.shipping_name ,NEW.shipping_phone ,NEW.shipping_email ,NEW.shipping_address ,
+    NEW.shipping_state ,NEW.shipping_city ,NEW.shipping_pincode ,NEW.shipping_charges ,NEW.tax ,NEW.total ,
+    NEW.total_payable_amount ,NEW.total_paid_amount ,NEW.discount_amt ,NEW.coupon_code ,NEW.payment_ref_id ,
+    NEW.payment_gateway_name ,NEW.payment_type ,NEW.payment_source ,NEW.timestamp ,NEW.transaction_id ,
+    NEW.bank_transaction_id ,NEW.transaction_time ,NEW.payment_mod ,NEW.bankname ,NEW.status ,NEW.delivery_date ,
+    NEW.user_comment ,NEW.order_type ,NEW.invoice_number ,NEW.agent_name ,NEW.billing_address_id ,NEW.shipping_address_id ,
+    NEW.warehouse_id ,NEW.feedback_status ,NEW.order_rating ,NEW.order_platform ,NEW.expected_delivery_time ,
+    NEW.actual_delivery_time ,NOW() ,NEW.updated_by ,'UPDATE' ,NEW.updated_at);
+
+
+drop trigger groots_orders.order_header_delete;
+
+create trigger groots_orders.order_header_delete after delete on groots_orders.order_header for each row
+  insert into groots_orders.order_header_log (id,order_id,order_number,user_id,created_date,payment_method,payment_status,
+    billing_name,billing_phone,billing_email,billing_address,billing_state,billing_city,billing_pincode,shipping_name,
+    shipping_phone,shipping_email,shipping_address,shipping_state,shipping_city,shipping_pincode,shipping_charges,tax,
+    total,total_payable_amount,total_paid_amount,discount_amt,coupon_code,payment_ref_id,payment_gateway_name,payment_type,
+    payment_source,timestamp,transaction_id,bank_transaction_id,transaction_time,payment_mod,bankname,status,delivery_date,
+    user_comment,order_type,invoice_number,agent_name,billing_address_id,shipping_address_id,warehouse_id,feedback_status,
+    order_rating,order_platform,expected_delivery_time,actual_delivery_time,created_at,updated_by,action,updated_at)
+  values (NULL,OLD.order_id,OLD.order_number,OLD.user_id,OLD.created_date,OLD.payment_method,OLD.payment_status,
+    OLD.billing_name,OLD.billing_phone,OLD.billing_email,OLD.billing_address,OLD.billing_state,OLD.billing_city,
+    OLD.billing_pincode,OLD.shipping_name,OLD.shipping_phone,OLD.shipping_email,OLD.shipping_address,OLD.shipping_state,
+    OLD.shipping_city,OLD.shipping_pincode,OLD.shipping_charges,OLD.tax,OLD.total,OLD.total_payable_amount,
+    OLD.total_paid_amount,OLD.discount_amt,OLD.coupon_code,OLD.payment_ref_id,OLD.payment_gateway_name,OLD.payment_type,
+    OLD.payment_source,OLD.timestamp,OLD.transaction_id,OLD.bank_transaction_id,OLD.transaction_time,OLD.payment_mod,
+    OLD.bankname,OLD.status,OLD.delivery_date,OLD.user_comment,OLD.order_type,OLD.invoice_number,OLD.agent_name,
+    OLD.billing_address_id,OLD.shipping_address_id,OLD.warehouse_id,OLD.feedback_status,OLD.order_rating,
+    OLD.order_platform,OLD.expected_delivery_time,OLD.actual_delivery_time,NOW(),OLD.updated_by,'DELETE',
+    OLD.updated_at);
+
+
+drop trigger groots_orders.retailer_payments_insert;
+
+create trigger groots_orders.retailer_payments_insert after insert on groots_orders.retailer_payments for each row 
+insert into groots_orders.retailer_payments_log (id,retailer_payment_id,retailer_id,paid_amount,date,payment_type,
+  cheque_no,comment,created_at,updated_at,status,cheque_status,updated_by,action)
+values(NULL,NEW.id,NEW.retailer_id,NEW.paid_amount,NEW.date,NEW.payment_type,
+  NEW.cheque_no,NEW.comment,NEW.created_at,NEW.updated_at,NEW.status,NEW.cheque_status,NEW.updated_by,'INSERT');
+
+DROP trigger groots_orders.retailer_payments_update;
+create trigger groots_orders.retailer_payments_update after update on groots_orders.retailer_payments for each row 
+  insert into groots_orders.retailer_payments_log (id,retailer_payment_id,retailer_id,paid_amount,date,payment_type,
+  cheque_no,comment,created_at,updated_at,status,cheque_status,updated_by,action)
+values(NULL,NEW.id,NEW.retailer_id,NEW.paid_amount,NEW.date,NEW.payment_type,
+  NEW.cheque_no,NEW.comment,NEW.created_at,NEW.updated_at,NEW.status,NEW.cheque_status,NEW.updated_by,'UPDATE');
+
+drop trigger groots_orders.retailer_payments_delete;
+create trigger groots_orders.retailer_payments_delete after delete on groots_orders.retailer_payments for each row 
+  insert into groots_orders.retailer_payments_log (id,retailer_payment_id,retailer_id,paid_amount,date,payment_type,
+  cheque_no,comment,created_at,updated_at,status,cheque_status,updated_by,action)
+  values (NULL,OLD.id,OLD.retailer_id,OLD.paid_amount,OLD.date,OLD.payment_type,OLD.cheque_no,
+    OLD.comment,OLD.created_at,OLD.updated_at,OLD.status,OLD.cheque_status,OLD.updated_by,'DELETE');
+
+drop trigger cb_dev_groots.retailer_log_insert;
+create trigger cb_dev_groots.retailer_log_insert after insert on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,time_of_delivery,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
+    retailer_type,sales_rep_id,delivery_time,updated_by)
+  values (NULL,'INSERT',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
+    NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
+    NEW.settlement_days,NEW.time_of_delivery,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
+    NEW.image_url,NEW.website,NEW.contact_person1,NEW.contact_person2,NEW.product_categories,NEW.categories_of_interest,
+    NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
+    NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
+    NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.retailer_type,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by);
+
+drop trigger cb_dev_groots.retailer_log_update;
+create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,time_of_delivery,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
+    retailer_type,sales_rep_id,delivery_time,updated_by)
+  values (NULL,'UPDATE',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
+    NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
+    NEW.settlement_days,NEW.time_of_delivery,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
+    NEW.image_url,NEW.website,NEW.contact_person1,NEW.contact_person2,NEW.product_categories,NEW.categories_of_interest,
+    NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
+    NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
+    NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.retailer_type,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by);
+
+
+drop trigger cb_dev_groots.retailer_log_delete;
+create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,time_of_delivery,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
+    retailer_type,sales_rep_id,delivery_time,updated_by)
+  values (NULL,'DELETE',OLD.id,OLD.name,OLD.retailer_code,OLD.VAT_number,OLD.email,OLD.password,OLD.mobile,
+    OLD.telephone,OLD.address,OLD.pincode,OLD.geolocation,OLD.owner_phone,OLD.owner_email,OLD.billing_email,
+    OLD.settlement_days,OLD.time_of_delivery,OLD.demand_centre,OLD.date_of_onboarding,OLD.city,OLD.state,OLD.image,
+    OLD.image_url,OLD.website,OLD.contact_person1,OLD.contact_person2,OLD.product_categories,OLD.categories_of_interest,
+    OLD.store_size,OLD.status,OLD.credit_limit,OLD.collecttion_agent,OLD.created_date,OLD.modified_date,OLD.min_order_price,
+    OLD.shipping_charge,OLD.allocated_warehouse_id,OLD.initial_payable_amount,OLD.total_payable_amount,
+    OLD.collection_fulfilled,OLD.collection_frequency,OLD.due_date,OLD.last_due_date,OLD.due_payable_amount,
+    OLD.collection_agent_id,OLD.collection_center_id,OLD.updated_at,OLD.retailer_type,OLD.sales_rep_id,OLD.delivery_time,
+    OLD.updated_by);
+
+
+
+update cb_dev_groots.retailer set delivery_time = '10:00:00' where delivery_time is null or delivery_time = '00:00:00';
+update groots_orders.order_header oh left join cb_dev_groots.retailer as re on re.id = oh.user_id set oh.expected_delivery_time = re.delivery_time where re.delivery_time is not null;
