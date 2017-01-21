@@ -256,10 +256,10 @@ class DashboardPageController extends Controller {
                 //die("here0");
                 return true;
             }
-            else if($this->checkAccessByData('warehouseEditor', array('warehouse_id'=>1))){
+            else if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>1))){
                 return true;
             }
-            else if($this->checkAccessByData('warehouseEditor', array('warehouse_id'=>2))){
+            else if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>2))){
                 return true;
             }
             else{
