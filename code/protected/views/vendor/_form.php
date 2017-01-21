@@ -61,7 +61,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'mobile'); ?>
-		<?php echo $form->textField($model,'mobile',array('size'=>12,'maxlength'=>12)); ?>
+		<?php echo $form->textField($model,'mobile',array('size'=>10,'maxlength'=>10)); ?>
 		<?php echo $form->error($model,'mobile'); ?>
 	</div>
 
@@ -79,7 +79,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'pincode'); ?>
-		<?php echo $form->textField($model,'pincode',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->textField($model,'pincode',array('size'=>6,'maxlength'=>6)); ?>
 		<?php echo $form->error($model,'pincode'); ?>
 	</div>
 

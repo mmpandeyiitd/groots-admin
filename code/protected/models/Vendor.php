@@ -66,9 +66,10 @@ class Vendor extends CActiveRecord
 			array('name, mobile, address, date_of_onboarding, credit_limit, bussiness_name, payment_start_date, proc_exec_id, vendor_type, payment_days_range, credit_days', 'required'),
 			array('status, credit_limit, proc_exec_id', 'numerical', 'integerOnly'=>true),
 			array('name, email, password, owner_email, settlement_days, time_of_delivery, bussiness_name', 'length', 'max'=>255),
-			array('vendor_code, pincode, owner_phone, initial_pending_amount, total_pending_amount', 'length', 'max'=>10),
+			array('pincode', 'length', 'max' => 6)
+			array('vendor_code, owner_phone, initial_pending_amount, total_pending_amount', 'length', 'max'=>10),
 			array('VAT_number', 'length', 'max'=>50),
-			array('mobile', 'length', 'max'=>12),
+			array('mobile', 'length', 'max'=>10),
 			array('telephone', 'length', 'max'=>15),
 			array('address', 'length', 'max'=>300),
 			array('city', 'length', 'max'=>200),
