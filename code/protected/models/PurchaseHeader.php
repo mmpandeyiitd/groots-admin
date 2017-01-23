@@ -128,7 +128,6 @@ class PurchaseHeader extends CActiveRecord
             $msg = 'Total Price Must Be Greater Than 0.!';   
         }
         else if(empty($vendorId) && !$isParent){
-            var_dump($vendorId, $isParent);die;
             $status = 0;
             $msg = 'Please Select Vendor';    
         }

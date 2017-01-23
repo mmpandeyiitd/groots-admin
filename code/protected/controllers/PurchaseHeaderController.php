@@ -288,7 +288,7 @@ class PurchaseHeaderController extends Controller
                 foreach ($purchaseLines as $item){
                     $purchaseLineMap[$item->base_product_id] = $item;
                 }
-                //var_dump($purchaseLineMap);die;
+                //avar_dump($purchaseLineMap);die;
                 $model->attributes = $_POST['PurchaseHeader'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -347,7 +347,7 @@ class PurchaseHeaderController extends Controller
                                 else{
                                     $transaction->rollBack();
                                     Yii::app()->user->setFlash('error', $flag['msg'].' For Product Id'.$id);
-                                    $this->redirect(array('admin','w_id'=>$w_id));
+                                    $this->redirect(array('admin',"w_id"=>$w_id, "id"=>$model->id));
                                 }
 
                             }
