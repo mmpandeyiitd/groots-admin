@@ -288,6 +288,7 @@ class PurchaseHeaderController extends Controller
                 foreach ($purchaseLines as $item){
                     $purchaseLineMap[$item->base_product_id] = $item;
                 }
+                //var_dump($purchaseLineMap);die;
                 $model->attributes = $_POST['PurchaseHeader'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -312,7 +313,7 @@ class PurchaseHeaderController extends Controller
 
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
-                            $order_qty = $received_qty = $price = $vendor_id = '';
+                            $order_qty = $received_qty = $unitPrice = $vendor_id = $totalPrice = '';
                             if(isset($_POST['order_qty'][$key])){
                                 $order_qty = trim($_POST['order_qty'][$key]);
                             }
@@ -320,54 +321,39 @@ class PurchaseHeaderController extends Controller
                             if(isset($_POST['received_qty'][$key]) ){
                                 $received_qty = trim($_POST['received_qty'][$key]);
                             }
-                            if(isset($_POST['price'][$key])){
-                                $price = trim($_POST['price'][$key]);
-                            }
-                            if(isset($_POST['totalPrice'][$key])){
-                                $totalPrice = trim($_POST['totalPrice'][$key]);
-                            }
-                            if(isset($_POST['InventoryHeader']['vendor_id'][$key])){
-                                $vendor_id = trim($_POST['InventoryHeader']['vendor_id'][$key]);
-                            }
-
-                            if (isset($purchaseLineMap[$id])) {
-                                $purchaseLine = $purchaseLineMap[$id];
-                            }
-                            else if(!empty($order_qty) || !empty($received_qty)){
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $id;
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-
-                            }
-                            if(isset($purchaseLine)){
-                                if($order_qty != ""){
-                                    $purchaseLine->order_qty = $order_qty;
-                                }
-
-                                if($received_qty != ""){
-                                    $purchaseLine->received_qty = $received_qty;
-                                }
-                                if($price != ''){
-                                    $purchaseLine->unit_price = $price;
-                                }
-                                if($price != ''){
-                                    $purchaseLine->price = $totalPrice;
-                                }
-                                if($vendor_id != ''){
-                                    $purchaseLine->vendor_id = $vendor_id;
-                                }
-
-
-                                $purchaseLine->save();
-
-                            }
-                            else{
-                                if(isset($purchaseLineMap[$id])){
+                            if($order_qty > 0){
+                                $unitPrice = $_POST['price'][$key];
+                                $totalPrice = $_POST['totalPrice'][$key];
+                                $vendorId = $_POST['vendorId'][$key];
+                                $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent); 
+                                if($flag['status'] == 1){
+                                    $purchaseLine = new PurchaseLine();
+                                   if (isset($purchaseLineMap[$id])) {
                                     $purchaseLine = $purchaseLineMap[$id];
-                                    $purchaseLine->deleteByPk($purchaseLine->id);
+                                    }
+                                    else if(!empty($order_qty) || !empty($received_qty)){
+                                        $purchaseLine->purchase_id = $model->id;
+                                        $purchaseLine->base_product_id = $id;
+                                        $purchaseLine->created_at = date("y-m-d H:i:s");
+                                    }
+                                    $purchaseLine->order_qty = $order_qty;
+                                    $purchaseLine->received_qty = $received_qty;
+                                    $purchaseLine->vendor_id = $vendorId;
+                                    $purchaseLine->unit_price = $unitPrice;
+                                    $purchaseLine->price = $totalPrice;
+                                    $purchaseLine->save();
+                                }
+                                else{
+                                    $transaction->rollBack();
+                                    Yii::app()->user->setFlash('error', $flag['msg'].' For Product Id'.$id);
+                                    $this->redirect(array('admin','w_id'=>$w_id));
                                 }
 
+                            }
+                            else if(isset($purchaseLineMap[$id])){
+                                $purchaseLine = $purchaseLineMap[$id];
+                                $purchaseLine->deleteByPk($purchaseLine->id);
                             }
 
                             $parentIdToUpdate = $_POST['parent_id'][$key];
