@@ -248,13 +248,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             array(
                 'header' => 'Vendors',
                 'type' => 'raw',
-                'value' => function($data) use ($priceMap){
+                'value' => function($data) use ($priceMap, $w_id){
                     $array = json_encode($priceMap);
                     if(isset($data->parent_id) && $data->parent_id == 0){
-                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)),'disabled'=>'disabled', 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown')); 
+                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id=>array('selected'=>true)),'disabled'=>'disabled', 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown')); 
                     }
                     else{
-                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown'));     
+                        return CHtml::activeDropDownList($data , 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id,$w_id), array('options' => array($data->vendor_id=>array('selected'=>true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect('.$data->parent_id.', '.$data->base_product_id.', '.$array.')', 'class' => 'select dropDown'));     
                     }
                    
                 }
