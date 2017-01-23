@@ -485,7 +485,7 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             var unitPrice = $(this).find('.price').val()
             if(unitPrice.length > 0){
                 totalPrice = parseFloat(orderQty.trim()) * unitPrice;
-                $(this).find('.totalPrice').val(totalPrice);
+                $(this).find('.totalPrice').val(totalPrice.toFixed(2));
             }
             if(parseFloat(totalPrice) > 0){
                 netPrice += parseFloat(totalPrice);
