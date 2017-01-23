@@ -98,6 +98,7 @@ class PurchaseHeaderController extends Controller
 	 */
 	public function actionCreate()
 	{
+        //var_dump($_POST);die;
 	    //echo "<pre>";
         $w_id = '';
         if(isset($_GET['w_id'])){
@@ -135,7 +136,7 @@ class PurchaseHeaderController extends Controller
 
 		if(isset($_POST['purchase-create']))
 		{
-            $transaction = Yii::app()->db->beginTransaction();
+            $transaction = Yii::app()->secondaryDb->beginTransaction();
             try {
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -174,28 +175,38 @@ class PurchaseHeaderController extends Controller
                             }
 
                             if ($quantity > 0 || $receivedQty > 0) {
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $id;
-                                if($quantity > 0){
-                                    $purchaseLine->order_qty = $quantity;
+                                $unitPrice = $_POST['price'][$key];
+                                $totalPrice = $_POST['totalPrice'][$key];
+                                $vendorId = $_POST['vendorId'][$key];
+                                $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent);
+                                if($flag['status'] == 1){
+                                    $purchaseLine = new PurchaseLine();
+                                    $purchaseLine->purchase_id = $model->id;
+                                    $purchaseLine->base_product_id = $id;
+                                    if($quantity > 0){
+                                        $purchaseLine->order_qty = $quantity;
+                                    }
+                                    if($receivedQty > 0){
+                                        $purchaseLine->received_qty = $receivedQty;
+                                    }
+                                    $purchaseLine->unit_price = $unitPrice;
+                                    $purchaseLine->price = $totalPrice;
+                                    $purchaseLine->created_at = date("y-m-d H:i:s");
+                                    $purchaseLine->vendor_id =$vendorId;
+                                    
+                                    if(!$purchaseLine->save()){
+                                        die(print_r($purchaseLine->getErrors()));
+                                    }    
                                 }
-                                if($receivedQty > 0){
-                                    $purchaseLine->received_qty = $receivedQty;
+                                else{
+                                    $transaction->rollBack();
+                                    Yii::app()->user->setFlash('error', $flag['msg'].' For Product Id'.$id);
+                                    $this->redirect(array('create','w_id'=>$w_id));                
                                 }
-                                if(isset($_POST['price'][$key]) && $_POST['price'][$key] > 0){
-                                    $purchaseLine->unit_price = $_POST['price'][$key];
-                                }
-                                if(isset($_POST['totalPrice'][$key]) && $_POST['totalPrice'][$key] > 0){
-                                    $purchaseLine->price = $_POST['totalPrice'][$key];
-                                }
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-                                $purchaseLine->vendor_id =$_POST['InventoryHeader']['vendor_id'][$key];
                                 
-                                if(!$purchaseLine->save()){
-                                    die(print_r($purchaseLine->getErrors()));
-                                }
                             }
+
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
@@ -738,4 +749,5 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         }
         ob_flush(); 
     }
+
 }

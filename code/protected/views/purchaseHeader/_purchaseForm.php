@@ -328,6 +328,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'value' => function($data) use ($update){
                     return CHtml::textField('totalPrice[]',$data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_'.$data->base_product_id));
                 }
+                ),
+            array(
+                'type' => 'raw',
+                'value'=> function($data){
+                    return CHtml::hiddenField('vendorId[]', $data->vendor_id, array('class' => 'hiddenVendor'));
+                }
                 )
         ),
     ));
@@ -580,10 +586,14 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         //console.log(array);
         $(".item_"+parent_id).each(function(){
             var vendorId = $(this).find('.dropDown').val();
+            $(this).find('.hiddenVendor').val(vendorId);
             //console.log(vendorId);
             if(vendorId){
-                var price = array[vendorId][baseProductId];
-                $(this).find('.price').val(price);
+                var ifPrice = $(this).find('.price').val();
+                if(!ifPrice){
+                    var price = array[vendorId][baseProductId];
+                    $(this).find('.price').val(price);    
+                }
             }
         });
        updateItemTotalRow(parent_id); 

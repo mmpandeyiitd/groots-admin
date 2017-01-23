@@ -115,6 +115,27 @@ class PurchaseHeader extends CActiveRecord
         return $status;
     }
 
-
+    public function validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent){
+        //var_dump($unitPrice,$totalPrice, $vendorId);die;
+        $status = 1;
+        $msg = '';
+        if(empty($unitPrice)){
+            $status = 0;
+            $msg = 'Unit Price Must Be Greater Than 0.!';
+        }
+        else if(empty($totalPrice)){
+            $status = 0;
+            $msg = 'Total Price Must Be Greater Than 0.!';   
+        }
+        else if(empty($vendorId) && !$isParent){
+            var_dump($vendorId, $isParent);die;
+            $status = 0;
+            $msg = 'Please Select Vendor';    
+        }
+        $result = array();
+        $result['status'] = $status;
+        $result['msg'] = $msg;
+        return $result;
+    }
 
 }
