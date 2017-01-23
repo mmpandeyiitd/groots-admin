@@ -366,7 +366,7 @@ class PurchaseHeaderController extends Controller
                         array_push($parentIdArr, $parentIdToUpdate);
                     }
                     $this->updateParentsItems($parentIdArr, $model->id);
-                    $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
+                    $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id,'type' => $updateType));
                     Yii::app()->user->setFlash('success', 'purchase order successfully Updated.');
                     Yii::app()->controller->redirect($url);
                     //$this->redirect(array('admin','w_id'=>$model->warehouse_id));
