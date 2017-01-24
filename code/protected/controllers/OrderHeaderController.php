@@ -32,21 +32,27 @@ class OrderHeaderController extends Controller {
     }*/
     protected function beforeAction() {
         $w_id='';
-        if(parent::beforeAction()){
-            if(isset($_GET['w_id'])){
-                $w_id = $_GET['w_id'];
-            }
-            if($w_id>0 && $this->checkAccessByData('OrderViewer', array('warehouse_id'=>$w_id))){
-                return true;
-            }
-            elseif($this->checkAccess('SuperAdmin')){
-                return true;
-            }
-            else{
-                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
-                Yii::app()->controller->redirect("index.php?r=user/profile");
-            }
+        if($this->action->id == 'sendMailToRetailerWithOrderId'){
+            return true;
         }
+        else{
+            if(parent::beforeAction()){
+                if(isset($_GET['w_id'])){
+                    $w_id = $_GET['w_id'];
+                }
+                if($w_id>0 && $this->checkAccessByData('OrderViewer', array('warehouse_id'=>$w_id))){
+                    return true;
+                }
+                elseif($this->checkAccess('SuperAdmin')){
+                    return true;
+                }
+                else{
+                    Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                    Yii::app()->controller->redirect("index.php?r=user/profile");
+                }
+            }    
+        }
+        
     }
 
     /**
@@ -57,7 +63,7 @@ class OrderHeaderController extends Controller {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'sales_by_retailer', 'sales_by_retailer_detail', 'sale_by_style', 'sale_by_style_dateial', 'sale_summery', 'sale_summery_detail', 'view', 'Reportnew', 'admin', 'report', 'Dispatch', 'productPricesByRetailerAndDate'),
+                'actions' => array('index', 'sales_by_retailer', 'sales_by_retailer_detail', 'sale_by_style', 'sale_by_style_dateial', 'sale_summery', 'sale_summery_detail', 'view', 'Reportnew', 'admin', 'report', 'Dispatch', 'productPricesByRetailerAndDate', 'sendMailToRetailerWithOrderId'),
                 'users' => array('*'),
                 ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -68,9 +74,9 @@ class OrderHeaderController extends Controller {
                 'actions' => array('admin', 'delete', 'admin', 'Reportnew', 'report','sendMailToRetailerWithOrderId'),
                 'users' => array('admin'),
                 ),
-            array('deny', // deny all users
-                'users' => array('*'),
-                ),
+             array('deny', // deny all users
+                 'users' => array('*'),
+                 ),
             );
     }
 
@@ -2231,11 +2237,11 @@ public function actionSendMailToRetailerWithOrderId($orderId){
         self::sendMailToRetailer($pdfArray);
         $result['status'] = 1;
         $result['msg'] = 'Email sent Successfully'; 
-        return $result;   
+        echo json_encode($result);  
     }catch (Exception $e){
         $result['status'] = 1;
         $result['msg'] = 'Retailer Email Failed';
-        return $result;
+        echo json_encode($result);
     }
 }
 
