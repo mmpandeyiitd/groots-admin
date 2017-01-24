@@ -53,8 +53,13 @@ if(isset($retailer->id)) {
                     'header' => 'payment_type',
                     'value' => function($data){
                         if(isset($data['payment_type'])){
-                        if($data['payment_type'] == trim('Cheque')  || $data['payment_type'] == trim('Debit Note') && $data['cheque_no'] != null)
-                            return $data['payment_type'].' : '.$data['cheque_no'];
+                        if($data['payment_type'] == trim('Cheque')  || $data['payment_type'] == trim('Debit Note') && $data['cheque_no'] != null){
+                            $x = $data['payment_type'].' : '.$data['cheque_no'];
+                            if($data['payment_type'] == trim('Cheque')){
+                                $x.=':'.$data['cheque_status'];
+                            }
+                            return $x;
+                        }
                         else 
                             return $data['payment_type'];
                     }
@@ -65,6 +70,7 @@ if(isset($retailer->id)) {
                     ),
                 //'payment_type',
                 'invoiceAmount',
+                'invoiceNumber',
                 'paymentAmount',
                 'outstanding',
                 'link' => array(

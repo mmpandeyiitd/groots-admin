@@ -61,11 +61,11 @@ class OrderHeaderController extends Controller {
                 'users' => array('*'),
                 ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch'),
+                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch','sendMailToRetailerWithOrderId'),
                 'users' => array('@'),
                 ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete', 'admin', 'Reportnew', 'report'),
+                'actions' => array('admin', 'delete', 'admin', 'Reportnew', 'report','sendMailToRetailerWithOrderId'),
                 'users' => array('admin'),
                 ),
             array('deny', // deny all users
@@ -153,7 +153,6 @@ class OrderHeaderController extends Controller {
                 //var_dump($retailer->delivery_time);die;
                 $orderHeader->expected_delivery_time = $retailer->delivery_time;
                 $orderHeader->actual_delivery_time = '00:00:00';
-                $orderHeader->updated_at = date('Y-m-d H:i:s');
                 $orderHeader->updated_by = Yii::app()->user->id;
                 //var_dump($orderHeader);die;
                 $orderHeader->save();
@@ -175,6 +174,7 @@ class OrderHeaderController extends Controller {
                 Yii::app()->user->setFlash('success', 'Order Created Successfully.');
                 if($orderHeader->status == 'Delivered')
                     $retailer->total_payable_amount += $orderHeader->total_payable_amount;
+                    $retailer->updated_by = Yii::app()->user->id;
                 $retailer->save();
                 $transaction->commit();
                 $this->redirect(array('OrderHeader/admin&w_id='.$w_id));
@@ -312,7 +312,6 @@ class OrderHeaderController extends Controller {
                     if(isset($_POST['OrderHeader']['expected_delivery_time']) && !empty($_POST['OrderHeader']['expected_delivery_time'])){
                         $orderHeader->expected_delivery_time = $_POST['OrderHeader']['expected_delivery_time'];
                     }
-                    $orderHeader->updated_at = date('Y-m-d H:i:s');
                     $orderHeader->updated_by = Yii::app()->user->id;
                     $orderHeader->save();
                     foreach ($_POST['quantity'] as $key => $quantity) {
@@ -367,6 +366,7 @@ class OrderHeaderController extends Controller {
                     else{
                         OrderHeader::setFeedbackStatusOnDelivered($id, 'Not Required');
                     }
+                    $retailer->updated_by = Yii::app()->user->id;
                     $retailer->save();
                     $transaction->commit();
                 //$this->redirect(array('OrderHeader/admin&w_id='.$w_id));
@@ -2181,12 +2181,12 @@ $mailsend = new OrderLine();
 try{
     $resp = $mailsend->awsAttachmentMail($array);
     Yii::app()->user->setFlash('success','Email Sent Successfully' );
-    Yii::app()->controller->redirect("index.php?r=orderHeader/admin");    
+    //Yii::app()->controller->redirect("index.php?r=orderHeader/admin");    
 } catch (Exception $e){
     $x = "The email was not sent. Error message: ";
     $x .= $e->getMessage()."\n";
     Yii::app()->user->setFlash('error', $x);
-    Yii::app()->controller->redirect("index.php?r=orderHeader/admin");  
+    //Yii::app()->controller->redirect("index.php?r=orderHeader/admin");  
 }
 }
 
@@ -2220,4 +2220,23 @@ public function getEffectivePrice($r_id, $d_date){
     }
     return $indexedResult;
 }
+
+
+public function actionSendMailToRetailerWithOrderId($orderId){
+    $pdf = $this->actionReport($orderId, 'invoice', true);
+    $pdfArray = array();
+    $pdfArray[0]['pdf'] = $pdf;
+    $pdfArray[0]['order_id'] = $orderId;
+    try{
+        self::sendMailToRetailer($pdfArray);
+        $result['status'] = 1;
+        $result['msg'] = 'Email sent Successfully'; 
+        return $result;   
+    }catch (Exception $e){
+        $result['status'] = 1;
+        $result['msg'] = 'Retailer Email Failed';
+        return $result;
+    }
+}
+
 }

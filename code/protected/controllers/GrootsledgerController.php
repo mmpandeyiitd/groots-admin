@@ -438,14 +438,15 @@ public function actionreport()
           $tmp['date'] = substr($order->delivery_date,0,10);
           $tmp['type'] = "Order";
           $tmp['invoiceAmount'] = $order->total_payable_amount;
+          $dDate = explode('-', $order->delivery_date);
+          $tmp['invoiceNumber'] = INVOICE_TEXT.$dDate[0].$dDate[1].$order->order_id;
           $tmp['paymentAmount'] = '';
           $tmp['outstanding'] = '';
-
           $tmp['update_url'] = 'OrderHeader/update';
                     //get retailer status at the time of order
           $statusChangeDate='';
           foreach ($dateArr as $d){
-            if ($d <= $order->delivery_date) {
+            if (strtotime($d) <= strtotime($order->delivery_date)) {
               $statusChangeDate = $d;
               break;
             }
@@ -467,13 +468,14 @@ public function actionreport()
             $tmp['cheque_status'] = $payment->cheque_status;
           }
           $tmp['invoiceAmount'] = '';
+          $tmp['invoiceNumber'] = '';
           $tmp['paymentAmount'] = $payment->paid_amount;
           $tmp['update_url'] = 'Grootsledger/UpdatePayment';
 
                     //get retailer status at the time of payment
           $statusChangeDate='';
           foreach ($dateArr as $d){
-            if ($d <= $payment->date) {
+            if (strtotime($d) <= strtotime($payment->date)) {
               $statusChangeDate = $d;
               break;
             }

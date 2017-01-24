@@ -173,6 +173,7 @@ class InventoryController extends Controller
                         $inv->extra_inv = empty($extra_inv) ? 0: $extra_inv;
                         $inv->balance = empty($balance) ? 0: $balance;
                         $inv->secondary_sale = empty($secondary_sale) ? 0: $secondary_sale;
+                        $inv->updated_by = Yii::app()->user->id;
                         //var_dump($inv);die;
                         $inv->save();
 
@@ -229,6 +230,7 @@ class InventoryController extends Controller
                         $parentInv->liquidation_wastage = $liquidation_wastage;
                         $parentInv->extra_inv = $extra_inv;
                         $parentInv->balance = $balance;
+                        $parentInv->updated_by = Yii::app()->user->id;
                         $parentInv->save();
                     }
                 }
