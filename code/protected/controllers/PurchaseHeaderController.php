@@ -639,7 +639,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         }
         $date = $_GET['date'];
         $data = array();
-        $sql = 'select pl.base_product_id, bp.title as title, bp.grade as grade, wa.name as warehouse, sum(pl.tobe_procured_qty) as tobe_procured_qty, sum(pl.order_qty) as procured_qty, sum(pl.received_qty) as received_qty from groots_orders.purchase_line as pl 
+        $sql = 'select pl.base_product_id, bp.title as title, bp.grade as grade, wa.name as warehouse, sum(pl.tobe_procured_qty) as tobe_procured_qty, sum(pl.order_qty) as procured_qty, sum(pl.received_qty) as received_qty, pl.unit_price, pl.price as total_price from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
          where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
@@ -674,6 +674,8 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             $tmp['tobe_procured_qty'] = $d['tobe_procured_qty'];
             $tmp['procured'] = $d['procured_qty'];
             $tmp['received_by_operation'] = $d['received_qty'];
+            $tmp['unit price'] = $d['unit_price'];
+            $tmp['total Price'] = $d['total_price'];
             foreach ($nameArr as $name){
                 $tmp[$name] = 0;
             }
