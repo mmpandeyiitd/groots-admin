@@ -32,11 +32,11 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin','delete', 'DownloadReportById'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -736,6 +736,52 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             fclose($fp);
         }
         ob_flush(); 
+    }
+
+
+    public function actionDownloadReportById($id){
+        $sql = 'select pl.*, case when pl.vendor_id = 0 then "parent" when pl.vendor_id != 0 then v.name end as vendorName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id where pl.purchase_id = '.$id ;
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $data = array();
+        foreach ($result as $key => $value) {
+            $tmp = array();
+            $tmp['product_id'] = $value['base_product_id'];
+            $tmp['order qty'] = $value['order_qty'];
+            $tmp['received by operations'] = $value['received_qty'];
+            $tmp['unit price'] = $value['unit_price'];
+            $tmp['total price'] = $value['price'];
+            $tmp['vendor'] = $value['vendorName'];
+            array_push($data, $tmp);
+        }
+        $fileName = $id."procurement_report_by_id".".csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (count($data > 0)) {
+            $fp = fopen('php://output', 'w');
+            //$columnstring = implode(',', array_keys($data[0]));
+            $columnstring = implode(',', array_keys(reset($data)));
+
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            //print_r( $updatecolumn); die;
+            fputcsv($fp, $updatecolumn);
+            foreach ($data AS $values) {
+                fputcsv($fp, $values);
+            }
+
+            fclose($fp);
+        }
+        ob_flush(); 
+
     }
 
 }
