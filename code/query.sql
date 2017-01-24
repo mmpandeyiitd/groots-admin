@@ -781,15 +781,15 @@ alter table cb_dev_groots.base_product modify column `store_id` int(11) DEFAULT 
 -- alter table retailer_payments modify column cheque_status enum('Cleared','Pending','Bounced') DEFAULT null;
 
 ------------------------------------------start from here 2017-01-21
-alter table groots_orders.inventory_header add column status tinyint(1) not null;
+alter table groots_orders.inventory_header add column status tinyint(1) not null default 1;
 update inventory_header set status = 1;
 ----------------------------
 alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
 alter table groots_orders.purchase_header drop column vendor_id ;
 alter table cb_dev_groots.retailer drop column time_of_delivery;
 
-alter table groots_orders.order_header add column expected_delivery_time time not null;
-alter table groots_orders.order_header add column actual_delivery_time time not null;
+alter table groots_orders.order_header add column expected_delivery_time time;
+alter table groots_orders.order_header add column actual_delivery_time time;
 
 
 update cb_dev_groots.base_product set pack_unit = "g" where pack_unit = "gm";
@@ -813,8 +813,8 @@ alter table groots_orders.retailer_payments add column updated_by int(11) not nu
 alter table groots_orders.order_header_log add column `feedback_status` enum('Not Required','Pending','Submitted') NOT NULL DEFAULT 'Not Required' after warehouse_id;
 alter table groots_orders.order_header_log add column `order_rating` tinyint(1) DEFAULT NULL after feedback_status;
 alter table groots_orders.order_header_log add column `order_platform` enum('Admin','Android') DEFAULT 'Admin' after order_rating;
-alter table groots_orders.order_header_log add column  `expected_delivery_time` time NOT NULL after order_platform;
-alter table groots_orders.order_header_log add column  `actual_delivery_time` time NOT NULL after expected_delivery_time;
+alter table groots_orders.order_header_log add column  `expected_delivery_time` time after order_platform;
+alter table groots_orders.order_header_log add column  `actual_delivery_time` time after expected_delivery_time;
 alter table groots_orders.order_header_log add column updated_by int(11) not null after created_at;
 
 alter table groots_orders.retailer_payments_log add column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT NULl after status;
