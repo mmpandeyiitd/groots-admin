@@ -126,7 +126,7 @@ class EmailClient
                 $result = self::sendMail2($params);
                 $messageId = $result->message_id;
                 $resultText = $result->result_text;
-                echo("Email sent! Message ID: $messageId"."\n");    
+                //echo("Email sent! Message ID: $messageId"."\n");    
             } catch (Exception $e){
                 throw $e;
         }
