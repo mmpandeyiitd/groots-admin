@@ -35,13 +35,16 @@ $form=$this->beginWidget('CActiveForm', array(
 		$disabled = "disabled";
 	}
 	if(!$showInactive){
-		$condition = 'status != 0 and ';
+		$condition = 'status != 0 ';
 	}
 	if(isset($w_id) && $w_id>0){
-		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition.' allocated_warehouse_id = '.$w_id. ' and status =1');
+		if(trim($condition)!=''){
+			$condition .= " and ";
+		}
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition.' allocated_warehouse_id = '.$w_id);
 	}
 	else{
-		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition.' status=1');
+		$retailerQueryArr = array('select'=>'id,name','order' => 'name', 'condition'=> $condition);
 	}
 	    echo $form->dropDownList($model,
 	      'user_id',
