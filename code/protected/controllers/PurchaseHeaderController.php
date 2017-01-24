@@ -740,7 +740,10 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
 
 
     public function actionDownloadReportById($id){
-        $sql = 'select pl.*, case when pl.vendor_id = 0 then "parent" when pl.vendor_id != 0 then v.name end as vendorName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id where pl.purchase_id = '.$id ;
+        $sql = 'select pl.*,bp.title, case when pl.vendor_id = 0 then "parent" when pl.vendor_id != 0 then v.name end as vendorName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
+        left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+         where pl.purchase_id = '.$id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc' ;
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
@@ -748,6 +751,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         foreach ($result as $key => $value) {
             $tmp = array();
             $tmp['product_id'] = $value['base_product_id'];
+            $tmp['title']  =$value['title'];
             $tmp['order qty'] = $value['order_qty'];
             $tmp['received by operations'] = $value['received_qty'];
             $tmp['unit price'] = $value['unit_price'];
