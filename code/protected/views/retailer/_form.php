@@ -120,11 +120,6 @@
             <?php echo $form->textField($model, 'settlement_days',array('maxlength' =>12)); ?>
             <?php echo $form->error($model, 'settlement_days'); ?>
         </div>
-        <div class="row">
-            <?php echo $form->labelEx($model, 'Time of Delivery'); ?>
-            <?php echo $form->textField($model, 'time_of_delivery',array('maxlength' =>12)); ?>
-            <?php echo $form->error($model, 'time_of_delivery'); ?>
-        </div>
 
         <div class="row">
             <?php echo $form->labelEx($model, 'VAT_number'); ?>
