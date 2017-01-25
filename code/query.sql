@@ -978,3 +978,11 @@ update groots_orders.order_header oh left join cb_dev_groots.retailer as re on r
 
 alter table groots_orders.inventory_header add column updated_by int(11) not null;
 alter table groots_orders.inventory add column updated_by int(11) not null;
+
+
+------------------------------------2017-01-25
+alter table cb_dev_groots.retailer add column retailer_grade_type enum('A', 'B', 'C','D') default 'A';
+alter table cb_dev_groots.retailer add column retailer_pricing_type  enum('Daily', 'Contract') default 'Daily';
+update cb_dev_groots.retailer set retailer_grade_type = case when retailer_type = 'GA' then 'A' when retailer_type = 'GB' then 'B' 
+  when retailer_type = 'GC' then 'C' when retailer_type = 'GD' then 'D' end , 
+  retailer_pricing_type = case when retailer_type = 'Contract Price' then 'Contract' when retailer_type!='Contract Price' then 'Daily' end;
