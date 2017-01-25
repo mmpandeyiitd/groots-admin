@@ -231,7 +231,7 @@ class Utility
         $outstanding = Retailer::getInitialPayableAmount($retailerId);
         $last_due_date = Retailer::getLastDueDate($retailerId);
         $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('select'=>'total_payable_amount','condition'=>'status = "Delivered" and delivery_date >= "2016-09-01" and delivery_date <= "'.$last_due_date.'"' ,'order'=> 'delivery_date ASC'));
-        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount', 'condition'=>'status != 0 and date >= "2016-09-01" and date <= "'.$last_due_date.'"', 'order'=> 'date ASC'));
+        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount', 'condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
         foreach ($retailerOrders as $key => $value) {
             $outstanding += $value['total_payable_amount'];
         }
