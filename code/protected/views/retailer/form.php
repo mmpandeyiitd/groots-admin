@@ -37,13 +37,30 @@
                 <?php echo $form->error($model, 'contact_person1'); ?>
             </div>
 
-            <div class="row">
-                <?php echo $form->labelEx($model, 'retailer_type'); ?>
-                <?php $list = Chtml::listData(Retailer::getRetailerTypes(), 'value', 'value');
-                echo CHtml::activeDropDownList($model, 'retailer_type', $list,array('empty' => 'Select Retailer Type', 'options' => array($model->retailer_type => array('selected' => true))));
+            <!-- <div class="row">
+                <?php //echo $form->labelEx($model, 'retailer_type'); ?>
+                <?php //$list = Chtml::listData(Retailer::getRetailerTypes(), 'value', 'value');
+                //echo CHtml::activeDropDownList($model, 'retailer_type', $list,array('empty' => 'Select Retailer Type', 'options' => array($model->retailer_type => array('selected' => true))));
                 ?>
                 <?php echo $form->error($model, 'retailer_type'); ?>
-            </div>
+            </div> -->
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'retailer_grade_type'); ?>
+            <?php $list = Chtml::listData(Retailer::getRetailerGradeTypes(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'retailer_grade_type', $list,array('empty' => 'Select Retailer Grade Type', 'options' => array($model->retailer_pricing_type => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'retailer_grade_type'); ?>
+        </div>
+
+         <div class="row">
+            <?php echo $form->labelEx($model, 'retailer_pricing_type'); ?>
+            <?php $list = Chtml::listData(Retailer::getRetailerPricingTypes(), 'value', 'value');
+                echo CHtml::activeDropDownList($model, 'retailer_pricing_type', $list,array('empty' => 'Select Retailer Pricing Type', 'options' => array($model->retailer_pricing_type => array('selected' => true))));
+             ?>
+            <?php echo $form->error($model, 'retailer_pricing_type'); ?>
+        </div>
+
 
 
             <div class="row customDatepicker1">

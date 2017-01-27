@@ -66,7 +66,7 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name', 'safe'),
+            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -128,6 +128,8 @@ class Retailer extends CActiveRecord {
             'retailer_type => Retailer Type',
             'sales_rep_id' => 'Sales Representative',
             'delivery_time' => 'Delivery Time',
+            'retailer_pricing_type' => 'Retailer Pricing Type',
+            'retailer_grade_type' => 'Retailer Grade Type',
         );
     }
 
@@ -186,6 +188,8 @@ class Retailer extends CActiveRecord {
         $criteria->compare('sales_rep_id', $this->sales_rep_id, true);
         $criteria->compare('delivery_time', $this->delivery_time, true);
         $criteria->compare('rs.status_name', $this->status_name, true);
+        $criteria->compare('retailer_grade_type', $this->retailer_grade_type, true);
+        $criteria->compare('retailer_pricing_type', $this->retailer_pricing_type, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -471,5 +475,15 @@ class Retailer extends CActiveRecord {
         return $result;
     }
 
+    public function getRetailerGradeTypes(){
+        $connection = Yii::app()->db;
+        $retailerGradeType = Utility::get_enum_values($connection, self::tableName(), 'retailer_grade_type' );
+        return $retailerGradeType;
+    }
 
+    public function getRetailerPricingTypes(){
+        $connection = Yii::app()->db;
+        $retailerPricingType = Utility::get_enum_values($connection, self::tableName(), 'retailer_pricing_type' );
+        return $retailerPricingType;
+    }
 }
