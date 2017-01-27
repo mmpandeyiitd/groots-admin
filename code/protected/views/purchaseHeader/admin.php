@@ -11,6 +11,7 @@ $this->breadcrumbs=array(
 if($showCreate){
 	$this->menu=array(
 		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
+		array('label' => 'Bulk Upload', 'url' => array('bulkUploadPurchase'))
 	);
 }
 

@@ -32,11 +32,11 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete', 'DownloadReportById'),
+				'actions'=>array('admin','delete', 'DownloadReportById', 'bulkUploadPurchase'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
