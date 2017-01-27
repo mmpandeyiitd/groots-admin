@@ -919,8 +919,8 @@ create trigger cb_dev_groots.retailer_log_insert after insert on cb_dev_groots.r
     demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
     categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
     shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
-    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
-    retailer_type,sales_rep_id,delivery_time,updated_by)
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type)
   values (NULL,'INSERT',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
     NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
     NEW.settlement_days,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
@@ -928,8 +928,8 @@ create trigger cb_dev_groots.retailer_log_insert after insert on cb_dev_groots.r
     NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
     NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
     NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
-    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.retailer_type,NEW.sales_rep_id,NEW.delivery_time,
-    NEW.updated_by);
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by, NEW.retailer_pricing_type, NEW.retailer_grade_type);
 
 drop trigger cb_dev_groots.retailer_log_update;
 create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.retailer for each row
@@ -938,8 +938,8 @@ create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.r
     demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
     categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
     shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
-    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
-    retailer_type,sales_rep_id,delivery_time,updated_by)
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type)
   values (NULL,'UPDATE',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
     NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
     NEW.settlement_days,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
@@ -947,8 +947,8 @@ create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.r
     NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
     NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
     NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
-    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.retailer_type,NEW.sales_rep_id,NEW.delivery_time,
-    NEW.updated_by);
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by, NEW.retailer_pricing_type, NEW.retailer_grade_type);
 
 
 drop trigger cb_dev_groots.retailer_log_delete;
@@ -958,8 +958,8 @@ create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.r
     demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
     categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
     shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
-    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,updated_at,
-    retailer_type,sales_rep_id,delivery_time,updated_by)
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type)
   values (NULL,'DELETE',OLD.id,OLD.name,OLD.retailer_code,OLD.VAT_number,OLD.email,OLD.password,OLD.mobile,
     OLD.telephone,OLD.address,OLD.pincode,OLD.geolocation,OLD.owner_phone,OLD.owner_email,OLD.billing_email,
     OLD.settlement_days,OLD.demand_centre,OLD.date_of_onboarding,OLD.city,OLD.state,OLD.image,
@@ -967,8 +967,8 @@ create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.r
     OLD.store_size,OLD.status,OLD.credit_limit,OLD.collecttion_agent,OLD.created_date,OLD.modified_date,OLD.min_order_price,
     OLD.shipping_charge,OLD.allocated_warehouse_id,OLD.initial_payable_amount,OLD.total_payable_amount,
     OLD.collection_fulfilled,OLD.collection_frequency,OLD.due_date,OLD.last_due_date,OLD.due_payable_amount,
-    OLD.collection_agent_id,OLD.collection_center_id,OLD.updated_at,OLD.retailer_type,OLD.sales_rep_id,OLD.delivery_time,
-    OLD.updated_by);
+    OLD.collection_agent_id,OLD.collection_center_id,OLD.updated_at,OLD.sales_rep_id,OLD.delivery_time,
+    OLD.updated_by, OLD.retailer_pricing_type, OLD.retailer_grade_type);
 
 
 
@@ -986,3 +986,7 @@ alter table cb_dev_groots.retailer add column retailer_pricing_type  enum('Daily
 update cb_dev_groots.retailer set retailer_grade_type = case when retailer_type = 'GA' then 'A' when retailer_type = 'GB' then 'B' 
   when retailer_type = 'GC' then 'C' when retailer_type = 'GD' then 'D' end , 
   retailer_pricing_type = case when retailer_type = 'Contract Price' then 'Contract' when retailer_type!='Contract Price' then 'Daily' end;
+
+alter table cb_dev_groots.retailer_log drop column retailer_type;
+alter table cb_dev_groots.retailer_log add column retailer_grade_type enum('A', 'B', 'C','D') default 'A';
+alter table cb_dev_groots.retailer_log add column retailer_pricing_type  enum('Daily', 'Contract') default 'Daily';
