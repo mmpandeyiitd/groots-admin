@@ -560,6 +560,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
                         $item->status = 'pending';
                         $item->created_at = date('Y-m-d');
                         $item->tobe_procured_qty = $qty;
+                        $item->vendor_id = 0;
                         $item->save();
                 }
             }
