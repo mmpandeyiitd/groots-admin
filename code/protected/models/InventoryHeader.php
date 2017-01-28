@@ -119,7 +119,7 @@ class InventoryHeader extends CActiveRecord
         //$criteria->together = true;
             $criteria->compare( 'bp.title', $this->item_title, true );
             $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
-
+            $criteria->condition = 't.warehouse_id = '.$this->warehouse_id.' and (bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted")';
         //$criteria->compare('i.date', $this->date, true);
             $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
             $pageParams = $_GET;
@@ -207,13 +207,11 @@ class InventoryHeader extends CActiveRecord
             if($this->update_type=="add"){
                 $joinType = " left ";
             }
-            else{
-                $criteria->condition = 'bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted"';
-            }
             $criteria->join = $joinType." join groots_orders.purchase_line pl on pl.base_product_id=t.base_product_id and pl.purchase_id=".$this->purchase_id;
             $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
             $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
+            $criteria->condition = 'bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted"';
             $criteria->compare( 'bp.title', $this->item_title, true );
             $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
             

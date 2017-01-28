@@ -179,20 +179,20 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         'dataProvider'=>$dataProvider,
         'filter'=>$inv_header,
         'columns'=>array(
-            array(
-                'header' => 'show child',
-                'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
-                'value' => function($data){
-                    if(isset($data->parent_id) && $data->parent_id == 0){
-                        return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
-                    }
-                    else{
-                        return "";
-                    }
+            // array(
+            //     'header' => 'show child',
+            //     'htmlOptions' => array('style' => 'width:15%;', 'class' => 'expand-bt'),
+            //     'value' => function($data){
+            //         if(isset($data->parent_id) && $data->parent_id == 0){
+            //             return CHtml::button("+",array("onclick"=> "toggleChild(".$data->base_product_id.")" ));
+            //         }
+            //         else{
+            //             return "";
+            //         }
 
-                },
-                'type' => 'raw',
-            ),
+            //     },
+            //     'type' => 'raw',
+            // ),
             array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
