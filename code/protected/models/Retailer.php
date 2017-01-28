@@ -54,7 +54,7 @@ class Retailer extends CActiveRecord {
             array('id, status,credit_limit,', 'numerical', 'integerOnly' => true),
 
             array('min_order_price, shipping_charge', 'numerical'),
-            array('name, website, contact_person1,geolocation,settlement_days,time_of_delivery,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
+            array('name, website, contact_person1,geolocation,settlement_days,demand_centre,owner_email,billing_email', 'length', 'max' => 250),
             array('retailer_code,owner_phone,mobile', 'length', 'max' => 10),
             array('state,retailer_code,VAT_number,contact_person1', 'length', 'max' => 150),
             array('VAT_number', 'length', 'min' => 11, 'max' => 11),
@@ -66,11 +66,11 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, retailer_type, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name', 'safe'),
+            array('modified_date,date_of_onboarding, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,time_of_delivery,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id, retailer_type, sales_rep_id,delivery_time',
+            array('id, name, retailer_code, VAT_number,pincode, email, password, mobile, telephone, address, city, state, image, image_url, website, contact_person1, contact_person2,product_categories, categories_of_interest, store_size, status,date_of_onboarding,demand_centre,settlement_days,billing_email,owner_email,owner_phone,geolocation,created_date, modified_date, collection_fulfilled, due_date, last_due_date, due_payable_amount, total_payable_amount,collection_agent_id, allocated_warehouse_id, sales_rep_id,delivery_time',
              'safe', 'on' => 'search'),
         );
     }
@@ -125,9 +125,10 @@ class Retailer extends CActiveRecord {
             'shipping_charge'=>'shipping_charge',
             'min_order_price'=>'min_order_price',
             'collection_agent_id' => 'collection_agent_id',
-            'retailer_type => Retailer Type',
             'sales_rep_id' => 'Sales Representative',
             'delivery_time' => 'Delivery Time',
+            'retailer_pricing_type' => 'Retailer Pricing Type',
+            'retailer_grade_type' => 'Retailer Grade Type',
         );
     }
 
@@ -182,10 +183,11 @@ class Retailer extends CActiveRecord {
         $criteria->compare('collection_agent_id', $this->collection_agent_id, true);
         $criteria->compare('total_payable_amount', $this->total_payable_amount, true);
         $criteria->compare('allocated_warehouse_id', $this->allocated_warehouse_id, true);
-        $criteria->compare('retailer_type', $this->retailer_type, true);
         $criteria->compare('sales_rep_id', $this->sales_rep_id, true);
         $criteria->compare('delivery_time', $this->delivery_time, true);
         $criteria->compare('rs.status_name', $this->status_name, true);
+        $criteria->compare('retailer_grade_type', $this->retailer_grade_type, true);
+        $criteria->compare('retailer_pricing_type', $this->retailer_pricing_type, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -434,11 +436,11 @@ class Retailer extends CActiveRecord {
         return $last_due_date;
     }
 
-    public function getRetailerTypes(){
-        $connection = Yii::app()->db;
-        $retailerType = Utility::get_enum_values($connection, self::tableName(), 'retailer_type' );
-        return $retailerType;
-    }
+    // public function getRetailerTypes(){
+    //     $connection = Yii::app()->db;
+    //     $retailerType = Utility::get_enum_values($connection, self::tableName(), 'retailer_type' );
+    //     return $retailerType;
+    // }
 
     public static function getRetailerLog($retailerId){
         $dateStatusMap = array();
@@ -471,5 +473,15 @@ class Retailer extends CActiveRecord {
         return $result;
     }
 
+    public function getRetailerGradeTypes(){
+        $connection = Yii::app()->db;
+        $retailerGradeType = Utility::get_enum_values($connection, self::tableName(), 'retailer_grade_type' );
+        return $retailerGradeType;
+    }
 
+    public function getRetailerPricingTypes(){
+        $connection = Yii::app()->db;
+        $retailerPricingType = Utility::get_enum_values($connection, self::tableName(), 'retailer_pricing_type' );
+        return $retailerPricingType;
+    }
 }

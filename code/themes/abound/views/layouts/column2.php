@@ -2,7 +2,7 @@
 $store_id = Yii::app()->session['brand_admin_id'];
 $userAuthItemArr = Utility::getUserAuthItemsArrFromSession();
 $meunAuthItemMap = array(
-    'report'=>array('SuperAdmin'),
+    'report'=>array('SuperAdmin', 'warehouseEditorAzd', 'warehouseEditor'),
     //'collection' => array('SuperAdmin'),
     'collection' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'buyer' => array('SuperAdmin'),
@@ -19,7 +19,7 @@ $meunAuthItemMap = array(
     'warehousePurchase' => array('PurchaseViewer'),
     'warehouseProcurement' => array('ProcurementViewer'),
 );
-$isReportVisible = isMenuVisible($meunAuthItemMap['report']);
+
 //$isCollectionVisible = isMenuVisible($meunAuthItemMap['collection']);
 $isBuyerVisible = isMenuVisible($meunAuthItemMap['buyer']);
 $isCategoryVisible = isMenuVisible($meunAuthItemMap['category']);
@@ -35,6 +35,7 @@ $access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
 $basaiAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
 $azdAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
 $isDashboardVisible = $access0||$basaiAccess||$azdAccess;
+$isReportVisible = $access0||$basaiAccess||$azdAccess;
 
 function isMenuVisible($authItemArr, $data=null){
     foreach ($authItemArr as $item){

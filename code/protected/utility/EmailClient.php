@@ -36,10 +36,11 @@ class EmailClient
         $recepientArr = array();
         foreach ($mailArray['to'] as $to)
         {
-            if($to['email']=="grootsadmin@gmail.com")
+            if($to['email']=="grootsadmin@gmail.com" || strpos($to['email'], '@groots-test') !== false)
             {
                 continue;
             }
+
             if ($i == 0)
             {
                 $params['to']        = $to['email'];
@@ -65,8 +66,12 @@ class EmailClient
         $request['Message']['Body']['Html']['Data'] = $html;
 
         try {
-            $result = $this->sesClient->sendEmail($request);
-            $messageId = $result->get('MessageId');
+            if(sizeof($recepientArr) > 0){
+                $result = $this->sesClient->sendEmail($request);
+                $messageId = $result->get('MessageId');
+                //echo("Email sent! Message ID: $messageId"."\n");
+            }
+
             //echo("Email sent! Message ID: $messageId"."\n");
 
         } catch (Exception $e) {
@@ -126,7 +131,7 @@ class EmailClient
                 $result = self::sendMail2($params);
                 $messageId = $result->message_id;
                 $resultText = $result->result_text;
-                echo("Email sent! Message ID: $messageId"."\n");    
+                //echo("Email sent! Message ID: $messageId"."\n");    
             } catch (Exception $e){
                 throw $e;
         }
