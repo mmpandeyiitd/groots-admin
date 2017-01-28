@@ -147,7 +147,7 @@ class PurchaseHeader extends CActiveRecord
         $parentIds = array();
         while(!feof($uploadedFile)){
             $row = fgetcsv($uploadedFile);
-            if(!$first){
+            if(!$first  && $row[0] != ''){
                 $purchase_id = trim($row[0]);
                 $date = trim($row[7]);
                 $bp_id = trim($row[2]);
@@ -165,11 +165,11 @@ class PurchaseHeader extends CActiveRecord
                         $line_id = 'NULL';
                     }
                     $query.= ($firstQuery) ? ', ':'';
-                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$rec_qty.', '.$unit_price.', '.$total_price.', '.$vendor_id.')';
+                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$rec_qty.', '.$unit_price.', '.$total_price.', NOW(),'.$vendor_id.')';
                     $firstQuery = true;
                     if(!empty($parentId)){
                         array_push($parentIds, $parentId);
-                        self::buildingParentData($parentData, $array, $parentId);    
+                        $parentData = self::buildingParentData($parentData, $array, $parentId);    
                     }
                 }
                 else if($flag['status'] == 0){
@@ -183,16 +183,13 @@ class PurchaseHeader extends CActiveRecord
             
             $query .= ' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)';
             try{
-               // die($query);
-                self::updateParentData($parentIds, $parentData,$purchase_id);
                 self::executePurchaseBulkQuery($query);
-                
+                self::updateParentData($parentIds, $parentData,$purchase_id);
             } catch(Exception $e){
                 throw $e;
             }
 
         }
-        die($query);
     }
 
     public function validateBulkUploadRow($array){
@@ -228,7 +225,8 @@ class PurchaseHeader extends CActiveRecord
         try{
             $connection = Yii::app()->secondaryDb;
             $command = $connection->createCommand($query);
-            $command->execute();    
+            $command->execute();
+            $transaction->commit();   
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
@@ -249,9 +247,11 @@ class PurchaseHeader extends CActiveRecord
             $parentData[$parentId]['unit_price'] = $array['unit_price'];
             $parentData[$parentId]['total_price'] = $array['total_price'];
         }
+        return $parentData;
     }
 
     public function updateParentData($parentIds, $parentData, $purchase_id){
+        //var_dump($parentIds,$parentData);die;
         $connection = Yii::app()->secondaryDb;
         $first = true;
         $sql = 'select base_product_id, id from purchase_line where base_product_id in ('.implode(',', $parentIds).') and purchase_id = '.$purchase_id;
@@ -263,16 +263,17 @@ class PurchaseHeader extends CActiveRecord
         }
         foreach ($parentData as $key => $value) {  
             $query.= ($first) ? '':', ';
-            $id = (!empty($value['line_id'])) ? $value['line_id'] : null;
+            $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
             $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0)';
             $first = false;
         }
         $query.=' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)'; 
         $transaction = Yii::app()->secondaryDb->beginTransaction();       
         try{
-            die($query);
+            //die($query);
             $command = $connection->createCommand($query);
             $command->execute();
+            $transaction->commit();
         } catch (\Exception $e) {
             $transaction->rollBack();
             throw $e;
