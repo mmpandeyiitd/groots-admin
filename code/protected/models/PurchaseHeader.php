@@ -180,7 +180,6 @@ class PurchaseHeader extends CActiveRecord
             $first = false;
         }
         if($firstQuery){
-            
             $query .= ' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)';
             try{
                 self::executePurchaseBulkQuery($query);
