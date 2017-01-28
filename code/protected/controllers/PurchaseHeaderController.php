@@ -838,7 +838,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
                 }
             }
         } catch(Exception $e){
-            Yii::app()->user->setFlash('error','File Upload Failed'.$e->getMessage());
+            Yii::app()->user->setFlash('error','File Upload Failed '.$e->getMessage());
         }
 
 
