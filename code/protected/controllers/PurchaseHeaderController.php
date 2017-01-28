@@ -32,11 +32,11 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase','downloadPurchaseTemplate'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete', 'DownloadReportById', 'bulkUploadPurchase'),
+				'actions'=>array('admin','delete', 'DownloadReportById', 'bulkUploadPurchase','downloadPurchaseTemplate'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -719,7 +719,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment;filename=' . $fileName);
 
-        if (count($data > 0)) {
+        if (count($data) > 0) {
             $fp = fopen('php://output', 'w');
             //$columnstring = implode(',', array_keys($data[0]));
             $columnstring = implode(',', array_keys(reset($data)));
@@ -769,7 +769,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment;filename=' . $fileName);
 
-        if (count($data > 0)) {
+        if (count($data) > 0) {
             $fp = fopen('php://output', 'w');
             //$columnstring = implode(',', array_keys($data[0]));
             $columnstring = implode(',', array_keys(reset($data)));
@@ -787,6 +787,109 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         }
         ob_flush(); 
 
+    }
+
+
+    public function actionBulkUploadPurchase(){
+        //var_dump($_POST);die;
+        $w_id = Yii::app()->session['w_id'];
+        $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
+        set_time_limit(0);
+        $logfile = '';
+        $baseid = '';
+        $model = new Bulk();
+        $csv_filename = '';
+        $cateogryarray = array();
+
+        try{
+            //$a = $_POST['Buk']['assd'];
+            if (isset($_POST['Bulk'])) {
+                $model->action = 'update';
+                $model->attributes = $_POST['Bulk'];
+                if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
+                    $csv = CUploadedFile::getInstance($model, 'csv_file');
+                    if (!empty($csv)) {
+                        if ($csv->size > 30 * 1024 * 1024) {
+                            Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                            $this->render('bulkUploadPurchase', array('model' => $model));
+                        }
+                        $fileName = 'csvupload/' . $csv->name;
+                        $filenameArr = explode('.', $fileName);
+                        $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
+                        $csv->saveAs($fileName);
+                    } else {
+
+                        Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
+                        $this->render('bulkUploadPurchase', array('model' => $model));
+                    }
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                    if ($ext != 'csv') {
+                        die('here1');
+                        Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
+                        $this->render('bulkUploadPurchase', array('model' => $model));
+                    }
+                        $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
+                        $logfile = fopen($csv_filename, "a");
+                        $uploadedFile = fopen($fileName, 'r');
+                        fputcsv($logfile, $logTemplate);
+                        PurchaseHeader::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                        fclose($logfile);
+                }
+            }
+        } catch(Exception $e){
+            Yii::app()->user->setFlash('error','File Upload Failed'.$e->getMessage());
+        }
+
+
+        // @unlink($fileName);
+        $this->render('bulkUploadPurchase',array('model' => $model));
+    }
+
+    public function actionDownloadPurchaseTemplate(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
+        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"'.$date.'" as date, pl.tobe_procured_qty, pl.order_qty, pl.received_qty, pl.unit_price, pl.price from cb_dev_groots.vendor_product_mapping as vpm 
+        inner join groots_orders.purchase_header as ph on ph.delivery_date = "'.$date.'"
+        left join groots_orders.purchase_line as pl on pl.purchase_id = ph.id and pl.base_product_id = vpm.base_product_id and pl.vendor_id = vpm.vendor_id
+        inner join cb_dev_groots.base_product bp on bp.base_product_id = vpm.base_product_id 
+        inner join cb_dev_groots.vendors as v on vpm.vendor_id = v.id
+        where v.allocated_warehouse_id = '.$w_id.' and (bp.grade is null or bp.grade = "Unsorted") and (bp.parent_id is null or bp.parent_id != 0)';
+        //die($sql);
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $data = $command->queryAll();
+        $fileName = "purchase_template".$date.".csv";
+        if (count($data) > 0) {
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+
+                $fp = fopen('php://output', 'w');
+                //$columnstring = implode(',', array_keys($data[0]));
+                $columnstring = implode(',', array_keys(reset($data)));
+
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                //print_r( $updatecolumn); die;
+                fputcsv($fp, $updatecolumn);
+                foreach ($data AS $values) {
+                    fputcsv($fp, $values);
+                }
+
+                fclose($fp);
+                ob_flush();
+        }
+        else {
+            $model = new Bulk();
+            Yii::app()->user->setFlash('error',"Can't create purchase");
+            $this->render('bulkUploadPurchase',array('model' => $model));
+        }
     }
 
 }
