@@ -535,7 +535,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             if (empty($purchaseOrder)) {
                 $purchaseOrder = new PurchaseHeader();
                 $purchaseOrder->warehouse_id = $w_id;
-                $purchaseOrder->vendor_id = 1;
+                // $purchaseOrder->vendor_id = 1;
                 $purchaseOrder->delivery_date = $date;
                 $purchaseOrder->status = 'pending';
                 $purchaseOrder->comment = 'system generated';
