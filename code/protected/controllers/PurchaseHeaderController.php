@@ -250,7 +250,7 @@ class PurchaseHeaderController extends Controller
 	public function actionUpdate($id)
 	{
 	    //echo "<pre>";
-		//var_dump($_POST);die;
+		//var_dump($_POST['vendorId']);
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -286,9 +286,10 @@ class PurchaseHeaderController extends Controller
                 $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
                 $purchaseLineMap = array();
                 foreach ($purchaseLines as $item){
-                    $purchaseLineMap[$item->base_product_id] = $item;
+                    $constraint = $item->base_product_id.'~'.$item->vendor_id;
+                    $purchaseLineMap[$constraint] = $item;
                 }
-                //avar_dump($purchaseLineMap);die;
+                //var_dump($purchaseLineMap);
                 $model->attributes = $_POST['PurchaseHeader'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -313,24 +314,29 @@ class PurchaseHeaderController extends Controller
 
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
-                            $order_qty = $received_qty = $unitPrice = $vendor_id = $totalPrice = '';
+                            $order_qty = $received_qty = $unitPrice = $totalPrice = '';
+                            $vendorId = 0;
                             if(isset($_POST['order_qty'][$key])){
                                 $order_qty = trim($_POST['order_qty'][$key]);
                             }
 
                             if(isset($_POST['received_qty'][$key]) ){
                                 $received_qty = trim($_POST['received_qty'][$key]);
+
+                            }if(!empty($_POST['vendorId'][$key]) ){
+                                $vendorId = trim($_POST['vendorId'][$key]);
                             }
+                            //var_dump($vendorId);
+                            $constraint = $id.'~'.$vendorId;
                             if($order_qty > 0){
                                 $unitPrice = $_POST['price'][$key];
                                 $totalPrice = $_POST['totalPrice'][$key];
-                                $vendorId = $_POST['vendorId'][$key];
                                 $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
                                 $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent); 
                                 if($flag['status'] == 1){
                                     $purchaseLine = new PurchaseLine();
-                                   if (isset($purchaseLineMap[$id])) {
-                                    $purchaseLine = $purchaseLineMap[$id];
+                                   if (isset($purchaseLineMap[$constraint])) {
+                                    $purchaseLine = $purchaseLineMap[$constraint];
                                     }
                                     else if(!empty($order_qty) || !empty($received_qty)){
                                         $purchaseLine->purchase_id = $model->id;
@@ -351,15 +357,15 @@ class PurchaseHeaderController extends Controller
                                 }
 
                             }
-                            else if(isset($purchaseLineMap[$id])){
-                                $purchaseLine = $purchaseLineMap[$id];
+                            else if(isset($purchaseLineMap[$constraint])){
+                                $purchaseLine = $purchaseLineMap[$constraint];
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
 
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
-
+                    //die();
 
                     $transaction->commit();
                     if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
@@ -855,7 +861,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         left join groots_orders.purchase_line as pl on pl.purchase_id = ph.id and pl.base_product_id = vpm.base_product_id and pl.vendor_id = vpm.vendor_id
         inner join cb_dev_groots.base_product bp on bp.base_product_id = vpm.base_product_id 
         inner join cb_dev_groots.vendors as v on vpm.vendor_id = v.id
-        where v.allocated_warehouse_id = '.$w_id.' and (bp.grade is null or bp.grade = "Unsorted") and (bp.parent_id is null or bp.parent_id != 0)';
+        where v.allocated_warehouse_id = '.$w_id.' and (bp.grade is null or bp.grade = "Unsorted") and (bp.parent_id is null or bp.parent_id != 0) order by ph.id, bp.title';
         //die($sql);
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
