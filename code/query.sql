@@ -1118,3 +1118,5 @@ alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
 alter table groots_orders.purchase_header drop column vendor_id ;
 
 
+alter table cb_dev_groots.vendors add column supplier_type enum('Vegetables','Fruits') default 'Vegetables';
+alter table groots_orders.purchase_line add column urd_number int(11) not null;

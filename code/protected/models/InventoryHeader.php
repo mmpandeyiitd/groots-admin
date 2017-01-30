@@ -34,6 +34,7 @@ class InventoryHeader extends CActiveRecord
     public $update_type="";
     public $price;
     public $unit_price;
+    public $urd_number;
 
     /**
      * @return string the associated database table name
@@ -198,7 +199,7 @@ class InventoryHeader extends CActiveRecord
                 $this->date = date('Y-m-d');
             }
             $criteria = new CDbCriteria;
-            $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, pl.order_qty, pl.tobe_procured_qty, pl.received_qty, pl.vendor_id,pl.price, pl.unit_price';
+            $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, pl.order_qty, pl.tobe_procured_qty, pl.received_qty, pl.vendor_id,pl.price, pl.unit_price,pl.urd_number';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
             );*/

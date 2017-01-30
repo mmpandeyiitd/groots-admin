@@ -32,7 +32,7 @@ class PurchaseLine extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,purchase_id,base_product_id,order_qty,received_qty,unit_price,price,status,created_at', 'safe', 'on'=>'search'),
+            array('id,purchase_id,base_product_id,order_qty,received_qty,unit_price,price,status,created_at,urd_number', 'safe', 'on'=>'search'),
         );
     }
 

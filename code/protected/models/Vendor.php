@@ -77,7 +77,7 @@ class Vendor extends CActiveRecord
 			array('image, website, contact_person1, contact_person2', 'length', 'max'=>250),
 			array('allocated_warehouse_id', 'length', 'max'=>11),
 			array('vendor_type', 'length', 'max'=>12),
-			array('image_url, credit_days, due_date, payment_days_range', 'safe'),
+			array('image_url, credit_days, due_date, payment_days_range, supplier_type', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_start_date, proc_exec_id, vendor_type, credit_days, due_date, payment_days_range', 'safe', 'on'=>'search'),
@@ -138,6 +138,7 @@ class Vendor extends CActiveRecord
 			'credit_days' => 'Credit Days',
 			'due_date' => 'Due Date',
 			'payment_days_range' => 'Payment Days Range',
+			'supplier_type' => 'Supplier Type'
 		);
 	}
 
@@ -198,6 +199,7 @@ class Vendor extends CActiveRecord
 		$criteria->compare('vendor_type',$this->vendor_type,true);
 		$criteria->compare('credit_days',$this->credit_days,true);
 		$criteria->compare('due_date',$this->due_date,true);
+		$criteria->compare('supplier_type',$this->supplier_type, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -115,7 +115,7 @@ class PurchaseHeader extends CActiveRecord
         return $status;
     }
 
-    public function validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent){
+    public function validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent){
         //var_dump($unitPrice,$totalPrice, $vendorId);die;
         $status = 1;
         $msg = '';
@@ -130,6 +130,10 @@ class PurchaseHeader extends CActiveRecord
         else if(empty($vendorId) && !$isParent){
             $status = 0;
             $msg = 'Please Select Vendor';    
+        }
+        else if(empty($urd_number) && !$isParent){
+            $status = 0;
+            $msg = 'Please Enter URD Number';    
         }
         $result = array();
         $result['status'] = $status;

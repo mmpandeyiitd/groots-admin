@@ -194,6 +194,18 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             //     'type' => 'raw',
             // ),
             array(
+                'header' => 'URD Number',
+                //'name' => 'urd_number',
+                'type' => 'raw',
+                'value' => function($data){
+                    $array = array('onchange' => 'copyUrd('.$data->base_product_id.','.$data->parent_id.')', 'style' => 'width:30px;', 'id' => 'urd_'.$data->base_product_id,'class' => 'urd');
+                    if(isset($data->parent_id) && $data->parent_id == 0){
+                        $array['readonly'] = 'readonly';
+                    }
+                    return CHtml::textField('urd_number[]',$data->urd_number, $array);
+                },
+                ),
+            array(
                 'header' => 'id',
                 'name' => 'base_product_id[]',
                 'value' => function ($data) {
@@ -597,6 +609,13 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
             }
         });
        updateItemTotalRow(parent_id); 
+    }
+
+    function copyUrd(bp_id,p_id){
+        console.log('here');
+        var urd = $('#urd_'+bp_id).val();
+        console.log(urd);
+        $('#urd_'+p_id).val(urd);
     }
 
 </script>

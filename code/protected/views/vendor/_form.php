@@ -42,6 +42,12 @@
 	</div>
 
 	<div class="row">
+		<?php echo $form->labelEx($model,'supplier_type'); ?>
+		<?php echo CHtml::activeDropDownList($model	, 'supplier_type', VendorDao::getVendorSupplyTypeDropdown(), array('options' => array($model->vendor_type=>array('selected'=>true)), 'style' => 'width:220.5px;')); ?>
+		<?php echo $form->error($model,'supplier_type'); ?>
+	</div>
+
+	<div class="row">
 		<?php echo $form->labelEx($model,'VAT_number'); ?>
 		<?php echo $form->textField($model,'VAT_number',array('size'=>50,'maxlength'=>50)); ?>
 		<?php echo $form->error($model,'VAT_number'); ?>

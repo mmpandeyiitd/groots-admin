@@ -294,6 +294,16 @@ class VendorDao{
         return $map;
     }
 
+    public function getVendorSupplyTypeDropdown(){
+        $connection = Yii::app()->db;
+        $result = Utility::get_enum_values($connection, 'vendors', 'supplier_type' );
+        $vendorTypes = array();
+        foreach ($result as $key => $value) {
+            $vendorTypes[$value['value']] = $value['value'];
+        }
+        return $vendorTypes;
+    }
+
 }
 
 

@@ -178,8 +178,9 @@ class PurchaseHeaderController extends Controller
                                 $unitPrice = $_POST['price'][$key];
                                 $totalPrice = $_POST['totalPrice'][$key];
                                 $vendorId = $_POST['vendorId'][$key];
+                                $urd_number = trim($_POST['urd_number'][$key]);
                                 $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
-                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent);
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent);
                                 if($flag['status'] == 1){
                                     $purchaseLine = new PurchaseLine();
                                     $purchaseLine->purchase_id = $model->id;
@@ -194,6 +195,7 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->price = $totalPrice;
                                     $purchaseLine->created_at = date("y-m-d H:i:s");
                                     $purchaseLine->vendor_id =$vendorId;
+                                    $purchaseLine->urd_number = $urd_number;
                                     
                                     if(!$purchaseLine->save()){
                                         die(print_r($purchaseLine->getErrors()));
@@ -250,7 +252,7 @@ class PurchaseHeaderController extends Controller
 	public function actionUpdate($id)
 	{
 	    //echo "<pre>";
-		//var_dump($_POST['vendorId']);
+		//var_dump($_POST);
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -279,7 +281,6 @@ class PurchaseHeaderController extends Controller
         $inv_header->purchase_id = $id;
         $inv_header->update_type = $updateType;
         $dataProvider = $inv_header->purchaseSearch();
-
         if(isset($_POST['purchase-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
             try {
@@ -315,7 +316,7 @@ class PurchaseHeaderController extends Controller
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
                             $order_qty = $received_qty = $unitPrice = $totalPrice = '';
-                            $vendorId = 0;
+                            $vendorId = $urd_number =0;
                             if(isset($_POST['order_qty'][$key])){
                                 $order_qty = trim($_POST['order_qty'][$key]);
                             }
@@ -329,10 +330,11 @@ class PurchaseHeaderController extends Controller
                             //var_dump($vendorId);
                             $constraint = $id.'~'.$vendorId;
                             if($order_qty > 0){
-                                $unitPrice = $_POST['price'][$key];
-                                $totalPrice = $_POST['totalPrice'][$key];
+                                $unitPrice = trim($_POST['price'][$key]);
+                                $totalPrice = trim($_POST['totalPrice'][$key]);
+                                $urd_number = trim($_POST['urd_number'][$key]);
                                 $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
-                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $isParent); 
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent); 
                                 if($flag['status'] == 1){
                                     $purchaseLine = new PurchaseLine();
                                    if (isset($purchaseLineMap[$constraint])) {
@@ -348,6 +350,7 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->vendor_id = $vendorId;
                                     $purchaseLine->unit_price = $unitPrice;
                                     $purchaseLine->price = $totalPrice;
+                                    $purchaseLine->urd_number = $urd_number;
                                     $purchaseLine->save();
                                 }
                                 else{
