@@ -255,8 +255,8 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function updateParentData($parentIds, $parentData, $purchase_id){
-        echo '<pre>';
-        var_dump($parentIds,$parentData);die;
+        // echo '<pre>';
+        // var_dump($parentIds,$parentData);die;
         $connection = Yii::app()->secondaryDb;
         $first = true;
         $sql = 'select base_product_id, id from purchase_line where base_product_id in ('.implode(',', $parentIds).') and purchase_id = '.$purchase_id;
@@ -264,9 +264,12 @@ class PurchaseHeader extends CActiveRecord
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         foreach ($result as $key => $value) {
-            $parentData[$value['base_product_id']]['line_id'] = $value['id']; 
+            if(isset($parentData[$value['base_product_id']])){
+                $parentData[$value['base_product_id']]['line_id'] = $value['id'];
+            }
         }
         foreach ($parentData as $key => $value) {  
+            //var_dump($parentData);die;
             $query.= ($first) ? '':', ';
             $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
             $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0,0)';
