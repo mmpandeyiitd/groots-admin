@@ -352,7 +352,7 @@ Sales: +91-11-3958-9895</span>
             if(isset($_POST['Retailer']['alternate_email']) && !empty($_POST['Retailer']['alternate_email'])){
                 $alternate_email = $_POST['Retailer']['alternate_email'];
                 $flag = Retailer::validateAlternateEmail($alternate_email);
-                if($flag){
+                if($flag['status'] == 1){
                     $model->alternate_email = $flag['ids'];
                 }
                 else{
