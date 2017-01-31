@@ -784,7 +784,9 @@ alter table retailer_payments modify column cheque_status enum('Cleared','Pendin
 ------------------------------------------start from here 2017-01-21
 alter table groots_orders.inventory_header add column status tinyint(1) not null default 1;
 update groots_orders.inventory_header set status = 1;
-
+----------------------------
+alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
+alter table groots_orders.purchase_header drop column vendor_id ;
 alter table cb_dev_groots.retailer drop column time_of_delivery;
 
 alter table groots_orders.order_header add column expected_delivery_time time;
@@ -812,8 +814,8 @@ alter table groots_orders.retailer_payments add column updated_by int(11) not nu
 alter table groots_orders.order_header_log add column `feedback_status` enum('Not Required','Pending','Submitted') NOT NULL DEFAULT 'Not Required' after warehouse_id;
 alter table groots_orders.order_header_log add column `order_rating` tinyint(1) DEFAULT NULL after feedback_status;
 alter table groots_orders.order_header_log add column `order_platform` enum('Admin','Android') DEFAULT 'Admin' after order_rating;
-alter table groots_orders.order_header_log add column  `expected_delivery_time` time  after order_platform;
-alter table groots_orders.order_header_log add column  `actual_delivery_time` time  after expected_delivery_time;
+alter table groots_orders.order_header_log add column  `expected_delivery_time` time after order_platform;
+alter table groots_orders.order_header_log add column  `actual_delivery_time` time after expected_delivery_time;
 alter table groots_orders.order_header_log add column updated_by int(11) not null after created_at;
 
 alter table groots_orders.retailer_payments_log add column `cheque_status` enum('Cleared','Pending','Bounced') DEFAULT NULl after status;
@@ -990,3 +992,5 @@ update cb_dev_groots.retailer set retailer_grade_type = case when retailer_type 
 alter table cb_dev_groots.retailer_log drop column retailer_type;
 alter table cb_dev_groots.retailer_log add column retailer_grade_type enum('A', 'B', 'C','D') default 'A';
 alter table cb_dev_groots.retailer_log add column retailer_pricing_type  enum('Daily', 'Contract') default 'Daily';
+
+

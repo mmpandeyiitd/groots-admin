@@ -9,7 +9,9 @@ $meunAuthItemMap = array(
     'category' => array('SuperAdmin'),
     'product' => array('SuperAdmin'),
     'order' => array('SuperAdmin'),
-    'dashboard' => array('SuperAdmin', 'warehouseEditorAzd', 'warehouseEditor'),
+    'dashboard' => array('SuperAdmin','warehouseEditorAzd', 'warehouseEditor'),
+    //'vendors' => array('SuperAdmin'),
+    'vendors' => array('VendorProfileViewer', 'VendorProductViewer', 'VendorLedgerViewer', 'VendorCreditViewer'),
     'warehouse' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
     'warehouseOrder' => array('OrderViewer'),
     'warehouseInventory' => array('InventoryViewer'),
@@ -23,7 +25,8 @@ $isBuyerVisible = isMenuVisible($meunAuthItemMap['buyer']);
 $isCategoryVisible = isMenuVisible($meunAuthItemMap['category']);
 $isProductVisible = isMenuVisible($meunAuthItemMap['product']);
 $isOrderVisible = isMenuVisible($meunAuthItemMap['order']);
-//$isDashboardVisible = isDashboardVisible();
+//$isDashboardVisible = isMenuVisible($meunAuthItemMap['dashboard']);
+//$isVendorVisible = isMenuVisible($meunAuthItemMap['vendors']);
 //$isWarehouseVisible = isMenuVisible($meunAuthItemMap['warehouse'], array('warehouse_id'=>1));
 //$isReportVisible = true;
 //var_dump($this->context);die("here");
@@ -37,6 +40,7 @@ $isReportVisible = $access0||$basaiAccess||$azdAccess;
 function isMenuVisible($authItemArr, $data=null){
     foreach ($authItemArr as $item){
         $access = Yii::app()->user->checkAccess($item, $data, false);
+        //echo $access; die;
         if($access){
             return true;
         }
@@ -54,6 +58,7 @@ $productArr = array('label' => '<i class="fa fa-modx"></i>product', 'url' => arr
 $regOffArray = array('label' => '<i class="fa fa-bullhorn"></i> Reg Office', 'url' => array('/store/update&id=1'), 'visible' => false);
 $orderArr = array('label' => '<i class="fa fa-shopping-bag"></i> Orders ', 'url' => array('/orderHeader/admin'), 'visible' => $isOrderVisible);
 $dashboardArr = array('label' => '<i class="fa fa-dashboard"></i> Dashboard', 'url' => array('/DashboardPage/index'), 'visible' => $isDashboardVisible);
+// $vendorArr = array('label' => '<i class="fa fa-list"></i> Vendors', 'url' => array('/vendor/admin'), 'visible' =>$isVendorVisible);
 
 function generateOrderMenu($id, $meunAuthItemMap){
     if(isMenuVisible($meunAuthItemMap['warehouseOrder'], array('warehouse_id'=>$id))){
@@ -149,6 +154,12 @@ $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' 
     //'submenuHtmlOptions' => array('class' => 'dropdown-submenu'),
 
 );
+$vendorWare = generateVendorWarehouse($meunAuthItemMap);
+$isVendorWarehouseVisible = sizeof($vendorWare)> 0 ? true : false;
+$vendorWarehouseArr = array('label' => '<i ></i> Vendors +', 'url' =>'#', 'visible' => $isVendorWarehouseVisible,
+    'items'=> $vendorWare,
+    'itemCssClass' => 'ex1',
+);
 
 function generateWarehouses($meunAuthItemMap){
     $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
@@ -166,6 +177,20 @@ function generateWarehouses($meunAuthItemMap){
 
     }
     return $warehouseMenuArr;
+}
+
+function generateVendorWarehouse($meunAuthItemMap){
+    $vendorWarehouses = array();
+    $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name', 'condition' => 'id !='.HD_OFFICE_WH_ID));
+    foreach ($warehouses as $key => $warehouse) {
+        $id = $warehouse->id;
+        $name = $warehouse->name;
+        if(isMenuVisible($meunAuthItemMap['vendors'], array('warehouse_id'=>$id))){
+        $x = array('label' => '<i ></i> '.$name, 'url' => array('/vendor/admin&w_id='.$id), 'visible' => true);
+        array_push($vendorWarehouses, $x);
+        }
+    }
+    return $vendorWarehouses;
 }
 
 
@@ -199,6 +224,7 @@ function generateWarehouses($meunAuthItemMap){
                     $productArr,
                     $categoryArr,
                     $buyerArr,
+                    $vendorWarehouseArr,
                     $collectionArr,
                     $reportArr,
                     $loginArr,

@@ -32,11 +32,11 @@ class PurchaseHeaderController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport'),
+				'actions'=>array('create','update', 'admin','downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase','downloadPurchaseTemplate'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
+				'actions'=>array('admin','delete', 'DownloadReportById', 'bulkUploadPurchase','downloadPurchaseTemplate'),
 				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -98,6 +98,7 @@ class PurchaseHeaderController extends Controller
 	 */
 	public function actionCreate()
 	{
+        //var_dump($_POST);die;
 	    //echo "<pre>";
         $w_id = '';
         if(isset($_GET['w_id'])){
@@ -135,7 +136,7 @@ class PurchaseHeaderController extends Controller
 
 		if(isset($_POST['purchase-create']))
 		{
-            $transaction = Yii::app()->db->beginTransaction();
+            $transaction = Yii::app()->secondaryDb->beginTransaction();
             try {
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -174,18 +175,40 @@ class PurchaseHeaderController extends Controller
                             }
 
                             if ($quantity > 0 || $receivedQty > 0) {
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $id;
-                                if($quantity > 0){
-                                    $purchaseLine->order_qty = $quantity;
+                                $unitPrice = $_POST['price'][$key];
+                                $totalPrice = $_POST['totalPrice'][$key];
+                                $vendorId = $_POST['vendorId'][$key];
+                                $urd_number = trim($_POST['urd_number'][$key]);
+                                $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent);
+                                if($flag['status'] == 1){
+                                    $purchaseLine = new PurchaseLine();
+                                    $purchaseLine->purchase_id = $model->id;
+                                    $purchaseLine->base_product_id = $id;
+                                    if($quantity > 0){
+                                        $purchaseLine->order_qty = $quantity;
+                                    }
+                                    if($receivedQty > 0){
+                                        $purchaseLine->received_qty = $receivedQty;
+                                    }
+                                    $purchaseLine->unit_price = $unitPrice;
+                                    $purchaseLine->price = $totalPrice;
+                                    $purchaseLine->created_at = date("y-m-d H:i:s");
+                                    $purchaseLine->vendor_id =$vendorId;
+                                    $purchaseLine->urd_number = $urd_number;
+                                    
+                                    if(!$purchaseLine->save()){
+                                        die(print_r($purchaseLine->getErrors()));
+                                    }    
                                 }
-                                if($receivedQty > 0){
-                                    $purchaseLine->received_qty = $receivedQty;
+                                else{
+                                    $transaction->rollBack();
+                                    Yii::app()->user->setFlash('error', $flag['msg'].' For Product Id'.$id);
+                                    $this->redirect(array('create','w_id'=>$w_id));                
                                 }
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-                                $purchaseLine->save();
+                                
                             }
+
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
@@ -207,7 +230,7 @@ class PurchaseHeaderController extends Controller
             }
 
 		}
-
+        $priceMap = VendorDao::getAllVendorsPriceMap();
 		$this->render('create',array(
 			'model'=>$model,
             'inv_header'=>$inv_header,
@@ -215,6 +238,7 @@ class PurchaseHeaderController extends Controller
             'dataProvider'=>$dataProvider,
             //'otherItems'=> $otherItems,
             'w_id' => $w_id,
+            'priceMap' => $priceMap,
 		));
 	}
 
@@ -228,7 +252,7 @@ class PurchaseHeaderController extends Controller
 	public function actionUpdate($id)
 	{
 	    //echo "<pre>";
-		//print_r($_POST);die;
+		//var_dump($_POST);
         $w_id = '';
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
@@ -257,15 +281,16 @@ class PurchaseHeaderController extends Controller
         $inv_header->purchase_id = $id;
         $inv_header->update_type = $updateType;
         $dataProvider = $inv_header->purchaseSearch();
-
         if(isset($_POST['purchase-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
             try {
                 $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
                 $purchaseLineMap = array();
                 foreach ($purchaseLines as $item){
-                    $purchaseLineMap[$item->base_product_id] = $item;
+                    $constraint = $item->base_product_id.'~'.$item->vendor_id;
+                    $purchaseLineMap[$constraint] = $item;
                 }
+                //var_dump($purchaseLineMap);
                 $model->attributes = $_POST['PurchaseHeader'];
                 $parentIdArr = array();
                 $parentIdToUpdate = '';
@@ -290,56 +315,67 @@ class PurchaseHeaderController extends Controller
 
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
-                            $order_qty = $received_qty = '';
+                            $order_qty = $received_qty = $unitPrice = $totalPrice = '';
+                            $vendorId = $urd_number =0;
                             if(isset($_POST['order_qty'][$key])){
                                 $order_qty = trim($_POST['order_qty'][$key]);
                             }
 
                             if(isset($_POST['received_qty'][$key]) ){
                                 $received_qty = trim($_POST['received_qty'][$key]);
-                            }
 
-                            if (isset($purchaseLineMap[$id])) {
-                                $purchaseLine = $purchaseLineMap[$id];
+                            }if(!empty($_POST['vendorId'][$key]) ){
+                                $vendorId = trim($_POST['vendorId'][$key]);
                             }
-                            else if(!empty($order_qty) || !empty($received_qty)){
-                                $purchaseLine = new PurchaseLine();
-                                $purchaseLine->purchase_id = $model->id;
-                                $purchaseLine->base_product_id = $id;
-                                $purchaseLine->created_at = date("y-m-d H:i:s");
-                            }
-                            if(isset($purchaseLine)){
-                                if($order_qty != ""){
+                            //var_dump($vendorId);
+                            $constraint = $id.'~'.$vendorId;
+                            if($order_qty > 0){
+                                $unitPrice = trim($_POST['price'][$key]);
+                                $totalPrice = trim($_POST['totalPrice'][$key]);
+                                $urd_number = trim($_POST['urd_number'][$key]);
+                                $isParent = ($_POST['parent_id'][$key] == 0)? true:false;
+                                $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent); 
+                                if($flag['status'] == 1){
+                                    $purchaseLine = new PurchaseLine();
+                                   if (isset($purchaseLineMap[$constraint])) {
+                                    $purchaseLine = $purchaseLineMap[$constraint];
+                                    }
+                                    else if(!empty($order_qty) || !empty($received_qty)){
+                                        $purchaseLine->purchase_id = $model->id;
+                                        $purchaseLine->base_product_id = $id;
+                                        $purchaseLine->created_at = date("y-m-d H:i:s");
+                                    }
                                     $purchaseLine->order_qty = $order_qty;
-                                }
-
-                                if($received_qty != ""){
                                     $purchaseLine->received_qty = $received_qty;
+                                    $purchaseLine->vendor_id = $vendorId;
+                                    $purchaseLine->unit_price = $unitPrice;
+                                    $purchaseLine->price = $totalPrice;
+                                    $purchaseLine->urd_number = $urd_number;
+                                    $purchaseLine->save();
                                 }
-
-
-                                $purchaseLine->save();
+                                else{
+                                    $transaction->rollBack();
+                                    Yii::app()->user->setFlash('error', $flag['msg'].' For Product Id'.$id);
+                                    $this->redirect(array('update',"w_id"=>$w_id, "id"=>$model->id, 'type' => $updateType));
+                                }
 
                             }
-                            else{
-                                if(isset($purchaseLineMap[$id])){
-                                    $purchaseLine = $purchaseLineMap[$id];
-                                    $purchaseLine->deleteByPk($purchaseLine->id);
-                                }
-
+                            else if(isset($purchaseLineMap[$constraint])){
+                                $purchaseLine = $purchaseLineMap[$constraint];
+                                $purchaseLine->deleteByPk($purchaseLine->id);
                             }
 
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
-
+                    //die();
 
                     $transaction->commit();
                     if($parentIdToUpdate != '' && $parentIdToUpdate > 0){
                         array_push($parentIdArr, $parentIdToUpdate);
                     }
                     $this->updateParentsItems($parentIdArr, $model->id);
-                    $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id));
+                    $url = Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$w_id, "id"=>$model->id,'type' => $updateType));
                     Yii::app()->user->setFlash('success', 'purchase order successfully Updated.');
                     Yii::app()->controller->redirect($url);
                     //$this->redirect(array('admin','w_id'=>$model->warehouse_id));
@@ -354,7 +390,7 @@ class PurchaseHeaderController extends Controller
             }
         }
 
-
+        $priceMap = VendorDao::getAllVendorsPriceMap();
 		$this->render('update',array(
 			'model'=>$model,
             'inv_header'=>$inv_header,
@@ -363,6 +399,7 @@ class PurchaseHeaderController extends Controller
             //'otherItems'=> $otherItems,
             'w_id' => $_GET['w_id'],
             'update'=>true,
+            'priceMap' => $priceMap,
 		));
 	}
 
@@ -507,7 +544,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             if (empty($purchaseOrder)) {
                 $purchaseOrder = new PurchaseHeader();
                 $purchaseOrder->warehouse_id = $w_id;
-                $purchaseOrder->vendor_id = 1;
+                // $purchaseOrder->vendor_id = 1;
                 $purchaseOrder->delivery_date = $date;
                 $purchaseOrder->status = 'pending';
                 $purchaseOrder->comment = 'system generated';
@@ -532,6 +569,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
                         $item->status = 'pending';
                         $item->created_at = date('Y-m-d');
                         $item->tobe_procured_qty = $qty;
+                        $item->vendor_id = 0;
                         $item->save();
                 }
             }
@@ -611,10 +649,10 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         }
         $date = $_GET['date'];
         $data = array();
-        $sql = 'select pl.base_product_id, bp.title as title, bp.grade as grade, wa.name as warehouse, sum(pl.tobe_procured_qty) as tobe_procured_qty, sum(pl.order_qty) as procured_qty, sum(pl.received_qty) as received_qty from groots_orders.purchase_line as pl 
+        $sql = 'select pl.base_product_id, bp.title as title, bp.grade as grade, wa.name as warehouse, sum(pl.tobe_procured_qty) as tobe_procured_qty, sum(pl.order_qty) as procured_qty, sum(pl.received_qty) as received_qty, pl.unit_price, pl.price as total_price from groots_orders.purchase_line as pl 
         left join purchase_header as ph on ph.id = pl.purchase_id left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id left join cb_dev_groots.warehouses as wa on ph.warehouse_id = wa.id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
-         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' and pl.tobe_procured_qty > 0 group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
+         where ph.status not in ("failed", "cancelled") and ph.delivery_date = '.'"'.$date.'"'.'and ph.warehouse_id = '.$w_id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc ';
            $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -646,6 +684,8 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
             $tmp['tobe_procured_qty'] = $d['tobe_procured_qty'];
             $tmp['procured'] = $d['procured_qty'];
             $tmp['received_by_operation'] = $d['received_qty'];
+            $tmp['unit price'] = $d['unit_price'];
+            $tmp['total Price'] = $d['total_price'];
             foreach ($nameArr as $name){
                 $tmp[$name] = 0;
             }
@@ -689,7 +729,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment;filename=' . $fileName);
 
-        if (count($data > 0)) {
+        if (count($data) > 0) {
             $fp = fopen('php://output', 'w');
             //$columnstring = implode(',', array_keys($data[0]));
             $columnstring = implode(',', array_keys(reset($data)));
@@ -707,4 +747,160 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         }
         ob_flush(); 
     }
+
+
+    public function actionDownloadReportById($id){
+        $sql = 'select pl.*,bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.name end as vendorName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
+        left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
+         where pl.purchase_id = '.$id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc' ;
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $data = array();
+        foreach ($result as $key => $value) {
+            $tmp = array();
+            $tmp['product_id'] = $value['base_product_id'];
+            $tmp['title']  =$value['title'];
+            $tmp['grade'] = $value['grade'];
+            $tmp['urd_number'] = $value['urd_number'];
+            $tmp['order qty'] = $value['order_qty'];
+            $tmp['received by operations'] = $value['received_qty'];
+            $tmp['unit price'] = $value['unit_price'];
+            $tmp['total price'] = $value['price'];
+            $tmp['vendor'] = $value['vendorName'];
+            array_push($data, $tmp);
+        }
+        $fileName = $id."procurement_report_by_id".".csv";
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (count($data) > 0) {
+            $fp = fopen('php://output', 'w');
+            //$columnstring = implode(',', array_keys($data[0]));
+            $columnstring = implode(',', array_keys(reset($data)));
+
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            //print_r( $updatecolumn); die;
+            fputcsv($fp, $updatecolumn);
+            foreach ($data AS $values) {
+                fputcsv($fp, $values);
+            }
+
+            fclose($fp);
+        }
+        ob_flush(); 
+
+    }
+
+
+    public function actionBulkUploadPurchase(){
+        //var_dump($_POST);die;
+        $w_id = Yii::app()->session['w_id'];
+        $logTemplate = array('id', 'base_product_id', 'action', 'status', 'error');
+        set_time_limit(0);
+        $logfile = '';
+        $baseid = '';
+        $model = new Bulk();
+        $csv_filename = '';
+        $cateogryarray = array();
+
+        try{
+            //$a = $_POST['Buk']['assd'];
+            if (isset($_POST['Bulk'])) {
+                $model->action = 'update';
+                $model->attributes = $_POST['Bulk'];
+                if (!empty($_FILES['Bulk']['tmp_name']['csv_file'])) {
+                    $csv = CUploadedFile::getInstance($model, 'csv_file');
+                    if (!empty($csv)) {
+                        if ($csv->size > 30 * 1024 * 1024) {
+                            Yii::app()->user->setFlash('error', 'Cannot upload file greater than 30 MB.');
+                            $this->render('bulkUploadPurchase', array('model' => $model));
+                        }
+                        $fileName = 'csvupload/' . $csv->name;
+                        $filenameArr = explode('.', $fileName);
+                        $fileName = $filenameArr[0] . '-' . Yii::app()->session['sessionId'] . '-' . time() . '.' . end($filenameArr);
+                        $csv->saveAs($fileName);
+                    } else {
+
+                        Yii::app()->user->setFlash('error', 'Please browse a CSV file to upload.');
+                        $this->render('bulkUploadPurchase', array('model' => $model));
+                    }
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+                    if ($ext != 'csv') {
+                        die('here1');
+                        Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
+                        $this->render('bulkUploadPurchase', array('model' => $model));
+                    }
+                        $csv_filename = LOG_BASE_PDT_DIR . uniqid() . '.csv';
+                        $logfile = fopen($csv_filename, "a");
+                        $uploadedFile = fopen($fileName, 'r');
+                        fputcsv($logfile, $logTemplate);
+                        PurchaseHeader::readInventoryUploadedFile($uploadedFile, $logfile, $w_id);
+                        Yii::app()->user->setFlash('success', 'File Uploaded Sucessfully.');
+                        fclose($logfile);
+                }
+            }
+        } catch(Exception $e){
+            Yii::app()->user->setFlash('error','File Upload Failed '.$e->getMessage());
+        }
+
+
+        // @unlink($fileName);
+        $this->render('bulkUploadPurchase',array('model' => $model));
+    }
+
+    public function actionDownloadPurchaseTemplate(){
+        $w_id = $_GET['w_id'];
+        $date = $_GET['date'];
+        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"'.$date.'" as date, pl.tobe_procured_qty, pl.order_qty, pl.received_qty, pl.unit_price, pl.price,"" as urd_number from cb_dev_groots.vendor_product_mapping as vpm 
+        inner join groots_orders.purchase_header as ph on ph.delivery_date = "'.$date.'"
+        left join groots_orders.purchase_line as pl on pl.purchase_id = ph.id and pl.base_product_id = vpm.base_product_id and pl.vendor_id = vpm.vendor_id
+        inner join cb_dev_groots.base_product bp on bp.base_product_id = vpm.base_product_id 
+        inner join cb_dev_groots.vendors as v on vpm.vendor_id = v.id
+        where v.allocated_warehouse_id = '.$w_id.' and (bp.grade is null or bp.grade = "Unsorted") and (bp.parent_id is null or bp.parent_id != 0) order by ph.id, bp.title';
+        //die($sql);
+        $connection = Yii::app()->secondaryDb;
+        $command = $connection->createCommand($sql);
+        $data = $command->queryAll();
+        $fileName = "purchase_template".$date.".csv";
+        if (count($data) > 0) {
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+
+                $fp = fopen('php://output', 'w');
+                //$columnstring = implode(',', array_keys($data[0]));
+                $columnstring = implode(',', array_keys(reset($data)));
+
+                $updatecolumn = str_replace('_', ' ', $columnstring);
+
+                $updatecolumn = explode(',', $updatecolumn);
+                //print_r( $updatecolumn); die;
+                fputcsv($fp, $updatecolumn);
+                foreach ($data AS $values) {
+                    fputcsv($fp, $values);
+                }
+
+                fclose($fp);
+                ob_flush();
+        }
+        else {
+            $model = new Bulk();
+            Yii::app()->user->setFlash('error',"Can't create purchase");
+            $this->render('bulkUploadPurchase',array('model' => $model));
+        }
+    }
+
 }

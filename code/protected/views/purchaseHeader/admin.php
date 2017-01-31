@@ -11,6 +11,7 @@ $this->breadcrumbs=array(
 if($showCreate){
 	$this->menu=array(
 		array('label'=>'Create Purchase', 'url'=>array('create&w_id='.$w_id)),
+		array('label' => 'Bulk Upload', 'url' => array('bulkUploadPurchase&w_id='.$w_id))
 	);
 }
 
@@ -188,6 +189,13 @@ $('.search-form form').submit(function(){
 				return CHtml::button($text1,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id, "type"=>"update"))."'")) . CHtml::button($text2,array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/update",array("w_id"=>$data->warehouse_id, "id"=>$data->id, "type"=>"add"))."'"));
 			},
 		),
+		array(
+			'header' => 'Report',
+			'type' => 'raw',
+			'value' => function($data){
+				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id))."'"));
+			},
+			)
 	),
 )); ?>
 

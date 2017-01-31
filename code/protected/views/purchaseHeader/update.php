@@ -24,4 +24,5 @@ $this->menu=array(
 	//'purchaseLineMap'=> $purchaseLineMap,
 	'dataProvider'=>$dataProvider,
 	'w_id'=>$w_id,
-	'update'=>$update,)); ?>
+	'update'=>$update,
+	'priceMap' => $priceMap)); ?>
