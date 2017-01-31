@@ -255,6 +255,7 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function updateParentData($parentIds, $parentData, $purchase_id){
+        echo '<pre>';
         var_dump($parentIds,$parentData);die;
         $connection = Yii::app()->secondaryDb;
         $first = true;
