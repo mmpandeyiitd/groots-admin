@@ -489,14 +489,21 @@ class Retailer extends CActiveRecord {
 
     public function validateAlternateEmail($emails){
         $array = explode(',', $emails);
+        $first = true;
+        $ids = '';
         if(isset($array)){
             foreach ($array as $key => $value) {
                 if(filter_var(trim($value), FILTER_VALIDATE_EMAIL) == false){
-                    return false;
+                    return array('status' => 0);
                 }
+                else{
+                    $ids.= ($first)?'':',';
+                    $ids.= trim($value);
+                }
+                $first = false;
             }
         }
-        return true;
+        return array('status' => 1, 'ids' => $ids);
     }
 }
 
