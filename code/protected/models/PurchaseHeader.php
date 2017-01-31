@@ -146,7 +146,7 @@ class PurchaseHeader extends CActiveRecord
         $purchase_id='';
         $first = true;
         $firstQuery = false;
-        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id) values';
+        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id,urd_number) values';
         $parentData = array();
         $parentIds = array();
         while(!feof($uploadedFile)){
@@ -162,14 +162,15 @@ class PurchaseHeader extends CActiveRecord
                 $unit_price = trim($row[11]);
                 $total_price = trim($row[12]);
                 $parentId = trim($row[3]);
-                $array = array('received_qty' => $rec_qty, 'order_qty' => $order_qty, 'unit_price' => $unit_price, 'total_price' => $total_price);
+                $urd_number = trim($row[13]);
+                $array = array('received_qty' => $rec_qty, 'order_qty' => $order_qty, 'unit_price' => $unit_price, 'total_price' => $total_price, 'urd_number' => $urd_number);
                 $flag = self::validateBulkUploadRow($array);
                 if($flag['status'] == 1){
                     if(empty($line_id)){
                         $line_id = 'NULL';
                     }
                     $query.= ($firstQuery) ? ', ':'';
-                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$rec_qty.', '.$unit_price.', '.$total_price.', NOW(),'.$vendor_id.')';
+                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$rec_qty.', '.$unit_price.', '.$total_price.', NOW(),'.$vendor_id.', '.$urd_number.')';
                     $firstQuery = true;
                     if(!empty($parentId)){
                         array_push($parentIds, $parentId);
@@ -184,7 +185,7 @@ class PurchaseHeader extends CActiveRecord
             $first = false;
         }
         if($firstQuery){
-            $query .= ' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)';
+            $query .= ' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price), urd_number = values(urd_number)';
             try{
                 self::executePurchaseBulkQuery($query);
                 self::updateParentData($parentIds, $parentData,$purchase_id);
@@ -258,7 +259,7 @@ class PurchaseHeader extends CActiveRecord
         $connection = Yii::app()->secondaryDb;
         $first = true;
         $sql = 'select base_product_id, id from purchase_line where base_product_id in ('.implode(',', $parentIds).') and purchase_id = '.$purchase_id;
-        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id) values';
+        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id,urd_number) values';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         foreach ($result as $key => $value) {
@@ -267,7 +268,7 @@ class PurchaseHeader extends CActiveRecord
         foreach ($parentData as $key => $value) {  
             $query.= ($first) ? '':', ';
             $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
-            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0)';
+            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0,0)';
             $first = false;
         }
         $query.=' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)'; 
