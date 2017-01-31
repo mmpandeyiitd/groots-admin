@@ -994,3 +994,4 @@ alter table cb_dev_groots.retailer_log add column retailer_grade_type enum('A', 
 alter table cb_dev_groots.retailer_log add column retailer_pricing_type  enum('Daily', 'Contract') default 'Daily';
 
 
+alter table cb_dev_groots.retailer add column alternate_email varchar(1000) default null;

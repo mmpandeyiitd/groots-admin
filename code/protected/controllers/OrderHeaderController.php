@@ -1408,7 +1408,7 @@ public function actionEdit($id) {
         'replyto' => $from_email,
         );
     $mailsend = new OrderLine();
-    $resp = $mailsend->sgSendMail($mailArray);
+    //$resp = $mailsend->sgSendMail($mailArray);
 }
 
 if ($_POST['status1'] == 'Paid') {
@@ -1503,7 +1503,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 
 
@@ -1599,7 +1599,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 if ($_POST['status1'] == 'Out for Delivery') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
@@ -1693,7 +1693,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 
 if ($_POST['status1'] == 'Delivered') {
@@ -1791,7 +1791,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 }
 if ($no_of_selectedIds > 0) {
