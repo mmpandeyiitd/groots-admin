@@ -157,12 +157,10 @@ class PurchaseHeader extends CActiveRecord
                 $bp_id = trim($row[2]);
                 $line_id = trim($row[1]);
                 $vendor_id = trim($row[6]);
-                $rec_qty = trim($row[10]);
-                $order_qty = trim($row[9]);
-                $unit_price = trim($row[11]);
-                $total_price = trim($row[12]);
+                $order_qty = trim($row[8]);
+                $unit_price = trim($row[9]);
                 $parentId = trim($row[3]);
-                $urd_number = trim($row[13]);
+                $urd_number = trim($row[10]);
                 $flag = self::validateBulkUploadRow($order_qty, $unit_price, $urd_number);
                 if($flag['status'] == 1){
                     $total_price = $order_qty*$unit_price;
