@@ -269,7 +269,11 @@ class PurchaseHeader extends CActiveRecord
         foreach ($parentData as $key => $value) {  
             $query.= ($first) ? '':', ';
             $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
-            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value["order_qty"].','.$value["received_qty"].','.$value["unit_price"].','.$value["total_price"].', NOW(),0,0)';
+            $order_qty = $value['order_qty'];
+            $received_qty = $value['received_qty'];
+            $unit_price = $value['unit_price'];
+            $total_price = $value['total_price'];
+            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$order_qty.','.$received_qty.','.$unit_price.','.$total_price.', NOW(),0,0)';
             $first = false;
         }
         $query.=' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)'; 
