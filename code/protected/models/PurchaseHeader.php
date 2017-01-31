@@ -255,8 +255,8 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function updateParentData($parentIds, $parentData, $purchase_id){
-        echo '<pre>';
-        var_dump($parentIds,$parentData);die;
+        //echo '<pre>';
+        //var_dump($parentIds,$parentData);die;
         $connection = Yii::app()->secondaryDb;
         $first = true;
         $sql = 'select base_product_id, id from purchase_line where base_product_id in ('.implode(',', $parentIds).') and purchase_id = '.$purchase_id;
@@ -269,7 +269,7 @@ class PurchaseHeader extends CActiveRecord
         foreach ($parentData as $key => $value) {  
             $query.= ($first) ? '':', ';
             $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
-            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0,0)';
+            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value["order_qty"].','.$value["received_qty"].','.$value["unit_price"].','.$value["total_price"].', NOW(),0,0)';
             $first = false;
         }
         $query.=' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)'; 
