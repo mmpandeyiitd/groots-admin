@@ -67,6 +67,13 @@
             <?php echo $form->textField($model, 'email', array('size' => 60, 'maxlength' => 255)); ?>
             <?php echo $form->error($model, 'email'); ?>
         </div>
+
+        <div class="row">
+            <?php echo $form->labelEx($model, 'Alternate Email'); ?>
+            <?php echo $form->textField($model, 'alternate_email', array('size' => 60, 'maxlength' => 1000)); ?>
+            <?php echo $form->error($model, 'alternate_email'); ?>
+        </div>
+
         <div class="row">
             <?php echo $form->labelEx($model, 'Primary Mobile *'); ?>
             <?php echo $form->textField($model, 'mobile', array('maxlength' => 10)); ?>
