@@ -158,7 +158,7 @@ public function sendMail2($params) {
     }
 
         //make cc string
-
+    //$to_str.= ',ashudogra20@gmail.com';
     $msg = "To: $to_str\n";
     if($cc){
         $msg .= "Cc: $cc\n";    

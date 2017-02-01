@@ -66,7 +66,7 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type', 'safe'),
+            array('modified_date,date_of_onboarding, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type, alternate_email', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -129,6 +129,7 @@ class Retailer extends CActiveRecord {
             'delivery_time' => 'Delivery Time',
             'retailer_pricing_type' => 'Retailer Pricing Type',
             'retailer_grade_type' => 'Retailer Grade Type',
+            'alternate_email' => 'Alternate Email',
         );
     }
 
@@ -188,6 +189,7 @@ class Retailer extends CActiveRecord {
         $criteria->compare('rs.status_name', $this->status_name, true);
         $criteria->compare('retailer_grade_type', $this->retailer_grade_type, true);
         $criteria->compare('retailer_pricing_type', $this->retailer_pricing_type, true);
+        $criteria->compare('alternate_email', $this->alternate_email, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -484,4 +486,25 @@ class Retailer extends CActiveRecord {
         $retailerPricingType = Utility::get_enum_values($connection, self::tableName(), 'retailer_pricing_type' );
         return $retailerPricingType;
     }
+
+    public function validateAlternateEmail($emails){
+        $array = explode(',', $emails);
+        $first = true;
+        $ids = '';
+        if(isset($array)){
+            foreach ($array as $key => $value) {
+                if(filter_var(trim($value), FILTER_VALIDATE_EMAIL) == false){
+                    return array('status' => 0);
+                }
+                else{
+                    $ids.= ($first)?'':',';
+                    $ids.= trim($value);
+                }
+                $first = false;
+            }
+        }
+        return array('status' => 1, 'ids' => $ids);
+    }
 }
+
+
