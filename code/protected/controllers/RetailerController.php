@@ -117,6 +117,17 @@ class RetailerController extends Controller {
                 Yii::app()->user->setFlash('error', 'Time Format Not Correct');
                 $this->redirect(array('create'));
             }
+            if(isset($_POST['Retailer']['alternate_email']) && !empty($_POST['Retailer']['alternate_email'])){
+                $alternate_email = $_POST['Retailer']['alternate_email'];
+                $flag = Retailer::validateAlternateEmail($alternate_email);
+                if($flag['status'] == 1){
+                    $model->alternate_email = $flag['ids'];
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Alternate Email Field Must Contain Comma Separated EmailIds');
+                    $this->redirect(array('create'));
+                }
+            }
             $data_pass= $_POST['Retailer']['password'];
             $model->attributes = $_POST['Retailer'];
             $model->modified_date = date('Y-m-d H:i:s');
@@ -320,7 +331,7 @@ Sales: +91-11-3958-9895</span>
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-
+        //var_dump($_POST);die;
         //echo $_REQUEST['r'];die;
         $model = $this->loadModel($id);
 
@@ -338,6 +349,17 @@ Sales: +91-11-3958-9895</span>
                 $this->redirect(array('update', 'id' => $model->id));
             }
             $model->attributes = $_POST['Retailer'];
+            if(isset($_POST['Retailer']['alternate_email']) && !empty($_POST['Retailer']['alternate_email'])){
+                $alternate_email = $_POST['Retailer']['alternate_email'];
+                $flag = Retailer::validateAlternateEmail($alternate_email);
+                if($flag['status'] == 1){
+                    $model->alternate_email = $flag['ids'];
+                }
+                else{
+                    Yii::app()->user->setFlash('error', 'Alternate Email Field Must Contain Comma Separated EmailIds');
+                    $this->redirect(array('update', 'id' => $model->id));
+                }
+            }
             $model->modified_date = date('Y-m-d H:i:s');
             $images = CUploadedFile::getInstancesByName('images');
             $model_media = new MediaRetailer();

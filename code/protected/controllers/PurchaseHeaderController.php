@@ -860,7 +860,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
     public function actionDownloadPurchaseTemplate(){
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"'.$date.'" as date, pl.tobe_procured_qty, pl.order_qty, pl.received_qty, pl.unit_price, pl.price,"" as urd_number from cb_dev_groots.vendor_product_mapping as vpm 
+        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"'.$date.'" as date, pl.order_qty, pl.unit_price,"" as urd_number from cb_dev_groots.vendor_product_mapping as vpm 
         inner join groots_orders.purchase_header as ph on ph.delivery_date = "'.$date.'"
         left join groots_orders.purchase_line as pl on pl.purchase_id = ph.id and pl.base_product_id = vpm.base_product_id and pl.vendor_id = vpm.vendor_id
         inner join cb_dev_groots.base_product bp on bp.base_product_id = vpm.base_product_id 

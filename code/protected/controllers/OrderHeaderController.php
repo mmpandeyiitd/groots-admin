@@ -1408,7 +1408,7 @@ public function actionEdit($id) {
         'replyto' => $from_email,
         );
     $mailsend = new OrderLine();
-    $resp = $mailsend->sgSendMail($mailArray);
+    //$resp = $mailsend->sgSendMail($mailArray);
 }
 
 if ($_POST['status1'] == 'Paid') {
@@ -1503,7 +1503,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 
 
@@ -1599,7 +1599,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 if ($_POST['status1'] == 'Out for Delivery') {
                         //$reportdata = $this->actionReportnew($_POST['selectedIds'][$i], $_POST['status1'], $email);
@@ -1693,7 +1693,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 
 if ($_POST['status1'] == 'Delivered') {
@@ -1791,7 +1791,7 @@ $mailArray = array(
     'replyto' => $from_email,
     );
 $mailsend = new OrderLine();
-$resp = $mailsend->sgSendMail($mailArray);
+//$resp = $mailsend->sgSendMail($mailArray);
 }
 }
 if ($no_of_selectedIds > 0) {
@@ -2075,13 +2075,14 @@ function zipFilesAndDownload($file_names,$archive_file_name)
             $order_id = $each['order_id'];
 
             $connection = Yii::app()->secondaryDb;
-            $sql = "SELECT oh.billing_email, oh.user_id, oh.delivery_date, re.name, wa.email_group FROM order_header as oh left join cb_dev_groots.retailer re on re.id = oh.user_id left join cb_dev_groots.warehouses as wa 
+            $sql = "SELECT oh.billing_email,re.alternate_email, oh.user_id, oh.delivery_date, re.name, wa.email_group FROM order_header as oh left join cb_dev_groots.retailer re on re.id = oh.user_id left join cb_dev_groots.warehouses as wa 
                 on wa.id = re.allocated_warehouse_id WHERE order_id = '" . $order_id. "'";
             $command = $connection->createCommand($sql);
             $command->execute();
             $result = $command->queryAll();
             foreach ($result as $key => $value) {
                 $emai_id = $value['billing_email'];
+                $alternate_email = $value['alternate_email'];
                 $retailerId = $value['user_id'];
                 $retailerName = $value['name'];
                 $delivery_date = $value['delivery_date'];
@@ -2168,6 +2169,9 @@ function zipFilesAndDownload($file_names,$archive_file_name)
 </html>';
 
 $body_text = '';
+if(isset($alternate_email) && !empty($alternate_email)){
+    $emai_id.= ','.$alternate_email;
+}
 $mailArray = array(
     'to' => $emai_id,
     'from' => $from_email,

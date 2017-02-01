@@ -146,7 +146,7 @@ class PurchaseHeader extends CActiveRecord
         $purchase_id='';
         $first = true;
         $firstQuery = false;
-        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id,urd_number) values';
+        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, unit_price, price, created_at, vendor_id,urd_number) values';
         $parentData = array();
         $parentIds = array();
         while(!feof($uploadedFile)){
@@ -157,20 +157,19 @@ class PurchaseHeader extends CActiveRecord
                 $bp_id = trim($row[2]);
                 $line_id = trim($row[1]);
                 $vendor_id = trim($row[6]);
-                $rec_qty = trim($row[10]);
-                $order_qty = trim($row[9]);
-                $unit_price = trim($row[11]);
-                $total_price = trim($row[12]);
+                $order_qty = trim($row[8]);
+                $unit_price = trim($row[9]);
                 $parentId = trim($row[3]);
-                $urd_number = trim($row[13]);
-                $array = array('received_qty' => $rec_qty, 'order_qty' => $order_qty, 'unit_price' => $unit_price, 'total_price' => $total_price, 'urd_number' => $urd_number);
-                $flag = self::validateBulkUploadRow($array);
+                $urd_number = trim($row[10]);
+                $flag = self::validateBulkUploadRow($order_qty, $unit_price, $urd_number);
                 if($flag['status'] == 1){
+                    $total_price = $order_qty*$unit_price;
+                    $array = array('order_qty' => $order_qty, 'unit_price' => $unit_price, 'total_price' => $total_price, 'urd_number' => $urd_number);
                     if(empty($line_id)){
                         $line_id = 'NULL';
                     }
                     $query.= ($firstQuery) ? ', ':'';
-                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$rec_qty.', '.$unit_price.', '.$total_price.', NOW(),'.$vendor_id.', '.$urd_number.')';
+                    $query.= '('.$line_id.', '.$purchase_id.', '.$bp_id.', '.$order_qty.', '.$unit_price.', '.$total_price.', NOW(),'.$vendor_id.', '.$urd_number.')';
                     $firstQuery = true;
                     if(!empty($parentId)){
                         array_push($parentIds, $parentId);
@@ -185,7 +184,7 @@ class PurchaseHeader extends CActiveRecord
             $first = false;
         }
         if($firstQuery){
-            $query .= ' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price), urd_number = values(urd_number)';
+            $query .= ' on duplicate key update order_qty = values(order_qty), unit_price = values(unit_price), price = values(price), urd_number = values(urd_number)';
             try{
                 self::executePurchaseBulkQuery($query);
                 self::updateParentData($parentIds, $parentData,$purchase_id);
@@ -196,32 +195,30 @@ class PurchaseHeader extends CActiveRecord
         }
     }
 
-    public function validateBulkUploadRow($array){
-        $result = array();
-        if(isset($array)){
-            foreach ($array as $key => $value) {
-                if(isset($value) && !empty($value)){
-                    if(!is_numeric($value)){
-                        $result['status'] = 0;
-                        $result['msg'] = $key.' must be numeric';
-                        return $result;
-                    }
-                    else if($value <= 0){
-                        $result['status'] = 0;
-                        $result['msg'] = $key.' must be greater than 0';
-                        return $result;
-                    }
-                }
-                else{
-                    $result['status'] = 2;
-                    $result['msg'] = '';
-                    return $result;
-                }
+    public function validateBulkUploadRow($order_qty, $unit_price,$urd_number){
+        $all_set = (!empty($order_qty) && !empty($unit_price) && !empty($urd_number))? true:false;
+        $one_set = !$all_set && (!empty($order)||!empty($unit_price)||!empty($urd_number)) ;
+        $all_empty = (empty($order_qty) && empty($unit_price) && empty($urd_number))? true:false;
+        if($all_set){
+            if(!is_numeric($order_qty)){
+                $result['status'] = 0;
+                $result['msg'] = 'order qty must be numeric';
+                return $result;
             }
-            $result['status'] = 1;
-            $result['msg'] = '';
-            return $result;
+            else if(!is_numeric($unit_price)){
+                $result['status'] = 0;
+                $result['msg'] = 'unit price must be numeric';
+                return $result;   
+            }
+            else if(!is_numeric($urd_number)){
+                $result['status'] = 0;
+                $result['msg'] = 'urd number must be numeric';
+                return $result;
+            }
         }
+        else if($one_set) return array('status' => 0, 'msg' => 'Not All Enteries Filled');
+        else if($all_empty) return array('status' => 2, 'msg' => '');
+        return array('status' => 1, 'msg' => '');
     }
 
     public function executePurchaseBulkQuery($query){
@@ -239,14 +236,12 @@ class PurchaseHeader extends CActiveRecord
 
     public function buildingParentData($parentData, $array, $parentId){
         if(array_key_exists($parentId, $parentData)){
-            $parentData[$parentId]['received_qty'] += $array['received_qty'];
             $parentData[$parentId]['order_qty'] += $array['order_qty'];
             $parentData[$parentId]['unit_price'] += $array['unit_price'];
             $parentData[$parentId]['total_price'] += $array['total_price'];
         }
         else{
             $parentData[$parentId] = array();
-            $parentData[$parentId]['received_qty'] = $array['received_qty'];
             $parentData[$parentId]['order_qty'] = $array['order_qty'];
             $parentData[$parentId]['unit_price'] = $array['unit_price'];
             $parentData[$parentId]['total_price'] = $array['total_price'];
@@ -255,23 +250,27 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function updateParentData($parentIds, $parentData, $purchase_id){
-        //var_dump($parentIds,$parentData);die;
+        // echo '<pre>';
+        // var_dump($parentIds,$parentData);die;
         $connection = Yii::app()->secondaryDb;
         $first = true;
         $sql = 'select base_product_id, id from purchase_line where base_product_id in ('.implode(',', $parentIds).') and purchase_id = '.$purchase_id;
-        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, received_qty, unit_price, price, created_at, vendor_id,urd_number) values';
+        $query = 'insert into groots_orders.purchase_line (id, purchase_id, base_product_id, order_qty, unit_price, price, created_at, vendor_id,urd_number) values';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         foreach ($result as $key => $value) {
-            $parentData[$value['base_product_id']]['line_id'] = $value['id']; 
+            if(isset($parentData[$value['base_product_id']])){
+                $parentData[$value['base_product_id']]['line_id'] = $value['id'];
+            }
         }
         foreach ($parentData as $key => $value) {  
+            //var_dump($parentData);die;
             $query.= ($first) ? '':', ';
             $id = (!empty($value['line_id'])) ? $value['line_id'] : 'NULL';
-            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['received_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0,0)';
+            $query.= ' ('.$id.','.$purchase_id.','.$key.','.$value['order_qty'].','.$value['unit_price'].','.$value['total_price'].', NOW(),0,0)';
             $first = false;
         }
-        $query.=' on duplicate key update order_qty = values(order_qty), received_qty = values(received_qty), unit_price = values(unit_price), price = values(price)'; 
+        $query.=' on duplicate key update order_qty = values(order_qty), unit_price = values(unit_price), price = values(price)'; 
         $transaction = Yii::app()->secondaryDb->beginTransaction();       
         try{
             //die($query);
