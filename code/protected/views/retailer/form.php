@@ -247,7 +247,19 @@
                 <?php echo $form->error($model, 'delivery_time'); ?>
             </div>
 
+            <div class="row">
+                <?php echo $form->labelEx($model, 'discount_type'); ?>
+                <?php $list = Chtml::listData(Retailer::getDiscountType(), 'value', 'value');
+                    echo CHtml::activeDropDownList($model, 'discount_type', $list,array());
+                 ?>
+                <?php echo $form->error($model, 'discount_type'); ?>
+            </div>
 
+            <div class="row">
+                <?php echo $form->labelEx($model, 'discount'); ?>
+                <?php echo $form->textField($model, 'discount'); ?>
+                <?php echo $form->error($model, 'discount'); ?>
+            </div>
 
 
             <div class=" buttons">

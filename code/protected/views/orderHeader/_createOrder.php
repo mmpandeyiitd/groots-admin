@@ -40,12 +40,14 @@ $issuperadmin = Yii::app()->session['is_super_admin'];
 //echo "<pre>";
 //print_r($orderline_detail[0]['min_order_price']);die;
 
+$discountType = $retailer->discount_type;
+$discountAmount = isset($update) ? $model->discount_amt : 0;
 $updateVariable = false;
 $isAdmin = false;
 if($this->checkAccess('SuperAdmin')){
     $isAdmin = true;
 }
-
+$discount = isset($update) ? $model->discount_amt : $retailer->discount;
 $setShippingCharge = '';
 if(isset($update)){
     $updateVariable = true;
@@ -351,6 +353,7 @@ else{
                         </span></h3>
 
                     <h3><b>Discount:</b><i class="fa fa-inr"></i><span id="discountChargeDisplay">
+                        <input type="text" style="width:80px;"  name="discountAmount" class="inputs" id="discountAmount" onchange ="calculateTotalAmount()" value="<?php echo $discountAmount ?>">
 
                         </span>
 
@@ -361,6 +364,7 @@ else{
                         </span>
 
                     </h3>
+
 
                     <h3><b>Discounted Total:</b><i class="fa fa-inr"></i> <span id="finalAmountDisplay">  </span></h3>
 
@@ -394,6 +398,8 @@ else{
                     <input type="hidden" id="shippingOriginal" name="" placeholder="0" class="form-control" style="width:120px;" value="<?php echo $retailer->shipping_charge; ?>" > 
                     <input type="hidden" id="discountCharge" name="discountCharge" placeholder="0" class="form-control" style="width:120px;" value="" >
                     <input type="hidden" id="sumAmount" name="sumAmount" placeholder="0" class="form-control" style="width:120px;" value="" >
+                    <input type="hidden" id="discountType" value="<?php echo $discountType;?>" >
+                    <input type="hidden" id="discount" value="<?php echo $discount;?>" >
                 </div>
             </div>
 
@@ -570,7 +576,9 @@ else{
         var shipping = Number($("#shippingCharge").val());
         var originalShipping = Number($("#shippingOriginal").val());
 
-        //var discount = $("#discount").val();
+        var discount = $("#discount").val();
+        var discountType = $("#discountType").val();
+        var discountAmount = $("#discountAmount").val();
         var minOrder = Number($("#minOrder").val());
 
         var sumAmount=0.00;
@@ -593,7 +601,17 @@ else{
         else{
             finalAmount = sumAmount + shipping;
         }
-
+        if(discountAmount){
+            finalAmount -= discountAmount;
+        }
+        else{
+            if(discountType == 'Percent'){
+                finalAmount -= (finalAmount*discount)/100;
+            }
+            else if(discountType == 'Absolute'){
+                finalAmount -= discount;
+            }
+        }
         shipping = shipping.toFixed(2);
         sumAmount = sumAmount.toFixed(2);
         finalAmount = finalAmount.toFixed(2);
