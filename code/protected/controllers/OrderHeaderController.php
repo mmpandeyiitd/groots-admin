@@ -160,6 +160,7 @@ class OrderHeaderController extends Controller {
                 $orderHeader->expected_delivery_time = $retailer->delivery_time;
                 $orderHeader->actual_delivery_time = '00:00:00';
                 $orderHeader->updated_by = Yii::app()->user->id;
+                $orderHeader->discount_amt = $_POST['discountAmount'];
                 //var_dump($orderHeader);die;
                 $orderHeader->save();
                 foreach ($_POST['quantity'] as $key => $quantity) {
@@ -319,6 +320,7 @@ class OrderHeaderController extends Controller {
                         $orderHeader->expected_delivery_time = $_POST['OrderHeader']['expected_delivery_time'];
                     }
                     $orderHeader->updated_by = Yii::app()->user->id;
+                    $orderHeader->discount_amt = $_POST['discountAmount'];
                     $orderHeader->save();
                     foreach ($_POST['quantity'] as $key => $quantity) {
 

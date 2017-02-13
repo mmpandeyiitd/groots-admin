@@ -372,8 +372,12 @@ foreach ($model as $value) {
             <td style="text-align:center;"><strong><?php echo $modelOrder->shipping_charges; ?></strong></td>
         </tr>
         <tr>
+            <td colspan="5" style="text-align:right;"><strong>Discount(Rs.) </strong></td>
+            <td style="text-align:center;"><strong><?php echo $modelOrder->discount_amt; ?></strong></td>
+        </tr>
+        <tr>
             <td colspan="5" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo round($grossTotal + $modelOrder->shipping_charges, 2); ?></strong></td>
+            <td style="text-align:center;"><strong><?php echo round($grossTotal + $modelOrder->shipping_charges - $modelOrder->discount_amt, 2); ?></strong></td>
         </tr>
         <?php if ($modelOrder->attributes['user_comment'] != '') { ?>
 

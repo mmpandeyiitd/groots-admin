@@ -66,7 +66,7 @@ class Retailer extends CActiveRecord {
             // array('mobile', 'unique', 'on' => 'insert', 'message' => 'mobile no. already exists!'),
             // array('product_categories,categories_of_interest', 'length', 'max' => 500),
             array('website', 'url', 'defaultScheme' => 'http'),
-            array('modified_date,date_of_onboarding, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type, alternate_email', 'safe'),
+            array('modified_date,date_of_onboarding, collection_center_id, collection_frequency, sales_rep_id,delivery_time,status_name, retailer_grade_type, retailer_pricing_type, alternate_email, discount, discount_type', 'safe'),
             //array('file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -190,6 +190,8 @@ class Retailer extends CActiveRecord {
         $criteria->compare('retailer_grade_type', $this->retailer_grade_type, true);
         $criteria->compare('retailer_pricing_type', $this->retailer_pricing_type, true);
         $criteria->compare('alternate_email', $this->alternate_email, true);
+        $criteria->compare('discount', $this->discount, true);
+        $criteria->compare('discount_type', $this->discount_type, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
@@ -504,6 +506,12 @@ class Retailer extends CActiveRecord {
             }
         }
         return array('status' => 1, 'ids' => $ids);
+    }
+
+    public static function getDiscountType(){
+        $connection = Yii::app()->db;
+        $type = Utility::get_enum_values($connection, self::tableName(), 'discount_type' );
+        return $type;
     }
 }
 

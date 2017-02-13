@@ -996,3 +996,68 @@ alter table cb_dev_groots.retailer_log add column retailer_pricing_type  enum('D
 
 alter table cb_dev_groots.retailer add column alternate_email varchar(1000) default null;
 alter table cb_dev_groots.retailer_log add column alternate_email varchar(1000) default null;
+
+alter table cb_dev_groots.retailer add column discount_type enum ('Absolute', 'Percent') default null;
+alter table cb_dev_groots.retailer add column discount decimal(10,2) default null;
+alter table cb_dev_groots.retailer_log add column discount_type enum ('Absolute', 'Percent') default null;
+alter table cb_dev_groots.retailer_log add column discount decimal(10,2) default null;
+ALTER table cb_dev_groots.retailer ADD COLUMN payment_mode enum ('online','offline'), ADD COLUMN pan_no VARCHAR(10), ADD COLUMN tan_no VARCHAR(10) AFTER pincode;
+ALTER table cb_dev_groots.retailer_log ADD COLUMN payment_mode enum ('online','offline'), ADD COLUMN pan_no VARCHAR(10), ADD COLUMN tan_no VARCHAR(10) AFTER pincode;
+
+drop trigger cb_dev_groots.retailer_log_insert;
+create trigger cb_dev_groots.retailer_log_insert after insert on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type,alternate_email, discount_type, discount, payment_mode)
+  values (NULL,'INSERT',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
+    NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
+    NEW.settlement_days,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
+    NEW.image_url,NEW.website,NEW.contact_person1,NEW.contact_person2,NEW.product_categories,NEW.categories_of_interest,
+    NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
+    NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
+    NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by, NEW.retailer_pricing_type, NEW.retailer_grade_type, NEW.alternate_email, NEW.discount_type, NEW.discount, NEW.payment_mode);
+
+drop trigger cb_dev_groots.retailer_log_update;
+create trigger cb_dev_groots.retailer_log_update after update on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type, alternate_email,discount_type, discount,payment_mode)
+  values (NULL,'UPDATE',NEW.id,NEW.name,NEW.retailer_code,NEW.VAT_number,NEW.email,NEW.password,NEW.mobile,
+    NEW.telephone,NEW.address,NEW.pincode,NEW.geolocation,NEW.owner_phone,NEW.owner_email,NEW.billing_email,
+    NEW.settlement_days,NEW.demand_centre,NEW.date_of_onboarding,NEW.city,NEW.state,NEW.image,
+    NEW.image_url,NEW.website,NEW.contact_person1,NEW.contact_person2,NEW.product_categories,NEW.categories_of_interest,
+    NEW.store_size,NEW.status,NEW.credit_limit,NEW.collecttion_agent,NEW.created_date,NEW.modified_date,
+    NEW.min_order_price,NEW.shipping_charge,NEW.allocated_warehouse_id,NEW.initial_payable_amount,NEW.total_payable_amount,
+    NEW.collection_fulfilled,NEW.collection_frequency,NEW.due_date,NEW.last_due_date,NEW.due_payable_amount,
+    NEW.collection_agent_id,NEW.collection_center_id,NEW.updated_at,NEW.sales_rep_id,NEW.delivery_time,
+    NEW.updated_by, NEW.retailer_pricing_type, NEW.retailer_grade_type, NEW.alternate_email,NEW.discount_type, NEW.discount,NEW.payment_mode);
+
+
+drop trigger cb_dev_groots.retailer_log_delete;
+create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.retailer for each row
+  insert into cb_dev_groots.retailer_log (id,action,retailer_id,name,retailer_code,VAT_number,email,password,mobile,
+    telephone,address,pincode,geolocation,owner_phone,owner_email,billing_email,settlement_days,
+    demand_centre,date_of_onboarding,city,state,image,image_url,website,contact_person1,contact_person2,product_categories,
+    categories_of_interest,store_size,status,credit_limit,collecttion_agent,created_date,modified_date,min_order_price,
+    shipping_charge,allocated_warehouse_id,initial_payable_amount,total_payable_amount,collection_fulfilled,
+    collection_frequency,due_date,last_due_date,due_payable_amount,collection_agent_id,collection_center_id,
+    updated_at,sales_rep_id,delivery_time,updated_by, retailer_pricing_type, retailer_grade_type,alternate_email,discount_type, discount,payment_mode)
+  values (NULL,'DELETE',OLD.id,OLD.name,OLD.retailer_code,OLD.VAT_number,OLD.email,OLD.password,OLD.mobile,
+    OLD.telephone,OLD.address,OLD.pincode,OLD.geolocation,OLD.owner_phone,OLD.owner_email,OLD.billing_email,
+    OLD.settlement_days,OLD.demand_centre,OLD.date_of_onboarding,OLD.city,OLD.state,OLD.image,
+    OLD.image_url,OLD.website,OLD.contact_person1,OLD.contact_person2,OLD.product_categories,OLD.categories_of_interest,
+    OLD.store_size,OLD.status,OLD.credit_limit,OLD.collecttion_agent,OLD.created_date,OLD.modified_date,OLD.min_order_price,
+    OLD.shipping_charge,OLD.allocated_warehouse_id,OLD.initial_payable_amount,OLD.total_payable_amount,
+    OLD.collection_fulfilled,OLD.collection_frequency,OLD.due_date,OLD.last_due_date,OLD.due_payable_amount,
+    OLD.collection_agent_id,OLD.collection_center_id,OLD.updated_at,OLD.sales_rep_id,OLD.delivery_time,
+    OLD.updated_by, OLD.retailer_pricing_type, OLD.retailer_grade_type, OLD.alternate_email, OLD.discount_type, OLD.discount,OLD.payment_mode);
