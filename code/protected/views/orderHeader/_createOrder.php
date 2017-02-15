@@ -610,6 +610,7 @@ else{
                 finalAmount -= (finalAmount*discount)/100;
             }
             else if(discountType == 'Absolute'){
+                $("#discountAmount").val(discount);
                 finalAmount -= discount;
             }
         }
