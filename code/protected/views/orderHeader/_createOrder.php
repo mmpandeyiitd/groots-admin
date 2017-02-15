@@ -601,7 +601,7 @@ else{
         else{
             finalAmount = sumAmount + shipping;
         }
-        if(discountAmount){
+        if(discountAmount!=0){
             finalAmount -= discountAmount;
         }
         else{
