@@ -583,24 +583,10 @@ else{
 
         var sumAmount=0.00;
         var finalAmount=0.00;
-
         $(".amount").each(function(){
 
             sumAmount += Number($(this).val());
         });
-        if(shipping == originalShipping){
-            if(sumAmount < minOrder){
-                finalAmount = sumAmount + shipping;
-
-            }
-            else{
-                finalAmount = sumAmount;
-                shipping = 0;
-            }
-        }
-        else{
-            finalAmount = sumAmount + shipping;
-        }
         if(discountAmount!=0){
             finalAmount -= discountAmount;
         }
@@ -613,6 +599,19 @@ else{
                 $("#discountAmount").val(discount);
                 finalAmount -= discount;
             }
+        }
+        if(shipping == originalShipping){
+            if(sumAmount < minOrder){
+                finalAmount = sumAmount + shipping;
+
+            }
+            else{
+                finalAmount = sumAmount;
+                shipping = 0;
+            }
+        }
+        else{
+            finalAmount = sumAmount + shipping;
         }
         shipping = shipping.toFixed(2);
         sumAmount = sumAmount.toFixed(2);
