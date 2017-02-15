@@ -606,7 +606,7 @@ else{
         }
         else{
             if(discountType == 'Percent'){
-                $("discountAmount").val((finalAmount*discount)/100);
+                $("#discountAmount").val((finalAmount*discount)/100);
                 finalAmount -= (finalAmount*discount)/100;
             }
             else if(discountType == 'Absolute'){
