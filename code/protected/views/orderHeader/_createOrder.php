@@ -588,30 +588,29 @@ else{
             sumAmount += Number($(this).val());
         });
         if(discountAmount!=0){
-            finalAmount -= discountAmount;
+            finalAmount = sumAmount - discountAmount;
         }
         else{
             if(discountType == 'Percent'){
-                $("#discountAmount").val((finalAmount*discount)/100);
-                finalAmount -= (finalAmount*discount)/100;
+                $("#discountAmount").val((sumAmount*discount)/100);
+                finalAmount = sumAmount - (sumAmount*discount)/100;
             }
             else if(discountType == 'Absolute'){
                 $("#discountAmount").val(discount);
-                finalAmount -= discount;
+                finalAmount = sumAmount - discount;
             }
         }
         if(shipping == originalShipping){
             if(sumAmount < minOrder){
-                finalAmount = sumAmount + shipping;
+                finalAmount += shipping;
 
             }
             else{
-                finalAmount = sumAmount;
                 shipping = 0;
             }
         }
         else{
-            finalAmount = sumAmount + shipping;
+            finalAmount = finalAmount + shipping;
         }
         shipping = shipping.toFixed(2);
         sumAmount = sumAmount.toFixed(2);
