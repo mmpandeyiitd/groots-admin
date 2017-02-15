@@ -368,12 +368,12 @@ foreach ($model as $value) {
         </tr>
 
         <tr>
-            <td colspan="5" style="text-align:right;"><strong>Shipping Charge (Rs.) </strong></td>
-            <td style="text-align:center;"><strong><?php echo $modelOrder->shipping_charges; ?></strong></td>
-        </tr>
-        <tr>
             <td colspan="5" style="text-align:right;"><strong>Discount(Rs.) </strong></td>
             <td style="text-align:center;"><strong><?php echo $modelOrder->discount_amt; ?></strong></td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:right;"><strong>Shipping Charge (Rs.) </strong></td>
+            <td style="text-align:center;"><strong><?php echo $modelOrder->shipping_charges; ?></strong></td>
         </tr>
         <tr>
             <td colspan="5" style="text-align:right;"><strong>Net Total (Rs.) </strong></td>

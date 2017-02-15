@@ -72,7 +72,7 @@ return array(
             'migrationPath'=>'application.modules.user.migrations',
             'migrationTable'=>'tbl_migration',
             'connectionID'=>'db',
-            'templateFile'=>'application.migrations.template',
+            //'templateFile'=>'application.migrations.template',
         ),
     ),
 );
