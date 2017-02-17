@@ -443,23 +443,23 @@ class InventoryHeader extends CActiveRecord
 }
 
     public function productWarehouseMappingUpload($uploadedFile, $logFile, $indexMap){
-        $warehouses = Warehouse::model()->findAll();
+        /*$warehouses = Warehouse::model()->findAllByAttributes(array(), array('condition' => " id != ".HD_OFFICE_WH_ID));
         $warehouseMap = array();
         foreach ($warehouses as $key => $value) {
             $warehouseMap[$value['id']] = array();
             $warehouseMap[$value['id']] = $value;
-        }
+        }*/
         $first = true;
         while(!feof($uploadedFile)){
             $row = fgetcsv($uploadedFile);
             if(!$first){
                 foreach ($indexMap as $key => $value) {
-                    if($row[$value['first']] == 1){
+                    //if($row[$value['first']] == 1){
                         self::createWarehouseProductMapping($key, $row, $logFile, $indexMap);
-                    }
+                    /*}
                     else{
                         self::changeMappingStatusIfPresent($key, $row,$logFile, $indexMap);
-                    }
+                    }*/
                 }
             }
             $first = false;
@@ -469,31 +469,40 @@ class InventoryHeader extends CActiveRecord
 
     public function createWarehouseProductMapping($w_id, $row, $logFile, $indexMap){
         $warehouse_id = $w_id;
+        $isMapping = trim($row[$indexMap[$w_id]['first']]);
         $procurement_center_id = trim($row[$indexMap[$w_id]['second']]);
         $base_product_id = trim($row[0]);
-        $flag = self::validateInputsFromCsv($warehouse_id, $procurement_center_id, $base_product_id);
+        $flag = self::validateInputsFromCsv($warehouse_id, $isMapping, $procurement_center_id, $base_product_id);
         if($flag['status'] == 1){
-            $model = InventoryHeader::model()->findByAttributes(array('base_product_id' => $base_product_id, 'warehouse_id' => $warehouse_id));
-            if(isset($model) && !empty($model)){
-                $model->procurement_center_id = $procurement_center_id;
-                $action = 'Update';
-            }
-            else{
-              $model = new InventoryHeader;
-              $model->warehouse_id = $warehouse_id;
-              $model->base_product_id = $base_product_id;
-              $model->schedule_inv = 0;
-              $model->extra_inv = 0;
-              $model->created_at = date('Y-m-d H:i:s');
-              $model->procurement_center_id = $procurement_center_id; 
-              $model->status = 1;
-              $model->updated_by = Yii::app()->user->id;
-              $action = 'Insert';
-            }
+
             try{
-                $model->save();
-                $temp = array($model->id,$base_product_id,$action,'Success', '0');
-                fputcsv($logFile, $temp); 
+                $model = InventoryHeader::model()->findByAttributes(array('base_product_id' => $base_product_id, 'warehouse_id' => $warehouse_id));
+
+                if(isset($model) && !empty($model)){
+                    $model->procurement_center_id = $procurement_center_id;
+                    $model->status = $isMapping;
+                    $action = 'Update';
+                    $model->save();
+                    $temp = array($model->id,$base_product_id,$action,'Success', '0');
+                    fputcsv($logFile, $temp);
+                }
+                else if ($isMapping == 1){
+                  $model = new InventoryHeader;
+                  $model->warehouse_id = $warehouse_id;
+                  $model->base_product_id = $base_product_id;
+                  $model->schedule_inv = 0;
+                  $model->extra_inv = 0;
+                  $model->created_at = date('Y-m-d H:i:s');
+                  $model->procurement_center_id = $procurement_center_id;
+                  $model->status = 1;
+                  $model->updated_by = Yii::app()->user->id;
+                  $action = 'Insert';
+                    $model->save();
+                    $temp = array($model->id,$base_product_id,$action,'Success', '0');
+                    fputcsv($logFile, $temp);
+                }
+
+
             }catch(Exception $e){
                 $temp = array('0',$base_product_id,$action,'Failure',$e->getMessage());
                 fputcsv($logFile, $temp);
@@ -507,7 +516,7 @@ class InventoryHeader extends CActiveRecord
 
 
 
-    public function validateInputsFromCsv($w_id, $proc_id, $bp_id){
+    public function validateInputsFromCsv($w_id, $is_mapp, $proc_id, $bp_id){
         $res = array();
         $res['status'] = 1;
         $res['msg'] = '';
@@ -515,23 +524,31 @@ class InventoryHeader extends CActiveRecord
             $res['status'] = 0;
             $res['msg'] = 'Warehouse Id Empty';
         }
-        else if(!is_numeric($w_id)){
+        if(!is_numeric($w_id)){
             $res['status'] = 0;
             $res['msg'] = 'Warehouse Id Not Numeric';
         }
-        else if($w_id == ''){
+        if($is_mapp == ''){
+            $res['status'] = 0;
+            $res['msg'] = 'mapping not provided';
+        }
+        if(!is_numeric($is_mapp)){
+            $res['status'] = 0;
+            $res['msg'] = 'mapping Not Numeric';
+        }
+        if($proc_id == ''){
             $res['status'] = 0;
             $res['msg'] = 'Procurement Center Id Empty';
         }
-        else if(!is_numeric($w_id)){
+        if(!is_numeric($proc_id)){
             $res['status'] = 0;
             $res['msg'] = 'Procurement Center Id Not Numeric';
         }
-        else if($w_id == ''){
+        if($bp_id == ''){
             $res['status'] = 0;
             $res['msg'] = 'Product Id Id Empty';
         }
-        else if(!is_numeric($w_id)){
+        if(!is_numeric($bp_id)){
             $res['status'] = 0;
             $res['msg'] = 'Product Id Not Numeric';
         }

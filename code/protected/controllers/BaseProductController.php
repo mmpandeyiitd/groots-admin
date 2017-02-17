@@ -2607,15 +2607,15 @@ class BaseProductController extends Controller {
 
     public function actionProductWarehouseMappingTemplate(){
         $file_name = 'Bulk_product_warehouse_mapping.csv';
-        $warehouses = Warehouse::model()->findAll();
-        $sql = 'select bp.base_product_id, bp.title, ih.warehouse_id, ih.procurement_center_id from base_product as bp left join groots_orders.inventory_header as ih on bp.base_product_id = ih.base_product_id 
-        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id where ih.status = 1 and (bp.parent_id is null or parent_id != 0) order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        $warehouses = Warehouse::model()->findAllByAttributes(array(), array('condition' => " id != ".HD_OFFICE_WH_ID));
+        $sql = 'select bp.base_product_id, bp.title, bp.grade, ih.warehouse_id, ih.procurement_center_id, ih.status from base_product as bp left join groots_orders.inventory_header as ih on bp.base_product_id = ih.base_product_id 
+        left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id  order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
         
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $products = $command->queryAll();
         $file_data = 'Product Id, SKU Name';
-        $i = 2;
+        $i = 3;
         $indexMap = array();
         foreach ($warehouses as $key => $value) {
             $name = explode(',', $value['name']);
@@ -2631,7 +2631,51 @@ class BaseProductController extends Controller {
 
         $newProducts= array();
         $arraySize = (2*count($warehouses)) + 2;
+        $prodMap = array();
         foreach ($products as $key => $value) {
+            if(!isset($prodMap[$value['base_product_id']])){
+                $prodMap[$value['base_product_id']] = array();
+            }
+
+            if(isset($value['warehouse_id'])){
+                $prodMap[$value['base_product_id']][$value['warehouse_id']] = $value;
+            }
+
+            $prodMap[$value['base_product_id']][0] = $value;
+
+
+        }
+
+
+        foreach ($prodMap as $bp_id => $value){
+            $newProducts[$bp_id] = array_fill(0, $arraySize, 0);
+            $newProducts[$bp_id][0] = $bp_id;
+            foreach ($warehouses as $k => $w) {
+                $indexes = $indexMap[$w['id']];
+                if(array_key_exists($w['id'], $value)){
+                    $newProducts[$bp_id][1] = $value[$w['id']]['title'];
+                    $newProducts[$bp_id][2] = $value[$w['id']]['grade'];
+                    if($value[$w['id']]['status'] == 0){
+                        $newProducts[$bp_id][$indexes['first']] = 0;
+                        $newProducts[$bp_id][$indexes['second']] = $value[$w['id']]['procurement_center_id'];
+                    }
+                    else{
+                        $newProducts[$bp_id][$indexes['first']] = 1;
+                        $newProducts[$bp_id][$indexes['second']] = $value[$w['id']]['procurement_center_id'];
+                    }
+                }
+                else{
+                    $newProducts[$bp_id][1] = $value[0]['title'];
+                    $newProducts[$bp_id][2] = $value[0]['grade'];
+                    $newProducts[$bp_id][$indexes['first']] = 0;
+                    $newProducts[$bp_id][$indexes['second']] = 0;
+                }
+            }
+        }
+
+
+
+        /*foreach ($products as $key => $value) {
             $indexes = $indexMap[$value['warehouse_id']];
             if(!array_key_exists($value['base_product_id'], $newProducts)){
                 $newProducts[$value['base_product_id']] = array_fill(0, $arraySize, 0);
@@ -2640,7 +2684,7 @@ class BaseProductController extends Controller {
             }
             $newProducts[$value['base_product_id']][$indexes['first']] = 1;
             $newProducts[$value['base_product_id']][$indexes['second']] = $value['procurement_center_id'];
-        }
+        }*/
         
         foreach ($newProducts as $key => $value) {
             $temp = implode(',', $value);
@@ -2655,9 +2699,9 @@ class BaseProductController extends Controller {
     }
 
     public function actionBulkProductWarehouseMapping(){
-        $warehouses = Warehouse::model()->findAll();
+        $warehouses = Warehouse::model()->findAllByAttributes(array(), array('condition' => " id != ".HD_OFFICE_WH_ID));
         $indexMap = array();
-        $i=2;
+        $i=3;
         foreach ($warehouses as $key => $value) {
             $indexMap[$value['id']] = array();
             $indexMap[$value['id']]['first'] = $i;

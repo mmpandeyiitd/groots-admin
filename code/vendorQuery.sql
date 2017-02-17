@@ -1,8 +1,5 @@
-alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
-alter table groots_orders.purchase_header drop column vendor_id ;
 
-
-----------------------------------------------------------------vendor table edit
+/*
 alter table cb_dev_groots.vendors drop column geolocation, drop product_categories, drop categories_of_interest, drop store_size, drop min_order_price, drop shipping_charge;
 
 alter table cb_dev_groots.vendors
@@ -54,10 +51,11 @@ alter table cb_dev_groots.vendors modify column updated_at timestamp default CUR
 
 
 
-alter table purchase_line add column vendor_id int (11) not null;
-update purchase_line as pl left join purchase_header as ph on ph.id = pl.purchase_id set pl.vendor_id = ph.vendor_id; 
+alter table groots_orders.purchase_line add column vendor_id int (11) not null;
+update groots_orders.purchase_line as pl left join groots_orders.purchase_header as ph on ph.id = pl.purchase_id set pl.vendor_id = ph.vendor_id;
+*/
 
-
+/*
 create table cb_dev_groots.vendor_log(
   id int(11) not null AUTO_INCREMENT,
   vendor_id int(11) not null,
@@ -70,13 +68,13 @@ create table cb_dev_groots.vendor_log(
   constraint fk_vl_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 default CHARSET=utf8;
 
-insert into vendor_log values (null, 1, 3743.90, "2016-12-01", CURDATE(), null);
+insert into cb_dev_groots.vendor_log values (null, 1, 3743.90, "2016-12-01", CURDATE(), null);
 
-alter table vendors add column initial_pending_date date not null;
-update vendors set initial_pending_date = "2016-12-01";
+alter table cb_dev_groots.vendors add column initial_pending_date date not null;
+update cb_dev_groots.vendors set initial_pending_date = "2016-12-01";
 
 
-create table vendor_product_mapping(
+create table cb_dev_groots.vendor_product_mapping(
 id int(11) not null AUTO_INCREMENT,
 vendor_id int(11) not null,
 base_product_id int(11) unsigned not null,
@@ -93,8 +91,12 @@ constraint fk_vpm_2 foreign key (base_product_id) REFERENCES cb_dev_groots.base_
 )ENGINE=InnoDB AUTO_INCREMENT=1 default CHARSET=utf8;
 
 
-insert into groots_employee values(null, 'Kamlesh', null, null, null, null, null, CURDATE(), 1,1,1,CURDATE(),null,   1);
-insert into employee_department values(null, 5, 2, CURDATE(), null, 1);
+insert into cb_dev_groots.groots_employee values(null, 'Kamlesh', null, null, null, null, null, CURDATE(), 1,1,CURDATE(),null,   1);
+insert into cb_dev_groots.employee_department values(null, 5, 2, CURDATE(), null, 1);
+
+INSERT INTO cb_dev_groots.`AuthItem` VALUES ('VendorEditor',1,'','',''),('VendorProfileEditor',1,'','',''),('VendorProfileViewer',0,'','',''),('VendorProductEditor',1,'','',''),('VendorProductViewer',0,'','',''),('VendorLedgerEditor',1,'','',''),('VendorLedgerViewer',0,'','',''),('VendorCreditEditor',1,'','',''),('VendorCreditViewer',0,'','','');
+
+INSERT INTO cb_dev_groots.`AuthItemChild` VALUES ('VendorCreditEditor','VendorCreditViewer'),('VendorCreditEditor','VendorLedgerEditor'),('VendorEditor','VendorCreditEditor'),('VendorEditor','VendorLedgerEditor'),('VendorEditor','VendorProductEditor'),('VendorEditor','VendorProfileEditor'),('VendorLedgerEditor','VendorLedgerViewer'),('VendorProductEditor','VendorProductViewer'),('VendorProfileEditor','VendorProfileViewer'),('WarehouseEditor','OrderEditor'),('WarehouseEditor','PurchaseEditor'),('WarehouseEditor','TransferEditor');
 
 insert into cb_dev_groots.users values (null, "VendorEditor", md5("ve@123"), "ve@abc.com","", 0, 1, now(), now()), 
   (null, "VendorCreditEditor", md5("vce@123"), "vce@abc.com","", 0, 1, now(), now()), 
@@ -106,7 +108,11 @@ insert into cb_dev_groots.users values (null, "VendorEditor", md5("ve@123"), "ve
    (null, "VendorLedgerViewer", md5("vlv@123"), "vlv@abc.com","", 0, 1, now(), now()), 
    (null, "VendorProfileViewer", md5("vprv@123"), "vprv@abc.com","", 0, 1, now(), now());
 
-insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
+
+
+
+*/
+  insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
  ('VendorEditor', 24, "return $params['warehouse_id']==1;"),
  ('VendorCreditEditor', 25, "return $params['warehouse_id']==1;"), 
  ('VendorProductEditor', 26, "return $params['warehouse_id']==1;"), 
@@ -119,7 +125,7 @@ insert into cb_dev_groots.AuthAssignment(itemname, userid, bizrule) values
 
 
 
-update groots_orders.purchase_line as l join base_product as b on b.base_product_id = l.base_product_id set l.pack_unit = b.pack_unit, l.pack_size = b.pack_size;
+update groots_orders.purchase_line as l join cb_dev_groots.base_product as b on b.base_product_id = l.base_product_id set l.pack_unit = b.pack_unit, l.pack_size = b.pack_size;
 
 alter table groots_orders.purchase_header drop foreign key fk_purchase_hd_2;
 
