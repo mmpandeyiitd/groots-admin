@@ -753,7 +753,7 @@ public static function createProcurementOrder($purchaseOrderMap, $date, $w_id){
         $sql = 'select pl.*,bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.name end as vendorName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
         left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
-         where pl.purchase_id = '.$id.' group by pl.base_product_id order by pcm.category_id asc, bp.base_title asc, bp.priority asc' ;
+         where pl.purchase_id = '.$id.' order by pcm.category_id asc, bp.base_title asc, bp.priority asc' ;
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
