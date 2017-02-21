@@ -282,7 +282,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                     /*if(isset($purchaseLineMap[$data->base_product_id])){
                         $data->order_qty = $purchaseLineMap[$data->base_product_id]['order_qty'];
                     }*/
-                    return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured, 'id'=>'order_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
+                    if($data->parent_id == null){
+                        return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured, 'id'=>'order_'.$data->base_product_id, 'onchange'=>'calculateFruitRow('.$data->base_product_id.')'));    
+                    }
+                    else{
+                        return CHtml::textField('order_qty[]', $data->order_qty, array('class'=>'input inputs', 'readonly'=> $readOnlyProcured, 'id'=>'order_'.$data->base_product_id, 'onchange'=>'updateItemTotalRow('.$data->parent_id.')'));
+                    }
                 },
             ),
             array(
@@ -331,7 +336,12 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
                 'header' => 'Unit Price',
                 'type' => 'raw',
                 'value' => function($data) use ($update){
-                    return CHtml::textField('price[]',$data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_'.$data->base_product_id));
+                    if($data->parent_id == null){
+                        return CHtml::textField('price[]',$data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_'.$data->base_product_id, 'onchange' => 'calculateFruitRow('.$data->base_product_id.')'));    
+                    }
+                    else{
+                        return CHtml::textField('price[]',$data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_'.$data->base_product_id));    
+                    }
                 }
                 ),
             array(
@@ -616,6 +626,14 @@ elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id'=>$w_id)))
         var urd = $('#urd_'+bp_id).val();
         console.log(urd);
         $('#urd_'+p_id).val(urd);
+    }
+
+    function calculateFruitRow(bp_id){
+        var proc_qty = $('#order_'+bp_id).val();
+        var unit_price = $('#price_'+bp_id).val();
+        if(unit_price){
+            $('#totalPrice_'+bp_id).val(proc_qty*unit_price);
+        }
     }
 
 </script>
