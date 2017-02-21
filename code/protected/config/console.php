@@ -69,7 +69,7 @@ return array(
     'commandMap'=>array(
         'migrate'=>array(
             'class'=>'system.cli.commands.MigrateCommand',
-            'migrationPath'=>'application.modules.user.migrations',
+            'migrationPath'=>'application.migrations',
             'migrationTable'=>'tbl_migration',
             'connectionID'=>'db',
             //'templateFile'=>'application.migrations.template',
