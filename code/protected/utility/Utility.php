@@ -215,7 +215,7 @@ class Utility
 
     public function calTotPayAmoByRetailer($retailerId){
         $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('select'=>'total_payable_amount','condition'=>'status = "Delivered" and delivery_date >= "2016-09-01"' ,'order'=> 'delivery_date ASC'));
-        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount', 'condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
+        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount,payment_type,cheque_status', 'condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
         $outstanding = Retailer::getInitialPayableAmount($retailerId);
         foreach ($retailerOrders as $key => $value) {
             $outstanding += $value['total_payable_amount'];
@@ -231,7 +231,7 @@ class Utility
         $outstanding = Retailer::getInitialPayableAmount($retailerId);
         $last_due_date = Retailer::getLastDueDate($retailerId);
         $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('select'=>'total_payable_amount','condition'=>'status = "Delivered" and delivery_date >= "2016-09-01" and delivery_date <= "'.$last_due_date.'"' ,'order'=> 'delivery_date ASC'));
-        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount', 'condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
+        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount,paymet_type,cheque_status', 'condition'=>'status != 0 and date >= "2016-09-01"', 'order'=> 'date ASC'));
         foreach ($retailerOrders as $key => $value) {
             $outstanding += $value['total_payable_amount'];
         }
@@ -306,5 +306,21 @@ class Utility
         }
         return $clean;
     }
+
+
+    public function calLastPayAmoByRetailerAndDate($retailerId, $date){
+        $outstanding = Retailer::getInitialPayableAmount($retailerId);
+        $retailerOrders = OrderHeader::model()->findAllByAttributes(array('user_id'=>$retailerId ),array('select'=>'total_payable_amount','condition'=>'status = "Delivered" and delivery_date >= "2016-09-01" and delivery_date <= "'.$date.'"' ,'order'=> 'delivery_date ASC'));
+        $retailerPayments = RetailerPayment::model()->findAllByAttributes(array('retailer_id'=>$retailerId), array('select'=>'paid_amount,payment_type,cheque_status', 'condition'=>'status != 0 and date >= "2016-09-01" and date <= "'.$date.'"', 'order'=> 'date ASC'));
+        foreach ($retailerOrders as $key => $value) {
+            $outstanding += $value['total_payable_amount'];
+        }
+        foreach ($retailerPayments as $key => $value) {
+            if(!($value['payment_type'] == "Cheque" && $value['cheque_status'] != "Cleared"))
+                $outstanding -= $value['paid_amount'];
+        }
+        return $outstanding;
+    }
+
 
 }

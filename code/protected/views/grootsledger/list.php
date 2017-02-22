@@ -2,7 +2,7 @@
 /* @var $this GrootsLedgerController */
 /* @var $model GrootsLedger */
 
-$this->breadcrumbs=array(
+$this->breadcrumbs = array(
     //'Groots Ledgers'=>array('index'),
     'Manage',
 );
@@ -15,31 +15,41 @@ $this->breadcrumbs=array(
 
 ?>
 <div>
-<h1>Manage Groots Ledgers</h1>
+    <h1>Manage Groots Ledgers</h1>
 
     <div>
         <?php
         echo "<br>";
         //echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));
-        $url = "index.php?r=Grootsledger/dailyCollection&w_id=".$w_id;
-        echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="'.$url.'"'));
+        $url = "index.php?r=Grootsledger/dailyCollection&w_id=" . $w_id;
+        echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="' . $url . '"'));
         echo "<br>";
-          ?>
-        </div>
+        ?>
     </div>
+</div>
+<div>
+    <?php
+    echo "<br>";
+    //echo CHtml::button("Get Today's Collection", array('onclick' => 'document.location.href="index.php?r=Grootsledger/dailyCollection"'));
+    $url = "index.php?r=Grootsledger/pastDateCollection&w_id=" . $w_id;
+    echo CHtml::button("Get Past Date Collection", array('onclick' => 'document.location.href="' . $url . '"'));
+    echo "<br>";
+    ?>
+</div>
+<br/>
 <?php
 
-    $this->widget('RetailerDropdown', array(
-        'model'=>$model,
-        'retailerId'=>$retailer->id,
-        'showInactive' => true,
-    ));
+$this->widget('RetailerDropdown', array(
+    'model' => $model,
+    'retailerId' => $retailer->id,
+    'showInactive' => true,
+));
 
 //var_dump($data);die;
-if(isset($retailer->id)) {
+if (isset($retailer->id)) {
     echo CHtml::link('<u>Create Payment</u>', array('Grootsledger/CreatePayment', 'retailerId' => $retailer->id, 'w_id' => $w_id));
 
-    if(!empty($data)) {
+    if (!empty($data)) {
         $this->widget('zii.widgets.grid.CGridView', array(
             'id' => '',
             'dataProvider' => $data,
@@ -51,23 +61,21 @@ if(isset($retailer->id)) {
                 'retailer_status',
                 array(
                     'header' => 'payment_type',
-                    'value' => function($data){
-                        if(isset($data['payment_type'])){
-                        if($data['payment_type'] == trim('Cheque')  || $data['payment_type'] == trim('Debit Note') && $data['cheque_no'] != null){
-                            $x = $data['payment_type'].' : '.$data['cheque_no'];
-                            if($data['payment_type'] == trim('Cheque')){
-                                $x.=':'.$data['cheque_status'];
-                            }
-                            return $x;
-                        }
-                        else 
-                            return $data['payment_type'];
+                    'value' => function ($data) {
+                        if (isset($data['payment_type'])) {
+                            if ($data['payment_type'] == trim('Cheque') || $data['payment_type'] == trim('Debit Note') && $data['cheque_no'] != null) {
+                                $x = $data['payment_type'] . ' : ' . $data['cheque_no'];
+                                if ($data['payment_type'] == trim('Cheque')) {
+                                    $x .= ':' . $data['cheque_status'];
+                                }
+                                return $x;
+                            } else
+                                return $data['payment_type'];
+                        } else
+                            return '';
                     }
-                    else 
-                       return '';
-               }
 
-                    ),
+                ),
                 //'payment_type',
                 'invoiceAmount',
                 'invoiceNumber',
@@ -77,9 +85,9 @@ if(isset($retailer->id)) {
                     'header' => 'Action',
                     'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                     'type' => 'raw',
-                    'value' => function($data) use ($w_id){
-                        $url = Yii::app()->controller->createUrl($data["update_url"],array("id"=>$data["id"],"w_id"=>$w_id));
-                        return CHtml::button("Update",array("onclick"=>"document.location.href='".$url."'"));
+                    'value' => function ($data) use ($w_id) {
+                        $url = Yii::app()->controller->createUrl($data["update_url"], array("id" => $data["id"], "w_id" => $w_id));
+                        return CHtml::button("Update", array("onclick" => "document.location.href='" . $url . "'"));
                     },
                     /*'value' => 'CHtml::button("Update",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl($data["update_url"],array("id"=>$data["id"],"w_id"=>$w_id))."\'"))',*/
                 )
