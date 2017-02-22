@@ -54,7 +54,7 @@ class InventoryHeader extends CActiveRecord
         // will receive user inputs.
         return array(
             array('id,warehouse_id,base_product_id,schedule_inv,schedule_inv_type,extra_inv,extra_inv_type,created_at,item_title,date,parent_id, status', 'safe', 'on' => 'search,update'),
-            );
+        );
     }
 
     /**
@@ -67,7 +67,7 @@ class InventoryHeader extends CActiveRecord
             'Warehouse' => array(self::BELONGS_TO, 'Warehouse', 'warehouse_id'),
             'BaseProduct' => array(self::BELONGS_TO,  'BaseProduct', 'base_product_id'),
             //'Inventory' => array(self::HAS_ONE,  'Inventory', 'inv_id'),
-            );
+        );
     }
 
 
@@ -77,7 +77,7 @@ class InventoryHeader extends CActiveRecord
     public function attributeLabels() {
         return array(
 
-            );
+        );
     }
 
     /*
@@ -114,131 +114,131 @@ class InventoryHeader extends CActiveRecord
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
             );*/
-            $criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
-            $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
-            $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
+        $criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
+        $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
-            $criteria->compare( 'bp.title', $this->item_title, true );
-            $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
-            $criteria->condition = 't.warehouse_id = '.$this->warehouse_id.' and (bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted")';
+        $criteria->compare( 'bp.title', $this->item_title, true );
+        $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
+        $criteria->condition = 't.warehouse_id = '.$this->warehouse_id.' and (bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted")';
         //$criteria->compare('i.date', $this->date, true);
-            $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
-            $pageParams = $_GET;
-            $pageParams['date'] = $this->date;
-            $pageParams['w_id'] = $this->warehouse_id;
-            return new CActiveDataProvider($this, array(
-                'criteria' => $criteria,
-                'sort'=>array(
-                    'attributes'=>array(
-                        'item_title'=>array(
-                            'asc'=>'bp.title',
-                            'desc'=>'bp.title DESC',
-                            ),
-                        '*',
-                        ),
+        $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        $pageParams = $_GET;
+        $pageParams['date'] = $this->date;
+        $pageParams['w_id'] = $this->warehouse_id;
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'sort'=>array(
+                'attributes'=>array(
+                    'item_title'=>array(
+                        'asc'=>'bp.title',
+                        'desc'=>'bp.title DESC',
                     ),
-                'pagination' => array(
-                    'pageSize' => 80,
+                    '*',
+                ),
+            ),
+            'pagination' => array(
+                'pageSize' => 80,
                 //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
-                    'params' => $pageParams,
-                    ),
-                ));
-        }
+                'params' => $pageParams,
+            ),
+        ));
+    }
 
     //transfer search
-        public function transferSearch() {
+    public function transferSearch() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-            if(empty($this->date)){
-                $this->date = date('Y-m-d');
-            }
-            $criteria = new CDbCriteria;
-            $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, tl.order_qty, tl.delivered_qty, tl.received_qty';
+        if(empty($this->date)){
+            $this->date = date('Y-m-d');
+        }
+        $criteria = new CDbCriteria;
+        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, tl.order_qty, tl.delivered_qty, tl.received_qty';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
             );*/
         //$criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
-            $joinType = "";
-            if($this->update_type=="add"){
-                $joinType = " left ";
-            }
-            $criteria->join = $joinType." join groots_orders.transfer_line tl on tl.base_product_id=t.base_product_id and tl.transfer_id=".$this->transfer_id;
-            $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
-            $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
+        $joinType = "";
+        if($this->update_type=="add"){
+            $joinType = " left ";
+        }
+        $criteria->join = $joinType." join groots_orders.transfer_line tl on tl.base_product_id=t.base_product_id and tl.transfer_id=".$this->transfer_id;
+        $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
         //$criteria->together = true;
-            $criteria->compare( 'bp.title', $this->item_title, true );
-            $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
+        $criteria->compare( 'bp.title', $this->item_title, true );
+        $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
 
         //$criteria->compare('i.date', $this->date, true);
-            $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
-            $pageParams = $_GET;
-            $pageParams['date'] = $this->date;
-            $pageParams['w_id'] = $this->warehouse_id;
-            return new CActiveDataProvider($this, array(
-                'criteria' => $criteria,
-                'sort'=>array(
-                    'attributes'=>array(
-                        'item_title'=>array(
-                            'asc'=>'bp.title',
-                            'desc'=>'bp.title DESC',
-                            ),
-                        '*',
-                        ),
+        $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        $pageParams = $_GET;
+        $pageParams['date'] = $this->date;
+        $pageParams['w_id'] = $this->warehouse_id;
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'sort'=>array(
+                'attributes'=>array(
+                    'item_title'=>array(
+                        'asc'=>'bp.title',
+                        'desc'=>'bp.title DESC',
                     ),
-                'pagination' => array(
-                    'pageSize' => 80,
+                    '*',
+                ),
+            ),
+            'pagination' => array(
+                'pageSize' => 80,
                 //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
-                    'params' => $pageParams,
-                    ),
-                ));
-        }
+                'params' => $pageParams,
+            ),
+        ));
+    }
 
     //purchase search
-        public function purchaseSearch() {
+    public function purchaseSearch() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-            if(empty($this->date)){
-                $this->date = date('Y-m-d');
-            }
-            $criteria = new CDbCriteria;
-            $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, pl.order_qty, pl.tobe_procured_qty, pl.received_qty, pl.vendor_id,pl.price, pl.unit_price,pl.urd_number';
+        if(empty($this->date)){
+            $this->date = date('Y-m-d');
+        }
+        $criteria = new CDbCriteria;
+        $criteria->select = 't.*, bp.title as item_title, bp.parent_id as parent_id, bp.grade, pl.order_qty, pl.tobe_procured_qty, pl.received_qty, pl.vendor_id,pl.price, pl.unit_price,pl.urd_number';
         /*$criteria->with = array(
             'BaseProduct' => array('alias'=> 't1', 'together' => true, ),
             );*/
         //$criteria->join = "left join groots_orders.inventory inv on (inv.base_product_id = t.base_product_id and inv.warehouse_id=t.warehouse_id  and inv.date ='".$this->date."') ";
-            $joinType = "";
-            if($this->update_type=="add"){
-                $joinType = " left ";
-            }
-            $criteria->join = $joinType." join groots_orders.purchase_line pl on pl.base_product_id=t.base_product_id and pl.purchase_id=".$this->purchase_id;
-            $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
-            $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
-        //$criteria->together = true;
-            $criteria->condition = 'bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted"';
-            $criteria->compare( 'bp.title', $this->item_title, true );
-            $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
-            
-        //$criteria->compare('i.date', $this->date, true);
-            $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
-            $pageParams = $_GET;
-            $pageParams['date'] = $this->date;
-            $pageParams['w_id'] = $this->warehouse_id;
-            return new CActiveDataProvider($this, array(
-                'criteria' => $criteria,
-                'sort'=>array(
-                    'attributes'=>array(
-                        'item_title'=>array(
-                            'asc'=>'bp.title',
-                            'desc'=>'bp.title DESC',
-                            ),
-                        '*',
-                        ),
-                    ),
-                'pagination' => array(
-                    'pageSize' => 80,
-                //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
-                    'params' => $pageParams,
-                    ),
-                ));
+        $joinType = "";
+        if($this->update_type=="add"){
+            $joinType = " left ";
         }
+        $criteria->join = $joinType." join groots_orders.purchase_line pl on pl.base_product_id=t.base_product_id and pl.purchase_id=".$this->purchase_id;
+        $criteria->join .= " join cb_dev_groots.base_product bp on bp.base_product_id = t.base_product_id  ";
+        $criteria->join .= " join cb_dev_groots.product_category_mapping pcm on bp.base_product_id = pcm.base_product_id  ";
+        //$criteria->together = true;
+        $criteria->condition = 'bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted"';
+        $criteria->compare( 'bp.title', $this->item_title, true );
+        $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
+
+        //$criteria->compare('i.date', $this->date, true);
+        $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
+        $pageParams = $_GET;
+        $pageParams['date'] = $this->date;
+        $pageParams['w_id'] = $this->warehouse_id;
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'sort'=>array(
+                'attributes'=>array(
+                    'item_title'=>array(
+                        'asc'=>'bp.title',
+                        'desc'=>'bp.title DESC',
+                    ),
+                    '*',
+                ),
+            ),
+            'pagination' => array(
+                'pageSize' => 80,
+                //'params' => array('date'=>$this->date, 'w_id'=>$this->warehouse_id),
+                'params' => $pageParams,
+            ),
+        ));
+    }
 
 
 
@@ -384,6 +384,9 @@ class InventoryHeader extends CActiveRecord
         elseif(isset($this->parent_id) && $this->parent_id == 0){
             $class .= "parent parent-id_".$this->parent_id." item_".$this->base_product_id;
         }
+        elseif($this->parent_id == null){
+            $class .= "fruit_".$this->base_product_id;
+        }
         return $class;
     }
 
@@ -404,7 +407,7 @@ class InventoryHeader extends CActiveRecord
         $criteria->limit = '1';
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
-            ));
+        ));
     }
 
     public function getRowCssProductId(){
@@ -423,24 +426,24 @@ class InventoryHeader extends CActiveRecord
     public function updateBaseProductInInventoryHeader($warehouse_id, $procurement_center_id, $base_product_id){
 
         foreach ($warehouse_id as $key => $value) {
-           $model = InventoryHeader::model()->findByAttributes(array('base_product_id' => $base_product_id, 'warehouse_id' => $value));
-           if(isset($model) && !empty($model)){
-            //var_dump($model);die;
-            $model->procurement_center_id = $procurement_center_id[$key];
+            $model = InventoryHeader::model()->findByAttributes(array('base_product_id' => $base_product_id, 'warehouse_id' => $value));
+            if(isset($model) && !empty($model)){
+                //var_dump($model);die;
+                $model->procurement_center_id = $procurement_center_id[$key];
+            }
+            else{
+                $model = new InventoryHeader;
+                $model->warehouse_id = $value;
+                $model->base_product_id = $base_product_id;
+                $model->schedule_inv = 0;
+                $model->extra_inv = 0;
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->procurement_center_id = $procurement_center_id[$key];
+                $model->updated_by = Yii::app()->user->id;
+            }
+            $model->save();
         }
-        else{
-            $model = new InventoryHeader;
-            $model->warehouse_id = $value;
-            $model->base_product_id = $base_product_id;
-            $model->schedule_inv = 0;
-            $model->extra_inv = 0;
-            $model->created_at = date('Y-m-d H:i:s');
-            $model->procurement_center_id = $procurement_center_id[$key];
-            $model->updated_by = Yii::app()->user->id;
-        }
-        $model->save();
     }
-}
 
     public function productWarehouseMappingUpload($uploadedFile, $logFile, $indexMap){
         /*$warehouses = Warehouse::model()->findAllByAttributes(array(), array('condition' => " id != ".HD_OFFICE_WH_ID));
@@ -455,7 +458,7 @@ class InventoryHeader extends CActiveRecord
             if(!$first){
                 foreach ($indexMap as $key => $value) {
                     //if($row[$value['first']] == 1){
-                        self::createWarehouseProductMapping($key, $row, $logFile, $indexMap);
+                    self::createWarehouseProductMapping($key, $row, $logFile, $indexMap);
                     /*}
                     else{
                         self::changeMappingStatusIfPresent($key, $row,$logFile, $indexMap);
@@ -487,16 +490,16 @@ class InventoryHeader extends CActiveRecord
                     fputcsv($logFile, $temp);
                 }
                 else if ($isMapping == 1){
-                  $model = new InventoryHeader;
-                  $model->warehouse_id = $warehouse_id;
-                  $model->base_product_id = $base_product_id;
-                  $model->schedule_inv = 0;
-                  $model->extra_inv = 0;
-                  $model->created_at = date('Y-m-d H:i:s');
-                  $model->procurement_center_id = $procurement_center_id;
-                  $model->status = 1;
-                  $model->updated_by = Yii::app()->user->id;
-                  $action = 'Insert';
+                    $model = new InventoryHeader;
+                    $model->warehouse_id = $warehouse_id;
+                    $model->base_product_id = $base_product_id;
+                    $model->schedule_inv = 0;
+                    $model->extra_inv = 0;
+                    $model->created_at = date('Y-m-d H:i:s');
+                    $model->procurement_center_id = $procurement_center_id;
+                    $model->status = 1;
+                    $model->updated_by = Yii::app()->user->id;
+                    $action = 'Insert';
                     $model->save();
                     $temp = array($model->id,$base_product_id,$action,'Success', '0');
                     fputcsv($logFile, $temp);
