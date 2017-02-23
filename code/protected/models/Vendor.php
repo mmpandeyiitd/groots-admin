@@ -219,7 +219,7 @@ class Vendor extends CActiveRecord
 
 	public function searchcredit(){
 		$criteria = new CDbCriteria; 
-        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
+        $criteria->select = 't.id, t.name,t.bussiness_name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
         if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 			$criteria->condition = 't.allocated_warehouse_id = '.$w_id;
