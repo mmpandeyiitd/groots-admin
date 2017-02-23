@@ -283,4 +283,13 @@ class PurchaseHeader extends CActiveRecord
         }
     }
 
+    public function validateReceviedData($post){
+        foreach ($post['base_product_id'] as $key => $id){
+            if(empty($post['received_qty'][$key])){
+                return array('status' => false, 'msg' => 'Received Qty not set for Product['.$post['base_product_id'][$key].']' );
+            }
+        }
+        return array('status'=>true);
+    }
+
 }

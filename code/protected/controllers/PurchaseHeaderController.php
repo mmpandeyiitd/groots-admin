@@ -257,11 +257,29 @@ class PurchaseHeaderController extends Controller
         if(isset($_GET['w_id'])){
             $w_id = $_GET['w_id'];
         }
+        $model=$this->loadModel($id);
         /*if(!($this->checkAccess('ProcurementEditor', array('warehouse_id'=>$w_id)) || $this->checkAccess('PurchaseEditor',array('warehouse_id'=>$w_id)))){
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }*/
+        // only procurementEditor and PurchaseEditor and their Parents can update Purchases
         if(!($this->checkAccessByData(array('ProcurementEditor', 'PurchaseEditor'), array('warehouse_id'=>$w_id)))){
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }//if status went to delivered then all received_qty feilds must be set
+        elseif($this->checkAccessByData('PurchaseEditor', array('warehouse_id' => $w_id))){
+            if(isset($_POST) && !empty($_POST) && $_POST['PurchaseHeader']['status'] == 'received' && $model->status != 'received' ){
+                $isDataPerfect = PurchaseHeader::validateReceviedData($_POST);
+                if(!$isDataPerfect['status']){
+                    Yii::app()->user->setFlash('error', $isDataPerfect['msg']);
+                    Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+                }
+            }
+
+        }//if status is already Delivered then procurementEditor cannot update
+        elseif(!($this->checkAccessByData('SuperAdmin', array('warehouse_id' => $w_id))) && $this->checkAccessByData('ProcurementEditor', array('warehouse_id' => $w_id))){
+            if($model->status == 'received'){
+                Yii::app()->user->setFlash('error','Purchase Status is already Delivered. Please Contact Admin');
+                Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+            }
         }
         $updateType = "update";
         if(isset($_GET['type'])){
@@ -269,7 +287,6 @@ class PurchaseHeaderController extends Controller
                 $updateType = "add";
             }
         }
-        $model=$this->loadModel($id);
 
 
         $inv_header = new InventoryHeader('search');

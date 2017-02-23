@@ -22,6 +22,9 @@ $readOnlyReceived = 'readonly';
 $readOnlyProcured = 'readonly';
 $visibleReceived = false;
 $visibleProcured = false;
+$visibleVendor = true;
+$visibleUnitPrice = true;
+$visibleTotalPrice = true;
 if ($this->checkAccess('SuperAdmin')) {
     $readOnlyReceived = false;
     $readOnlyProcured = false;
@@ -37,8 +40,11 @@ if ($this->checkAccess('SuperAdmin')) {
     $readOnlyProcured = 'readonly';
     $visibleReceived = true;
     $visibleProcured = false;
+    $visibleTotalPrice = false;
+    $visibleVendor = false;
+    $visibleUnitPrice = false;
 }
-
+//die;
 
 ?>
 
@@ -257,6 +263,7 @@ if ($this->checkAccess('SuperAdmin')) {
                 array(
                     'header' => 'Vendors',
                     'type' => 'raw',
+                    'visible' => $visibleVendor,
                     'value' => function ($data) use ($priceMap, $w_id) {
                         $array = json_encode($priceMap);
                         if (isset($data->parent_id) && $data->parent_id == 0) {
@@ -332,6 +339,7 @@ if ($this->checkAccess('SuperAdmin')) {
                 array(
                     'header' => 'Unit Price',
                     'type' => 'raw',
+                    'visible' => $visibleUnitPrice,
                     'value' => function ($data) use ($update) {
                         if ($data->parent_id == null) {
                             return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id, 'onchange' => 'calculateFruitRow(' . $data->base_product_id . ')'));
@@ -343,6 +351,7 @@ if ($this->checkAccess('SuperAdmin')) {
                 array(
                     'header' => 'Total Price',
                     'type' => 'raw',
+                    'visible' => $visibleTotalPrice,
                     'value' => function ($data) use ($update) {
                         return CHtml::textField('totalPrice[]', $data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_' . $data->base_product_id));
                     }
