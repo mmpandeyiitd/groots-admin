@@ -120,7 +120,7 @@ class InventoryHeader extends CActiveRecord
         //$criteria->together = true;
         $criteria->compare( 'bp.title', $this->item_title, true );
         $criteria->compare( 't.warehouse_id', $this->warehouse_id, true );
-        $criteria->condition = 't.warehouse_id = '.$this->warehouse_id.' and (bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted")';
+        $criteria->condition .= ' and (bp.grade is null or bp.grade = "Parent" or bp.grade = "Unsorted")';
         //$criteria->compare('i.date', $this->date, true);
         $criteria->order = 'pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $pageParams = $_GET;

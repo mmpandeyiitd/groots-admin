@@ -1373,7 +1373,7 @@ class BaseProductController extends Controller {
                                 if (isset($cols['Diameter']))
                                     $row['diameter'] = str_replace("’", "'", trim($data[$cols['Diameter']]));
                                 if (isset($cols['Grade']))
-                                    $row['grade'] = str_replace("’", "'", trim($data[$cols['Grade']]));
+                                    $row['Grade'] = str_replace("’", "'", trim($data[$cols['Grade']]));
                                 if (isset($cols['description']))
                                     $row['description'] = str_replace("’", "'", trim($data[$cols['description']]));
 
@@ -1468,18 +1468,19 @@ class BaseProductController extends Controller {
 
                                 }
                                
+                               
                                 if (isset($cols['grade'])) {
-                                    $row['grade'] = trim($data[$cols['grade']]);
+
+                                    if(trim($data[$cols['grade']]) != ''){
+                                        $row['grade'] = trim($data[$cols['grade']]);
+                                    }
+                                    else{
+                                        $row['grade'] = null;
+                                    }
+
                                 }
-                                else{
-                                    $row['grade'] = null;
-                                }
-                                if (isset($cols['grade'])) {
-                                    $row['grade'] = trim($data[$cols['grade']]);
-                                }
-                                else{
-                                    $row['grade'] = null;
-                                }
+                                
+                                
 
                                 if (isset($cols['priority'])) {
                                     $row['priority'] = trim($data[$cols['priority']]);
