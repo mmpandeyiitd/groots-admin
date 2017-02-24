@@ -76,5 +76,68 @@ class GrootsledgerDao{
       $retailer->save();
       return $retailerPayment;
   }
+
+      public function getDailyRetailerDetails(){
+            $sql = 'select id, name , initial_payable_amount, status,due_date,collection_frequency from retailer where collection_frequency = "Daily"';
+            $connection = Yii::app()->db;
+            $command = $connection->createCommand($sql);
+            $result = $command->queryAll();
+            return $result;
+      }
+
+    public function getNonDailyRetailerDetails(){
+        $sql = 'select id, name , initial_payable_amount,status,due_date,collection_frequency from retailer where collection_frequency != "Daily"';
+        $connection = Yii::app()->db;
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        return $result;
+    }
+    public function downloadDailyPastReport($dailyDataProvider,$date){
+        $fileName = 'PastDailyCollectionReport'.$date.'.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        if (isset($dailyDataProvider['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dailyDataProvider['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dailyDataProvider AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
+
+    public function downloadNonDailyPastReport($nonDailyDataProvider,$date){
+        $fileName = 'PastNonDailyCollectionReport'.$date.'.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+        if (isset($nonDailyDataProvider['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($nonDailyDataProvider['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($nonDailyDataProvider AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+    }
 }
 ?>

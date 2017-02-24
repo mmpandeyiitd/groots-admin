@@ -17,7 +17,7 @@ class VendorDao{
 
     public function getVendorProductList($productId, $w_id){
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select vpm.vendor_id, v.name from cb_dev_groots.vendor_product_mapping as vpm left join cb_dev_groots.vendors as v on v.id = vpm.vendor_id where vpm.base_product_id = '.$productId.' and v.allocated_warehouse_id = '.$w_id ;
+        $sql = 'select vpm.vendor_id, v.bussiness_name from cb_dev_groots.vendor_product_mapping as vpm left join cb_dev_groots.vendors as v on v.id = vpm.vendor_id where vpm.base_product_id = '.$productId.' and v.allocated_warehouse_id = '.$w_id ;
         //echo $sql; die;
         $command = $connection->createCommand($sql);
         $command->execute();
@@ -25,7 +25,7 @@ class VendorDao{
         //var_dump($data);die;
         $array = array();
         foreach ($data as $key => $value) {
-            $array[$value['vendor_id']] = $value['name'];
+            $array[$value['vendor_id']] = $value['bussiness_name'];
         }
         //var_dump($array);die;
         return $array;

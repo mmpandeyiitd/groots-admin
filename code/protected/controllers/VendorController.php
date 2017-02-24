@@ -74,7 +74,6 @@ class VendorController extends Controller
 		$model=new Vendor;
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
-
 		if(isset($_POST['Vendor']))
 		{
 			$model->attributes=$_POST['Vendor'];
@@ -87,6 +86,7 @@ class VendorController extends Controller
 			$model->due_date = date('Y-m-d', strtotime($model->payment_start_date.' + '.$model->credit_days.' days'));
 			$model->created_date = date('Y-m-d H:i:s');
 			$model->allocated_warehouse_id = $w_id;
+			$model->initial_pending_date = VendorDao::getInitialPendingDate();
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -159,10 +159,10 @@ class VendorController extends Controller
 	 */
 	public function actionAdmin()
 	{	
-		$w_id ='';
-		if(isset($_GET['w_id'])){
-			$w_id = $_GET['w_id'];
-		}
+		$w_id =Yii::app()->session['w_id'];
+		if(isset($_GET['w_id'])) {
+            $w_id = $_GET['w_id'];
+        }
 		Yii::app()->session['w_id'] = $w_id;
 		$model=new Vendor('search');
 		$model->unsetAttributes();  // clear any default values

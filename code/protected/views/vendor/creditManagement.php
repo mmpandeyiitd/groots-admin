@@ -55,6 +55,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'name' => 'name',
 				'value' => '$data->name',
 				),
+            array(
+                'header' => 'Bussiness Name',
+                'name' => 'bussiness_name',
+                'value' => '$data->bussiness_name',
+            ),
 			array(
 				'header' => 'Vendor Type',
 				'name' => 'vendor_type',

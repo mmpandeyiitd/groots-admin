@@ -10,6 +10,7 @@ $this->menu=array(
 <br>
 <h4>
 	Name : <?php echo $vendor->name; ?></br>
+    Bussiness Name : <?php echo $vendor->bussiness_name;?></br>
 	Id: <?php echo $vendor->id; ?>
 </h4>
 

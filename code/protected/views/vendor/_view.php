@@ -8,6 +8,10 @@
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
 
+    <b><?php echo CHtml::encode($data->getAttributeLabel('bussiness_name')); ?>:</b>
+    <?php echo CHtml::encode($data->bussiness_name); ?>
+    <br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
 	<?php echo CHtml::encode($data->name); ?>
 	<br />
