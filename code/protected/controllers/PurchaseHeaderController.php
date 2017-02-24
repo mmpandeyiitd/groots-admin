@@ -334,19 +334,28 @@ class PurchaseHeaderController extends Controller
                         foreach ($_POST['base_product_id'] as $key => $id) {
                             $order_qty = $received_qty = $unitPrice = $totalPrice = '';
                             $vendorId = $urd_number =0;
-                            if(isset($_POST['order_qty'][$key])){
+                            if(isset($_POST['order_qty'][$key]) && !empty($_POST['order_qty'][$key])){
                                 $order_qty = trim($_POST['order_qty'][$key]);
                             }
 
-                            if(isset($_POST['received_qty'][$key]) ){
+                            if(isset($_POST['received_qty'][$key]) && !empty($_POST['received_qty'][$key]) ){
                                 $received_qty = trim($_POST['received_qty'][$key]);
 
-                            }if(!empty($_POST['vendorId'][$key]) ){
+                            }if(isset($_POST['vendorId'][$key]) && !empty($_POST['vendorId'][$key]) ){
                                 $vendorId = trim($_POST['vendorId'][$key]);
                             }
                             //var_dump($vendorId);
                             $constraint = $id.'~'.$vendorId;
-                            if($order_qty > 0){
+                            if($received_qty > 0){
+                                $purchaseLine = new PurchaseLine();
+                                if (isset($purchaseLineMap[$constraint])) {
+                                    $purchaseLine = $purchaseLineMap[$constraint];
+                                }
+                                $purchaseLine->received_qty = $received_qty;
+                                $purchaseLine->save();
+                            }
+
+                            else if($order_qty > 0){
                                 $unitPrice = trim($_POST['price'][$key]);
                                 $totalPrice = trim($_POST['totalPrice'][$key]);
                                 $urd_number = trim($_POST['urd_number'][$key]);
@@ -363,7 +372,7 @@ class PurchaseHeaderController extends Controller
                                         $purchaseLine->created_at = date("y-m-d H:i:s");
                                     }
                                     $purchaseLine->order_qty = $order_qty;
-                                    $purchaseLine->received_qty = $received_qty;
+                                    //$purchaseLine->received_qty = $received_qty;
                                     $purchaseLine->vendor_id = $vendorId;
                                     $purchaseLine->unit_price = $unitPrice;
                                     $purchaseLine->price = $totalPrice;

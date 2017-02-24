@@ -25,6 +25,7 @@ $visibleProcured = false;
 $visibleVendor = true;
 $visibleUnitPrice = true;
 $visibleTotalPrice = true;
+$visibleUrd = true;
 if ($this->checkAccess('SuperAdmin')) {
     $readOnlyReceived = false;
     $readOnlyProcured = false;
@@ -43,6 +44,7 @@ if ($this->checkAccess('SuperAdmin')) {
     $visibleTotalPrice = false;
     $visibleVendor = false;
     $visibleUnitPrice = false;
+    $visibleUrd = false;
 }
 //die;
 
@@ -238,6 +240,7 @@ if ($this->checkAccess('SuperAdmin')) {
                     'header' => 'URD Number',
                     //'name' => 'urd_number',
                     'type' => 'raw',
+                    'visible' => $visibleUrd,
                     'value' => function ($data) {
                         $array = array('onchange' => 'copyUrd(' . $data->base_product_id . ',' . $data->parent_id . ')', 'style' => 'width:30px;', 'id' => 'urd_' . $data->base_product_id, 'class' => 'urd');
                         if (isset($data->parent_id) && $data->parent_id == 0) {
@@ -303,6 +306,7 @@ if ($this->checkAccess('SuperAdmin')) {
                         /*if(isset($purchaseLineMap[$data->base_product_id])){
                             $data->received_qty = $purchaseLineMap[$data->base_product_id]['received_qty'];
                         }*/
+
                         return CHtml::textField('received_qty[]', $data->received_qty, array('class' => 'input received-inputs', 'readonly' => $readOnlyReceived, 'id' => 'received_' . $data->base_product_id, 'onchange' => 'updateItemTotalRow(' . $data->parent_id . ')'));
                     },
                     'type' => 'raw',
@@ -502,23 +506,23 @@ if ($this->checkAccess('SuperAdmin')) {
                 // if($("#received_"+bp_id).length > 0){
                 //     totalReceived += parseFloat($("#received_"+bp_id).val().trim()) || 0;
                 // }
-                if (orderQty.length > 0) {
+                if (orderQty && orderQty.length > 0) {
                     totalOrder += parseFloat(orderQty.trim());
                 }
-                if (receivedQty.length > 0) {
+                if (receivedQty && receivedQty.length > 0) {
                     totalReceived += parseFloat(receivedQty.trim());
                 }
                 var totalPrice = 0;
 
                 var unitPrice = $(this).find('.price').val()
-                if (unitPrice.length > 0) {
+                if (unitPrice && unitPrice.length > 0) {
                     totalPrice = parseFloat(orderQty.trim()) * unitPrice;
                     $(this).find('.totalPrice').val(totalPrice.toFixed(2));
                 }
                 if (parseFloat(totalPrice) > 0) {
                     netPrice += parseFloat(totalPrice);
                 }
-                if (unitPrice.length > 0) {
+                if (unitPrice && unitPrice.length > 0) {
                     netUnit += parseFloat(unitPrice.trim());
                 }
 
@@ -526,16 +530,16 @@ if ($this->checkAccess('SuperAdmin')) {
             // if($("#tobe-procured_"+parent_id).length > 0){
             //     $("#tobe-procured_"+parent_id).html(totalTobeProcured);
             // }
-            if ($("#order_" + parent_id).length > 0) {
+            if ($("#order_" + parent_id) && $("#order_" + parent_id).length > 0) {
                 $("#order_" + parent_id).val(totalOrder);
             }
-            if ($("#received_" + parent_id).length > 0) {
+            if ($("#received_" + parent_id) && $("#received_" + parent_id).length > 0) {
                 $("#received_" + parent_id).val(totalReceived);
             }
-            if ($("#price_" + parent_id).length > 0) {
+            if ($("#price_" + parent_id) && $("#price_" + parent_id).length > 0) {
                 $("#price_" + parent_id).val(netUnit);
             }
-            if ($("#totalPrice_" + parent_id).length > 0) {
+            if ($("#totalPrice_" + parent_id) && $("#totalPrice_" + parent_id).length > 0) {
                 $("#totalPrice_" + parent_id).val(netPrice);
             }
 
@@ -609,12 +613,12 @@ if ($this->checkAccess('SuperAdmin')) {
         }
 
         function onVendorSelect(parent_id, baseProductId, array) {
-            console.log("hello");
+            //console.log("hello");
             $(".item_" + parent_id).each(function () {
-                console.log("hello1");
+                //console.log("hello1");
                 var vendorId = $(this).find('.dropDown').val();
                 $(this).find('.hiddenVendor').val(vendorId);
-                console.log(vendorId);
+                //console.log(vendorId);
                 if (vendorId) {
                     var ifPrice = $(this).find('.price').val();
                     if (!ifPrice) {
