@@ -95,8 +95,8 @@ class BaseProduct extends CActiveRecord {
 // @todo Please remove those attributes that should not be searched.
             //   array('image', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
             array('size_chart', 'file', 'types' => 'jpg, gif, png, jpeg', 'allowEmpty' => true, 'maxSize' => IMAGE_SIZE),
-            array('store_price,store_offer_price,parent_id,grade,priority,base_title', 'safe', 'on' => 'search'),
-            array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date', 'safe', 'on' => 'search'),
+            array('store_price,store_offer_price,parent_id,grade,priority,base_title', 'safe'),
+            array('base_product_id,pack_size,pack_unit,description,title,color,store_id,status,created_date,modified_date,store_price,store_offer_price,parent_id,grade,priority,base_title', 'safe', 'on' => 'search'),
         );
     }
 
