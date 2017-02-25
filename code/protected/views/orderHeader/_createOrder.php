@@ -144,7 +144,7 @@ else{
                     </span>
                     <div class="clearfix"></div>
                     <label>Status:</label> <span class="">
-                        <select name="status" class="selectNew">
+                        <select name="status" class="selectNew" id = "orderStatus" onchange="checkOrderStatus()">
                             <option value="Pending" <?php if($model->status=='Pending') {echo "selected='selected' ";} ?> >Pending </option>
                             <option value="Confirmed" <?php if($model->status=='Confirmed') {echo "selected='selected' ";} ?>> Confirmed </option>
                             <option value="Out for Delivery" <?php if($model->status=='Out for Delivery') {echo "selected='selected' ";} ?>>Out for Delivery</option>
@@ -374,7 +374,7 @@ else{
                         else {*/
                             ?>
                             <input type="submit" class="button_new" value="Update" id="update" name="update"
-                                   style="width: auto;"/>
+                                   style="width: auto;" onclick="checkOrderStatus(event)"/>
                             <!--<a href="index.php?r=OrderHeader/report&id=<?php //echo $model->attributes['order_id'];
                             ?>" class="button_new" style="width: auto;" target="_blank"  >Create Invoice</a>-->
 
@@ -657,6 +657,20 @@ else{
         return true;
     }
 
+    function checkOrderStatus(event) {
+        console.log('here');
+        var status = $('#orderStatus').val();
+        var delTime = $('#actual_delivery_time').val();
+        console.log(status);
+        console.log(delTime);
+        if (status && status == 'Delivered') {
+            if (!delTime || delTime == '00:00:00') {
+                window.alert('Please Enter Actual Delivery Time Before Changing Status To Delivered Or Updating Order');
+                event.preventDefault();
+            }
+        }
+        else return true;
+    }
 
 
 </script>
