@@ -463,10 +463,10 @@ class VendorController extends Controller
     {
         $w_id = Yii::app()->session['w_id'];
         $connection = Yii::app()->db;
-        $sql = 'select vpm.id , v.name , bp.title , bp.grade, vpm.created_at from vendor_product_mapping as vpm
+        $sql = 'select bp.base_product_id ,vpm.id , v.name , bp.title , bp.grade, vpm.created_at from vendor_product_mapping as vpm
                   left join vendors as v on v.id = vpm.vendor_id
                   left join base_product bp on bp.base_product_id = vpm.base_product_id
-                  where v.allocated_warehouse_id = "'.$w_id.'" order by v.name';
+                  where v.allocated_warehouse_id = "'.$w_id.'" and (bp.grade = "Unsorted" or bp.grade is null) order by v.name';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         $fileName = date('Y-m-d') . 'AllVendorProductList.csv';

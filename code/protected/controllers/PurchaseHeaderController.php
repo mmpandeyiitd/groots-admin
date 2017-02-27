@@ -32,7 +32,7 @@ class PurchaseHeaderController extends Controller
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase', 'downloadPurchaseTemplate'),
+                'actions' => array('create', 'update', 'admin', 'downloadReconciliationReport', 'dailyProcurement', 'downloadProcurementReport', 'DownloadReportById', 'bulkUploadPurchase', 'downloadPurchaseTemplate','intervalPurchaseReport'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -789,7 +789,7 @@ class PurchaseHeaderController extends Controller
             $tmp['title'] = $value['title'];
             $tmp['grade'] = $value['grade'];
             $tmp['urd_number'] = $value['urd_number'];
-            $tmp['order qty'] = $value['order_qty'];
+            $tmp['procured qty'] = $value['order_qty'];
             $tmp['received by operations'] = $value['received_qty'];
             $tmp['unit price'] = $value['unit_price'];
             $tmp['total price'] = $value['price'];
@@ -928,6 +928,53 @@ class PurchaseHeaderController extends Controller
             Yii::app()->user->setFlash('error', "Can't create purchase");
             $this->render('bulkUploadPurchase', array('model' => $model));
         }
+    }
+
+
+    public function actionIntervalPurchaseReport(){
+        $w_id = $_GET['w_id'];
+        if(isset($_POST['purchase_from']) && isset($_POST['purchase_to']) && !empty($_POST['purchase_from']) && !empty($_POST['purchase_to'])){
+            $fromDate = $_POST['purchase_from'];
+            $toDate = $_POST['purchase_to'];
+        }
+        else{
+            Yii::app()->user->setFlash('error', 'Please Select Dates');
+            Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
+        }
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select ph.id,ph.delivery_date , bp.title , bp.grade, pl.order_qty as "procured qty", pl.received_qty, pl.unit_price, pl.price as totalPrice, v.bussiness_name
+                from purchase_line pl left join purchase_header ph on pl.purchase_id = ph.id left join cb_dev_groots.base_product bp on bp.base_product_id = pl.base_product_id
+                left join cb_dev_groots.vendors as v on v.id = pl.vendor_id
+                where ph.warehouse_id = "'.$w_id.'" and ph.delivery_date between "'.$fromDate.'" and "'.$toDate.'"';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $fileName = $fromDate.'//'.$toDate.'PurchaseReport.csv';
+        if (count($result) > 0) {
+            ob_clean();
+            header('Pragma: public');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Cache-Control: private', false);
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment;filename=' . $fileName);
+
+            $fp = fopen('php://output', 'w');
+            //$columnstring = implode(',', array_keys($data[0]));
+            $columnstring = implode(',', array_keys(reset($result)));
+
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            //print_r( $updatecolumn); die;
+            fputcsv($fp, $updatecolumn);
+            foreach ($result AS $values) {
+                fputcsv($fp, $values);
+            }
+
+            fclose($fp);
+            ob_flush();
+        }
+
     }
 
 }
