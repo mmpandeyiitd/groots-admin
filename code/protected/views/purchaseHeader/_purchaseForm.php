@@ -606,6 +606,8 @@ if ($this->checkAccess('SuperAdmin')) {
             clone.find('.received-inputs').val('');
             clone.find('.price').val('');
             clone.find('.dropDown').val(0);
+            clone.find('.urd').val('');
+            clone.find('.totalPrice').val('');
             //console.log(clone);
             clone.id = row.id;
             clone.insertAfter(row);
