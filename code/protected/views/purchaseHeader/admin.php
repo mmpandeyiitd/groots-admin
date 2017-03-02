@@ -247,7 +247,7 @@ $('.search-form form').submit(function(){
 			'header' => 'Report',
 			'type' => 'raw',
 			'value' => function($data){
-				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id))."'"));
+				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id, 'w_id' => $_GET['w_id']))."'"));
 			},
 			)
 	),
