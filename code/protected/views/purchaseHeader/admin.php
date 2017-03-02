@@ -264,8 +264,8 @@ $('.search-form form').submit(function(){
         window.open(url, '_blank');
     }
 
-    function onIntervalReportDownload(event, url) {
-	    console.log(url);
+    function onIntervalReportDownload(event) {
+
         var fromDate = $('#purchase_from').val();
         var toDate = $('#purchase_to').val();
         if(!fromDate){

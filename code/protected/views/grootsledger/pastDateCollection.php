@@ -5,8 +5,60 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<form name="myform" method="post"
-      action="<?php echo Yii::app()->getBaseUrl() . '/index.php?r=Grootsledger/pastDateCollection&w_id=2'; ?>">
+
+
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl() . '/index.php?r=Grootsledger/pastDateCollection&w_id=2'; ?>">
+
+    <h2> Interval Report</h2>
+    <div class="dashboard-table">
+        <h4 style="width:20%">Interval Collection</h4>
+        <div class="right_date" style="width:80%">
+            <label for = "ledger_from">From</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                // 'model' => $model,
+                'name' => 'ledger_from',
+                'attribute' => 'ledger_from',
+                //'value' => $model->created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'showAnim' => 'fold',
+                    'debug' => true,
+                    //'mcollection_fromaxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+            //echo $form->error($model, 'created_at');
+            ?>
+
+
+            <label for = "purchase_to">To</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                //'model' => $model,
+                'name' => 'ledger_to',
+                'attribute' => 'ledger_to',
+                //'value' => $model->inv_created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'debug' => true,
+                    //'maxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+
+            echo CHtml::submitButton('Download', array('onclick' => 'onIntervalReportDownload(event)'));
+            ?>
+
+        </div>
+    </div>
+    <br><br><br><br>
+    <p>
+        <h2> Past Date Ledger</h2>
+    </p>
+
     <h5>
         Select Date
         <?php
@@ -36,8 +88,12 @@ $this->breadcrumbs=array(
         </div>
 
 
+
+
+        <br>
+        <br>
     </h5>
-    <h2> Daily Retailers</h2>
+    <h3> Daily Retailers</h3>
     <?php
     $this->widget('zii.widgets.grid.CGridView', array(
         'id' => 'todayscollection',
@@ -50,7 +106,7 @@ $this->breadcrumbs=array(
             'current_due_date',
         )));
     ?>
-    <h2>Non Daily Retailers</h2>
+    <h3>Non Daily Retailers</h3>
     <?php
     $this->widget('zii.widgets.grid.CGridView', array(
         'id' => 'todayscollection',
@@ -73,3 +129,21 @@ $this->breadcrumbs=array(
     </div>
 
 </form>
+
+
+<script type = "text/javascript">
+
+    function onIntervalReportDownload(event) {
+        var fromDate = $('#ledger_from').val();
+        var toDate = $('#ledger_to').val();
+        if(!fromDate){
+            alert('Please Select From Date');
+            event.preventDefault();
+        }
+        else if(!toDate){
+            alert('Please Select to Date');
+            event.preventDefault();
+        }
+    }
+
+</script>

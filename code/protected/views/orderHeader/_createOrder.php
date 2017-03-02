@@ -587,6 +587,7 @@ else{
 
             sumAmount += Number($(this).val());
         });
+        finalAmount = sumAmount;
         if(discountAmount!=0){
             finalAmount = sumAmount - discountAmount;
         }
