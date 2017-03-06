@@ -785,6 +785,7 @@ class PurchaseHeaderController extends Controller
         $data = array();
         foreach ($result as $key => $value) {
             $tmp = array();
+            $tmp['date'] = $value['delivery_date'];
             $tmp['product_id'] = $value['base_product_id'];
             $tmp['title'] = $value['title'];
             $tmp['grade'] = $value['grade'];
@@ -794,7 +795,6 @@ class PurchaseHeaderController extends Controller
             $tmp['unit price'] = $value['unit_price'];
             $tmp['total price'] = $value['price'];
             $tmp['vendor'] = $value['vendorBussinessName'];
-            $tmp['date'] = $value['delivery_date'];
             array_push($data, $tmp);
         }
         $fileName = $id . "procurement_report_by_id" . ".csv";
