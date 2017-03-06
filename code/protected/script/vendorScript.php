@@ -5,7 +5,7 @@ function getAllVendorPayableAmount($startDate, $endDate){
 	$password = "mmp@root";
 	$localhost = "localhost";
 	$connection = mysql_connect($localhost,$username, $password);
-    $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from groots_orders.purchase_header as h left join groots_orders.purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and l.status = "pending" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
+    $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from groots_orders.purchase_header as h left join groots_orders.purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
     $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from groots_orders.vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
     $result1 = mysql_query($orderSql);
     $rows1 = mysql_num_rows($result1);
@@ -68,7 +68,7 @@ function getAllVendorInitialPending($startDate){
         $sql = 'select total_pending from cb_dev_groots.vendor_log where vendor_id = '.$value['id'].' and base_date = "'.$startDate.'" order by id desc limit 1';
         $result = mysql_query($sql);
         $amount = mysql_fetch_array($result);
-        $map[$value['id']] = $amount['total_pending'];
+        $map[$value['id']] = (!empty($result)) ? $amount['total_pending'] : 0   ;
     }
     return $map;
 }
