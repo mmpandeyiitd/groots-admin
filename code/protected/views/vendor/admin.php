@@ -45,7 +45,10 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
-
+</br>
+<?php
+echo CHtml::button('All Vendor Product List', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("vendor/downloadAllVendorProductList")."'"));
+?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'vendor-grid',
 	'dataProvider'=>$model->search(),
