@@ -674,12 +674,11 @@ class GrootsledgerController extends Controller
             $temp['collection_frequency'] = $retailer['collection_frequency'];
             array_push($nonDailyDataProvider, $temp);
         }
-
         if(isset($_POST['dailyReport']) && !empty($_POST['dailyReport'])){
             GrootsledgerDao::downloadDailyPastReport($dailyDataProvider,$date);
             exit();
         }
-        else if(isset($_POST['nonDailyReport    ']) && !empty($_POST['nonDailyReport'])){
+        else if(isset($_POST['nonDailyReport']) && !empty($_POST['nonDailyReport'])){
             GrootsledgerDao::downloadNonDailyPastReport($nonDailyDataProvider,$date);
             exit();
         }
