@@ -1,5 +1,6 @@
 <?php
 //change the following paths if necessary
+ini_set('memory_limit', '500M');
 $yii=dirname(__FILE__).'/framework/yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';
 $constants=dirname(__FILE__).'/protected/config/constants.php';

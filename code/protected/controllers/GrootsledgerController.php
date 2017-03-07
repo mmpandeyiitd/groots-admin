@@ -682,6 +682,9 @@ class GrootsledgerController extends Controller
             GrootsledgerDao::downloadNonDailyPastReport($nonDailyDataProvider,$date);
             exit();
         }
+        else if(isset($_POST['ledger_from']) && isset($_POST['ledger_to']) && !empty($_POST['ledger_from']) && !empty($_POST['ledger_to'])){
+            GrootsledgerDao::downloadIntervalCollectionReport($_POST['ledger_from'], $_POST['ledger_to']);
+        }
         $dailyDataProvider = new CArrayDataProvider($dailyDataProvider, array(
             'sort'=> array(
                 'attributes' => array(
@@ -709,4 +712,5 @@ class GrootsledgerController extends Controller
 
 
     }
+
 }

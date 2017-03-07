@@ -131,6 +131,60 @@ $('.search-form form').submit(function(){
 	'model'=>$model,
 )); */?>
 </div>--><!-- search-form -->
+<h4> Purchase Report</h4>
+<form method = "post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=purchaseHeader/intervalPurchaseReport&w_id='.$w_id;?>"
+<div class="dashboard-table">
+        <h4 style="width:20%">Purchase</h4>
+        <div class="right_date" style="width:80%">
+            <label for = "purchase_from">From</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                // 'model' => $model,
+                'name' => 'purchase_from',
+                'attribute' => 'purchase_from',
+                //'value' => $model->created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'showAnim' => 'fold',
+                    'debug' => true,
+                    //'mcollection_fromaxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+            //echo $form->error($model, 'created_at');
+            ?>
+
+
+            <label for = "purchase_to">To</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                //'model' => $model,
+                'name' => 'purchase_to',
+                'attribute' => 'purchase_to',
+                //'value' => $model->inv_created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'debug' => true,
+                    //'maxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+            $url = "document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/intervalPurchaseReport",array('w_id'=>$_GET['w_id']));
+            ?>
+
+
+            <?php
+            echo CHtml::submitButton('Download', array('onclick' => 'onIntervalReportDownload(event)'));
+            ?>
+
+        </div>
+</div>
+</form>
+
+<br>
+<br>
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'purchase-header-grid',
@@ -193,7 +247,7 @@ $('.search-form form').submit(function(){
 			'header' => 'Report',
 			'type' => 'raw',
 			'value' => function($data){
-				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id))."'"));
+				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id, 'w_id' => $_GET['w_id']))."'"));
 			},
 			)
 	),
@@ -210,6 +264,19 @@ $('.search-form form').submit(function(){
         window.open(url, '_blank');
     }
 
+    function onIntervalReportDownload(event) {
+
+        var fromDate = $('#purchase_from').val();
+        var toDate = $('#purchase_to').val();
+        if(!fromDate){
+            alert('Please Select From Date');
+            event.preventDefault();
+        }
+        else if(!toDate){
+            alert('Please Select to Date');
+            event.preventDefault();
+        }
+    }
 
 
 </script>
