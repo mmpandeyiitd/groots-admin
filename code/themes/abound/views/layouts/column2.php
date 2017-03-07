@@ -4,7 +4,7 @@ $userAuthItemArr = Utility::getUserAuthItemsArrFromSession();
 $meunAuthItemMap = array(
     'report'=>array('SuperAdmin', 'warehouseEditorAzd', 'warehouseEditor'),
     //'collection' => array('SuperAdmin'),
-    'collection' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
+    'collection' => array('CollectionEditor'),
     'buyer' => array('SuperAdmin'),
     'category' => array('SuperAdmin'),
     'product' => array('SuperAdmin'),
@@ -34,6 +34,7 @@ $isOrderVisible = isMenuVisible($meunAuthItemMap['order']);
 $access0 = Yii::app()->user->checkAccess('SuperAdmin', false);
 $basaiAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>1), false);
 $azdAccess = Yii::app()->user->checkAccess('WarehouseEditor', array('warehouse_id'=>2), false);
+$collectionAcess = Yii::app()->user->checkAccess('CollectionEditor', array('warehouse_id'=>2), false);
 $isDashboardVisible = $access0||$basaiAccess||$azdAccess;
 $isReportVisible = $access0||$basaiAccess||$azdAccess;
 
@@ -146,7 +147,7 @@ elseif($azdAccess){
 
 $warehouses = generateWarehouses($meunAuthItemMap);
 $isWarehouseVisible = sizeof($warehouses)>0 ? true : false;
-$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => $collectionUrl, 'visible' => $isWarehouseVisible);
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => $collectionUrl, 'visible' => $collectionAcess);
 $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' => $isWarehouseVisible,
     'items'=> $warehouses,
     'itemCssClass' => 'ex1',
