@@ -379,7 +379,7 @@ class PurchaseHeaderController extends Controller
                                     $this->redirect(array('update', "w_id" => $w_id, "id" => $model->id, 'type' => $updateType));
                                 }
 
-                            } else if (isset($purchaseLineMap[$constraint])) {
+                            } else if (isset($purchaseLineMap[$constraint]) && (empty($order_qty) && empty($received_qty))) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
@@ -387,7 +387,7 @@ class PurchaseHeaderController extends Controller
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
                     }
-                    //die();
+                    //die('here');
 
                     $transaction->commit();
                     if ($parentIdToUpdate != '' && $parentIdToUpdate > 0) {
