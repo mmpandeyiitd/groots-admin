@@ -134,7 +134,7 @@ function generateWarehouseItems($w_id, $meunAuthItemMap){
 
 
 $collectionUrl = '';
-if($access0){
+if($access0 || $collectionAcess){
     $collectionUrl = array('/Grootsledger/admin&w_id=3');
 }
 elseif($basaiAccess){
@@ -143,6 +143,7 @@ elseif($basaiAccess){
 elseif($azdAccess){
     $collectionUrl = array('/Grootsledger/admin&w_id=2');
 }
+
 
 
 $warehouses = generateWarehouses($meunAuthItemMap);
