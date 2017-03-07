@@ -379,7 +379,7 @@ class PurchaseHeaderController extends Controller
                                     $this->redirect(array('update', "w_id" => $w_id, "id" => $model->id, 'type' => $updateType));
                                 }
 
-                            } else if (isset($purchaseLineMap[$constraint]) && (empty($order_qty) && empty($received_qty))) {
+                            } else if (isset($purchaseLineMap[$constraint]) && (isset($_POST['order_qty'][$key]) && empty($_POST['order_qty'][$key]))) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
