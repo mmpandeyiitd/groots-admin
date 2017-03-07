@@ -1,10 +1,8 @@
 <?php
-
+$dbConfig = dirname(__FILE__).'/../config/db-config.php';
+require_once($dbConfig);
+$connection = mysql_connect($localhost,$username, $password);
 function getAllVendorPayableAmount($startDate, $endDate){
-    $username = "root";
-	$password = "mmp@root";
-	$localhost = "localhost";
-	$connection = mysql_connect($localhost,$username, $password);
     $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from groots_orders.purchase_header as h left join groots_orders.purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
     $paymentSql = 'select vendor_id , sum(paid_amount) as paid_amount from groots_orders.vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
     $result1 = mysql_query($orderSql);
@@ -49,10 +47,6 @@ function getAllVendorPayableAmount($startDate, $endDate){
 }
 
 function getAllVendorInitialPending($startDate){
-   	$username = "root";
-	$password = "mmp@root";
-	$localhost = "localhost";
-	$connection = mysql_connect($localhost,$username, $password);
     $map = array();
     $sql = 'select id from cb_dev_groots.vendors where status = 1';
     $result = mysql_query($sql);
@@ -76,10 +70,6 @@ function getAllVendorInitialPending($startDate){
 
 
 date_default_timezone_set("Asia/Kolkata");
-$username = "root";
-$password = "mmp@root";
-$localhost = "localhost";
-$connection = mysql_connect($localhost,$username, $password);
 mysql_select_db('cb_dev_groots');
 $sql = 'select due_date, id, name, payment_start_date, payment_days_range, initial_pending_date, initial_pending_amount from cb_dev_groots.vendors where status = 1';
 $query = mysql_query($sql);
