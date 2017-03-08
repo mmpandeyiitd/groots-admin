@@ -22,4 +22,4 @@ org.eclipse.wst.jsdt.ui.superType.container
 org.eclipse.wst.jsdt.ui.superType.name
 code/protected/runtime/system.log
 code/protected/runtime/application.log.*
-#code/protected/script/db-config.php
+code/protected/script/db-config.php
