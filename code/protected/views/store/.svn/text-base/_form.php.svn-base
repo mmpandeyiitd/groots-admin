@@ -1,0 +1,150 @@
+<div class="form">
+
+<?php $form=$this->beginWidget('CActiveForm', array(
+	'id'=>'store-form',
+	'enableClientValidation'=>true,
+	'htmlOptions' => array('enctype' => 'multipart/form-data'),
+	'clientOptions'=>array(
+		'validateOnSubmit'=>true,
+	),
+)); ?>
+	<p class="note">Fields with <span class="required">*</span> are required.</p>
+
+	<?php echo CHtml::errorSummary($model); ?>
+	<fieldset>Vendor Information</fieldset>
+	<div class="row">
+		<?php echo $form->labelEx($model,'store_id'); ?>
+		<?php echo $form->textField($model,'store_id',array('size'=>40,'maxlength'=>255, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'store_id'); ?>
+	</div>
+	<div class="row">
+		<?php echo $form->labelEx($model,'seller_name'); ?>
+		<?php echo $form->textField($model,'seller_name',array('size'=>40,'maxlength'=>255, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'seller_name'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'mobile_numbers'); ?>
+		<?php echo $form->textField($model,'mobile_numbers',array('size'=>40,'maxlength'=>10, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'mobile_numbers'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'email'); ?>
+		<?php echo $form->textField($model,'email',array('size'=>40,'maxlength'=>255, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'email'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'customer_value'); ?>
+		<?php echo $form->textField($model,'customer_value',array('size'=>40,'maxlength'=>17)); ?>
+		<?php echo $form->error($model,'customer_value'); ?>
+	</div>
+	
+	<fieldset>Business Address Information</fieldset>
+	<div class="row">
+		<?php echo $form->labelEx($model,'business_address_country'); ?>
+		<?php echo $form->textField($model,'business_address_country',array('size'=>40,'maxlength'=>100, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'business_address_country'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'business_address_state'); ?>
+		<?php echo $form->textField($model,'business_address_state',array('size'=>40,'maxlength'=>100, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'business_address_state'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'business_address'); ?>
+		<?php echo $form->textField($model,'business_address',array('size'=>80,'maxlength'=>300, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'business_address'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'business_address_city'); ?>
+		<?php echo $form->textField($model,'business_address_city',array('size'=>40,'maxlength'=>100, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'business_address_city'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'business_address_pincode'); ?>
+		<?php echo $form->textField($model,'business_address_pincode',array('size'=>40,'maxlength'=>6, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'business_address_pincode'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'telephone_numbers'); ?>
+		<?php echo $form->textField($model,'telephone_numbers',array('size'=>40,'maxlength'=>15, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'telephone_numbers'); ?>
+	</div>
+	
+	<fieldset>Store Information</fieldset>
+	<div class="row">
+		<?php echo $form->labelEx($model,'store_name'); ?>
+		<?php echo $form->textField($model,'store_name',array('size'=>40,'maxlength'=>200, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'store_name'); ?>
+	</div>
+	
+	<?php $logoPath = CHtml::resolveValue($model,'store_logo');?>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'store_logo'); ?>
+		<?php  
+		if (!empty($logoPath)) {
+			$logoPath = GETIT_MEDIA_BASE_URL . $logoPath;
+			$storeName = CHtml::resolveValue($model,'store_name');
+			$image = CHtml::image($logoPath, $storeName, array('height' => 25, 'width'=>25, 'id'=>'store_logo_image'));
+			echo "<a href='$logoPath' target='_blank' >".$image."</a>";
+		}
+		?>
+		<?php echo $form->fileField($model,'store_logo'); ?>
+		<?php echo $form->error($model,'store_logo'); ?>
+	</div>
+	
+	<div class="row">
+		<label for="Store[auto_generate_store_logo]">Auto generate Store Logo</label>
+		<input id="auto_generate_store_logo" type="checkbox" name="Store[auto_generate_store_logo]">
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'store_details'); ?>
+		<?php echo $form->textarea($model,'store_details',array('rows'=>3,'cols'=>80, 'readonly'=>true)); ?>
+		<?php echo $form->error($model,'store_details'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'meta_title'); ?>
+		<?php echo $form->textarea($model,'meta_title',array('rows'=>3,'cols'=>80, 'maxlength'=>150)); ?>
+		<?php echo $form->error($model,'meta_title'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'meta_keywords'); ?>
+		<?php echo $form->textarea($model,'meta_keywords',array('rows'=>3,'cols'=>80, 'maxlength'=>255)); ?>
+		<?php echo $form->error($model,'meta_keywords'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'meta_description'); ?>
+		<?php echo $form->textarea($model,'meta_description',array('rows'=>3,'cols'=>80, 'maxlength'=>150)); ?>
+		<?php echo $form->error($model,'meta_description'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'status'); ?>
+		<?php echo $form->dropdownlist($model,'status',array('0'=>'Disable', '1'=>'Enable')); ?>
+		<?php echo $form->error($model,'status'); ?>
+	</div>
+	
+	<div class="row">
+		<?php echo $form->labelEx($model,'visible'); ?>
+		<?php echo $form->dropdownlist($model,'visible',array('1'=>'Enable', '0'=>'Disable')); ?>
+		<?php echo $form->error($model,'visible'); ?>
+	</div>
+	
+	<div class="row buttons">
+		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	</div>
+<?php $this->endWidget(); ?>
+
+</div><!-- form -->
