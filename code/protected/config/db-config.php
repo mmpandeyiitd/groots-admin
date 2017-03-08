@@ -4,5 +4,4 @@ $username = "root";
 $password = "root";
 $localhost = "localhost";
 
-
 ?>
