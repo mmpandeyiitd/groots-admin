@@ -705,7 +705,8 @@ class GrootsledgerController extends Controller
         $this->render('pastDateCollection', array(
             'dailyDataProvider' => $dailyDataProvider,
             'nonDailyDataProvider' => $nonDailyDataProvider,
-            'date' => $date
+            'date' => $date,
+            'w_id' => $_GET['w_id'],
         ));
 //        var_dump($dailyRetailer);
 //        var_dump($nonDailyRetailer);
