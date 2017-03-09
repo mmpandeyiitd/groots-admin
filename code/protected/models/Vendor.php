@@ -203,7 +203,7 @@ class Vendor extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-            'pagination' => array('pageSize' => 45,),
+            'pagination' => array('pageSize' => 45  ,),
 		));
 	}
 
@@ -221,6 +221,7 @@ class Vendor extends CActiveRecord
 	public function searchcredit(){
 		$criteria = new CDbCriteria; 
         $criteria->select = 't.id, t.name,t.bussiness_name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
+        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
         if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 			$criteria->condition = 't.allocated_warehouse_id = '.$w_id;
@@ -229,6 +230,7 @@ class Vendor extends CActiveRecord
        	$criteria->compare('name',$this->name,true);
        	$criteria->compare('vendor_type',$this->vendor_type,true);
        	$criteria->compare('total_pending_amount',$this->total_pending_amount,true);
+       	$criteria->compare('bussiness_name', $this->bussiness_name, true);
        	return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'pagination' => array(
@@ -274,7 +276,9 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
     			$i++;
     		}
     		else if(strtotime($payments[$i]->date) > strtotime($orders[$j]['delivery_date'])){
@@ -313,7 +317,10 @@ class Vendor extends CActiveRecord
     			$temp['paid_amount'] = $payments[$a]['paid_amount'];
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
+
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
     			$temp['outstanding'] = $outstanding;
