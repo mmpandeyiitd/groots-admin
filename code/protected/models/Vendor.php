@@ -230,7 +230,7 @@ class Vendor extends CActiveRecord
        	$criteria->compare('name',$this->name,true);
        	$criteria->compare('vendor_type',$this->vendor_type,true);
        	$criteria->compare('total_pending_amount',$this->total_pending_amount,true);
-       	$criteria->compare('bussiness_name', $this->bussiness_name, true);  
+       	$criteria->compare('bussiness_name', $this->bussiness_name, true);
        	return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'pagination' => array(
@@ -276,7 +276,9 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
     			$i++;
     		}
     		else if(strtotime($payments[$i]->date) > strtotime($orders[$j]['delivery_date'])){
@@ -315,7 +317,10 @@ class Vendor extends CActiveRecord
     			$temp['paid_amount'] = $payments[$a]['paid_amount'];
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
+
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
     			$temp['outstanding'] = $outstanding;
