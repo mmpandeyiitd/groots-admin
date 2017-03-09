@@ -356,7 +356,7 @@ class VendorController extends Controller
         $vendor = Vendor::model()->findByPk($vendor_id);
         $payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
         $orders = VendorDao::getVendorOrderQuantity($vendor_id);
-        $dataProvider = Vendor::getLedgerDataProvider($payments, $orders);
+        $dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
         $this->render('vendorLedger', array(
             'dataProvider' => $dataProvider,
             'vendor' => $vendor,));
