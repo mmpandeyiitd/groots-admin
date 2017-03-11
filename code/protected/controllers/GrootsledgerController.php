@@ -194,6 +194,11 @@ class GrootsledgerController extends Controller
     {
         //print("<pre>");
         //print_r($_POST);die;
+        $w_id = isset($_GET['w_id']) ? $_GET['w_id'] : '';
+        if(!($this->checkAccessByData('CollectionEditor', array('warehouse_id' => $w_id)))){
+            Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+            Yii::app()->controller->redirect("index.php?r=user/profile");
+        }
         $w_id = $_GET['w_id'];
         $retailerPayment = new RetailerPayment();
         $retailerId = $_GET['retailerId'];
@@ -232,6 +237,11 @@ class GrootsledgerController extends Controller
     {
         //print("<pre>");
         //print_r($_POST);die;
+        $w_id = isset($_GET['w_id']) ? $_GET['w_id'] : '';
+        if(!($this->checkAccessByData('CollectionEditor', array('warehouse_id' => $w_id)))){
+            Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+            Yii::app()->controller->redirect("index.php?r=user/profile");
+        }
         $w_id = $_GET['w_id'];
         if (isset($_POST['update'])) {
             $transaction = Yii::app()->db->beginTransaction();
@@ -572,11 +582,29 @@ class GrootsledgerController extends Controller
       }*/
     protected function beforeAction()
     {
-        return parent::beforeAction();
+        if (parent::beforeAction()) {
+            if (isset($_GET['w_id'])) {
+                $w_id = $_GET['w_id'];
+            }
+            if ($w_id > 0 && $this->checkAccessByData('CollectionViewer', array('warehouse_id' => $w_id))) {
+                return true;
+            }
+            elseif ($this->checkAccess('SuperAdmin')) {
+                return true;
+            } else {
+                Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+                Yii::app()->controller->redirect("index.php?r=user/profile");
+            }
+        }
     }
 
-    public static function updateDaily($retailerIds, $payments)
+    public function updateDaily($retailerIds, $payments)
     {
+        $w_id = isset($_GET['w_id']) ? $_GET['w_id'] : '';
+        if(!($this->checkAccessByData('CollectionEditor', array('warehouse_id' => $w_id)))){
+            Yii::app()->user->setFlash('permission_error', 'You have no permission to access this page');
+            Yii::app()->controller->redirect("index.php?r=user/profile");
+        }
         foreach ($retailerIds as $key => $retailerId) {
             $retailerPayment = new RetailerPayment();
             $retailer = Retailer::model()->findByPk($retailerId);
