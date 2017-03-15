@@ -221,7 +221,6 @@ class Vendor extends CActiveRecord
 	public function searchcredit(){
 		$criteria = new CDbCriteria; 
         $criteria->select = 't.id, t.name,t.bussiness_name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
-        $criteria->select = 't.id, t.name, t.total_pending_amount, t.vendor_type, t.due_date, credit_days, credit_limit, initial_pending_amount';
         if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
 			$criteria->condition = 't.allocated_warehouse_id = '.$w_id;
@@ -261,22 +260,27 @@ class Vendor extends CActiveRecord
         return $class;
     }
 
-    public function getLedgerDataProvider($payments, $orders){
+    public function getLedgerDataProvider($payments, $orders, $vendor_id){
     	//var_dump(count($orders), count($payments));die;
     	$i= $j=0;
     	$dataProvider = array();
-    	$outstanding = 0;
+    	$outstanding = VendorDao::getVendorInitialPendingAmount($vendor_id);
+    	//echo '<pre>';
+    	//var_dump($payments);die;
     	for ($i=0, $j=0; $i<count($payments) && $j<count($orders) ;) { 
     		$temp = array();
     		if(strtotime($payments[$i]->date) < strtotime($orders[$j]['delivery_date'])){
     			$temp['id'] = 'Payment'.$payments[$i]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+                if($payments[$i]['payment_type'] == 'Cheque'){
+                    $temp['paid_amount'] .= ' : '.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
+                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
-    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+    			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
                     $outstanding -= $temp['paid_amount'];
                 }
     			$i++;
@@ -296,11 +300,17 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$i]['id'].' / Order:'.$orders[$j]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+    			if($payments[$i]['payment_type'] == 'Cheque'){
+    			    $temp['paid_amount'] .= '->'.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
+                }
     			$temp['order_amount'] = $orders[$j]['price'];
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = $payments[$i]['id'];
-    			$outstanding += $temp['order_amount'] - $temp['paid_amount'];
+    			$outstanding += $temp['order_amount'];
+    			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
+    			    $outstanding -= $temp['paid_amount'];
+                }
     			$i++;$j++;
     		}
     		$temp['outstanding'] = $outstanding;
@@ -315,9 +325,12 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$a]['id'];
     			$temp['date'] = $payments[$a]['date'];
     			$temp['paid_amount'] = $payments[$a]['paid_amount'];
+                if($payments[$a]['payment_type'] == 'Cheque'){
+                    $temp['paid_amount'] .= '->'.$payments[$a]['payment_type'].'('.$payments[$a]['cheque_status'].')';
+                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
-    			if(!($payments['payment_type'] == 'Cheque' && $payments['cheque_status']!='Cleared')){
+    			if(!($payments[$a]['payment_type'] == 'Cheque' && $payments[$a]['cheque_status']!='Cleared')){
                     $outstanding -= $temp['paid_amount'];
                 }
 

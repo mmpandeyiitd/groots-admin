@@ -316,7 +316,7 @@ WHERE oh.delivery_date between('".$cDate."') and ('".$cdate1."') and oh.status n
     	$orders = OrderHeader::model()->findAll($criteria);
     	$criteria2 = new CDbCriteria;
     	$criteria2->select = 't.retailer_id, t.date, t.paid_amount,t.cheque_status, t.payment_type, t.cheque_no, r.name as retailerName';
-    	$criteria2->condition = 't.date between "'.$startDate.'" and "'.$endDate.'" and t.status =1';
+    	$criteria2->condition = 't.date between "'.$startDate.'" and "'.$endDate.'" and (t.status != 0 or t.payment_type = "Cheque")';
     	$criteria2->join = 'left join cb_dev_groots.retailer as r on r.id = t.retailer_id';
     	$criteria2->order = 't.date, t.retailer_id';
     	$payments = RetailerPayment::model()->findAll($criteria2);
