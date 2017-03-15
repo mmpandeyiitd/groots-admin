@@ -144,30 +144,30 @@ VendorPayment::vendorPaymentTypes();
 		<?php echo $form->error($model,'comment'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'created_at'); ?>
-        <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
-            'model'=>$model,
-            'attribute'=>'created_at',
+<!--	<div class="row">-->
+<!--		--><?php //echo $form->labelEx($model,'created_at'); ?>
+<!--        --><?php //$this->widget('zii.widgets.jui.CJuiDatePicker',array(
+//            'model'=>$model,
+//            'attribute'=>'created_at',
+//
+//            'id'=>'created_at',
+//            'value'=> date('Y-m-d'),
+//            'options'=>array(
+//                'dateFormat' => 'yy-mm-dd',
+//                'showAnim'=>'fold',
+//            ),
+//            'htmlOptions'=>array(
+//                'style'=>'height:20px;'
+//            ),
+//        )); ?>
+<!--        --><?php //echo $form->error($model,'created_at'); ?>
+<!--	</div>-->
 
-            'id'=>'created_at',
-            'value'=> date('Y-m-d'),
-            'options'=>array(
-                'dateFormat' => 'yy-mm-dd',
-                'showAnim'=>'fold',
-            ),
-            'htmlOptions'=>array(
-                'style'=>'height:20px;'
-            ),
-        )); ?>
-        <?php echo $form->error($model,'created_at'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'updated_at'); ?>
-		<?php echo $form->textField($model,'updated_at'); ?>
-		<?php echo $form->error($model,'updated_at'); ?>
-	</div>
+<!--	<div class="row">-->
+<!--		--><?php //echo $form->labelEx($model,'updated_at'); ?>
+<!--		--><?php //echo $form->textField($model,'updated_at'); ?>
+<!--		--><?php //echo $form->error($model,'updated_at'); ?>
+<!--	</div>-->
 	<?php if(! $update){?>
 	<div class="row status">
 		<?php echo $form->labelEx($model,'status'); ?>

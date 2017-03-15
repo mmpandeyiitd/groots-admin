@@ -8,10 +8,12 @@ $this->menu=array(
 ?>
 <h1 style = "color:#003300;">Vendor Ledger</h1>
 <br>
+<br>
 <h4>
 	Name : <?php echo $vendor->name; ?></br>
     Bussiness Name : <?php echo $vendor->bussiness_name;?></br>
-	Id: <?php echo $vendor->id; ?>
+    Id: <?php echo $vendor->id; ?></br>
+    InitialPayableAmount <?php echo VendorDao::getVendorInitialPendingAmount($vendor->id); ?>
 </h4>
 
 <?php if (Yii::app()->user->hasFlash('premission_info')): ?>
@@ -29,8 +31,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'id',
 			'date',
 			'paid_amount',
+            'order_amount',
 			'order_quantity',
-			'order_amount',
 			'outstanding',
 			array(
 				'header' => 'Invoice',

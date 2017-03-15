@@ -32,6 +32,7 @@ class VendorPayment extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	public $bussiness_name;
 	public function tableName()
 	{
 		return 'vendor_payments';
@@ -55,7 +56,7 @@ class VendorPayment extends CActiveRecord
 			array('transaction_id, receiving_acc_no', 'length', 'max'=>25),
 			array('bank_name, acc_holder_name', 'length', 'max'=>300),
 			array('isfc_code', 'length', 'max'=>15),
-			array('cheque_issue_date, comment', 'safe'),
+			array('cheque_issue_date, comment,bussiness_name', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_issue_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
@@ -121,9 +122,10 @@ class VendorPayment extends CActiveRecord
 		$criteria=new CDbCriteria;
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
-			$criteria->select = 't.*';
+			$criteria->select = 't.*,v.bussiness_name ';
 			$criteria->join = 'left join cb_dev_groots.vendors as v on t.vendor_id = v.id';
 			$criteria->condition = 'v.allocated_warehouse_id = '.$w_id;
+			$criteria->order = 't.id desc';
 		}
 		$criteria->compare('id',$this->id);
 		$criteria->compare('vendor_id',$this->vendor_id);
@@ -144,9 +146,13 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
 		$criteria->compare('status',$this->status);
+        $criteria->compare('v.bussiness_name',$this->bussiness_name);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'pagination' => array(
+                'pageSize' => 45,
+            ),
 		));
 	}
 

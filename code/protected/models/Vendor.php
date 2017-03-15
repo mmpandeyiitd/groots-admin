@@ -203,7 +203,7 @@ class Vendor extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-            'pagination' => array('pageSize' => 45,),
+            'pagination' => array('pageSize' => 45  ,),
 		));
 	}
 
@@ -229,6 +229,7 @@ class Vendor extends CActiveRecord
        	$criteria->compare('name',$this->name,true);
        	$criteria->compare('vendor_type',$this->vendor_type,true);
        	$criteria->compare('total_pending_amount',$this->total_pending_amount,true);
+       	$criteria->compare('bussiness_name', $this->bussiness_name, true);
        	return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
             'pagination' => array(
@@ -259,22 +260,29 @@ class Vendor extends CActiveRecord
         return $class;
     }
 
-    public function getLedgerDataProvider($payments, $orders){
+    public function getLedgerDataProvider($payments, $orders, $vendor_id){
     	//var_dump(count($orders), count($payments));die;
     	$i= $j=0;
     	$dataProvider = array();
-    	$outstanding = 0;
+    	$outstanding = VendorDao::getVendorInitialPendingAmount($vendor_id);
+    	//echo '<pre>';
+    	//var_dump($payments);die;
     	for ($i=0, $j=0; $i<count($payments) && $j<count($orders) ;) { 
     		$temp = array();
     		if(strtotime($payments[$i]->date) < strtotime($orders[$j]['delivery_date'])){
     			$temp['id'] = 'Payment'.$payments[$i]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+                if($payments[$i]['payment_type'] == 'Cheque'){
+                    $temp['paid_amount'] .= ' : '.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
+                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
     			$i++;
     		}
     		else if(strtotime($payments[$i]->date) > strtotime($orders[$j]['delivery_date'])){
@@ -292,11 +300,17 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$i]['id'].' / Order:'.$orders[$j]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
+    			if($payments[$i]['payment_type'] == 'Cheque'){
+    			    $temp['paid_amount'] .= '->'.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
+                }
     			$temp['order_amount'] = $orders[$j]['price'];
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = $payments[$i]['id'];
-    			$outstanding += $temp['order_amount'] - $temp['paid_amount'];
+    			$outstanding += $temp['order_amount'];
+    			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
+    			    $outstanding -= $temp['paid_amount'];
+                }
     			$i++;$j++;
     		}
     		$temp['outstanding'] = $outstanding;
@@ -311,9 +325,15 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$a]['id'];
     			$temp['date'] = $payments[$a]['date'];
     			$temp['paid_amount'] = $payments[$a]['paid_amount'];
+                if($payments[$a]['payment_type'] == 'Cheque'){
+                    $temp['paid_amount'] .= '->'.$payments[$a]['payment_type'].'('.$payments[$a]['cheque_status'].')';
+                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
-    			$outstanding -= $temp['paid_amount'];
+    			if(!($payments[$a]['payment_type'] == 'Cheque' && $payments[$a]['cheque_status']!='Cleared')){
+                    $outstanding -= $temp['paid_amount'];
+                }
+
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
     			$temp['outstanding'] = $outstanding;

@@ -304,6 +304,14 @@ class VendorDao{
         return $vendorTypes;
     }
 
+    public function getVendorInitialPendingAmount($vendor_id){
+        $connection = Yii::app()->db;
+        $sql = 'select initial_pending_amount from vendors where id = '.$vendor_id;
+        $command = $connection->createCommand($sql);
+        $amount = $command->queryScalar();
+        return (isset($amount)) ? $amount: 0;
+    }
+
 }
 
 

@@ -48,13 +48,14 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'columns'=>array(
 		'id',
 		'vendor_id',
+        'bussiness_name',
 		'paid_amount',
 		'date',
 		'payment_type',
 		'cheque_no',
+        'cheque_status',
 		/*
 		'debit_no',
-		'cheque_status',
 		'cheque_issue_date',
 		'cheque_name',
 		'transaction_id',
