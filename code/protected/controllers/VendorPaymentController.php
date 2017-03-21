@@ -80,13 +80,14 @@ class VendorPaymentController extends Controller
 		if(isset($_POST['VendorPayment']))
 		{
 			$model->attributes=$_POST['VendorPayment'];
+			$model->created_at = date('Y-m-d');
 			if($model->save()){
 				$vendor->total_pending_amount-= $model->paid_amount;
 				if(!$vendor->save()){
 					echo '<pre>';
 					die(print_r($vendor->getErrors()));
 				}
-				$this->redirect(array('admin'));
+				$this->redirect(array('vendor/admin'));
 			}
 		}
 		$this->render('create',array(
@@ -126,7 +127,7 @@ class VendorPaymentController extends Controller
 				if(!$vendor->save()){
 					die(print_r($vendor->getErrors()));
 				}
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('vendor/admin'));
 			}
 		}
 		$this->render('update',array(

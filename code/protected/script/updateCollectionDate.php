@@ -1,7 +1,6 @@
 <?php
-$username = "root";
-$password = "root";
-$localhost = "rds1.cyrtfjsamdhu.ap-southeast-1.rds.amazonaws.com";
+$dbConfig = dirname(__FILE__).'/../config/db-config.php';
+require_once($dbConfig);
 $database = "cb_dev_groots";
 $connection = mysql_connect($localhost,$username, $password);
 $sql = "select due_date, collection_frequency, status, id from cb_dev_groots.retailer order by id asc";
