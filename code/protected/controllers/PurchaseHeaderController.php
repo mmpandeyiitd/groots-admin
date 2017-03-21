@@ -327,7 +327,7 @@ class PurchaseHeaderController extends Controller
 
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
-                            $order_qty = $received_qty = $unitPrice = $totalPrice = '';
+                            $order_qty = $received_qty = $unitPrice = $totalPrice = 0.00;
                             $vendorId = $urd_number = 0;
                             if (isset($_POST['order_qty'][$key]) && !empty($_POST['order_qty'][$key])) {
                                 $order_qty = trim($_POST['order_qty'][$key]);
@@ -342,13 +342,9 @@ class PurchaseHeaderController extends Controller
                             }
                             //var_dump($vendorId);
                             $constraint = $id . '~' . $vendorId;
-                            if ($received_qty > 0 ) {
-                                $purchaseLine = new PurchaseLine();
-                                if (isset($purchaseLineMap[$constraint])) {
-                                    $purchaseLine = $purchaseLineMap[$constraint];
-                                }
-                                $purchaseLine->received_qty = $received_qty;
-                                $purchaseLine->save();
+                            $purchaseLine = new PurchaseLine();
+                            if (isset($purchaseLineMap[$constraint])) {
+                                $purchaseLine = $purchaseLineMap[$constraint];
                             }
 
                             if ($order_qty > 0) {
@@ -358,16 +354,11 @@ class PurchaseHeaderController extends Controller
                                 $isParent = ($_POST['parent_id'][$key] == 0) ? true : false;
                                 $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent);
                                 if ($flag['status'] == 1) {
-                                    $purchaseLine = new PurchaseLine();
-                                    if (isset($purchaseLineMap[$constraint])) {
-                                        $purchaseLine = $purchaseLineMap[$constraint];
-                                    } else if (!empty($order_qty) || !empty($received_qty)) {
-                                        $purchaseLine->purchase_id = $model->id;
-                                        $purchaseLine->base_product_id = $id;
-                                        $purchaseLine->created_at = date("y-m-d H:i:s");
-                                    }
+                                    $purchaseLine->purchase_id = $model->id;
+                                    $purchaseLine->base_product_id = $id;
+                                    $purchaseLine->created_at = date("y-m-d H:i:s");
                                     $purchaseLine->order_qty = $order_qty;
-                                    //$purchaseLine->received_qty = $received_qty;
+                                    $purchaseLine->received_qty = $received_qty;
                                     $purchaseLine->vendor_id = $vendorId;
                                     $purchaseLine->unit_price = $unitPrice;
                                     $purchaseLine->price = $totalPrice;
@@ -379,7 +370,12 @@ class PurchaseHeaderController extends Controller
                                     $this->redirect(array('update', "w_id" => $w_id, "id" => $model->id, 'type' => $updateType));
                                 }
 
-                            } else if (isset($purchaseLineMap[$constraint]) && (isset($_POST['order_qty'][$key]) && empty($_POST['order_qty'][$key]))) {
+                            }
+                            if ($received_qty > 0 ) {
+                                $purchaseLine->received_qty = $received_qty;
+                                $purchaseLine->save();
+                            }
+                            else if (isset($purchaseLineMap[$constraint]) && (isset($_POST['order_qty'][$key]) && empty($_POST['order_qty'][$key]))) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
