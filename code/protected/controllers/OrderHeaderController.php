@@ -67,7 +67,7 @@ class OrderHeaderController extends Controller {
                 'users' => array('*'),
                 ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch','sendMailToRetailerWithOrderId'),
+                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch','sendMailToRetailerWithOrderId', 'mailConfirmedOrders'),
                 'users' => array('@'),
                 ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -2249,6 +2249,12 @@ public function actionSendMailToRetailerWithOrderId($orderId){
         $result['msg'] = 'Retailer Email Failed';
         echo json_encode($result);
     }
+}
+
+public function actionMailConfirmedOrders(){
+    echo '<pre>';
+    var_dump($_POST);die;
+    $this->render('mailConfirmedOrders');
 }
 
 }
