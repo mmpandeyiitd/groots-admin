@@ -289,7 +289,6 @@ class VendorController extends Controller
         $initial_pending_date = VendorDao::getInitialPendingDate();
         //var_dump($initial_pending_date);die;
         if (strtotime($endDate) < strtotime($initial_pending_date)) {
-
             $startDate = VendorDao::getLastPendingDate($endDate, $initial_pending_date);
         } else $startDate = $initial_pending_date;
         if (isset($_POST['Payment']) && !empty($_POST['creditRepaid'])) {
@@ -303,7 +302,9 @@ class VendorController extends Controller
         $totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
         $initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
         $lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
-        //var_dump($initialPendingMap);die;
+//        echo '<pre>';
+//        var_dump($startDate);
+//        var_dump($initialPendingMap);die;
         $totalPending = 0;
         // foreach ($initialPendingMap as $key => $value) {
         // 	$totalPending += $value;
