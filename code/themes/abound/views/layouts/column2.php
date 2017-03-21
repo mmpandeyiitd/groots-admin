@@ -4,7 +4,7 @@ $userAuthItemArr = Utility::getUserAuthItemsArrFromSession();
 $meunAuthItemMap = array(
     'report'=>array('SuperAdmin', 'warehouseEditorAzd', 'warehouseEditor'),
     //'collection' => array('SuperAdmin'),
-    'collection' => array('OrderViewer', 'InventoryViewer', 'TransferViewer', 'PurchaseViewer', 'ProcurementViewer'),
+    'collection' => array('CollectionEditor'),
     'buyer' => array('SuperAdmin'),
     'category' => array('SuperAdmin'),
     'product' => array('SuperAdmin'),
@@ -131,22 +131,11 @@ function generateWarehouseItems($w_id, $meunAuthItemMap){
     return $warehouseItems;
 }
 
-
-$collectionUrl = '';
-if($access0){
-    $collectionUrl = array('/Grootsledger/admin&w_id=3');
-}
-elseif($basaiAccess){
-    $collectionUrl = array('/Grootsledger/admin&w_id=1');
-}
-elseif($azdAccess){
-    $collectionUrl = array('/Grootsledger/admin&w_id=2');
-}
-
+$collectionProp = generateCollectionProperties();
 
 $warehouses = generateWarehouses($meunAuthItemMap);
 $isWarehouseVisible = sizeof($warehouses)>0 ? true : false;
-$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => $collectionUrl, 'visible' => $isWarehouseVisible);
+$collectionArr = array('label' => '<i class="fa fa-list"></i> Collection management', 'url' => $collectionProp['url'], 'visible' => $collectionProp['access']);
 $warehouseArr = array('label' => '<i ></i> Warehouse +', 'url' =>'#', 'visible' => $isWarehouseVisible,
     'items'=> $warehouses,
     'itemCssClass' => 'ex1',
@@ -191,6 +180,26 @@ function generateVendorWarehouse($meunAuthItemMap){
         }
     }
     return $vendorWarehouses;
+}
+
+function generateCollectionProperties(){
+    $collectionUrl = '';
+    $access = false;
+    $warehouses = Warehouse::model()->findAllByAttributes(array('status'=>1), array('select'=> 'id, name'));
+    if(Yii::app()->user->checkAccess('SuperAdmin', false)){
+        $collectionUrl = array('/Grootsledger/admin&w_id='.HD_OFFICE_WH_ID);
+        return array('url' => $collectionUrl, 'access' => true);
+    }
+    else{
+        foreach ($warehouses as $warehouse){
+            if(Yii::app()->user->checkAccess('CollectionViewer', array('warehouse_id'=>$warehouse->id), false)){
+                $collectionUrl = array('/Grootsledger/admin&w_id='.$warehouse->id);
+                $access = true;
+                return array('url' => $collectionUrl, 'access' => $access);
+            }
+
+        }
+    }
 }
 
 

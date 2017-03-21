@@ -1,13 +1,13 @@
 <?php
 $this->breadcrumbs=array(
-'Groots Ledger'=>array('admin&w_id=2'),
+'Groots Ledger'=>array('admin&w_id='.$w_id),
 'Past Collection',
 );
 ?>
 
 
 
-<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl() . '/index.php?r=Grootsledger/pastDateCollection&w_id=2'; ?>">
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl() . '/index.php?r=Grootsledger/pastDateCollection&w_id='.$w_id; ?>">
 
     <h2> Interval Report</h2>
     <div class="dashboard-table">
@@ -125,7 +125,7 @@ $this->breadcrumbs=array(
     <div>
         <?php echo "<br>" ?>
         <!--<a href="index.php?r=Grootsledger/admin" class="button_new" style="width: auto;" target="_blank"  >Back</a>-->
-        <a href="index.php?r=Grootsledger/admin" class="button_new" style="width: auto;" target="_blank"  >Back</a>
+        <a href="index.php?r=Grootsledger/admin&w_id=<?php echo $w_id; ?>"   class="button_new" style="width: auto;" target="_blank"  >Back</a>
     </div>
 
 </form>
