@@ -10,18 +10,18 @@ function getAllVendorPayableAmount($startDate, $endDate){
     $i = 0;
     $orderAmount = array();
     while($i < $rows1){
-		$temp = mysql_fetch_array($result1);
-		array_push($orderAmount, $temp);
-		$i++;
+        $temp = mysql_fetch_array($result1);
+        array_push($orderAmount, $temp);
+        $i++;
     }
     $result2 = mysql_query($paymentSql);
     $rows1 = mysql_num_rows($result2);
     $i = 0;
     $paymentAmount = array();
     while($i < $rows1){
-		$temp = mysql_fetch_array($result2);
-		array_push($paymentAmount, $temp);
-		$i++;
+        $temp = mysql_fetch_array($result2);
+        array_push($paymentAmount, $temp);
+        $i++;
     }
     $order = array();
     $payment  =array();
@@ -51,10 +51,10 @@ function getAllVendorInitialPending($startDate){
     $sql = 'select id from cb_dev_groots.vendors where status = 1';
     $result = mysql_query($sql);
     $rows = mysql_num_rows($result);
-   	$i = 0;
+    $i = 0;
     $ids = array();
     while($i < $rows){
-       	$temp = mysql_fetch_array($result);
+        $temp = mysql_fetch_array($result);
         array_push($ids, $temp);
         $i++;
     }//base_date(vendor_log) = initial_pending_date of that vendor
@@ -83,23 +83,30 @@ $initialPendingMap = getAllVendorInitialPending($initial_pending_date);
 $totalPendingMap = getAllVendorPayableAmount(date('Y-m-d', strtotime($initial_pending_date.' + 1 day')), $yesterday);
 while($i < $rows){
     //update due_date for current vendor
-	$current = mysql_fetch_array($query);
-	if(strtotime($current['due_date']) == strtotime($yesterday)){
-		$newDueDate = date('Y-m-d', strtotime($current['due_date'].' + '.$current['payment_days_range'].' day'));
-		$newStartDate = date('Y-m-d', strtotime($current['payment_start_date'].' + '.$current['payment_days_range'].' day'));
-		$sql2 = 'update vendors set due_date = "'.$newDueDate.'", payment_start_date = "'.$newStartDate.'" where id = '.$current['id'];
+    $current = mysql_fetch_array($query);
+    if(strtotime($current['due_date']) == strtotime($yesterday)){
+        $newDueDate = date('Y-m-d', strtotime($current['due_date'].' + '.$current['payment_days_range'].' day'));
+        $newStartDate = date('Y-m-d', strtotime($current['payment_start_date'].' + '.$current['payment_days_range'].' day'));
+        $sql2 = 'update vendors set due_date = "'.$newDueDate.'", payment_start_date = "'.$newStartDate.'" where id = '.$current['id'];
 
-		$update = mysql_query($sql2);
-	}//uodate initial_pending_date and initial_pending_amount vendor for current vendor
-	if(strtotime($yesterday) == strtotime(date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month')))){
-		$totalNow = $initialPendingMap[$current['id']] + $totalPendingMap[$current['id']];
-		$newBaseDate = date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month'));
-		$updateLog = 'insert into vendor_log values(null, '.$current['id'].', '.$totalNow.', "'.$newBaseDate.'", CURDATE(), null)';
-		$updateVendorTable = 'update vendors set initial_pending_date = "'.$yesterday.'" , initial_pending_amount = "'.$totalNow.'" where id = '.$current['id']	;
-		$update = mysql_query($updateVendorTable);
-		$update = mysql_query($updateLog);
-	}
-	$i++;
+        $update = mysql_query($sql2);
+    }//uodate initial_pending_date and initial_pending_amount vendor for current vendor
+    $totalNow = $initialPendingMap[$current['id']] + $totalPendingMap[$current['id']];
+    $checkLog = 'select id from vendor_log where vendor_id = '.$current['id'];
+    $query = mysql_query($checkLog);
+    $rows = mysql_num_rows($query);
+    if($rows==0){
+        $insertVendorLog = 'insert into vendor_log VALUES(null, '.$current['id'].', '.$totalNow.', "'.$initial_pending_date.'", CURDATE(), null)';
+        $query = mysql_query($insertVendorLog);
+    }
+    if(strtotime($yesterday) == strtotime(date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month')))){
+        $newBaseDate = date('Y-m-d', strtotime($current['initial_pending_date'].' + 2 month'));
+        $updateLog = 'insert into vendor_log values(null, '.$current['id'].', '.$totalNow.', "'.$newBaseDate.'", CURDATE(), null)';
+        $updateVendorTable = 'update vendors set initial_pending_date = "'.$yesterday.'" , initial_pending_amount = "'.$totalNow.'" where id = '.$current['id']	;
+        $update = mysql_query($updateVendorTable);
+        $update = mysql_query($updateLog);
+    }
+    $i++;
 }
 
 
