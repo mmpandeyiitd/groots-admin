@@ -125,9 +125,11 @@ class VendorPayment extends CActiveRecord
 			$criteria->select = 't.*,v.bussiness_name ';
 			$criteria->join = 'left join cb_dev_groots.vendors as v on t.vendor_id = v.id';
 			$criteria->condition = 'v.allocated_warehouse_id = '.$w_id;
-			$criteria->order = 't.id desc';
+
 		}
-		$criteria->compare('id',$this->id);
+
+
+        $criteria->compare('id',$this->id);
 		$criteria->compare('vendor_id',$this->vendor_id);
 		$criteria->compare('paid_amount',$this->paid_amount,true);
 		$criteria->compare('date',$this->date,true);
@@ -148,8 +150,46 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('status',$this->status);
         $criteria->compare('v.bussiness_name',$this->bussiness_name);
 
+        $sort = new CSort();
+        $sort->attributes = array(
+            'id'=>array(
+                'asc'=>'id',
+                'desc'=>'id desc',
+            ),
+            'vendor_id'=>array(
+                'asc'=>'t.vendor_id',
+                'desc'=>'t.vendor_id desc',
+            ),
+            'bussiness_name'=>array(
+                'asc'=>'v.bussiness_name',
+                'desc'=>'v.bussiness_name',
+            ),
+            'paid_amount'=>array(
+                'asc'=>'t.paid_amount',
+                'desc'=>'t.paid_amount desc',
+            ),
+            'date'=>array(
+                'asc'=>'t.date',
+                'desc'=>'t.date desc',
+            ),
+            'cheque_status'=>array(
+                'asc'=>'t.cheque_status',
+                'desc'=>'t.cheque_status desc',
+            ),
+            'cheque_no'=>array(
+                'asc'=>'t.cheque_no',
+                'desc'=>'t.cheque_no desc',
+            ),
+            'payment_type'=>array(
+                'asc'=>'t.payment_type',
+                'desc'=>'t.payment_type desc',
+            ),
+
+        );
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'sort'=> $sort,
             'pagination' => array(
                 'pageSize' => 45,
             ),

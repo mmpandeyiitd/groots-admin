@@ -30,11 +30,10 @@ function getAllVendorPayableAmount($startDate, $endDate){
             $order[$value['vendor_id']] = $value['price'];
     }
     foreach ($paymentAmount as $key => $value) {
-        if(($value['payment_type'] == 'Cheque' && $value['cheque_status'] == 'Cleared')){
-            $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
-        }
-        else if(! empty($value['paid_amount'])){
-            $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+        if(!empty($value['paid_amount'])) {
+            if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
+                $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+            }
         }
     }
     foreach ($order as $key => $value) {
