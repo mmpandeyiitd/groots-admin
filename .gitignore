@@ -1,5 +1,6 @@
 code/protected/config/constants.php
 code/protected/config/main.php
+code/protected/config/console.php
 *.log
 *.txt
 *.pyc
