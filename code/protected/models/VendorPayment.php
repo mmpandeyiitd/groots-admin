@@ -148,7 +148,7 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
 		$criteria->compare('status',$this->status);
-        $criteria->compare('v.bussiness_name',$this->bussiness_name);
+        $criteria->compare('v.bussiness_name',$this->bussiness_name,true);
 
         $sort = new CSort();
         $sort->attributes = array(
@@ -186,6 +186,7 @@ class VendorPayment extends CActiveRecord
             ),
 
         );
+        $sort->defaultOrder = 't.id desc';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
