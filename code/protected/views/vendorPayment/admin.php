@@ -10,6 +10,8 @@ $this->breadcrumbs=array(
 $this->menu=array(
 	//array('label'=>'List VendorPayment', 'url'=>array('index')),
 	//array('label'=>'Create VendorPayment', 'url'=>array('create')),
+    array('label'=>'Create Vendor', 'url'=>array('vendor/create')),
+    array('label' => 'Credit Management', 'url' => array('vendor/creditManagement')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -33,6 +35,55 @@ You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&g
 or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
 </p>
 
+<div class="dashboard-table">
+    <form method="post">
+        <h4 style="width:20%">vendor payment</h4>
+        <div class="right_date" style="width:80%">
+            <label>From</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                // 'model' => $model,
+                'name' => 'payment_from',
+                'attribute' => 'payment_from',
+                //'value' => $model->created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'showAnim' => 'fold',
+                    'debug' => true,
+                    //'maxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+            //echo $form->error($model, 'created_at');
+            ?>
+
+
+            <label>To</label>
+            <?php
+
+            $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                //'model' => $model,
+                'name' => 'payment_to',
+                'attribute' => 'payment_to',
+                //'value' => $model->inv_created_at,
+                'options' => array(
+                    'dateFormat' => 'yy-mm-dd',
+                    'debug' => true,
+                    //'maxDate' => "60",
+                ), //DateTimePicker options
+                'htmlOptions' => array('readonly' => 'true'),
+            ));
+
+            ?>
+
+            <input name="paymentReport" class="button_new" type="submit" value="Download" />
+
+        </div>
+    </form>
+
+</div>
+
 <?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -53,7 +104,19 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'date',
 		'payment_type',
 		'cheque_no',
-        'cheque_status',
+        //'cheque_status',
+        array(
+            'header' => 'Cheque Status',
+            'name' => 'cheque_status',
+            'value' => function($data){
+                if($data->payment_type == 'Cheque'){
+                    return $data->cheque_status;
+                }
+                else{
+                    return '';
+                }
+            }
+        ),
 		/*
 		'debit_no',
 		'cheque_issue_date',

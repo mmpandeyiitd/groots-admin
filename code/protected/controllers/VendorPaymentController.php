@@ -175,6 +175,11 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionAdmin()
 	{
+	    if(isset($_POST['paymentReport'])){
+	        if(isset($_POST['payment_from']) && !empty($_POST['payment_from']))
+	            $startDate = $_POST['payment_from'];
+
+        }
 		$model=new VendorPayment('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['VendorPayment']))
