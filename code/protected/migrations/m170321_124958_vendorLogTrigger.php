@@ -17,6 +17,8 @@ class m170321_124958_vendorLogTrigger extends CDbMigration
             $this->execute($triggerInsert);
             $sql = 'insert into cb_dev_groots.vendor_log (vendor_id , total_pending, base_date, created_at, updated_at) (select id, initial_pending_amount, "2017-02-28", CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP() from cb_dev_groots.vendors as v where v.id > 37 )' ;
             $this->execute($sql);
+            $transaction->commit();
+            return true;
         } catch(Exception $e){
             echo "Exception: ".$e->getMessage()."\n";
             $transaction->rollBack();
