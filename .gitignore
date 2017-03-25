@@ -4,6 +4,7 @@ code/protected/config/console.php
 *.log
 *.txt
 *.pyc
+*.swp
 code/images/*
 code/assets/*
 code/log/*
