@@ -176,9 +176,13 @@ class VendorPaymentController extends Controller
 	public function actionAdmin()
 	{
 	    if(isset($_POST['paymentReport'])){
+	        $startDate = $endDate = '';
 	        if(isset($_POST['payment_from']) && !empty($_POST['payment_from']))
 	            $startDate = $_POST['payment_from'];
-
+            if(isset($_POST['payment_to']) && !empty($_POST['payment_to']))
+                $endDate = $_POST['payment_to'];
+            VendorPaymentDao::downloadPaymentReport($startDate,$endDate);
+            exit();
         }
 		$model=new VendorPayment('search');
 		$model->unsetAttributes();  // clear any default values
