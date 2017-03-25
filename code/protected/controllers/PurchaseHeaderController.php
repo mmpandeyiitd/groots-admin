@@ -770,10 +770,11 @@ class PurchaseHeaderController extends Controller
 
     public function actionDownloadReportById($id)
     {
-        $sql = 'select ph.delivery_date , pl.*,bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.bussiness_name end as vendorBussinessName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
+        $sql = 'select ph.delivery_date , pl.*,ca.category_name, bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.bussiness_name end as vendorBussinessName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
         left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
         left join groots_orders.purchase_header ph on ph.id = pl.purchase_id
+        left join cb_dev_groots.category as ca on ca.category_id = pcm.category_id
          where pl.purchase_id = ' . $id . ' order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
@@ -783,6 +784,7 @@ class PurchaseHeaderController extends Controller
             $tmp = array();
             $tmp['date'] = $value['delivery_date'];
             $tmp['product_id'] = $value['base_product_id'];
+            $tmp['category_name'] = $value['category_name'];
             $tmp['title'] = $value['title'];
             $tmp['grade'] = $value['grade'];
             $tmp['urd_number'] = $value['urd_number'];
@@ -938,12 +940,15 @@ class PurchaseHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select ph.id,ph.delivery_date , bp.title , bp.grade, pl.order_qty as "procured qty", pl.received_qty, pl.unit_price, pl.price as totalPrice, v.bussiness_name
+        $sql = 'select ph.id,ca.category_name, ph.delivery_date , bp.title , bp.grade, pl.urd_number,pl.order_qty as "procured qty", pl.received_qty, pl.unit_price, pl.price as totalPrice, v.bussiness_name
                 from purchase_line pl left join purchase_header ph on pl.purchase_id = ph.id left join cb_dev_groots.base_product bp on bp.base_product_id = pl.base_product_id
                 left join cb_dev_groots.vendors as v on v.id = pl.vendor_id
+                left join cb_dev_groots.product_category_mapping as pcm on pcm.base_product_id = pl.base_product_id
+                left join cb_dev_groots.category as ca on ca.category_id = pcm.category_id
                 where ph.warehouse_id = "'.$w_id.'" and ph.delivery_date between "'.$fromDate.'" and "'.$toDate.'"';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
+        //var_dump($result);die;
         $fileName = $fromDate.'//'.$toDate.'PurchaseReport.csv';
         if (count($result) > 0) {
             ob_clean();

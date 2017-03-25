@@ -355,10 +355,13 @@ class Vendor extends CActiveRecord
     			array_push($dataProvider, $temp);
     		}
     	}
-    	return new CArrayDataProvider($dataProvider, array(
+    	$result = array('data' => $dataProvider);
+    	$dataProvider =  new CArrayDataProvider($dataProvider, array(
                     'sort'=>array(
                         'attributes'=>array('id','date','paid_amount','order_amount', 'order_quantity'),
                     ),'pagination'=>array('pageSize'=>100)));
+    	$result['dataProvider'] = $dataProvider;
+    	return $result;
     }
 
 

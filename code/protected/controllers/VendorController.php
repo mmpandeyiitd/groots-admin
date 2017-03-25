@@ -358,8 +358,13 @@ class VendorController extends Controller
         $payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
         $orders = VendorDao::getVendorOrderQuantity($vendor_id);
         $dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
+        if(isset($_POST['ledgerDownload'])){
+            VendorDao::downloadLedger($dataProvider['data']);
+            exit();
+        }
+        //if(isset())
         $this->render('vendorLedger', array(
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider['dataProvider'],
             'vendor' => $vendor,));
 
     }

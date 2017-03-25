@@ -6,6 +6,7 @@ $this->menu=array(
 );
  
 ?>
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/vendorLedger&vendor_id='.$vendor->id;?>">
 <h1 style = "color:#003300;">Vendor Ledger</h1>
 <br>
 <br>
@@ -23,6 +24,8 @@ $this->menu=array(
 <?php endif; ?>
 
 <?php
+echo CHtml::submitButton('Download Ledger', array('name'=>'ledgerDownload'));
+
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'ledger-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
@@ -47,3 +50,4 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				),
 		));
 ?>
+</form>
