@@ -10,6 +10,8 @@ class m170324_134046_CollectionAuthAssignment extends CDbMigration
             $this->execute($sql);
             $sql = "insert into cb_dev_groots.AuthItemChild (parent, child) VALUES ('WarehouseEditor', 'CollectionEditor'), ('CollectionEditor', 'CollectionViewer')";
             $this->execute($sql);
+            $transaction->commit();
+            return true;
         } catch(Exception $e){
             echo "Exception: ".$e->getMessage()."\n";
             $transaction->rollBack();
