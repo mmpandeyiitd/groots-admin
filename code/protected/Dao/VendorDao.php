@@ -137,7 +137,7 @@ class VendorDao{
         foreach ($paymentAmount as $key => $value) {
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    if(array_key_exists($payment, $value['vendor_id'])){
+                    if(array_key_exists($value['vendor_id'], $payment)){
                         $payment[$value['vendor_id']] -= $value['paid_amount'];
                     }
                     else{
