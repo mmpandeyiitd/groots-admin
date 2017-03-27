@@ -4,7 +4,7 @@ require_once($dbConfig);
 $connection = mysql_connect($localhost,$username, $password);
 function getAllVendorPayableAmount($startDate, $endDate){
     $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from groots_orders.purchase_header as h left join groots_orders.purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and (l.received_qty > 0 or l.order_qty > 0) group by l.vendor_id';
-    $paymentSql = 'select vendor_id, payment_type, cheque_status , sum(paid_amount) as paid_amount from groots_orders.vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
+    $paymentSql = 'select vendor_id, payment_type, cheque_status , paid_amount as paid_amount from groots_orders.vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 ';
     $result1 = mysql_query($orderSql);
     $rows1 = mysql_num_rows($result1);
     $i = 0;
@@ -32,7 +32,12 @@ function getAllVendorPayableAmount($startDate, $endDate){
     foreach ($paymentAmount as $key => $value) {
         if(!empty($value['paid_amount'])) {
             if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                if(array_key_exists($value['vendor_id'], $payment)){
+                    $payment[$value['vendor_id']] -= $value['paid_amount'];
+                }
+                else{
+                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                }
             }
         }
     }

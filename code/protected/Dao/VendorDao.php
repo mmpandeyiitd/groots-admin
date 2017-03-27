@@ -123,7 +123,7 @@ class VendorDao{
         //var_dump($endDate);die;
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and l.received_qty > 0 group by l.vendor_id';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
+        $paymentSql = 'select vendor_id,payment_type, cheque_status ,paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1';
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -137,7 +137,12 @@ class VendorDao{
         foreach ($paymentAmount as $key => $value) {
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    if(array_key_exists($value['vendor_id'], $payment)){
+                        $payment[$value['vendor_id']] -= $value['paid_amount'];
+                    }
+                    else{
+                        $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    }
                 }
             }
         }
@@ -160,7 +165,7 @@ class VendorDao{
         //$paymentEndDate = date('Y-m-d', strtotime($paymentEndDate.' + 1 day'));
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.vendor_id = '.$vendor_id.'  and l.price > 0 and l.received_qty > 0' ; //group by h.delivery_date order by h.delivery_date';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -176,7 +181,7 @@ class VendorDao{
         foreach ($paymentAmount as $value){
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    $result -= $value['paid_amount'];
                 }
             }
         }
