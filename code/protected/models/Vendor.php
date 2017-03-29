@@ -77,7 +77,7 @@ class Vendor extends CActiveRecord
 			array('image, website, contact_person1, contact_person2', 'length', 'max'=>250),
 			array('allocated_warehouse_id', 'length', 'max'=>11),
 			array('vendor_type', 'length', 'max'=>12),
-			array('image_url, credit_days, due_date, payment_days_range, supplier_type', 'safe'),
+			array('image_url, credit_days, due_date, payment_days_range, supplier_type, account_holder_name, bank_account_no, account_type, bank_name, branch_name, isfc_code', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, name, vendor_code, VAT_number, email, password, mobile, telephone, address, pincode, owner_phone, owner_email, settlement_days, time_of_delivery, date_of_onboarding, city, state, image, image_url, website, contact_person1, contact_person2, status, credit_limit, created_date, updated_at, allocated_warehouse_id, initial_pending_amount, total_pending_amount, bussiness_name, payment_start_date, proc_exec_id, vendor_type, credit_days, due_date, payment_days_range', 'safe', 'on'=>'search'),
@@ -138,7 +138,14 @@ class Vendor extends CActiveRecord
 			'credit_days' => 'Credit Days',
 			'due_date' => 'Due Date',
 			'payment_days_range' => 'Payment Days Range',
-			'supplier_type' => 'Supplier Type'
+			'supplier_type' => 'Supplier Type',
+            'account_holder_name'=> 'Account Holder Name',
+            'bank_account_no' => 'Bank Account Number',
+            'account_type' => 'Account Type',
+            'bank_name' => 'Bank Name' ,
+            'branch_name' => 'Branch Name',
+            'isfc_code' => 'ISFC Code'
+
 		);
 	}
 
@@ -200,6 +207,13 @@ class Vendor extends CActiveRecord
 		$criteria->compare('credit_days',$this->credit_days,true);
 		$criteria->compare('due_date',$this->due_date,true);
 		$criteria->compare('supplier_type',$this->supplier_type, true);
+        $criteria->compare('account_holder_name',$this->account_holder_name, true);
+        $criteria->compare('bank_account_no',$this->bank_account_no, true);
+        $criteria->compare('account_type',$this->account_type, true);
+        $criteria->compare('bank_name',$this->bank_name, true);
+        $criteria->compare('branch_name',$this->branch_name, true);
+        $criteria->compare('isfc_code',$this->isfc_code, true);
+
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -280,6 +294,10 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
+    			$temp['payment_type'] = $payments[$i]['payment_type'];
+    			if($payments[$i]['payment_type']  == 'Cheque'){
+    			    $temp['cheque_status'] = $payments[$i]['cheque_status'];
+                }
     			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
                     $outstanding -= $temp['paid_amount'];
                 }
@@ -293,6 +311,8 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = null;
+                $temp['payment_type'] = '';
+                $temp['cheque_status'] = '';
     			$outstanding += $temp['order_amount'];
     			$j++;
     		}
@@ -307,6 +327,10 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = $payments[$i]['id'];
+                $temp['payment_type'] = $payments[$i]['payment_type'];
+                if($payments[$i]['payment_type']  == 'Cheque'){
+                    $temp['cheque_status'] = $payments[$i]['cheque_status'];
+                }
     			$outstanding += $temp['order_amount'];
     			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
     			    $outstanding -= $temp['paid_amount'];
@@ -337,6 +361,10 @@ class Vendor extends CActiveRecord
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
     			$temp['outstanding'] = $outstanding;
+                $temp['payment_type'] = $payments[$a]['payment_type'];
+                if($payments[$i]['payment_type']  == 'Cheque'){
+                    $temp['cheque_status'] = $payments[$a]['cheque_status'];
+                }
     			array_push($dataProvider, $temp);
     		}
     	}
@@ -352,6 +380,8 @@ class Vendor extends CActiveRecord
     			$temp['purchase_id'] = $orders[$b]['id'];
     			$temp['payment_id'] = null;
     			$temp['outstanding'] = $outstanding;
+                $temp['payment_type'] = '';
+                $temp['cheque_status'] = '';
     			array_push($dataProvider, $temp);
     		}
     	}
