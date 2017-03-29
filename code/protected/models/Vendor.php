@@ -335,6 +335,7 @@ class Vendor extends CActiveRecord
     			if(!($payments[$i]['payment_type'] == 'Cheque' && $payments[$i]['cheque_status']!='Cleared')){
     			    $outstanding -= $temp['paid_amount'];
                 }
+
     			$i++;$j++;
     		}
     		$temp['outstanding'] = $outstanding;
@@ -360,11 +361,12 @@ class Vendor extends CActiveRecord
 
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
-    			$temp['outstanding'] = $outstanding;
                 $temp['payment_type'] = $payments[$a]['payment_type'];
                 if($payments[$i]['payment_type']  == 'Cheque'){
                     $temp['cheque_status'] = $payments[$a]['cheque_status'];
                 }
+    			$temp['outstanding'] = $outstanding;
+
     			array_push($dataProvider, $temp);
     		}
     	}
@@ -379,9 +381,10 @@ class Vendor extends CActiveRecord
     			$outstanding += $temp['order_amount'];
     			$temp['purchase_id'] = $orders[$b]['id'];
     			$temp['payment_id'] = null;
-    			$temp['outstanding'] = $outstanding;
                 $temp['payment_type'] = '';
                 $temp['cheque_status'] = '';
+    			$temp['outstanding'] = $outstanding;
+
     			array_push($dataProvider, $temp);
     		}
     	}
