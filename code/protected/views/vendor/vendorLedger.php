@@ -34,6 +34,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'id',
 			'date',
 			'paid_amount',
+            'payment_type',
+            'cheque_status',
             'order_amount',
 			'order_quantity',
 			'outstanding',

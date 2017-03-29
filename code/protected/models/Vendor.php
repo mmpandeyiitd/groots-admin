@@ -287,9 +287,6 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment'.$payments[$i]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
-                if($payments[$i]['payment_type'] == 'Cheque'){
-                    $temp['paid_amount'] .= ' : '.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
-                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
@@ -320,9 +317,6 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$i]['id'].' / Order:'.$orders[$j]['id'];
     			$temp['date'] = $payments[$i]['date'];
     			$temp['paid_amount'] = $payments[$i]['paid_amount'];
-    			if($payments[$i]['payment_type'] == 'Cheque'){
-    			    $temp['paid_amount'] .= '->'.$payments[$i]['payment_type'].'('.$payments[$i]['cheque_status'].')';
-                }
     			$temp['order_amount'] = $orders[$j]['price'];
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
@@ -350,9 +344,6 @@ class Vendor extends CActiveRecord
     			$temp['id'] = 'Payment:'.$payments[$a]['id'];
     			$temp['date'] = $payments[$a]['date'];
     			$temp['paid_amount'] = $payments[$a]['paid_amount'];
-                if($payments[$a]['payment_type'] == 'Cheque'){
-                    $temp['paid_amount'] .= '->'.$payments[$a]['payment_type'].'('.$payments[$a]['cheque_status'].')';
-                }
     			$temp['order_amount'] = null;
     			$temp['order_quantity'] = null;
     			if(!($payments[$a]['payment_type'] == 'Cheque' && $payments[$a]['cheque_status']!='Cleared')){
