@@ -291,6 +291,7 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = null;
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['purchase_id'] = null;
+    			$temp['comment'] = $payments[$i]['comment'];
     			$temp['payment_type'] = $payments[$i]['payment_type'];
     			if($payments[$i]['payment_type']  == 'Cheque'){
     			    $temp['cheque_status'] = $payments[$i]['cheque_status'];
@@ -308,6 +309,7 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = null;
+    			$temp['comment'] = '';
                 $temp['payment_type'] = '';
                 $temp['cheque_status'] = '';
     			$outstanding += $temp['order_amount'];
@@ -321,6 +323,7 @@ class Vendor extends CActiveRecord
     			$temp['order_quantity'] = $orders[$j]['received_qty'];
     			$temp['purchase_id'] = $orders[$j]['id'];
     			$temp['payment_id'] = $payments[$i]['id'];
+    			$temp['comment'] = $payments[$i]['comment'];
                 $temp['payment_type'] = $payments[$i]['payment_type'];
                 if($payments[$i]['payment_type']  == 'Cheque'){
                     $temp['cheque_status'] = $payments[$i]['cheque_status'];
@@ -352,6 +355,7 @@ class Vendor extends CActiveRecord
 
     			$temp['payment_id'] = $payments[$a]['id'];
     			$temp['purchase_id'] = null;
+    			$temp['comment'] = $payments[$a]['comment'];
                 $temp['payment_type'] = $payments[$a]['payment_type'];
                 if($payments[$i]['payment_type']  == 'Cheque'){
                     $temp['cheque_status'] = $payments[$a]['cheque_status'];
@@ -372,6 +376,7 @@ class Vendor extends CActiveRecord
     			$outstanding += $temp['order_amount'];
     			$temp['purchase_id'] = $orders[$b]['id'];
     			$temp['payment_id'] = null;
+    			$temp['comment'] = '';
                 $temp['payment_type'] = '';
                 $temp['cheque_status'] = '';
     			$temp['outstanding'] = $outstanding;
