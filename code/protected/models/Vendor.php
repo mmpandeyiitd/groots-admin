@@ -293,6 +293,7 @@ class Vendor extends CActiveRecord
     			$temp['purchase_id'] = null;
     			$temp['comment'] = $payments[$i]['comment'];
     			$temp['payment_type'] = $payments[$i]['payment_type'];
+    			$temp['cheque_status'] = '';
     			if($payments[$i]['payment_type']  == 'Cheque'){
     			    $temp['cheque_status'] = $payments[$i]['cheque_status'];
                 }
@@ -325,6 +326,7 @@ class Vendor extends CActiveRecord
     			$temp['payment_id'] = $payments[$i]['id'];
     			$temp['comment'] = $payments[$i]['comment'];
                 $temp['payment_type'] = $payments[$i]['payment_type'];
+                $temp['cheque_status'] = '';
                 if($payments[$i]['payment_type']  == 'Cheque'){
                     $temp['cheque_status'] = $payments[$i]['cheque_status'];
                 }
@@ -357,6 +359,7 @@ class Vendor extends CActiveRecord
     			$temp['purchase_id'] = null;
     			$temp['comment'] = $payments[$a]['comment'];
                 $temp['payment_type'] = $payments[$a]['payment_type'];
+                $temp['cheque_status'] = '';
                 if($payments[$i]['payment_type']  == 'Cheque'){
                     $temp['cheque_status'] = $payments[$a]['cheque_status'];
                 }
