@@ -352,6 +352,16 @@ class VendorDao{
         ob_flush();
     }
 
+    public function getVendorAccountTypeDropdown(){
+        $connection = Yii::app()->db;
+        $result = Utility::get_enum_values($connection, 'vendors', 'account_type' );
+        $vendorTypes = array();
+        foreach ($result as $key => $value) {
+            $vendorTypes[$value['value']] = $value['value'];
+        }
+        return $vendorTypes;
+    }
+
 }
 
 
