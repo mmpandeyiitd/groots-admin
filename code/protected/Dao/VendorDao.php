@@ -123,7 +123,7 @@ class VendorDao{
         //var_dump($endDate);die;
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and l.received_qty > 0 group by l.vendor_id';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status ,paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1';
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -137,12 +137,7 @@ class VendorDao{
         foreach ($paymentAmount as $key => $value) {
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    if(array_key_exists($value['vendor_id'], $payment)){
-                        $payment[$value['vendor_id']] -= $value['paid_amount'];
-                    }
-                    else{
-                        $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
-                    }
+                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
                 }
             }
         }
@@ -165,7 +160,7 @@ class VendorDao{
         //$paymentEndDate = date('Y-m-d', strtotime($paymentEndDate.' + 1 day'));
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.vendor_id = '.$vendor_id.'  and l.price > 0 and l.received_qty > 0' ; //group by h.delivery_date order by h.delivery_date';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -181,7 +176,7 @@ class VendorDao{
         foreach ($paymentAmount as $value){
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    $result -= $value['paid_amount'];
+                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
                 }
             }
         }
@@ -352,14 +347,81 @@ class VendorDao{
         ob_flush();
     }
 
-    public function getVendorAccountTypeDropdown(){
-        $connection = Yii::app()->db;
-        $result = Utility::get_enum_values($connection, 'vendors', 'account_type' );
-        $vendorTypes = array();
-        foreach ($result as $key => $value) {
-            $vendorTypes[$value['value']] = $value['value'];
+    public function getLedgerData($vendor_id){
+        $connection = Yii::app()->secondaryDb;
+        $orderQuery = 'select ph.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
+                          from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
+                          where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
+                          group by ph.delivery_date order by ph.delivery_date';
+        $paymentsQuery = 'select *, "Payment" as type from vendor_payments where vendor_id = '.$vendor_id.' and status = 1';
+        $command = $connection->createCommand($orderQuery);
+        $orders = $command->queryAll();
+        $command = $connection->createCommand($paymentsQuery);
+        $payments = $command->queryAll();
+        $ledgerData = array_merge_recursive($orders, $payments);
+        $dataProvider = array();
+        foreach ($ledgerData as $key => $value) {
+            $type[$key] = $value['type'];
+            $date[$key] = $value['date'];
         }
-        return $vendorTypes;
+        if (!empty($ledgerData)) {
+            array_multisort($date, SORT_ASC, $type, SORT_ASC, $ledgerData);
+        }
+        $outstanding = VendorDao::getVendorInitialPendingAmount($vendor_id);
+        foreach ($ledgerData as $key => $value){
+            if($value['type'] == 'Order'){
+                $outstanding+= $value['price'];
+            }
+            else if($value['type'] == 'Payment'){
+                if(!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')){
+                    $outstanding-= $value['paid_amount'];
+                }
+            }
+            $value['outstanding'] = $outstanding;
+            $ledgerData[$key] = $value;
+
+        }
+        $dataProvider = self::makeLedgerDataProvider($ledgerData);
+        //echo '<pre>';
+        //var_dump($dataProvider);die;
+        $result = array('data' => $dataProvider);
+        $dataProvider =  new CArrayDataProvider($dataProvider, array(
+            'sort'=>array(
+                'attributes'=>array('id','date','paid_amount','order_amount', 'order_quantity'),
+            ),'pagination'=>array('pageSize'=>100)));
+        $result['dataProvider'] = $dataProvider;
+        return $result;
+
+    }
+
+    public function makeLedgerDataProvider($ledgerData){
+        $dataProvider = array();
+        foreach ($ledgerData as $ledgerRow){
+            $tmp = array();
+            $tmp['id'] = $ledgerRow['id'];
+            $tmp['type'] = $ledgerRow['type'];
+            $tmp['date'] = $ledgerRow['date'];
+            $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
+            $tmp['order_amount'] = isset($ledgerRow['price']) ? $ledgerRow['price']: null;
+            $tmp['order_quantity'] = isset($ledgerRow['received_qty']) ? $ledgerRow['received_qty']: null;
+            $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
+            $tmp['outstanding'] = $ledgerRow['outstanding'];
+            $tmp['payment_type'] = isset($ledgerRow['payment_type']) ? $ledgerRow['payment_type']: null;
+            $tmp['cheque_no'] = isset($ledgerRow['cheque_no']) ? $ledgerRow['cheque_no']: null;
+            $tmp['debit_no'] = isset($ledgerRow['debit_no']) ? $ledgerRow['debit_no']: null;
+            $tmp['cheque_status'] = isset($ledgerRow['cheque_status']) ? $ledgerRow['cheque_status']: null;
+            $tmp['cheque_issue_date'] = isset($ledgerRow['cheque_issue_date']) ? $ledgerRow['cheque_issue_date']: null;
+            $tmp['cheque_name'] = isset($ledgerRow['cheque_name']) ? $ledgerRow['cheque_name']: null;
+            $tmp['transaction_id'] = isset($ledgerRow['transaction_id']) ? $ledgerRow['transaction_id']: null;
+            $tmp['receiving_acc_no'] = isset($ledgerRow['receiving_acc_no']) ? $ledgerRow['receiving_acc_no']: null;
+            $tmp['bank_name'] = isset($ledgerRow['bank_name']) ? $ledgerRow['bank_name']: null;
+            $tmp['isfc_code'] = isset($ledgerRow['isfc_code']) ? $ledgerRow['isfc_code']: null;
+            $tmp['acc_holder_name'] = isset($ledgerRow['acc_holder_name']) ? $ledgerRow['acc_holder_name']: null;
+            $tmp['comment'] = isset($ledgerRow['comment']) ? $ledgerRow['comment']: null;
+            $tmp['status'] = isset($ledgerRow['status']) ? $ledgerRow['status']: null;
+            array_push($dataProvider,$tmp);
+        }
+        return $dataProvider;
     }
 
 }

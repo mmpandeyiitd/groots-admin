@@ -86,7 +86,6 @@ class VendorController extends Controller
             $model->created_date = date('Y-m-d H:i:s');
             $model->allocated_warehouse_id = $w_id;
             $model->initial_pending_date = VendorDao::getInitialPendingDate();
-
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->id));
         }
@@ -354,11 +353,11 @@ class VendorController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=" . $w_id);
         }
-
+        $dataProvider = VendorDao::getLedgerData($vendor_id);
         $vendor = Vendor::model()->findByPk($vendor_id);
-        $payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
-        $orders = VendorDao::getVendorOrderQuantity($vendor_id);
-        $dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
+        //$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
+        //$orders = VendorDao::getVendorOrderQuantity($vendor_id);
+        //$dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
         if(isset($_POST['ledgerDownload'])){
             VendorDao::downloadLedger($dataProvider['data']);
             exit();
