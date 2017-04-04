@@ -348,8 +348,9 @@ class VendorDao{
     }
 
     public function getLedgerData($vendor_id){
+        //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
-        $orderQuery = 'select ph.id,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
+        $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
                           where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
                           group by ph.delivery_date order by ph.delivery_date';
@@ -401,19 +402,20 @@ class VendorDao{
             $tmp['id'] = $ledgerRow['id'];
             $tmp['type'] = $ledgerRow['type'];
             $tmp['date'] = $ledgerRow['date'];
+            $tmp['urd'] = isset($ledgerRow['urd_number']) ? $ledgerRow['urd_number'] : null;
             $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
             $tmp['order_amount'] = isset($ledgerRow['price']) ? $ledgerRow['price']: null;
             $tmp['order_quantity'] = isset($ledgerRow['received_qty']) ? $ledgerRow['received_qty']: null;
             $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
             $tmp['outstanding'] = $ledgerRow['outstanding'];
             $tmp['payment_type'] = isset($ledgerRow['payment_type']) ? $ledgerRow['payment_type']: null;
-            $tmp['cheque_no'] = isset($ledgerRow['cheque_no']) ? $ledgerRow['cheque_no']: null;
-            $tmp['debit_no'] = isset($ledgerRow['debit_no']) ? $ledgerRow['debit_no']: null;
-            $tmp['cheque_status'] = isset($ledgerRow['cheque_status']) ? $ledgerRow['cheque_status']: null;
-            $tmp['cheque_issue_date'] = isset($ledgerRow['cheque_issue_date']) ? $ledgerRow['cheque_issue_date']: null;
-            $tmp['cheque_name'] = isset($ledgerRow['cheque_name']) ? $ledgerRow['cheque_name']: null;
-            $tmp['transaction_id'] = isset($ledgerRow['transaction_id']) ? $ledgerRow['transaction_id']: null;
-            $tmp['receiving_acc_no'] = isset($ledgerRow['receiving_acc_no']) ? $ledgerRow['receiving_acc_no']: null;
+            $tmp['cheque_no'] = (isset($ledgerRow['cheque_no']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_no']: null;
+            $tmp['debit_no'] = (isset($ledgerRow['debit_no']) && $ledgerRow['payment_type'] == 'Debit Note') ? $ledgerRow['debit_no']: null;
+            $tmp['cheque_status'] = (isset($ledgerRow['cheque_status']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_status']: null;
+            $tmp['cheque_issue_date'] = (isset($ledgerRow['cheque_issue_date']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_issue_date']: null;
+            $tmp['cheque_name'] = (isset($ledgerRow['cheque_name']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_name']: null;
+            $tmp['transaction_id'] = (isset($ledgerRow['transaction_id']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['transaction_id']: null;
+            $tmp['receiving_acc_no'] = (isset($ledgerRow['receiving_acc_no']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['receiving_acc_no']: null;
             $tmp['bank_name'] = isset($ledgerRow['bank_name']) ? $ledgerRow['bank_name']: null;
             $tmp['isfc_code'] = isset($ledgerRow['isfc_code']) ? $ledgerRow['isfc_code']: null;
             $tmp['acc_holder_name'] = isset($ledgerRow['acc_holder_name']) ? $ledgerRow['acc_holder_name']: null;
