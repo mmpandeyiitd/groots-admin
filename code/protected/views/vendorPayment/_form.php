@@ -114,9 +114,9 @@ VendorPayment::vendorPaymentTypes();
 		<?php echo $form->error($model,'transaction_id'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'receiving_acc_no'); ?>
-		<?php echo $form->textField($model,'receiving_acc_no',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->textField($model,'receiving_acc_no',array('value' => $vendor->bank_account_no ,'size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'receiving_acc_no'); ?>
 	</div>
 
