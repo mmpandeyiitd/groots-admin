@@ -34,6 +34,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'id',
 			'date',
 			'paid_amount',
+            'payment_type',
+            'cheque_status',
             'order_amount',
 			'order_quantity',
 			'outstanding',
@@ -41,8 +43,8 @@ $this->widget('zii.widgets.grid.CGridView', array(
 				'header' => 'Invoice',
 				'type'=>'raw',
 				'value' => function($data) use ($vendor){
-					if(isset($data['purchase_id']) && !empty($data['purchase_id'])){
-						return CHtml::button('Invoice', array('submit' => 'index.php?r=vendor/invoice&vendorId='.$vendor->id.'&purchaseId='.$data['purchase_id']));
+					if($data['type'] == "Order"){
+						return CHtml::button('Invoice', array('submit' => 'index.php?r=vendor/invoice&vendorId='.$vendor->id.'&purchaseId='.$data['id']));
 					}
 					else return '';
 				}

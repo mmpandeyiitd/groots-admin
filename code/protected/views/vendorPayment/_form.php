@@ -114,27 +114,27 @@ VendorPayment::vendorPaymentTypes();
 		<?php echo $form->error($model,'transaction_id'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'receiving_acc_no'); ?>
-		<?php echo $form->textField($model,'receiving_acc_no',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->textField($model,'receiving_acc_no',array('value' => $vendor->bank_account_no ,'size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'receiving_acc_no'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'bank_name'); ?>
-		<?php echo $form->textField($model,'bank_name',array('size'=>60,'maxlength'=>300)); ?>
+		<?php echo $form->textField($model,'bank_name',array('value' => $vendor->bank_name,'size'=>60,'maxlength'=>300)); ?>
 		<?php echo $form->error($model,'bank_name'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'isfc_code'); ?>
-		<?php echo $form->textField($model,'isfc_code',array('size'=>15,'maxlength'=>15)); ?>
+		<?php echo $form->textField($model,'isfc_code',array('value' => $vendor->isfc_code,'size'=>15,'maxlength'=>15)); ?>
 		<?php echo $form->error($model,'isfc_code'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet ">
 		<?php echo $form->labelEx($model,'acc_holder_name'); ?>
-		<?php echo $form->textField($model,'acc_holder_name',array('size'=>60,'maxlength'=>300)); ?>
+		<?php echo $form->textField($model,'acc_holder_name',array('value' => $vendor->account_holder_name,'size'=>60,'maxlength'=>300)); ?>
 		<?php echo $form->error($model,'acc_holder_name'); ?>
 	</div>
 
@@ -198,21 +198,24 @@ VendorPayment::vendorPaymentTypes();
     	console.log('here2');
     	var e = document.getElementById("VendorPayment_payment_type");
 		var str = e.options[e.selectedIndex].text;
+        onStartUp();
+        if( str != 'Cash'){
+            console.log('here');
+            $('.others').each(function () {
+                $(this).show();
+            })
+        }
 		if(str == 'Cheque'){
-			onStartUp();
 			$('.cheque').each(function(){
 				$(this).show();
 			})
 		}
 		else if(str == 'NetBanking'){
-			onStartUp();
 			$('.internet').each(function(){
 				$(this).show();
 			})
 		}
-		else {
-			onStartUp();
-		}
+
     }
 
 </script>
