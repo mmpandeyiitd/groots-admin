@@ -46,6 +46,7 @@ class SubscribedProduct extends CActiveRecord {
     public $subscribed_product_id;
     public $store_price;
     public $store_offer_price ;
+    public $category_name;
 
     public function tableName() {
         return 'subscribed_product';
@@ -66,7 +67,7 @@ class SubscribedProduct extends CActiveRecord {
             //  array('checkout_url', 'length', 'max' => 2083),
             array('sku', 'length', 'max' => 128),
             array('created_date, modified_date', 'safe'),
-            array('title,effective_price,discout_per', 'safe', 'on' => 'search'),
+            array('title,effective_price,discout_per, category_name', 'safe', 'on' => 'search'),
             //array('', 'safe', 'on'=>'search'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -579,11 +580,13 @@ WHERE `subscribed_product_id`=$val";
 //            $criteria->order = "t.title ASC";
             //echo '<pre>';print_r($criteria);die;
             //$this->_defaultScopeDisabled = true;
-            $criteria->select = ''.$retailer_id.' as selected_retailer_id, if(isnull(t.status),1,t.status) as status,if(isnull(rp.retailer_id),0, rp.retailer_id)
-                  as retailer_id , t.subscribed_product_id , bp.title, t.store_price , t.store_offer_price , if(isnull(rp.effective_price),0,rp.effective_price)
+            $criteria->select = ''.$retailer_id.' as selected_retailer_id, c.category_name, if(isnull(t.status),1,t.status) as status,if(isnull(rp.retailer_id),0, rp.retailer_id)
+                  as retailer_id , t.subscribed_product_id , bp.title, t.store_price , t.store_offer_price , if(isnull(rp.effective_price)," ",rp.effective_price)
                   as effective_price , if(isnull(rp.discount_per),0,rp.discount_per) as discount_price';
             $criteria->join = 'left join cb_dev_groots.retailer_product_quotation as rp on t.subscribed_product_id = rp.subscribed_product_id and '.$retailer_id.' = rp.retailer_id';
             $criteria->join .= ' left join cb_dev_groots.base_product as bp on t.base_product_id = bp.base_product_id';
+            $criteria->join .= ' left join cb_dev_groots.product_category_mapping as pcm on pcm.base_product_id = t.base_product_id ';
+            $criteria->join .= ' left join cb_dev_groots.category as c on c.category_id = pcm.category_id ';
             $criteria->condition = 't.status = 1 and bp.status = 1 and (bp.grade not in ("Parent", "Unsorted") or isnull(bp.grade))';
             $criteria->group = 't.subscribed_product_id';
             $criteria->order = 'bp.title ASC';
@@ -599,6 +602,7 @@ WHERE `subscribed_product_id`=$val";
         $criteria->compare('bp.title', $this->title, true);
         $criteria->compare('t.store_price', $this->store_price, true);
         $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
+        $criteria->compare('c.category_name', $this->category_name, true);
         //$criteria->compare('t.quantity', $this->quantity);
         //$criteria->compare('t.store', $this->store, true);
         $criteria->compare('t.status', $this->status, FALSE);

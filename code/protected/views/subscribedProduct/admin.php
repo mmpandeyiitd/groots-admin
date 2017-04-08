@@ -136,6 +136,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             'selectableRows' => '100',
         ),
         'subscribed_product_id',
+        'category_name',
         'title',
         'store_price',
         'store_offer_price',
