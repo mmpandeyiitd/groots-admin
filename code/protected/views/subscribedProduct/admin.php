@@ -71,9 +71,9 @@ $pageSizeDropDown = CHtml::dropDownList(
     ?></h5>
 <div class="search-form" style="display:none">
     <?php
+    echo 'here';
     $this->renderPartial('_search', array(
-        'model_grid' => $model_grid,
-    ));
+        'model_grid' => $model_grid,));
     ?>
 </div><!-- search-form -->
 <?php if (Yii::app()->user->hasFlash('success')): ?><div class="flash-error label label-success" style="margin-left: 15px;"><?php echo Yii::app()->user->getFlash('success'); ?></div><?php endif; ?>
@@ -121,7 +121,7 @@ $pageSizeDropDown = CHtml::dropDownList(
 $this->widget('zii.widgets.grid.CGridView', array(
     'itemsCssClass' => 'table table-striped table-bordered table-hover',
     'id' => 'ympdm-store-grid',
-    'dataProvider' => $model_grid->search(''),
+    'dataProvider' => $model_grid->searchRetProdMapping(),
     'filter' => $model_grid,
     
     'columns' => array(

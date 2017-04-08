@@ -346,7 +346,9 @@ class PurchaseHeaderController extends Controller
                             if (isset($purchaseLineMap[$constraint])) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
                             }
-
+                            //var_dump($purchaseLine);
+                            //echo 'here'.'<br>';
+                            //var_dump($order_qty, $received_qty);
                             if ($order_qty > 0) {
                                 $unitPrice = trim($_POST['price'][$key]);
                                 $totalPrice = trim($_POST['totalPrice'][$key]);
@@ -364,6 +366,9 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->price = $totalPrice;
                                     $purchaseLine->urd_number = $urd_number;
                                     $purchaseLine->save();
+                                    if(isset($purchaseLineMap[$constraint])){
+                                        unset($purchaseLineMap[$constraint]);
+                                    }
                                 } else {
                                     $transaction->rollBack();
                                     Yii::app()->user->setFlash('error', $flag['msg'] . ' For Product Id' . $id);
@@ -374,16 +379,23 @@ class PurchaseHeaderController extends Controller
                             if ($received_qty > 0 ) {
                                 $purchaseLine->received_qty = $received_qty;
                                 $purchaseLine->save();
+                                if(isset($purchaseLineMap[$constraint])){
+                                    unset($purchaseLineMap[$constraint]);
+                                }
                             }
                             else if (isset($purchaseLineMap[$constraint]) && (isset($_POST['order_qty'][$key]) && empty($_POST['order_qty'][$key]))) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
+                                unset($purchaseLineMap[$constraint]);
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
 
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
+                        //die('here');
                     }
-                    //die('here');
+                    foreach ($purchaseLineMap as $p_line){
+                        $p_line->deleteByPk($p_line->id);
+                    }
 
                     $transaction->commit();
                     if ($parentIdToUpdate != '' && $parentIdToUpdate > 0) {
