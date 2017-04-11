@@ -20,6 +20,15 @@ class RetailerproductquotationGridview extends CActiveRecord {
     /**
      * @return string the associated database table name
      */
+    public $retailer_id;
+    public $status;
+    public $subscribed_product_id;
+    public $title;
+    public $store_price;
+    public $store_offer_price ;
+    public $effective_price;
+    public $dicount_pre;
+
 
     public $selected_retailer_id;
 
@@ -91,27 +100,27 @@ class RetailerproductquotationGridview extends CActiveRecord {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             $retailer_id = $_GET['id'];
             $sub_ids = $this->getSubcribeid($retailer_id);
-            // $criteria->alias = 'rp2';
+             //$criteria->alias = 'rp2';
              $criteria->select = "$retailer_id as selected_retailer_id,rp2.status,rp2.retailer_id,t.subscribed_product_id,t.title,t.store_price,t.store_offer_price,IF(rp2.`effective_price` IS NULL,0,rp2.`effective_price`) AS effective_price,
 IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
             $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
             $criteria->group = "t.subscribed_product_id";
-
             $criteria->order = "t.title ASC";
             //echo '<pre>';print_r($criteria);die;
-            
+            //$this->_defaultScopeDisabled = true;
+//
         }
-       
+//
         
-        $criteria->compare('t.title', $this->title, true);
-        $criteria->compare('t.store_price', $this->store_price, true);
-        $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
-        $criteria->compare('t.quantity', $this->quantity);
-        $criteria->compare('t.store', $this->store, true);
-        $criteria->compare('t.status', $this->status, FALSE);
-        $criteria->compare('retailer_id', $this->retailer_id, true);
-        $criteria->compare('rp2.effective_price', $this->effective_price, true);
-        $criteria->compare('rp2.discount_price', $this->discount_price, true);
+        $criteria->compare('bp.title', $this->title, true);
+        $criteria->compare('sp.store_price', $this->store_price, true);
+        $criteria->compare('sp.store_offer_price', $this->store_offer_price, true);
+        //$criteria->compare('t.quantity', $this->quantity);
+        //$criteria->compare('t.store', $this->store, true);
+        $criteria->compare('sp.status', $this->status, FALSE);
+        $criteria->compare('rp.retailer_id', $this->retailer_id, true);
+        $criteria->compare('rp.effective_price', $this->effective_price, true);
+        $criteria->compare('rp.discount_price', $this->discount_price, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,

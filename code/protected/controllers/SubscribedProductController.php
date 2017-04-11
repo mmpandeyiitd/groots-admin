@@ -208,7 +208,7 @@ class SubscribedProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
-        // echo '<pre>'; print_r($_POST);die;
+         //echo '<pre>'; var_dump($_POST);die;
         /*if (substr_count(Yii::app()->session['premission_info']['module_info']['subscribedProduct'], 'R') == 0) {
             Yii::app()->user->setFlash('permission_error', 'You have not permission to access');
             Yii::app()->controller->redirect("index.php?r=DashboardPage/index");
@@ -228,14 +228,15 @@ class SubscribedProductController extends Controller {
       	}
         $no_of_Deletedataarray = 1;
         $model = new SubscribedProduct;
-        $model_grid = new RetailerproductquotationGridview('search');
+        //$model_grid = new RetailerproductquotationGridview('search');
+        $model_grid = new SubscribedProduct('search');
         if (isset($_GET['pageSize'])) {
             Yii::app()->user->setState('pageSize', (int) $_GET['pageSize']);
             unset($_GET['pageSize']);
         }
         $model_grid->unsetAttributes(); // clear any default values
-        if (isset($_GET['RetailerproductquotationGridview'])) {
-            $model_grid->attributes = $_GET['RetailerproductquotationGridview'];
+        if (isset($_GET['SubscribedProduct'])) {
+            $model_grid->attributes = $_GET['SubscribedProduct'];
             //$model->attributes=$_REQUEST['id'];
         }
 

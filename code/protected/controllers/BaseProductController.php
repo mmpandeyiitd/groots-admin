@@ -1298,7 +1298,7 @@ class BaseProductController extends Controller {
                 }
                 $i = 0;
                 $requiredFields = array('title', 'categoryId', 'Store Price', 'Store Offer Price', 'Pack Size', 'Pack Unit', 'Effective Price Date');
-                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id', 'grade', 'priority', 'baseTitle');
+                $defaultFields = array('title','base_product_id','categoryId', 'Pack Size', 'Pack Unit', 'store id', 'Store Price', 'Effective Price Date', 'Diameter', 'Grade', 'Store Offer Price', 'description', 'color', 'quantity', 'Name', 'Price(Store Offer Price)', 'Weight', 'Weight Unit', 'Length', 'Length Unit', 'image','Status', 'parent id', 'grade', 'priority', 'baseTitle', 'Pack Size In Gm');
 
                 if ($model->action == 'update') {
                     $requiredFields = array('Base Product ID');
@@ -1370,6 +1370,9 @@ class BaseProductController extends Controller {
                                     $row['pack_size'] = str_replace("’", "'", trim($data[$cols['Pack Size']]));
                                 if (isset($cols['Pack Unit']))
                                     $row['pack_unit'] = str_replace("’", "'", trim($data[$cols['Pack Unit']]));
+                                if (isset($cols['Pack Size In Gm']))
+                                    $row['pack_size_in_gm'] = str_replace("’", "'", trim($data[$cols['Pack Size In Gm']]));
+
                                 if (isset($cols['Diameter']))
                                     $row['diameter'] = str_replace("’", "'", trim($data[$cols['Diameter']]));
                                 if (isset($cols['Grade']))
@@ -2163,7 +2166,7 @@ class BaseProductController extends Controller {
 
     public function actionCreateFileDownload() {
         $file_name = 'Bulk_Upload_product_create.csv';
-        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,baseTitle';
+        $file_data = 'title,categoryId,Store Price,Store Offer Price,Effective Price Date,Pack Size,Pack Unit,Pack Size In Gm, description,color,Grade,Diameter,Weight,Weight Unit,Length,Length Unit,image,parent id,grade,priority,baseTitle';
         $size_of_file = strlen($file_data);
         $this->renderPartial('fileDownload', array(
             'file_name' => $file_name,
