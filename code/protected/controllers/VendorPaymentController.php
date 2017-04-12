@@ -28,7 +28,7 @@ class VendorPaymentController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view', 'paymentInvoice'),
 				'users'=>array('*'),
 				),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -193,6 +193,37 @@ class VendorPaymentController extends Controller
 			'model'=>$model,
 			));
 	}
+
+	public function actionPaymentInvoice($id){
+	    $model = $this->loadModel($id);
+	    $vendor = Vendor::model()->findByPk($model->vendor_id);
+        $store = Store::model()->findByAttributes(array('store_id' => 1));
+        $model->groots_address = $store->business_address;
+        $model->groots_city = $store->business_address_city;
+        $model->groots_state = $store->business_address_state;
+        $model->groots_country = $store->business_address_country;
+        $model->groots_pincode = $store->business_address_pincode;
+        $model->groots_authorized_name = $store->store_name;
+        ob_start();
+        echo $this->renderPartial('paymentInvoice', array('model' => $model,'vendor' => $vendor, 'type' => 'invoice'), true);//die;
+        $content = ob_get_clean();
+        require_once(dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
+        $title = "Vendor Invoice";
+        $downloadFileName = $vendor->bussiness_name.' '.$model->id.' payment'. ".pdf";
+
+        try {
+            $html2pdf = new HTML2PDF('P', 'A4', 'en');
+            $html2pdf->pdf->SetTitle($title);
+            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->Output($downloadFileName);
+            var_dump($html2pdf);
+
+
+        } catch (HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+    }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

@@ -33,6 +33,13 @@ class VendorPayment extends CActiveRecord
 	 * @return string the associated database table name
 	 */
 	public $bussiness_name;
+    public $groots_authorized_name;
+    public $groots_address;
+    public $groots_city;
+    public $groots_state;
+    public $groots_country;
+    public $groots_pincode;
+
 	public function tableName()
 	{
 		return 'vendor_payments';
