@@ -296,7 +296,8 @@ class PurchaseHeaderController extends Controller
         if (isset($_POST['purchase-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
             try {
-                $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
+                $prodIds = implode(',',$_POST['base_product_id']);
+                $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id), array('condition'=> 'base_product_id in ('.$prodIds.')'));
                 $purchaseLineMap = array();
                 foreach ($purchaseLines as $item) {
                     $constraint = $item->base_product_id . '~' . $item->vendor_id;
@@ -989,5 +990,6 @@ class PurchaseHeaderController extends Controller
         }
 
     }
+
 
 }

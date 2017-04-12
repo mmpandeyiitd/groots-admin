@@ -32,7 +32,7 @@ class VendorController extends Controller
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList'),
+                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList','zipInvoicesByVendor'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -408,9 +408,10 @@ class VendorController extends Controller
         }
     }
 
-    public function actionInvoice($vendorId, $purchaseId)
+    public function actionInvoice($vendorId, $purchaseId,$zip=false)
     {
         $model = VendorDao::getLineByPurchasId($vendorId, $purchaseId);
+        //echo 'jhere';
         //var_dump($model);die;
         $prodIds = array();
         foreach ($model as $key => $value) {
@@ -437,10 +438,13 @@ class VendorController extends Controller
         $modelOrder->groots_pincode = $store->business_address_pincode;
         $modelOrder->groots_authorized_name = $store->store_name;
         $vendor = Vendor::model()->findByPk($vendorId);
-        $this->createPdf($model, $newModel, $vendor, $modelOrder);
+        if($zip == true){
+            return $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
+        }
+        $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
     }
 
-    public function createPdf($model, $newModel, $vendor, $modelOrder)
+    public function createPdf($model, $newModel, $vendor, $modelOrder,$zip)
     {
         ob_start();
         echo $this->renderPartial('invoice', array('model' => $model, 'newModel' => $newModel,
@@ -454,8 +458,15 @@ class VendorController extends Controller
             $html2pdf = new HTML2PDF('P', 'A4', 'en');
             $html2pdf->pdf->SetTitle($title);
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            $html2pdf->Output($downloadFileName);
-            var_dump($html2pdf);
+            if($zip==true){
+                //var_dump(array('pdf'=>$html2pdf, 'name'=>$downloadFileName));die;
+                return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
+            }
+            else{
+                $html2pdf->Output($downloadFileName);
+                var_dump($html2pdf);
+            }
+
 
 
         } catch (HTML2PDF_exception $e) {
@@ -502,4 +513,21 @@ class VendorController extends Controller
             ob_flush();
         }
     }
+
+    public function actionZipInvoicesByVendor($id){
+        require_once('OrderHeaderController.php');
+        $vendorIds = VendorDao::getAllVendorFromPurchase($id);
+        $pdfArray = array();
+        //echo '<pre>';
+        foreach ($vendorIds as $value){
+            //$pdf = self::actionInvoice($value['vendor_id'], $id,true);
+            //var_dump($pdf);die;
+            array_push($pdfArray, VendorController::actionInvoice($value['vendor_id'], $id,true));
+            //var_dump($value['vendor_id']);
+        }
+        //die;
+        $zipFileName=$id."purchase".".zip";
+        OrderHeaderController::zipFilesAndDownload($pdfArray,$zipFileName);
+    }
 }
+?>

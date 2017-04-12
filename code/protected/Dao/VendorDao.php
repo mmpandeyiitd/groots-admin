@@ -285,6 +285,7 @@ class VendorDao{
         $connection = Yii::app()->secondaryDb;
         $sql = 'select pl.*, bp.title as product_name , bp.parent_id from purchase_line as pl left join purchase_header as ph on ph.id = pl.purchase_id
         left join cb_dev_groots.base_product as bp on bp.base_product_id = pl.base_product_id where pl.purchase_id = '.$purchaseId.' and pl.vendor_id ='.$vendorId.' and ph.status = "received" and pl.received_qty > 0 and (bp.parent_id > 0 or bp.parent_id is null) ';
+        //var_dump($sql);
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         return $result; 
@@ -424,6 +425,14 @@ class VendorDao{
             array_push($dataProvider,$tmp);
         }
         return $dataProvider;
+    }
+
+    public function getAllVendorFromPurchase($id){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select distinct vendor_id from purchase_line where purchase_id = '.$id.' and vendor_id is not null and vendor_id != 0';
+        //var_dump($sql);die;
+        $command = $connection->createCommand($sql);
+        return $command->queryAll();
     }
 
 }

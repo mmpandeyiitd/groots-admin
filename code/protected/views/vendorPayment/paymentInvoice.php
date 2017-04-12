@@ -58,7 +58,13 @@
     }
 </style>
 <?php
-$title = "Payment Invoice";
+if($model->payment_type == 'Debit Note'){
+    $title = "Debit Note Acknowledgement";
+}
+else{
+    $title = "Payment Acknowledgement";
+}
+
 $challanNoText = "Invoice No";
 $text = "";
 
@@ -160,79 +166,76 @@ $text = "";
             </tr>
 
 
+<!--            <tr>-->
+<!--                <th style="text-align:center;  padding: 5px; width:45%;"> COLUMN NAME</th>-->
+<!--                <th style="text-align:center; padding: 5px; width:55%;"> VALUE</th>-->
+<!--            </tr>-->
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;"> COLUMN NAME</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> VALUE</th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Payment Type</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->payment_type?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Payment Type</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->payment_type?></th>
-            </tr>
-            <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Paid Amount</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->paid_amount?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Paid Amount</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->paid_amount?></td>
             </tr>
 
             <?php if ($model->payment_type == "Cheque"){ ?>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Cheque Number</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_no?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Cheque Number</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_no?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Cheque Name</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_name?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Cheque Name</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_name?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Cheque Status</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_status?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Cheque Status</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_status?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Cheque Issue Date</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_issue_date?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Cheque Issue Date</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_issue_date?></td>
             </tr>
             <?php }
             if($model->payment_type == "NetBanking"){
             ?>
                 <tr>
-                    <th style="text-align:center;  padding: 5px; width:45%;">Transaction Id</th>
-                    <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->transaction_id?></th>
+                    <td style="text-align:center;  padding: 5px; width:45%;">Transaction Id</td>
+                    <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->transaction_id?></td>
                 </tr>
             <?php }
             if($model->payment_type != "Cash"){?>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Account Holder Name</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->acc_holder_name?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Account Holder Name</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->acc_holder_name?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Receiving Account Number</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->receiving_acc_no?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Receiving Account Number</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->receiving_acc_no?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">Bank Name</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->bank_name?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">Bank Name</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->bank_name?></td>
             </tr>
             <tr>
-                <th style="text-align:center;  padding: 5px; width:45%;">ISFC Code</th>
-                <th style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->isfc_code?></th>
+                <td style="text-align:center;  padding: 5px; width:45%;">ISFC Code</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->isfc_code?></td>
             </tr>
             <?php } ?>
-
+            <tr>
+                <td style="text-align:center;  padding: 5px; width:45%;">Comment</td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->comment?></td>
+            </tr>
 
 
 
 
             <tr>
                 <td colspan="6">
-
-                    <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
-                        Thank you for your business! We look forward to serving you again<br>
-                        Contact email id: <?php echo SALES_SUPPORT_EMAIL; ?> <br>
-                        Ordering Support: <?php echo ORDER_SUPPORT_NO; ?><br>
-                        Customer Support: <?php echo CUSTOMER_SUPPORT_NO; ?><br>
-                        Sales Support: <?php echo SALES_SUPPORT_NO; ?><br>
-                        <br>
-                        <?php echo $text; ?><br>
-                        All disputes are subject to the jurisdiction of the courts of Delhi.
+                    <br>
+                    <p style="text-align: left; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
+                        <?php echo 'Vendor Signature  ..............'; ?>
+                        <br><br>
                     </p>
                 </td>
 
