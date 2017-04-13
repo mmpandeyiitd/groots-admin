@@ -32,7 +32,7 @@ $this->menu=array(
 		'cheque_no',
 		'debit_no',
 		'cheque_status',
-		'cheque_issue_date',
+		'cheque_date',
 		'cheque_name',
 		'transaction_id',
 		'receiving_acc_no',

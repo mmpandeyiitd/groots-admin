@@ -194,7 +194,7 @@ $text = "";
             </tr>
             <tr>
                 <td style="text-align:center;  padding: 5px; width:45%;">Cheque Issue Date</td>
-                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_issue_date?></td>
+                <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->cheque_date?></td>
             </tr>
             <?php }
             if($model->payment_type == "NetBanking"){

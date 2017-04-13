@@ -84,12 +84,12 @@ VendorPayment::vendorPaymentTypes();
 	</div>
 
 	<div class="row hide cheque">
-		<?php echo $form->labelEx($model,'cheque_issue_date'); ?>
+		<?php echo $form->labelEx($model,'cheque_date'); ?>
         <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
-            'attribute'=>'cheque_issue_date',
+            'attribute'=>'cheque_date',
 
-            'id'=>'cheque_issue_date',
+            'id'=>'cheque_date',
             //'value'=> date('Y-m-d'),
             'options'=>array(
                 'dateFormat' => 'yy-mm-dd',
@@ -99,7 +99,7 @@ VendorPayment::vendorPaymentTypes();
                 'style'=>'height:20px;'
             ),
         )); ?>
-        <?php echo $form->error($model,'cheque_issue_date'); ?>
+        <?php echo $form->error($model,'cheque_date'); ?>
 	</div>
 
 	<div class="row hide cheque">
