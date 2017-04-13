@@ -226,20 +226,24 @@ $text = "";
                 <td style="text-align:center;  padding: 5px; width:45%;">Comment</td>
                 <td style="text-align:center; padding: 5px; width:55%;"> <?php echo $model->comment?></td>
             </tr>
-
-
-
-
             <tr>
-                <td colspan="6">
-                    <br>
-                    <p style="text-align: left; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
-                        <?php echo 'Vendor Signature  ..............'; ?>
-                        <br><br>
-                    </p>
-                </td>
-
+                <td style="height:15px; text-align:center;  padding: 5px; width:45%;">Vendor Signature</td>
+                <td style="height:15px; text-align:center; padding: 5px; width:55%;">__________________</td>
             </tr>
+
+
+
+
+<!--            <tr>-->
+<!--                <td colspan="6">-->
+<!--                    <br>-->
+<!--                    <p style="text-align: left; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">-->
+<!--                        --><?php //echo 'Vendor Signature  ..............'; ?>
+<!--                        <br><br>-->
+<!--                    </p>-->
+<!--                </td>-->
+<!---->
+<!--            </tr>-->
 
 
         </table>
