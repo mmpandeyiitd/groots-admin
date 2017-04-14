@@ -123,7 +123,7 @@ class VendorDao{
         //var_dump($endDate);die;
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and l.received_qty > 0 group by l.vendor_id';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -137,7 +137,12 @@ class VendorDao{
         foreach ($paymentAmount as $key => $value) {
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    if(array_key_exists($value['vendor_id'], $payment)){
+                        $payment[$value['vendor_id']] -= $value['paid_amount'];
+                    }
+                    else{
+                        $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    }
                 }
             }
         }
@@ -160,7 +165,7 @@ class VendorDao{
         //$paymentEndDate = date('Y-m-d', strtotime($paymentEndDate.' + 1 day'));
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price, h.id from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.vendor_id = '.$vendor_id.'  and l.price > 0 and l.received_qty > 0' ; //group by h.delivery_date order by h.delivery_date';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , sum(paid_amount) as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$paymentEndDate.'" and status = 1 and vendor_id = '.$vendor_id;
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
@@ -176,7 +181,7 @@ class VendorDao{
         foreach ($paymentAmount as $value){
             if(!empty($value['paid_amount'])) {
                 if (!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')) {
-                    $payment[$value['vendor_id']] = 0 - $value['paid_amount'];
+                    $result -= $value['paid_amount'];
                 }
             }
         }
@@ -285,6 +290,7 @@ class VendorDao{
         $connection = Yii::app()->secondaryDb;
         $sql = 'select pl.*, bp.title as product_name , bp.parent_id from purchase_line as pl left join purchase_header as ph on ph.id = pl.purchase_id
         left join cb_dev_groots.base_product as bp on bp.base_product_id = pl.base_product_id where pl.purchase_id = '.$purchaseId.' and pl.vendor_id ='.$vendorId.' and ph.status = "received" and pl.received_qty > 0 and (bp.parent_id > 0 or bp.parent_id is null) ';
+        //var_dump($sql);
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         return $result; 
@@ -323,7 +329,7 @@ class VendorDao{
     }
 
     public function downloadLedger($dataArray){
-        $fileName = 'VendorPaymert.csv';
+        $fileName = 'VendorPayment.csv';
         ob_clean();
         header('Pragma: public');
         header('Expires: 0');
@@ -424,6 +430,50 @@ class VendorDao{
             array_push($dataProvider,$tmp);
         }
         return $dataProvider;
+    }
+
+    public function getAllVendorFromPurchase($id){
+        $connection = Yii::app()->secondaryDb;
+        $sql = 'select distinct vendor_id from purchase_line where purchase_id = '.$id.' and vendor_id is not null and vendor_id != 0';
+        //var_dump($sql);die;
+        $command = $connection->createCommand($sql);
+        return $command->queryAll();
+    }
+
+    public function downloadVendorMasterReport($w_id){
+        $connection = Yii::app()->db;
+        $sql = 'select v.id, v.name, v.bussiness_name, v.vendor_code, v.VAT_number, v.email, v.mobile, v.telephone, v.address, 
+                v.pincode, v.owner_phone, v.owner_email, v.settlement_days, v.time_of_delivery, v.date_of_onboarding, v.city, 
+                v.state, v.image, v.image_url, v.website, v.contact_person1, v.contact_person2, v.status, v.credit_limit, 
+                v.created_date, v.updated_at,wa.name as `warehouse`, v.initial_pending_amount, v.payment_start_date, ge.name as `procurement executive`, 
+                v.vendor_type, v.credit_days, v.due_date, v.payment_days_range, v.initial_pending_date, v.supplier_type, v.account_holder_name, 
+                v.bank_account_no, v.account_type, v.bank_name, v.branch_name, v.isfc_code from vendors as v left join groots_employee as ge
+                on ge.id = v.proc_exec_id left join warehouses as wa on wa.id = v.allocated_warehouse_id where allocated_warehouse_id = '.$w_id;
+        //var_dump($sql);die;
+        $command = $connection->createCommand($sql);
+        $dataArray = $command->queryAll();
+        $fileName = 'VendorMaster.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
     }
 
 }

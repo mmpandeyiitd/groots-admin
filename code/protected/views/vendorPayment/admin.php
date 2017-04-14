@@ -119,7 +119,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
         ),
 		/*
 		'debit_no',
-		'cheque_issue_date',
+		'cheque_date',
 		'cheque_name',
 		'transaction_id',
 		'receiving_acc_no',

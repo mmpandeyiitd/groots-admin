@@ -12,7 +12,7 @@
  * @property string $cheque_no
  * @property string $debit_no
  * @property string $cheque_status
- * @property string $cheque_issue_date
+ * @property string $cheque_date
  * @property string $cheque_name
  * @property string $transaction_id
  * @property string $receiving_acc_no
@@ -33,6 +33,13 @@ class VendorPayment extends CActiveRecord
 	 * @return string the associated database table name
 	 */
 	public $bussiness_name;
+    public $groots_authorized_name;
+    public $groots_address;
+    public $groots_city;
+    public $groots_state;
+    public $groots_country;
+    public $groots_pincode;
+
 	public function tableName()
 	{
 		return 'vendor_payments';
@@ -56,10 +63,10 @@ class VendorPayment extends CActiveRecord
 			array('transaction_id, receiving_acc_no', 'length', 'max'=>25),
 			array('bank_name, acc_holder_name', 'length', 'max'=>300),
 			array('isfc_code', 'length', 'max'=>15),
-			array('cheque_issue_date, comment,bussiness_name', 'safe'),
+			array('cheque_date, comment,bussiness_name', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_issue_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
+			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,7 +96,7 @@ class VendorPayment extends CActiveRecord
 			'cheque_no' => 'Cheque No',
 			'debit_no' => 'Debit No',
 			'cheque_status' => 'Cheque Status',
-			'cheque_issue_date' => 'Cheque Issue Date',
+			'cheque_date' => 'Cheque Date',
 			'cheque_name' => 'Cheque Name',
 			'transaction_id' => 'Transaction',
 			'receiving_acc_no' => 'Receiving Acc No',
@@ -137,7 +144,7 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('cheque_no',$this->cheque_no,true);
 		$criteria->compare('debit_no',$this->debit_no,true);
 		$criteria->compare('cheque_status',$this->cheque_status,true);
-		$criteria->compare('cheque_issue_date',$this->cheque_issue_date,true);
+		$criteria->compare('cheque_date',$this->cheque_date,true);
 		$criteria->compare('cheque_name',$this->cheque_name,true);
 		$criteria->compare('transaction_id',$this->transaction_id,true);
 		$criteria->compare('receiving_acc_no',$this->receiving_acc_no,true);

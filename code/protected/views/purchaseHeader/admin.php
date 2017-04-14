@@ -249,7 +249,17 @@ $('.search-form form').submit(function(){
 			'value' => function($data){
 				return CHtml::button('report', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("purchaseHeader/downloadReportById",array('id'=>$data->id, 'w_id' => $_GET['w_id']))."'"));
 			},
-			)
+			),
+        array(
+            'header' => 'Zip Invoices',
+            'type' => 'raw',
+            'value' => function($data){
+                if($data->status == "received"){
+                    return CHtml::button('Zip Invoices', array('onclick' => "document.location.href='".Yii::app()->controller->createUrl("vendor/zipInvoicesByVendor",array('id'=>$data->id))."'"));
+                }
+                else return '';
+            }
+        )
 	),
 )); ?>
 
