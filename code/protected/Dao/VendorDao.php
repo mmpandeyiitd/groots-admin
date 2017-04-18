@@ -121,13 +121,17 @@ class VendorDao{
     public function getAllVendorPayableAmount($startDate, $endDate){
        // $endDate = date('Y-m-d', strtotime($endDate.' + 1 day'));
         //var_dump($endDate);die;
+        //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
         $orderSql = 'select l.vendor_id as vendor_id,  sum(l.price) as price from purchase_header as h left join purchase_line as l on h.id = l.purchase_id where h.delivery_date BETWEEN "'.$startDate.'" AND "'.$endDate.'" and h.status = "received" and l.price > 0 and l.received_qty > 0 group by l.vendor_id';
-        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount as paid_amount from vendor_payments where date between "'.$startDate.'" and "'.$endDate.'" and status = 1 group by vendor_id';
+        $paymentSql = 'select vendor_id,payment_type, cheque_status , paid_amount as paid_amount from vendor_payments where status = 1 ';
+
         $command = $connection->createCommand($orderSql);
         $orderAmount = $command->queryAll();
         $command = $connection->createCommand($paymentSql);
         $paymentAmount = $command->queryAll();
+        //var_dump($orderAmount);
+        //var_dump($paymentAmount);die;
         $order = array();
         $payment  =array();
         foreach ($orderAmount as $key => $value) {
@@ -356,10 +360,12 @@ class VendorDao{
     public function getLedgerData($vendor_id){
         //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
-        $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
+        $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
+                        sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
                           where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
                           group by ph.delivery_date order by ph.delivery_date';
+        //var_dump($orderQuery);die;
         $paymentsQuery = 'select *, "Payment" as type from vendor_payments where vendor_id = '.$vendor_id.' and status = 1';
         $command = $connection->createCommand($orderQuery);
         $orders = $command->queryAll();
