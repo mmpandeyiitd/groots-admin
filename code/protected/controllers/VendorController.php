@@ -307,9 +307,9 @@ class VendorController extends Controller
         $totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
         $initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
         $lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
-//        echo '<pre>';
-//        var_dump($startDate);
-//        var_dump($initialPendingMap);die;
+        //echo '<pre>';
+        //var_dump($startDate);
+        //var_dump($totalPendingMap);die;
         $totalPending = 0;
         // foreach ($initialPendingMap as $key => $value) {
         // 	$totalPending += $value;
