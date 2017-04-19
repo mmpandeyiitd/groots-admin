@@ -360,13 +360,14 @@ class VendorDao{
     public function getLedgerData($vendor_id){
         //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
+        $base_date = self::getInitialPendingDate();
         $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
                         sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
-                          where ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
+                          where ph.delivery_date > "'.$base_date.'" and ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
                           group by ph.delivery_date order by ph.delivery_date';
         //var_dump($orderQuery);die;
-        $paymentsQuery = 'select *, "Payment" as type from vendor_payments where vendor_id = '.$vendor_id.' and status = 1';
+        $paymentsQuery = 'select *, "Payment" as type from vendor_payments where vendor_id = '.$vendor_id.' and status = 1 and date > "'.$base_date.'"';
         $command = $connection->createCommand($orderQuery);
         $orders = $command->queryAll();
         $command = $connection->createCommand($paymentsQuery);
@@ -480,6 +481,58 @@ class VendorDao{
             fclose($fp);
         }
         ob_flush();
+    }
+
+    public function downloadCreditReport($payable, $totalPendingMap, $initialPendingMap, $lastPaymentDetails,$endDate){
+        $w_id = '';
+        if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
+            $w_id = Yii::app()->session['w_id'];
+        }
+        $connection = Yii::app()->db;
+        $sql = 'select id, name,bussiness_name, total_pending_amount, vendor_type, due_date, credit_days, credit_limit, initial_pending_amount from vendors where status = 1 and allocated_warehouse_id = '.$w_id;
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $dataArray = array();
+        //echo '<pre>';
+        //var_dump($result);
+        foreach ($result as $vendor){
+            $temp['ID'] = $vendor['id'];
+            $temp['Name'] = $vendor['name'];
+            $temp['Bussiness Name'] = $vendor['bussiness_name'];
+            $temp['Vendor Type'] = $vendor['vendor_type'];
+            $currentPayable = $payable[$vendor['id']]['amount'] + $initialPendingMap[$vendor['id']] - $vendor['credit_limit'];
+            $temp['Amount Payable'] = ($currentPayable > 0) ? $currentPayable : 0;
+            $temp['Total Pending'] = (array_key_exists($vendor['id'], $initialPendingMap)) ? $initialPendingMap[$vendor['id']] : 0;
+            $temp['Total Pending'] += (array_key_exists($vendor['id'], $totalPendingMap)) ? $totalPendingMap[$vendor['id']] : 0;
+            $temp['Payment Due Date'] = $payable[$vendor['id']]['dueDate'];
+            $temp['Last Paid On'] = (array_key_exists($vendor['id'], $lastPaymentDetails)) ? $lastPaymentDetails[$vendor['id']]['date'] : 'NA';
+            $temp['Last Paid Amount'] = (array_key_exists($vendor['id'], $lastPaymentDetails)) ? $lastPaymentDetails[$vendor['id']]['amount'] : 'NA';
+            array_push($dataArray,$temp);
+        }
+        //var_dump($dataArray);die;
+        $fileName = 'CreditManagement'.$endDate.'.csv';
+        ob_clean();
+        header('Pragma: public');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private', false);
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment;filename=' . $fileName);
+
+        if (isset($dataArray['0'])) {
+            $fp = fopen('php://output', 'w');
+            $columnstring = implode(',', array_keys($dataArray['0']));
+            $updatecolumn = str_replace('_', ' ', $columnstring);
+
+            $updatecolumn = explode(',', $updatecolumn);
+            fputcsv($fp, $updatecolumn);
+            foreach ($dataArray AS $values) {
+                fputcsv($fp, $values);
+            }
+            fclose($fp);
+        }
+        ob_flush();
+
     }
 
 }

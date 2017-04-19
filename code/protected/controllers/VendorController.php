@@ -272,6 +272,7 @@ class VendorController extends Controller
 
     public function actionCreditManagement()
     {
+        //echo '<pre>';
         //var_dump($_POST);die;
 
         $w_id = '';
@@ -307,9 +308,10 @@ class VendorController extends Controller
         $totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
         $initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
         $lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
-        //echo '<pre>';
-        //var_dump($startDate);
-        //var_dump($totalPendingMap);die;
+//        echo '<pre>';
+//        var_dump($startDate);
+//        var_dump($initialPendingMap);
+//        var_dump($totalPendingMap);die;
         $totalPending = 0;
         // foreach ($initialPendingMap as $key => $value) {
         // 	$totalPending += $value;
@@ -335,6 +337,10 @@ class VendorController extends Controller
         // 	$totalPayable += $initialPendingMap[$key];
         // }
         // $payable['total'] = strval($totalPayable);
+        if(isset($_POST['downloadReport'])){
+            VendorDao::downloadCreditReport($payable, $totalPendingMap, $initialPendingMap, $lastPaymentDetails,$endDate);
+            exit();
+        }
         $this->render('creditManagement', array(
             'model' => $model,
             'dataProvider' => $model,
