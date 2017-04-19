@@ -12,8 +12,11 @@ class VendorPaymentDao{
                       ,
                       CASE WHEN vp.payment_type = "Cheque" THEN vp.cheque_status
                       WHEN vp.payment_type != "Cheque" then ""
-                      END as Cheque_status
-                      , v.bussiness_name from groots_orders.vendor_payments as vp left join vendors as v on v.id = vp.vendor_id where vp.date BETWEEN "'.$startDate.'" and "'.$endDate.'"';
+                      END as Cheque_status,
+                      CASE WHEN vp.payment_type = "Cheque" THEN vp.cheque_date 
+                      WHEN vp.payment_type != "Cheque" then ""
+                      END as cheque_date
+                      from groots_orders.vendor_payments as vp left join vendors as v on v.id = vp.vendor_id where vp.date BETWEEN "'.$startDate.'" and "'.$endDate.'"';
         $connection = Yii::app()->db;
         $command = $connection->createCommand($sql);
         $dataArray = $command->queryAll();

@@ -357,6 +357,7 @@ class VendorController extends Controller
     public function actionVendorLedger($vendor_id)
     {
         $w_id = '';
+        //echo '<pre>';var_dump($_POST);die;
         if (isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])) {
             $w_id = Yii::app()->session['w_id'];
         }
@@ -373,7 +374,9 @@ class VendorController extends Controller
             VendorDao::downloadLedger($dataProvider['data']);
             exit();
         }
-        //if(isset())
+        if(isset($_POST['balance_template'])){
+
+        }
         $this->render('vendorLedger', array(
             'dataProvider' => $dataProvider['dataProvider'],
             'vendor' => $vendor,));

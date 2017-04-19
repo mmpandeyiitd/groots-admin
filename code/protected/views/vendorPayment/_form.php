@@ -29,7 +29,6 @@ VendorPayment::vendorPaymentTypes();
 	<div class="row">
 		<?php echo $form->labelEx($model,'paid_amount'); ?>
 		<?php $array =  array('size'=>10,'maxlength'=>10);
-			if($update){$array['readOnly'] = 'readOnly';}
 			echo $form->textField($model,'paid_amount',$array); ?>
 		<?php echo $form->error($model,'paid_amount'); ?>
 	</div>
@@ -168,13 +167,11 @@ VendorPayment::vendorPaymentTypes();
 <!--		--><?php //echo $form->textField($model,'updated_at'); ?>
 <!--		--><?php //echo $form->error($model,'updated_at'); ?>
 <!--	</div>-->
-	<?php if(! $update){?>
 	<div class="row status">
 		<?php echo $form->labelEx($model,'status'); ?>
 		<?php echo $form->dropDownList($model, 'status', array(0=>'Inactive', 1=>'Active'), array('style' => 'width:220.20px;')); ?>
 		<?php echo $form->error($model,'status'); ?>
 	</div>
-	<?php } ?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

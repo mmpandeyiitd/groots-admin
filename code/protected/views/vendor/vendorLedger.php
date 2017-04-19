@@ -25,7 +25,46 @@ $this->menu=array(
 
 <?php
 echo CHtml::submitButton('Download Ledger', array('name'=>'ledgerDownload'));
+?>
 
+    <div class="dashboard-table">
+        <form method="post">
+            <h4 style="width:20%">balance confirmation</h4>
+            <div class="right_date" style="width:80%">
+                <label>Date</label>
+                <?php
+
+                $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                    // 'model' => $model,
+                    'name' => 'balance_date',
+                    'attribute' => 'balance_date',
+                    //'value' => $model->created_at,
+                    'options' => array(
+                        'dateFormat' => 'yy-mm-dd',
+                        'showAnim' => 'fold',
+                        'debug' => true,
+                        //'maxDate' => "60",
+                    ), //DateTimePicker options
+                    'htmlOptions' => array('readonly' => 'true'),
+                ));
+                //echo $form->error($model, 'created_at');
+                ?>
+
+
+                <?php
+
+
+                ?>
+
+                <input name="balance_template" class="button_new" type="submit" value="Download" />
+
+            </div>
+        </form>
+
+    </div>
+
+
+    <?php
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'ledger-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
