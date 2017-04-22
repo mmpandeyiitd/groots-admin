@@ -362,9 +362,9 @@ class VendorDao{
         $connection = Yii::app()->secondaryDb;
         $base_date = self::getInitialPendingDate();
         $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
-                        sum(pl.received_qty) as received_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
+                        sum(pl.order_qty) as procured_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
-                          where ph.delivery_date > "'.$base_date.'" and ph.status = "received" and pl.received_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
+                          where ph.delivery_date > "'.$base_date.'" and ph.status = "received" and pl.order_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
                           group by ph.delivery_date order by ph.delivery_date';
         //var_dump($orderQuery);die;
         $paymentsQuery = 'select *, "Payment" as type from vendor_payments where vendor_id = '.$vendor_id.' and status = 1 and date > "'.$base_date.'"';
@@ -418,7 +418,7 @@ class VendorDao{
             $tmp['urd'] = isset($ledgerRow['urd_number']) ? $ledgerRow['urd_number'] : null;
             $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
             $tmp['order_amount'] = isset($ledgerRow['price']) ? $ledgerRow['price']: null;
-            $tmp['order_quantity'] = isset($ledgerRow['received_qty']) ? $ledgerRow['received_qty']: null;
+            $tmp['order_quantity'] = isset($ledgerRow['procured_qty']) ? $ledgerRow['procured_qty']: null;
             $tmp['paid_amount'] = isset($ledgerRow['paid_amount']) ? $ledgerRow['paid_amount']: null;
             $tmp['outstanding'] = $ledgerRow['outstanding'];
             $tmp['payment_type'] = isset($ledgerRow['payment_type']) ? $ledgerRow['payment_type']: null;
