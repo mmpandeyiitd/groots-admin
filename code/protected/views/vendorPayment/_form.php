@@ -29,7 +29,6 @@ VendorPayment::vendorPaymentTypes();
 	<div class="row">
 		<?php echo $form->labelEx($model,'paid_amount'); ?>
 		<?php $array =  array('size'=>10,'maxlength'=>10);
-			if($update){$array['readOnly'] = 'readOnly';}
 			echo $form->textField($model,'paid_amount',$array); ?>
 		<?php echo $form->error($model,'paid_amount'); ?>
 	</div>
@@ -84,12 +83,12 @@ VendorPayment::vendorPaymentTypes();
 	</div>
 
 	<div class="row hide cheque">
-		<?php echo $form->labelEx($model,'cheque_issue_date'); ?>
+		<?php echo $form->labelEx($model,'cheque_date'); ?>
         <?php $this->widget('zii.widgets.jui.CJuiDatePicker',array(
             'model'=>$model,
-            'attribute'=>'cheque_issue_date',
+            'attribute'=>'cheque_date',
 
-            'id'=>'cheque_issue_date',
+            'id'=>'cheque_date',
             //'value'=> date('Y-m-d'),
             'options'=>array(
                 'dateFormat' => 'yy-mm-dd',
@@ -99,7 +98,7 @@ VendorPayment::vendorPaymentTypes();
                 'style'=>'height:20px;'
             ),
         )); ?>
-        <?php echo $form->error($model,'cheque_issue_date'); ?>
+        <?php echo $form->error($model,'cheque_date'); ?>
 	</div>
 
 	<div class="row hide cheque">
@@ -114,27 +113,27 @@ VendorPayment::vendorPaymentTypes();
 		<?php echo $form->error($model,'transaction_id'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'receiving_acc_no'); ?>
-		<?php echo $form->textField($model,'receiving_acc_no',array('size'=>25,'maxlength'=>25)); ?>
+		<?php echo $form->textField($model,'receiving_acc_no',array('value' => $vendor->bank_account_no ,'size'=>25,'maxlength'=>25)); ?>
 		<?php echo $form->error($model,'receiving_acc_no'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'bank_name'); ?>
-		<?php echo $form->textField($model,'bank_name',array('size'=>60,'maxlength'=>300)); ?>
+		<?php echo $form->textField($model,'bank_name',array('value' => $vendor->bank_name,'size'=>60,'maxlength'=>300)); ?>
 		<?php echo $form->error($model,'bank_name'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet">
 		<?php echo $form->labelEx($model,'isfc_code'); ?>
-		<?php echo $form->textField($model,'isfc_code',array('size'=>15,'maxlength'=>15)); ?>
+		<?php echo $form->textField($model,'isfc_code',array('value' => $vendor->isfc_code,'size'=>15,'maxlength'=>15)); ?>
 		<?php echo $form->error($model,'isfc_code'); ?>
 	</div>
 
-	<div class="row hide internet">
+	<div class="row hide others internet ">
 		<?php echo $form->labelEx($model,'acc_holder_name'); ?>
-		<?php echo $form->textField($model,'acc_holder_name',array('size'=>60,'maxlength'=>300)); ?>
+		<?php echo $form->textField($model,'acc_holder_name',array('value' => $vendor->account_holder_name,'size'=>60,'maxlength'=>300)); ?>
 		<?php echo $form->error($model,'acc_holder_name'); ?>
 	</div>
 
@@ -168,13 +167,11 @@ VendorPayment::vendorPaymentTypes();
 <!--		--><?php //echo $form->textField($model,'updated_at'); ?>
 <!--		--><?php //echo $form->error($model,'updated_at'); ?>
 <!--	</div>-->
-	<?php if(! $update){?>
 	<div class="row status">
 		<?php echo $form->labelEx($model,'status'); ?>
 		<?php echo $form->dropDownList($model, 'status', array(0=>'Inactive', 1=>'Active'), array('style' => 'width:220.20px;')); ?>
 		<?php echo $form->error($model,'status'); ?>
 	</div>
-	<?php } ?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
@@ -198,21 +195,24 @@ VendorPayment::vendorPaymentTypes();
     	console.log('here2');
     	var e = document.getElementById("VendorPayment_payment_type");
 		var str = e.options[e.selectedIndex].text;
+        onStartUp();
+        if( str != 'Cash'){
+            console.log('here');
+            $('.others').each(function () {
+                $(this).show();
+            })
+        }
 		if(str == 'Cheque'){
-			onStartUp();
 			$('.cheque').each(function(){
 				$(this).show();
 			})
 		}
 		else if(str == 'NetBanking'){
-			onStartUp();
 			$('.internet').each(function(){
 				$(this).show();
 			})
 		}
-		else {
-			onStartUp();
-		}
+
     }
 
 </script>

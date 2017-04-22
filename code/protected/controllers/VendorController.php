@@ -32,7 +32,7 @@ class VendorController extends Controller
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList'),
+                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList','zipInvoicesByVendor'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -157,11 +157,16 @@ class VendorController extends Controller
      */
     public function actionAdmin()
     {
+        //echo '<pre>';
+        //var_dump($_POST);die;
         $w_id = Yii::app()->session['w_id'];
         if (isset($_GET['w_id'])) {
             $w_id = $_GET['w_id'];
         }
         Yii::app()->session['w_id'] = $w_id;
+        if(isset($_POST['downloadVendorMaster'])){
+           VendorDao::downloadVendorMasterReport($w_id);
+        }
         $model = new Vendor('search');
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['Vendor']))
@@ -267,6 +272,7 @@ class VendorController extends Controller
 
     public function actionCreditManagement()
     {
+        //echo '<pre>';
         //var_dump($_POST);die;
 
         $w_id = '';
@@ -289,7 +295,6 @@ class VendorController extends Controller
         $initial_pending_date = VendorDao::getInitialPendingDate();
         //var_dump($initial_pending_date);die;
         if (strtotime($endDate) < strtotime($initial_pending_date)) {
-
             $startDate = VendorDao::getLastPendingDate($endDate, $initial_pending_date);
         } else $startDate = $initial_pending_date;
         if (isset($_POST['Payment']) && !empty($_POST['creditRepaid'])) {
@@ -303,7 +308,10 @@ class VendorController extends Controller
         $totalPendingMap = VendorDao::getAllVendorPayableAmount($nextDate, $endDate);
         $initialPendingMap = VendorDao::getAllVendorInitialPending($startDate);
         $lastPaymentDetails = VendorDao::getVendorLastPaymentDetails();
-        //var_dump($initialPendingMap);die;
+//        echo '<pre>';
+//        var_dump($startDate);
+//        var_dump($initialPendingMap);
+//        var_dump($totalPendingMap);die;
         $totalPending = 0;
         // foreach ($initialPendingMap as $key => $value) {
         // 	$totalPending += $value;
@@ -329,6 +337,10 @@ class VendorController extends Controller
         // 	$totalPayable += $initialPendingMap[$key];
         // }
         // $payable['total'] = strval($totalPayable);
+        if(isset($_POST['downloadReport'])){
+            VendorDao::downloadCreditReport($payable, $totalPendingMap, $initialPendingMap, $lastPaymentDetails,$endDate);
+            exit();
+        }
         $this->render('creditManagement', array(
             'model' => $model,
             'dataProvider' => $model,
@@ -345,6 +357,7 @@ class VendorController extends Controller
     public function actionVendorLedger($vendor_id)
     {
         $w_id = '';
+        //echo '<pre>';var_dump($_POST);die;
         if (isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])) {
             $w_id = Yii::app()->session['w_id'];
         }
@@ -352,13 +365,20 @@ class VendorController extends Controller
             Yii::app()->user->setFlash('premission_info', 'You dont have permission.!');
             Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=" . $w_id);
         }
-
+        $dataProvider = VendorDao::getLedgerData($vendor_id);
         $vendor = Vendor::model()->findByPk($vendor_id);
-        $payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
-        $orders = VendorDao::getVendorOrderQuantity($vendor_id);
-        $dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
+        //$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
+        //$orders = VendorDao::getVendorOrderQuantity($vendor_id);
+        //$dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
+        if(isset($_POST['ledgerDownload'])){
+            VendorDao::downloadLedger($dataProvider['data']);
+            exit();
+        }
+        if(isset($_POST['balance_template'])){
+
+        }
         $this->render('vendorLedger', array(
-            'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider['dataProvider'],
             'vendor' => $vendor,));
 
     }
@@ -402,9 +422,10 @@ class VendorController extends Controller
         }
     }
 
-    public function actionInvoice($vendorId, $purchaseId)
+    public function actionInvoice($vendorId, $purchaseId,$zip=false)
     {
         $model = VendorDao::getLineByPurchasId($vendorId, $purchaseId);
+        //echo 'jhere';
         //var_dump($model);die;
         $prodIds = array();
         foreach ($model as $key => $value) {
@@ -431,10 +452,13 @@ class VendorController extends Controller
         $modelOrder->groots_pincode = $store->business_address_pincode;
         $modelOrder->groots_authorized_name = $store->store_name;
         $vendor = Vendor::model()->findByPk($vendorId);
-        $this->createPdf($model, $newModel, $vendor, $modelOrder);
+        if($zip == true){
+            return $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
+        }
+        $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
     }
 
-    public function createPdf($model, $newModel, $vendor, $modelOrder)
+    public function createPdf($model, $newModel, $vendor, $modelOrder,$zip)
     {
         ob_start();
         echo $this->renderPartial('invoice', array('model' => $model, 'newModel' => $newModel,
@@ -448,8 +472,15 @@ class VendorController extends Controller
             $html2pdf = new HTML2PDF('P', 'A4', 'en');
             $html2pdf->pdf->SetTitle($title);
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            $html2pdf->Output($downloadFileName);
-            var_dump($html2pdf);
+            if($zip==true){
+                //var_dump(array('pdf'=>$html2pdf, 'name'=>$downloadFileName));die;
+                return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
+            }
+            else{
+                $html2pdf->Output($downloadFileName);
+                var_dump($html2pdf);
+            }
+
 
 
         } catch (HTML2PDF_exception $e) {
@@ -496,4 +527,21 @@ class VendorController extends Controller
             ob_flush();
         }
     }
+
+    public function actionZipInvoicesByVendor($id){
+        require_once('OrderHeaderController.php');
+        $vendorIds = VendorDao::getAllVendorFromPurchase($id);
+        $pdfArray = array();
+        //echo '<pre>';
+        foreach ($vendorIds as $value){
+            //$pdf = self::actionInvoice($value['vendor_id'], $id,true);
+            //var_dump($pdf);die;
+            array_push($pdfArray, VendorController::actionInvoice($value['vendor_id'], $id,true));
+            //var_dump($value['vendor_id']);
+        }
+        //die;
+        $zipFileName=$id."purchase".".zip";
+        OrderHeaderController::zipFilesAndDownload($pdfArray,$zipFileName);
+    }
 }
+?>

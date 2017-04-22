@@ -2025,9 +2025,9 @@ $this->render('admin', array(
 
 }
 
-function zipFilesAndDownload($file_names,$archive_file_name)
+public function zipFilesAndDownload($file_names,$archive_file_name)
 {
-        //echo $file_path;die;
+    //var_dump($file_names);die;
     $dir = dirname(__FILE__) . '/../../../../dump/';
     $zipName = $dir.$archive_file_name;
 

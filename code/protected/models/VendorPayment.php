@@ -12,7 +12,7 @@
  * @property string $cheque_no
  * @property string $debit_no
  * @property string $cheque_status
- * @property string $cheque_issue_date
+ * @property string $cheque_date
  * @property string $cheque_name
  * @property string $transaction_id
  * @property string $receiving_acc_no
@@ -33,6 +33,13 @@ class VendorPayment extends CActiveRecord
 	 * @return string the associated database table name
 	 */
 	public $bussiness_name;
+    public $groots_authorized_name;
+    public $groots_address;
+    public $groots_city;
+    public $groots_state;
+    public $groots_country;
+    public $groots_pincode;
+
 	public function tableName()
 	{
 		return 'vendor_payments';
@@ -56,10 +63,10 @@ class VendorPayment extends CActiveRecord
 			array('transaction_id, receiving_acc_no', 'length', 'max'=>25),
 			array('bank_name, acc_holder_name', 'length', 'max'=>300),
 			array('isfc_code', 'length', 'max'=>15),
-			array('cheque_issue_date, comment,bussiness_name', 'safe'),
+			array('cheque_date, comment,bussiness_name', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_issue_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
+			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,7 +96,7 @@ class VendorPayment extends CActiveRecord
 			'cheque_no' => 'Cheque No',
 			'debit_no' => 'Debit No',
 			'cheque_status' => 'Cheque Status',
-			'cheque_issue_date' => 'Cheque Issue Date',
+			'cheque_date' => 'Cheque Date',
 			'cheque_name' => 'Cheque Name',
 			'transaction_id' => 'Transaction',
 			'receiving_acc_no' => 'Receiving Acc No',
@@ -125,9 +132,11 @@ class VendorPayment extends CActiveRecord
 			$criteria->select = 't.*,v.bussiness_name ';
 			$criteria->join = 'left join cb_dev_groots.vendors as v on t.vendor_id = v.id';
 			$criteria->condition = 'v.allocated_warehouse_id = '.$w_id;
-			$criteria->order = 't.id desc';
+
 		}
-		$criteria->compare('id',$this->id);
+
+
+        $criteria->compare('id',$this->id);
 		$criteria->compare('vendor_id',$this->vendor_id);
 		$criteria->compare('paid_amount',$this->paid_amount,true);
 		$criteria->compare('date',$this->date,true);
@@ -135,7 +144,7 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('cheque_no',$this->cheque_no,true);
 		$criteria->compare('debit_no',$this->debit_no,true);
 		$criteria->compare('cheque_status',$this->cheque_status,true);
-		$criteria->compare('cheque_issue_date',$this->cheque_issue_date,true);
+		$criteria->compare('cheque_date',$this->cheque_date,true);
 		$criteria->compare('cheque_name',$this->cheque_name,true);
 		$criteria->compare('transaction_id',$this->transaction_id,true);
 		$criteria->compare('receiving_acc_no',$this->receiving_acc_no,true);
@@ -146,10 +155,49 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('created_at',$this->created_at,true);
 		$criteria->compare('updated_at',$this->updated_at,true);
 		$criteria->compare('status',$this->status);
-        $criteria->compare('v.bussiness_name',$this->bussiness_name);
+        $criteria->compare('v.bussiness_name',$this->bussiness_name,true);
+
+        $sort = new CSort();
+        $sort->attributes = array(
+            'id'=>array(
+                'asc'=>'id',
+                'desc'=>'id desc',
+            ),
+            'vendor_id'=>array(
+                'asc'=>'t.vendor_id',
+                'desc'=>'t.vendor_id desc',
+            ),
+            'bussiness_name'=>array(
+                'asc'=>'v.bussiness_name',
+                'desc'=>'v.bussiness_name',
+            ),
+            'paid_amount'=>array(
+                'asc'=>'t.paid_amount',
+                'desc'=>'t.paid_amount desc',
+            ),
+            'date'=>array(
+                'asc'=>'t.date',
+                'desc'=>'t.date desc',
+            ),
+            'cheque_status'=>array(
+                'asc'=>'t.cheque_status',
+                'desc'=>'t.cheque_status desc',
+            ),
+            'cheque_no'=>array(
+                'asc'=>'t.cheque_no',
+                'desc'=>'t.cheque_no desc',
+            ),
+            'payment_type'=>array(
+                'asc'=>'t.payment_type',
+                'desc'=>'t.payment_type desc',
+            ),
+
+        );
+        $sort->defaultOrder = 't.id desc';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'sort'=> $sort,
             'pagination' => array(
                 'pageSize' => 45,
             ),

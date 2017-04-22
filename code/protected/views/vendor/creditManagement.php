@@ -31,6 +31,8 @@ $this->widget('zii.widgets.jui.CJuiDatePicker',array(
 echo '   ';
 echo CHtml::button('Submit', array('submit' => array('vendor/creditManagement'), 'style' => 'height:30px;'));
 
+echo '<br>';
+echo CHtml::submitButton('Download Credit Report', array('name' => 'downloadReport' ,'style' => 'height:30px;'));
 ?>
 </form>
 

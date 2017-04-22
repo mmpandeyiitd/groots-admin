@@ -1063,3 +1063,5 @@ create trigger cb_dev_groots.retailer_log_delete after delete on cb_dev_groots.r
     OLD.updated_by, OLD.retailer_pricing_type, OLD.retailer_grade_type, OLD.alternate_email, OLD.discount_type, OLD.discount,OLD.payment_mode);
 
 
+alter table vendor_payments MODIFY column receiving_acc_no bigint(18) not null;
+update vendor_payments as vp left join cb_dev_groots.vendors as v on vp.vendor_id = v.id set receiving_acc_no = v.bank_account_no where receiving_acc_no is null or receiving_acc_no = '';

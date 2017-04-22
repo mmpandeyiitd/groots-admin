@@ -37,9 +37,16 @@ class SubscribedProduct extends CActiveRecord {
      * @return string the associated database table name
      */
     public $action;
+    public $selected_retailer_id;
     public $title;
     public $effective_price;
-    public $discout_per;
+    public $discount_price;
+    public $retailer_id;
+    public $status;
+    public $subscribed_product_id;
+    public $store_price;
+    public $store_offer_price ;
+    public $category_name;
 
     public function tableName() {
         return 'subscribed_product';
@@ -60,7 +67,7 @@ class SubscribedProduct extends CActiveRecord {
             //  array('checkout_url', 'length', 'max' => 2083),
             array('sku', 'length', 'max' => 128),
             array('created_date, modified_date', 'safe'),
-            array('title,effective_price,discout_per', 'safe', 'on' => 'search'),
+            array('title,effective_price,discout_per, category_name', 'safe', 'on' => 'search'),
             //array('', 'safe', 'on'=>'search'),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -558,6 +565,60 @@ WHERE `subscribed_product_id`=$val";
             }
             ob_flush();
         }
+    }
+
+    public function searchRetProdMapping(){
+        $criteria = new CDbCriteria;
+        if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+            $retailer_id = $_GET['id'];
+            //$sub_ids = $this->getSubcribeid($retailer_id);
+            //$criteria->alias = 'rp2';
+//            $criteria->select = "$retailer_id as selected_retailer_id,rp2.status,rp2.retailer_id,t.subscribed_product_id,t.title,t.store_price,t.store_offer_price,IF(rp2.`effective_price` IS NULL,0,rp2.`effective_price`) AS effective_price,
+//IF(rp2.`discount_price` IS NULL,0,rp2.`discount_price`) AS discount_price";
+//            $criteria->join = "left join `retailerproductquotation_gridview` as rp2 on rp2.subscribed_product_id=t.subscribed_product_id and rp2.retailer_id=$retailer_id";
+//            $criteria->group = "t.subscribed_product_id";
+//            $criteria->order = "t.title ASC";
+            //echo '<pre>';print_r($criteria);die;
+            //$this->_defaultScopeDisabled = true;
+            $criteria->select = ''.$retailer_id.' as selected_retailer_id, c.category_name, if(isnull(t.status),1,t.status) as status,if(isnull(rp.retailer_id),0, rp.retailer_id)
+                  as retailer_id , t.subscribed_product_id , bp.title, t.store_price , t.store_offer_price , if(isnull(rp.effective_price)," ",rp.effective_price)
+                  as effective_price , if(isnull(rp.discount_per),0,rp.discount_per) as discount_price';
+            $criteria->join = 'left join cb_dev_groots.retailer_product_quotation as rp on t.subscribed_product_id = rp.subscribed_product_id and '.$retailer_id.' = rp.retailer_id';
+            $criteria->join .= ' left join cb_dev_groots.base_product as bp on t.base_product_id = bp.base_product_id';
+            $criteria->join .= ' left join cb_dev_groots.product_category_mapping as pcm on pcm.base_product_id = t.base_product_id ';
+            $criteria->join .= ' left join cb_dev_groots.category as c on c.category_id = pcm.category_id ';
+            $criteria->condition = 't.status = 1 and bp.status = 1 and (bp.grade not in ("Parent", "Unsorted") or isnull(bp.grade))';
+            $criteria->group = 't.subscribed_product_id';
+            $criteria->order = 'bp.title ASC';
+        }
+//       $sql = select 251 as selected_retailer_id, if(isnull(sp.status),1,sp.status) as status,if(isnull(rp.retailer_id),0, rp.retailer_id)
+//              as retailer_id , sp.subscribed_product_id , bp.title, sp.store_price , sp.store_offer_price , if(isnull(rp.effective_price),0,rp.effective_price)
+//              as effective_price , if(isnull(rp.discount_per),0,rp.discount_per) as discount_per from cb_dev_groots.subscribed_product as sp
+//              left join cb_dev_groots.retailer_product_quotation as rp on sp.subscribed_product_id = rp.subscribed_product_id and 251 = rp.retailer_id
+//              left join cb_dev_groots.base_product as bp on sp.base_product_id = bp.base_product_id where sp.status = 1 and bp.status = 1 and
+//              (bp.grade not in ("Parent", "Unsorted") or isnull(bp.grade)) group by sp.subscribed_product_id order by bp.title ASC;
+        ;
+
+        $criteria->compare('bp.title', $this->title, true);
+        $criteria->compare('t.store_price', $this->store_price, true);
+        $criteria->compare('t.store_offer_price', $this->store_offer_price, true);
+        $criteria->compare('c.category_name', $this->category_name, true);
+        //$criteria->compare('t.quantity', $this->quantity);
+        //$criteria->compare('t.store', $this->store, true);
+        $criteria->compare('t.status', $this->status, FALSE);
+        $criteria->compare('rp.retailer_id', $this->retailer_id, true);
+        $criteria->compare('rp.effective_price', $this->effective_price, true);
+        $criteria->compare('rp.discount_price', $this->discount_price, true);
+
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+//            'pagination' => array(
+//                'pageSize' => Yii::app()->user->getState('pageSize', Yii::app()->params['defaultPageSize']),
+//            ),
+            'pagination' => array(
+                'pageSize' => 100,
+            ),
+        ));
     }
 
 }

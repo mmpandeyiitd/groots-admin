@@ -296,7 +296,8 @@ class PurchaseHeaderController extends Controller
         if (isset($_POST['purchase-update'])) {
             $transaction = Yii::app()->db->beginTransaction();
             try {
-                $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id));
+                $prodIds = implode(',',$_POST['base_product_id']);
+                $purchaseLines = PurchaseLine::model()->findAllByAttributes(array('purchase_id' => $id), array('condition'=> 'base_product_id in ('.$prodIds.')'));
                 $purchaseLineMap = array();
                 foreach ($purchaseLines as $item) {
                     $constraint = $item->base_product_id . '~' . $item->vendor_id;
@@ -346,7 +347,9 @@ class PurchaseHeaderController extends Controller
                             if (isset($purchaseLineMap[$constraint])) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
                             }
-
+                            //var_dump($purchaseLine);
+                            //echo 'here'.'<br>';
+                            //var_dump($order_qty, $received_qty);
                             if ($order_qty > 0) {
                                 $unitPrice = trim($_POST['price'][$key]);
                                 $totalPrice = trim($_POST['totalPrice'][$key]);
@@ -364,6 +367,9 @@ class PurchaseHeaderController extends Controller
                                     $purchaseLine->price = $totalPrice;
                                     $purchaseLine->urd_number = $urd_number;
                                     $purchaseLine->save();
+                                    if(isset($purchaseLineMap[$constraint])){
+                                        unset($purchaseLineMap[$constraint]);
+                                    }
                                 } else {
                                     $transaction->rollBack();
                                     Yii::app()->user->setFlash('error', $flag['msg'] . ' For Product Id' . $id);
@@ -374,16 +380,23 @@ class PurchaseHeaderController extends Controller
                             if ($received_qty > 0 ) {
                                 $purchaseLine->received_qty = $received_qty;
                                 $purchaseLine->save();
+                                if(isset($purchaseLineMap[$constraint])){
+                                    unset($purchaseLineMap[$constraint]);
+                                }
                             }
                             else if (isset($purchaseLineMap[$constraint]) && (isset($_POST['order_qty'][$key]) && empty($_POST['order_qty'][$key]))) {
                                 $purchaseLine = $purchaseLineMap[$constraint];
+                                unset($purchaseLineMap[$constraint]);
                                 $purchaseLine->deleteByPk($purchaseLine->id);
                             }
 
                             $parentIdToUpdate = $_POST['parent_id'][$key];
                         }
+                        //die('here');
                     }
-                    //die('here');
+                    foreach ($purchaseLineMap as $p_line){
+                        $p_line->deleteByPk($p_line->id);
+                    }
 
                     $transaction->commit();
                     if ($parentIdToUpdate != '' && $parentIdToUpdate > 0) {
@@ -770,10 +783,11 @@ class PurchaseHeaderController extends Controller
 
     public function actionDownloadReportById($id)
     {
-        $sql = 'select ph.delivery_date , pl.*,bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.bussiness_name end as vendorBussinessName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
+        $sql = 'select ph.delivery_date , pl.*,ca.category_name, bp.title,bp.grade, case when pl.vendor_id = 0 then "" when pl.vendor_id != 0 then v.bussiness_name end as vendorBussinessName from purchase_line pl  left join cb_dev_groots.vendors as v on v.id = pl.vendor_id 
         left join cb_dev_groots.base_product as bp on pl.base_product_id = bp.base_product_id
         left join cb_dev_groots.product_category_mapping pcm on pcm.base_product_id=bp.base_product_id
         left join groots_orders.purchase_header ph on ph.id = pl.purchase_id
+        left join cb_dev_groots.category as ca on ca.category_id = pcm.category_id
          where pl.purchase_id = ' . $id . ' order by pcm.category_id asc, bp.base_title asc, bp.priority asc';
         $connection = Yii::app()->secondaryDb;
         $command = $connection->createCommand($sql);
@@ -783,6 +797,7 @@ class PurchaseHeaderController extends Controller
             $tmp = array();
             $tmp['date'] = $value['delivery_date'];
             $tmp['product_id'] = $value['base_product_id'];
+            $tmp['category_name'] = $value['category_name'];
             $tmp['title'] = $value['title'];
             $tmp['grade'] = $value['grade'];
             $tmp['urd_number'] = $value['urd_number'];
@@ -938,12 +953,15 @@ class PurchaseHeaderController extends Controller
             Yii::app()->controller->redirect("index.php?r=purchaseHeader/admin&w_id=".$w_id);
         }
         $connection = Yii::app()->secondaryDb;
-        $sql = 'select ph.id,ph.delivery_date , bp.title , bp.grade, pl.order_qty as "procured qty", pl.received_qty, pl.unit_price, pl.price as totalPrice, v.bussiness_name
+        $sql = 'select ph.id,ca.category_name, ph.delivery_date , bp.title , bp.grade, pl.urd_number,pl.order_qty as "procured qty", pl.received_qty, pl.unit_price, pl.price as totalPrice, v.bussiness_name
                 from purchase_line pl left join purchase_header ph on pl.purchase_id = ph.id left join cb_dev_groots.base_product bp on bp.base_product_id = pl.base_product_id
                 left join cb_dev_groots.vendors as v on v.id = pl.vendor_id
+                left join cb_dev_groots.product_category_mapping as pcm on pcm.base_product_id = pl.base_product_id
+                left join cb_dev_groots.category as ca on ca.category_id = pcm.category_id
                 where ph.warehouse_id = "'.$w_id.'" and ph.delivery_date between "'.$fromDate.'" and "'.$toDate.'"';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
+        //var_dump($result);die;
         $fileName = $fromDate.'//'.$toDate.'PurchaseReport.csv';
         if (count($result) > 0) {
             ob_clean();
@@ -972,5 +990,6 @@ class PurchaseHeaderController extends Controller
         }
 
     }
+
 
 }

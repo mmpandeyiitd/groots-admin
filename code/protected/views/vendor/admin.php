@@ -46,9 +46,10 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 </br>
-<?php
-echo CHtml::button('All Vendor Product List', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("vendor/downloadAllVendorProductList")."'"));
-?>
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/admin';?>">
+    <?php echo CHtml::button('All Vendor Product List', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("vendor/downloadAllVendorProductList")."'")); ?>
+    <?php echo CHtml::submitButton('Vendor master', array('name' => 'downloadVendorMaster')); ?>
+
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'vendor-grid',
 	'dataProvider'=>$model->search(),
@@ -120,3 +121,4 @@ echo CHtml::button('All Vendor Product List', array("onclick"=>"document.locatio
 		),
 	),
 )); ?>
+</form>

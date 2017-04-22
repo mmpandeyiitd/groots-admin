@@ -38,8 +38,8 @@
 	<?php echo CHtml::encode($data->cheque_status); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_issue_date')); ?>:</b>
-	<?php echo CHtml::encode($data->cheque_issue_date); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_date')); ?>:</b>
+	<?php echo CHtml::encode($data->cheque_date); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('cheque_name')); ?>:</b>

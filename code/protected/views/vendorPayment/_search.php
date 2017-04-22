@@ -52,8 +52,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'cheque_issue_date'); ?>
-		<?php echo $form->textField($model,'cheque_issue_date'); ?>
+		<?php echo $form->label($model,'cheque_date'); ?>
+		<?php echo $form->textField($model,'cheque_date'); ?>
 	</div>
 
 	<div class="row">

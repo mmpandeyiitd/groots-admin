@@ -251,11 +251,7 @@
 		<?php //echo $form->error($model,'created_date'); ?>
 	</div> -->
 
-	<!-- <div class="row">
-		<?php //echo $form->labelEx($model,'updated_at'); ?>
-		<?php //echo $form->textField($model,'updated_at'); ?>
-		<?php //echo $form->error($model,'updated_at'); ?>
-	</div> -->
+
 <?php if($update){ ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'allocated_warehouse_id'); ?>
@@ -264,17 +260,50 @@
 	</div>
 	<?php } ?>
 
+<?php if(!$update){ ?>
 	<div class="row">
 		<?php echo $form->labelEx($model,'initial_pending_amount'); ?>
 		<?php echo $form->textField($model,'initial_pending_amount',array('size'=>10,'maxlength'=>10)); ?>
 		<?php echo $form->error($model,'initial_pending_amount'); ?>
 	</div>
+<?php } ?>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'total_pending_amount'); ?>
 		<?php echo $form->textField($model,'total_pending_amount',array('size'=>10,'maxlength'=>10)); ?>
 		<?php echo $form->error($model,'total_pending_amount'); ?>
 	</div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'account_holder_name'); ?>
+        <?php echo $form->textField($model,'account_holder_name'); ?>
+        <?php echo $form->error($model,'account_holder_name'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'bank_account_no'); ?>
+        <?php echo $form->textField($model,'bank_account_no'); ?>
+        <?php echo $form->error($model,'bank_account_no'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'bank_name'); ?>
+        <?php echo $form->textField($model,'bank_name'); ?>
+        <?php echo $form->error($model,'bank_name'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'branch_name'); ?>
+        <?php echo $form->textField($model,'branch_name'); ?>
+        <?php echo $form->error($model,'branch_name'); ?>
+    </div>
+
+    <div class="row">
+        <?php echo $form->labelEx($model,'isfc_code'); ?>
+        <?php echo $form->textField($model,'isfc_code'); ?>
+        <?php echo $form->error($model,'isfc_code'); ?>
+    </div>
+
 
 	
 

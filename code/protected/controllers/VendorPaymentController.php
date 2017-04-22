@@ -28,7 +28,7 @@ class VendorPaymentController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view', 'paymentInvoice'),
 				'users'=>array('*'),
 				),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -71,6 +71,7 @@ class VendorPaymentController extends Controller
 			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
 			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 		}
+        $initial_pending_date = VendorDao::getInitialPendingDate();
 		$model=new VendorPayment;
 		$model->vendor_id = $vendor_id;
 		$vendor = Vendor::model()->findByPk($vendor_id);
@@ -79,6 +80,10 @@ class VendorPaymentController extends Controller
 
 		if(isset($_POST['VendorPayment']))
 		{
+            if(strtotime($_POST['VendorPayment']['date']) <= strtotime($initial_pending_date)){
+                Yii::app()->user->setFlash('error', "Can't create payment to be created before base_date. Please Ask Developer" );
+                Yii::app()->controller->redirect("index.php?r=vendorPayment/admin&w_id=".$w_id);
+            }
 			$model->attributes=$_POST['VendorPayment'];
 			$model->created_at = date('Y-m-d');
 			if($model->save()){
@@ -102,7 +107,9 @@ class VendorPaymentController extends Controller
 	 * @param integer $id the ID of the model to be updated
 	 */
 	public function actionUpdate($id)
-	{	
+	{
+	    //echo '<pre>';
+	    //var_dump($_POST);die;
 		$w_id = '';
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
@@ -111,7 +118,7 @@ class VendorPaymentController extends Controller
 			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
 			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 		}
-
+        $initial_pending_date = VendorDao::getInitialPendingDate();
 		$model=$this->loadModel($id);
 		$vendor = Vendor::model()->findByPk($model->vendor_id);
 		$initialPaid = $model->paid_amount;
@@ -120,6 +127,10 @@ class VendorPaymentController extends Controller
 
 		if(isset($_POST['VendorPayment']))
 		{
+            if(strtotime($_POST['VendorPayment']['date']) <= strtotime($initial_pending_date)){
+                Yii::app()->user->setFlash('error', "Can't update payment created before base_date. Please Ask Developer" );
+                Yii::app()->controller->redirect("index.php?r=vendorPayment/admin&w_id=".$w_id);
+            }
 			$model->attributes=$_POST['VendorPayment'];
 			if($model->save()){
 				$vendor->total_pending_amount += $initialPaid;
@@ -175,6 +186,15 @@ class VendorPaymentController extends Controller
 	 */
 	public function actionAdmin()
 	{
+	    if(isset($_POST['paymentReport'])){
+	        $startDate = $endDate = '';
+	        if(isset($_POST['payment_from']) && !empty($_POST['payment_from']))
+	            $startDate = $_POST['payment_from'];
+            if(isset($_POST['payment_to']) && !empty($_POST['payment_to']))
+                $endDate = $_POST['payment_to'];
+            VendorPaymentDao::downloadPaymentReport($startDate,$endDate);
+            exit();
+        }
 		$model=new VendorPayment('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['VendorPayment']))
@@ -184,6 +204,37 @@ class VendorPaymentController extends Controller
 			'model'=>$model,
 			));
 	}
+
+	public function actionPaymentInvoice($id){
+	    $model = $this->loadModel($id);
+	    $vendor = Vendor::model()->findByPk($model->vendor_id);
+        $store = Store::model()->findByAttributes(array('store_id' => 1));
+        $model->groots_address = $store->business_address;
+        $model->groots_city = $store->business_address_city;
+        $model->groots_state = $store->business_address_state;
+        $model->groots_country = $store->business_address_country;
+        $model->groots_pincode = $store->business_address_pincode;
+        $model->groots_authorized_name = $store->store_name;
+        ob_start();
+        echo $this->renderPartial('paymentInvoice', array('model' => $model,'vendor' => $vendor, 'type' => 'invoice'), true);//die;
+        $content = ob_get_clean();
+        require_once(dirname(__FILE__) . '/../extensions/html2pdf/html2pdf.php');
+        $title = "Vendor Invoice";
+        $downloadFileName = $vendor->bussiness_name.' '.$model->id.' payment'. ".pdf";
+
+        try {
+            $html2pdf = new HTML2PDF('P', 'A4', 'en');
+            $html2pdf->pdf->SetTitle($title);
+            $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+            $html2pdf->Output($downloadFileName);
+            var_dump($html2pdf);
+
+
+        } catch (HTML2PDF_exception $e) {
+            echo $e;
+            exit;
+        }
+    }
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

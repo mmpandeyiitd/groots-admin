@@ -12,7 +12,16 @@ $this->breadcrumbs = array(
     array('label'=>'Create GrootsLedger', 'url'=>array('create')),
 );
 */
+$paymentUpdate = false;
+$orderUpdate = false;
+if ($this->checkAccess('SuperAdmin')) {
+    $paymentUpdate = true;
+    $orderUpdate = true;
+}
+else if ($this->checkAccessByData('CollectionEditor', array('warehouse_id' => $w_id))) {
+    $paymentUpdate = true;
 
+}
 ?>
 <div>
     <h1>Manage Groots Ledgers</h1>
@@ -85,9 +94,12 @@ if (isset($retailer->id)) {
                     'header' => 'Action',
                     'headerHtmlOptions' => array('style' => 'color:#1d2e7b;'),
                     'type' => 'raw',
-                    'value' => function ($data) use ($w_id) {
+                    'value' => function ($data) use ($w_id, $paymentUpdate, $orderUpdate) {
                         $url = Yii::app()->controller->createUrl($data["update_url"], array("id" => $data["id"], "w_id" => $w_id));
-                        return CHtml::button("Update", array("onclick" => "document.location.href='" . $url . "'"));
+                        $options = array("onclick" => "document.location.href='" . $url . "'");
+                        if($data['type'] == 'Payment' && !$paymentUpdate) $options["style"] = "display:none;";
+                        else if($data['type'] == 'Order' && !$orderUpdate) $options["style"] = "display:none;";
+                        return CHtml::button("Update", $options);
                     },
                     /*'value' => 'CHtml::button("Update",array("onclick"=>"document.location.href=\'".Yii::app()->controller->createUrl($data["update_url"],array("id"=>$data["id"],"w_id"=>$w_id))."\'"))',*/
                 )

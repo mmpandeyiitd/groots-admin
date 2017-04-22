@@ -17,8 +17,11 @@ $this->menu=array(
 ?>
 
 <h1>View VendorPayment #<?php echo $model->id; ?></h1>
-
+<div align = "right">
+    <?php echo CHtml::button('Print', array('submit' => 'index.php?r=vendorPayment/paymentInvoice&id='.$model->id)); ?>
+</div>
 <?php $this->widget('zii.widgets.CDetailView', array(
+    'id' => 'vendor-payment-list',
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
@@ -29,7 +32,7 @@ $this->menu=array(
 		'cheque_no',
 		'debit_no',
 		'cheque_status',
-		'cheque_issue_date',
+		'cheque_date',
 		'cheque_name',
 		'transaction_id',
 		'receiving_acc_no',
@@ -41,4 +44,7 @@ $this->menu=array(
 		'updated_at',
 		'status',
 	),
-)); ?>
+));
+
+?>
+
