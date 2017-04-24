@@ -105,6 +105,7 @@ if ($issuperadmin == 0) {
     ?>
 </div><!-- search-form -->
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/admin&w_id='.$w_id;?>">
+    <?php echo CHtml::button('Mail Confirmed Orders' , array('name' => 'mailConfirmedOrders','style' =>'float:left;', 'class' => 'button_new', 'submit' => array('orderHeader/mailConfirmedOrders')));?>
 
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
 <?php if(Yii::app()->user->hasFlash('success')):?>
@@ -123,7 +124,7 @@ onclick='return confirm("Do you want to cancel");'/>
 <input  type="submit" name="sandbutton" class="activebutton" value="send CSV File" />
 <input  type="submit" name="downloadbutton" class="activebutton" value="Download CSV File" />-->
     <!--<input  type="submit" name="status" class="activebutton"  value="Change status" />-->
-    
+
     <?php
 //$pageSize = Yii::app()->user->getState( 'pageSize', Yii::app()->params[ 'defaultPageSize' ] );
     $pageSize = 10;

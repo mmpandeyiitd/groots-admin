@@ -2253,8 +2253,31 @@ public function actionSendMailToRetailerWithOrderId($orderId){
 
 public function actionMailConfirmedOrders(){
     echo '<pre>';
-    var_dump($_POST);die;
-    $this->render('mailConfirmedOrders');
+    var_dump($_POST);
+    $date = '';
+    $model = new OrderLine('search');
+    $model->unsetAttributes();
+    if (isset($_GET['OrderLine'])) {
+        $model->attributes = $_GET['OrderLine'];
+    }
+    if(isset($_POST['date'])){
+        $date = $_POST['date'];
+    }
+    else $date = date('Y-m-d');
+    $parentIds = $titles = array();
+    if(isset($_POST['base_product_id'])){
+        foreach($_POST['base_product_id'] as $key => $id){
+            if(isset($_POST['checkedId_'.$key])){
+                array_push($parentIds, $id);
+                array_push($titles, $_POST['title'][$key]);
+            }
+        }
+    }
+    var_dump($parentIds,$titles);die;
+    $this->render('mailConfirmedOrders',
+        array('date' => $date,
+            //'dataProvider' => $dataProvider,
+            'model' => $model));
 }
 
 }

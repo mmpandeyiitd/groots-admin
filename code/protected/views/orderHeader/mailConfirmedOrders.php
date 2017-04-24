@@ -1,9 +1,9 @@
-<form>
+<form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/mailConfirmedOrders'    ;?>">
 <?php
 echo 'Select Date'."\t";
 $this->widget('zii.widgets.jui.CJuiDatePicker', array(
     //'model' => $model,
-    'name' => 'text',
+    'name' => 'date',
     //'attribute' => 'deliverySummaryDeliveryDate',
     'flat' => false, //remove to hide the datepicker
     'options' => array(
@@ -13,7 +13,7 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
         //'minDate'=>-5,
         'maxDate' => "+3M",
     ),
-    'value' => date('Y-m-d'),
+    'value' => $date,
     'htmlOptions' => array(
         'style' => 'float:center;', 'readonly' => 'true',
     ),
@@ -22,6 +22,48 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
 echo '<br>'.'<br>'.'<br>';
 echo ' Enter Text Subject'."\t".CHtml::textArea('Subject','', array('style' => 'float:center;'));
 echo '<br>';
-echo CHtml::submitButton('Submit');
+
+
+    $this->widget('zii.widgets.grid.CGridView', array(
+        'id' => 'mail-pending-skus',
+        //'model' => $model,
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'dataProvider' => $model->searchMailShortOrders(),
+        //'filter' => $model,
+        'columns' => array(
+            array(
+                'header' => 'check',
+                'name' => 'checkeId',
+                'type' => 'raw',
+                'value' => function($data){
+                    echo CHtml::checkBox('checkedId_'.$data->base_product_id, false);
+                }
+            ),
+            'base_product_id',
+            'title',
+            array(
+                //'header' => 'Base Product Id',
+                //'name' => 'base_product_id',
+                //'type' => 'raw',
+                'value' => function($data){
+                    echo CHtml::hiddenField('base_product_id[]', $data->base_product_id);
+                     //return $data->base_product_id;
+                }
+            ),
+            array(
+                //'header' => 'Title',
+                //'name' => 'title',
+                //'type' => 'raw',
+                'value' => function($data){
+                    echo CHtml::hiddenField('title[]', $data->title);
+                    //return $data->title;
+                }
+            ),
+
+
+        )
+    ));
+echo CHtml::submitButton('Submit', array('name' => 'sendMail'));
+
 ?>
 </form>

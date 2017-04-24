@@ -278,7 +278,6 @@ $this->breadcrumbs = array(
 <!--                <input style="float:right;" type = "button" class = "button_new" value = "Mail Confirmed Orders">-->
 <!--            </div>-->
 
-            <?php echo CHtml::button('Mail Confirmed Orders' , array('name' => 'mailConfirmedOrders','style' =>'float:right;', 'class' => 'button_new', 'submit' => array('orderHeader/mailConfirmedOrders')));?>
 
             <a href="index.php?r=orderHeader/admin" class="info_box">
 
