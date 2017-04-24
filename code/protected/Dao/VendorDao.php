@@ -76,7 +76,7 @@ class VendorDao{
             $values = '';
             $count = 1;
             foreach ($array as $key => $value) {
-                $values.= '(null,'.$vendor_id.', '.$value['base_product_id'].', '.$value['price'].', 1, CURDATE(), null, '.$userId.')';
+                $values.= '(null,'.$vendor_id.', '.$value['base_product_id'].', '.$value['price'].', 1, CURDATE(), NOW(), '.$userId.')';
                 if($count != count($array)){
                     $values.= ', ';
                 }
