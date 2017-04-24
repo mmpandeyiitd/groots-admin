@@ -2102,6 +2102,8 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
+            $email_message = 'Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
+                        Thank you for choosing Groots!<br>';
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
             $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
@@ -2135,8 +2137,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
                       <strong>Hi ' . $buyername . '</strong>
                       <br> 
                       <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-                        Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
-                        Thank you for choosing Groots!<br>
+                        '.$email_message.'
                     </span>
                     <br>
 
@@ -2253,7 +2254,7 @@ public function actionSendMailToRetailerWithOrderId($orderId){
 
 public function actionMailConfirmedOrders(){
     echo '<pre>';
-    var_dump($_POST);
+    //var_dump($_POST);
     $date = '';
     $model = new OrderLine('search');
     $model->unsetAttributes();
@@ -2262,22 +2263,32 @@ public function actionMailConfirmedOrders(){
     }
     if(isset($_POST['date'])){
         $date = $_POST['date'];
+
     }
     else $date = date('Y-m-d');
     $parentIds = $titles = array();
     if(isset($_POST['base_product_id'])){
         foreach($_POST['base_product_id'] as $key => $id){
-            if(isset($_POST['checkedId_'.$key])){
+            if(isset($_POST['checkedId_'.$id])){
                 array_push($parentIds, $id);
                 array_push($titles, $_POST['title'][$key]);
             }
         }
+        $orderData = OrderHeaderDao::getuserIdsFromShortSku($parentIds,$date);
+        self::sendMailShortSkus($orderData);
+        var_dump($orderData);die;
     }
-    var_dump($parentIds,$titles);die;
+
     $this->render('mailConfirmedOrders',
         array('date' => $date,
             //'dataProvider' => $dataProvider,
             'model' => $model));
 }
 
+public function sendMailShortSkus($orderData){
+    foreach ($orderData as $orderId){
+        $pdf = $this->actionReport($orderId, 'invoice', true);
+        array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$orderId));
+    }
+}
 }
