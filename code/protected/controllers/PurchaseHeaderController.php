@@ -377,7 +377,10 @@ class PurchaseHeaderController extends Controller
                                 }
 
                             }
-                            if ($received_qty > 0 ) {
+                            if($id== 1880 && $vendorId== 3){
+                                var_dump($received_qty,isset($_POST['order_qty'][$key]));
+                            }
+                            if (isset($_POST['received_qty'][$key]) || $received_qty > 0 ) {
                                 $purchaseLine->received_qty = $received_qty;
                                 $purchaseLine->save();
                                 if(isset($purchaseLineMap[$constraint])){
