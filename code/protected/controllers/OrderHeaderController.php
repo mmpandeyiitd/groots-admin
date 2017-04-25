@@ -1289,7 +1289,7 @@ public function actionEdit($id) {
                     }
                 }
                 if($type=='email-invoice'){
-                    $this->sendMailToRetailer($pdfArray);
+                    $this->sendMailToRetailer($pdfArray, false);
                     Yii::app()->controller->redirect("index.php?r=orderHeader/admin&w_id=".$w_id);
                 }
                 else{
@@ -2069,11 +2069,11 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
         //var_dump($zipName);
     }
 
-    private function sendMailToRetailer($pdfArray){
+    private function sendMailToRetailer($pdfArray, $skuShort){
         $array = array();
         //var_dump($pdfArray);die;
         foreach ($pdfArray as $each){
-            $pdf = $each['pdf'];
+            $pdf = (isset($each['pdf'])) ? $each['pdf']: null;
             $order_id = $each['order_id'];
 
             $connection = Yii::app()->secondaryDb;
@@ -2102,8 +2102,15 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
-            $email_message = 'Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
+            $email_message = '';
+            if($skuShort['isShort']){
+                $email_message = $skuShort['message'];
+            }
+            else{
+                $email_message = 'Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
                         Thank you for choosing Groots!<br>';
+            }
+
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
             $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
@@ -2170,22 +2177,36 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
 </tbody></table>
 </body>
 </html>';
-
 $body_text = '';
 if(isset($alternate_email) && !empty($alternate_email)){
     $emai_id.= ','.$alternate_email;
 }
-$mailArray = array(
-    'to' => $emai_id,
-    'from' => $from_email,
-    'fromname' => $from_name,
-    'subject' => $subject,
-    'html' => $body_html,
-    'text' => $body_text,
-    'replyTo' => $replyto,
-    'pdf' => $pdf,
-    'cc' => $cc_group,
+if($skuShort['isShort']){
+    $mailArray = array(
+        'to' => $emai_id,
+        'from' => $from_email,
+        'fromname' => $from_name,
+        'subject' => $subject,
+        'html' => $body_html,
+        'text' => $body_text,
+        'replyTo' => $replyto,
+        //'pdf' => $pdf,
+        'cc' => $cc_group,
     );
+}
+else {
+    $mailArray = array(
+        'to' => $emai_id,
+        'from' => $from_email,
+        'fromname' => $from_name,
+        'subject' => $subject,
+        'html' => $body_html,
+        'text' => $body_text,
+        'replyTo' => $replyto,
+        'pdf' => $pdf,
+        'cc' => $cc_group,
+    );
+}
 array_push($array, $mailArray);
 
 
@@ -2241,7 +2262,7 @@ public function actionSendMailToRetailerWithOrderId($orderId){
     $pdfArray[0]['pdf'] = $pdf;
     $pdfArray[0]['order_id'] = $orderId;
     try{
-        self::sendMailToRetailer($pdfArray);
+        self::sendMailToRetailer($pdfArray, false);
         $result['status'] = 1;
         $result['msg'] = 'Email sent Successfully'; 
         echo json_encode($result);  
@@ -2253,7 +2274,7 @@ public function actionSendMailToRetailerWithOrderId($orderId){
 }
 
 public function actionMailConfirmedOrders(){
-    echo '<pre>';
+    //echo '<pre>';
     //var_dump($_POST);
     $date = '';
     $model = new OrderLine('search');
@@ -2275,8 +2296,8 @@ public function actionMailConfirmedOrders(){
             }
         }
         $orderData = OrderHeaderDao::getuserIdsFromShortSku($parentIds,$date);
-        self::sendMailShortSkus($orderData);
-        var_dump($orderData);die;
+        self::sendMailShortSkus($orderData,$titles);
+        //var_dump($orderData);die;
     }
 
     $this->render('mailConfirmedOrders',
@@ -2285,10 +2306,20 @@ public function actionMailConfirmedOrders(){
             'model' => $model));
 }
 
-public function sendMailShortSkus($orderData){
+public function sendMailShortSkus($orderData, $titles){
+    $pdfArray = array();
+    $titles= implode(', ',$titles);
     foreach ($orderData as $orderId){
-        $pdf = $this->actionReport($orderId, 'invoice', true);
-        array_push($pdfArray, array('pdf'=>$pdf, 'order_id'=>$orderId));
+        array_push($pdfArray, array('order_id'=>$orderId));
+    }
+    $skuShort = array();
+    $skuShort['isShort'] = true;
+    $skuShort['message'] = 'Following Items are short on todays delivery.'.$titles.'. Sorry For Inconvinience';
+    try{
+        self::sendMailToRetailer($pdfArray, $skuShort);
+        Yii::app()->user->setFlash('success','Email Sent Successfully' );
+    } catch(Exception $e){
+        Yii::app()->user->setFlash('error','Email Could Not Be Sent '.$e->getMessage() );
     }
 }
 }

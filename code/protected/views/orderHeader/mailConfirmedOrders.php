@@ -1,3 +1,21 @@
+<?php
+$this->breadcrumbs = array(
+    'Orders' => array('admin'),
+);
+?>
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+    <div class="Csv" style="color:green;">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+        <?php echo Yii::app()->user->getFlash('prod'); ?>
+    </div>
+<?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="Csv" style="color:red;">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
+
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/mailConfirmedOrders'    ;?>">
 <?php
 echo 'Select Date'."\t";
@@ -64,6 +82,8 @@ echo '<br>';
         )
     ));
 echo CHtml::submitButton('Submit', array('name' => 'sendMail'));
-
+//echo '<br>'.'<br>';
 ?>
+    <a href="index.php?r=orderHeader/admin" class="button_new" style="width: auto;"
+       target="_self">Back</a>
 </form>
