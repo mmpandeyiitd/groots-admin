@@ -2102,6 +2102,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
+            die($emailurldata);die;
             $email_message = '';
             if($skuShort['isShort']){
                 $email_message = $skuShort['message'];
@@ -2308,13 +2309,17 @@ public function actionMailConfirmedOrders(){
 
 public function sendMailShortSkus($orderData, $titles){
     $pdfArray = array();
-    $titles= implode(', ',$titles);
+    //$titles= implode(', ',$titles);
     foreach ($orderData as $orderId){
         array_push($pdfArray, array('order_id'=>$orderId));
     }
     $skuShort = array();
     $skuShort['isShort'] = true;
-    $skuShort['message'] = 'Following Items are short on todays delivery.'.$titles.'. Sorry For Inconvinience';
+    $skuShort['message'] = 'Following Items are short on todays delivery';
+    foreach ($titles as $count => $title){
+        $skuShort['message'] .= $count.' '.$title.'<br>';
+    }
+    $skuShort['message'] .= '. Sorry For Inconvinience';
     try{
         self::sendMailToRetailer($pdfArray, $skuShort);
         Yii::app()->user->setFlash('success','Email Sent Successfully' );
