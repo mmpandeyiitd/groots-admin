@@ -35,6 +35,19 @@ You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&g
 or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
 </p>
 
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+    <div class="Csv" style="color:green;">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+        <?php echo Yii::app()->user->getFlash('prod'); ?>
+    </div>
+<?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="Csv" style="color:red;">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
+
 <div class="dashboard-table">
     <form method="post">
         <h4 style="width:20%">vendor payment</h4>
@@ -99,6 +112,14 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'columns'=>array(
 		'id',
 		'vendor_id',
+        array(
+            'header' => 'status',
+            'name' => 'status',
+            'value' => function($data){
+                return ($data->status == 1)? 'Active' : 'Inactive';
+            },
+            'filter' => false,
+        ),
         'bussiness_name',
 		'paid_amount',
 		'date',

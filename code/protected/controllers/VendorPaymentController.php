@@ -71,6 +71,7 @@ class VendorPaymentController extends Controller
 			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
 			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 		}
+        $initial_pending_date = VendorDao::getInitialPendingDate();
 		$model=new VendorPayment;
 		$model->vendor_id = $vendor_id;
 		$vendor = Vendor::model()->findByPk($vendor_id);
@@ -79,6 +80,10 @@ class VendorPaymentController extends Controller
 
 		if(isset($_POST['VendorPayment']))
 		{
+            if(strtotime($_POST['VendorPayment']['date']) <= strtotime($initial_pending_date)){
+                Yii::app()->user->setFlash('error', "Can't create payment to be created before base_date. Please Ask Developer" );
+                Yii::app()->controller->redirect("index.php?r=vendorPayment/admin&w_id=".$w_id);
+            }
 			$model->attributes=$_POST['VendorPayment'];
 			$model->created_at = date('Y-m-d');
 			if($model->save()){
@@ -102,7 +107,9 @@ class VendorPaymentController extends Controller
 	 * @param integer $id the ID of the model to be updated
 	 */
 	public function actionUpdate($id)
-	{	
+	{
+	    //echo '<pre>';
+	    //var_dump($_POST);die;
 		$w_id = '';
 		if(isset(Yii::app()->session['w_id']) && !empty(Yii::app()->session['w_id'])){
 			$w_id = Yii::app()->session['w_id'];
@@ -111,7 +118,7 @@ class VendorPaymentController extends Controller
 			Yii::app()->user->setFlash('premission_info', 'You dont have permission.! Bitch');
 			Yii::app()->controller->redirect("index.php?r=vendor/admin&w_id=".$w_id);
 		}
-
+        $initial_pending_date = VendorDao::getInitialPendingDate();
 		$model=$this->loadModel($id);
 		$vendor = Vendor::model()->findByPk($model->vendor_id);
 		$initialPaid = $model->paid_amount;
@@ -120,6 +127,10 @@ class VendorPaymentController extends Controller
 
 		if(isset($_POST['VendorPayment']))
 		{
+            if(strtotime($_POST['VendorPayment']['date']) <= strtotime($initial_pending_date)){
+                Yii::app()->user->setFlash('error', "Can't update payment created before base_date. Please Ask Developer" );
+                Yii::app()->controller->redirect("index.php?r=vendorPayment/admin&w_id=".$w_id);
+            }
 			$model->attributes=$_POST['VendorPayment'];
 			if($model->save()){
 				$vendor->total_pending_amount += $initialPaid;
