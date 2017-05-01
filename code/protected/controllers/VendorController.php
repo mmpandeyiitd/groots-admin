@@ -32,7 +32,8 @@ class VendorController extends Controller
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList','zipInvoicesByVendor'),
+                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice',
+                                    'downloadAllVendorProductList','zipInvoicesByVendor','vendorS3Upload'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -542,6 +543,11 @@ class VendorController extends Controller
         //die;
         $zipFileName=$id."purchase".".zip";
         OrderHeaderController::zipFilesAndDownload($pdfArray,$zipFileName);
+    }
+
+    public function actionvendorS3Upload(){
+
+        $this->render('vendorS3Upload');
     }
 }
 ?>
