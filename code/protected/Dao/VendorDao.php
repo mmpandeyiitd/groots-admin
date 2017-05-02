@@ -434,7 +434,8 @@ class VendorDao{
             $tmp['acc_holder_name'] = isset($ledgerRow['acc_holder_name']) ? $ledgerRow['acc_holder_name']: null;
             $tmp['comment'] = isset($ledgerRow['comment']) ? $ledgerRow['comment']: null;
             $tmp['status'] = isset($ledgerRow['status']) ? $ledgerRow['status']: null;
-            $tmp['labour_cost'] = $ledgerRow['labour_cost'];
+            $tmp['labour_cost'] = ($vendor_id == 4) ? $ledgerRow['labour_cost'] : 0;
+            $tmp['outstanding'] += $tmp['labour_cost'];
             array_push($dataProvider,$tmp);
         }
         return $dataProvider;
