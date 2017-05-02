@@ -1225,9 +1225,7 @@ public function actionEdit($id) {
      * Manages all models.
      */
     public function actionAdmin() {
-        require_once( dirname(__FILE__) . '/../utility/StorageClient.php');
-        $x = new StotageClient();
-        $x->addFile('test');die;
+        
         if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>1))){
         }
  //print("<pre>");
