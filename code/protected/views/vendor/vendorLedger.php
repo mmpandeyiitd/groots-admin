@@ -65,6 +65,7 @@ echo CHtml::submitButton('Download Ledger', array('name'=>'ledgerDownload'));
 
 
     <?php
+    $labourVisible = ($vendor->id == 4);
 $this->widget('zii.widgets.grid.CGridView', array(
 		'id'=>'ledger-grid',   
 		'itemsCssClass' => 'table table-striped table-bordered table-hover',
@@ -75,6 +76,14 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'paid_amount',
             'payment_type',
             'cheque_status',
+            array(
+                'header'=>'Labour Cost',
+                'type' => 'raw',
+                'visible' => $labourVisible,
+                'value' => function($data){
+                    echo $data['labour_cost'];
+                }
+            ),
             'order_amount',
 			'order_quantity',
 			'outstanding',

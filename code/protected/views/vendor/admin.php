@@ -12,6 +12,7 @@ $this->menu=array(
 	array('label'=>'Create Vendor', 'url'=>array('create')),
 	array('label' => 'Credit Management', 'url' => array('creditManagement')),
 	array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
+    array('label' => 'Vendor Upload', 'url' => array('vendorS3Upload')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
