@@ -13,7 +13,7 @@ class m170321_124958_vendorLogTrigger extends CDbMigration
             $currentPendingDate = $command->queryScalar();
             $triggerInsert = 'create trigger vendor_log_insert after insert on cb_dev_groots.vendors for each row
                             insert into vendor_log(vendor_id, total_pending,base_date, created_at, updated_at)
-                            values (NEW.id, NEW.total_pending_amount + NEW.initial_pending_amount, "'.$currentPendingDate.'", NOW(), NOW())';
+                            values (NEW.id, NEW.total_pending_amount + NEW.initial_pending_amount, "'.$currentPendingDate.'", now(), now())';
             $this->execute($triggerInsert);
             $sql = 'insert into cb_dev_groots.vendor_log (vendor_id , total_pending, base_date, created_at, updated_at) (select id, initial_pending_amount, "2017-02-28", CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP() from cb_dev_groots.vendors as v where v.id > 37 )' ;
             $this->execute($sql);
