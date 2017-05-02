@@ -15,8 +15,9 @@ class m170429_072941_s3_table extends CDbMigration
                      file_link VARCHAR (500) not null,
                      file_type VARCHAR (10) not null,
                      date date not null,
+                     status int(1) not null default 1;
                      created_at datetime not null,
-                     updated_at timestamp default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP ,
+                     updated_at timestamp default CURRENT_TIMESTtAMP on update CURRENT_TIMESTAMP ,
                      uploaded_by int(11) not null,
                      updated_by int(11) not null,
                      primary key (id),

@@ -546,6 +546,19 @@ class VendorController extends Controller
     }
 
     public function actionvendorS3Upload(){
+        if(isset($_POST['addFile'])){
+            //echo '<pre>';
+            //var_dump($_POST);
+            //var_dump($_FILES);
+            $w_id = Yii::app()->session['w_id'];
+            $file_type = explode('.',$_FILES['file']['name']);
+            if($_POST['file_type'] != $file_type){
+                Yii::app()->user->setFlash('error', 'File Types Did Not Match');
+                Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+            }
+            $file = fopen( $_FILES['file']['tmp_name'], "rb");
+            //var_dump($file);die;
+        }
 
         $this->render('vendorS3Upload');
     }

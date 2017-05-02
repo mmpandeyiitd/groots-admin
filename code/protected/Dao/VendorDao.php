@@ -537,12 +537,12 @@ class VendorDao{
 
     public function allVendorDropdown(){
         $connection= Yii::app()->db;
-        $sql = 'select id, bussiness_name from vendor where status = 1';
+        $sql = 'select id, bussiness_name from vendors where status = 1';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
-        $array = array();
+        $array = array(0=>'Select vendor');
         foreach ($result as $vendor){
-            $array[$vendor['id']] = $array['bussiness_name'];
+            $array[$vendor['id']] = $vendor['bussiness_name'];
         }
         return $array;
     }
