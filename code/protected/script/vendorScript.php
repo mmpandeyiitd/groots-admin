@@ -85,10 +85,14 @@ $rows = mysql_num_rows($query);
 $i=0;
 $today = date('Y-m-d');
 $yesterday = date('Y-m-d', strtotime($today.' - 1 day'));
-$initial_pending_date = mysql_result($query, 0, 3);
+$initial_pending_date = mysql_result($query, 0, 5);
 mysql_data_seek($query, 0);
 $initialPendingMap = getAllVendorInitialPending($initial_pending_date);
 $totalPendingMap = getAllVendorPayableAmount(date('Y-m-d', strtotime($initial_pending_date.' + 1 day')), $yesterday);
+$x = 'update vendors set initial_pending_date = "2017-02-28" where id = 1';
+$x = mysql_query($x);
+die;
+//var_dump(date('Y-m-d', strtotime('2017-02-28 + 2 month')));die;
 while($i < $rows){
     //update due_date for current vendor
     $current = mysql_fetch_array($query);
@@ -99,7 +103,8 @@ while($i < $rows){
 
         $update = mysql_query($sql2);
     }//uodate initial_pending_date and initial_pending_amount vendor for current vendor
-    $totalNow = $initialPendingMap[$current['id']] + $totalPendingMap[$current['id']];
+    $totalPending = isset($totalPendingMap[$current['id']]) ? $totalPendingMap[$current['id']] : 0;
+    $totalNow = $initialPendingMap[$current['id']] + $totalPending  ;
     $checkLog = 'select id from vendor_log where vendor_id = '.$current['id'];
     $query = mysql_query($checkLog);
     $rows = mysql_num_rows($query);
