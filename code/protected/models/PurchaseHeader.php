@@ -35,7 +35,7 @@ class PurchaseHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, paid_amount,comment,invoice_number,created_at', 'safe', 'on' => 'search,update'),
+            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, paid_amount,comment,invoice_number,created_at,labour_cost', 'safe', 'on' => 'search,update'),
         );
     }
 

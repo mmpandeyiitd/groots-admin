@@ -241,7 +241,7 @@ class VendorDao{
         return $initialPendingDate;
     }
 
-    public function getInitialPendingDate(){
+    public function     getInitialPendingDate(){
         $connection = Yii::app()->db;
         $sql = 'select initial_pending_date from vendors limit 1';
         $command = $connection->createCommand($sql);
@@ -361,7 +361,7 @@ class VendorDao{
         //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
         $base_date = self::getInitialPendingDate();
-        $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
+        $orderQuery = 'select ph.id,ph.labour_cost ,GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
                         sum(pl.order_qty) as procured_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
                           where ph.delivery_date > "'.$base_date.'" and ph.status = "received" and pl.order_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
@@ -395,7 +395,7 @@ class VendorDao{
             $ledgerData[$key] = $value;
 
         }
-        $dataProvider = self::makeLedgerDataProvider($ledgerData);
+        $dataProvider = self::makeLedgerDataProvider($ledgerData,$vendor_id);
         //echo '<pre>';
         //var_dump($dataProvider);die;
         $result = array('data' => $dataProvider);
@@ -408,7 +408,7 @@ class VendorDao{
 
     }
 
-    public function makeLedgerDataProvider($ledgerData){
+    public function makeLedgerDataProvider($ledgerData,$vendor_id){
         $dataProvider = array();
         foreach ($ledgerData as $ledgerRow){
             $tmp = array();
@@ -434,6 +434,7 @@ class VendorDao{
             $tmp['acc_holder_name'] = isset($ledgerRow['acc_holder_name']) ? $ledgerRow['acc_holder_name']: null;
             $tmp['comment'] = isset($ledgerRow['comment']) ? $ledgerRow['comment']: null;
             $tmp['status'] = isset($ledgerRow['status']) ? $ledgerRow['status']: null;
+            $tmp['labour_cost'] = $ledgerRow['labour_cost'];
             array_push($dataProvider,$tmp);
         }
         return $dataProvider;
