@@ -546,9 +546,16 @@ class VendorController extends Controller
     }
 
     public function actionvendorS3Upload(){
+        $vendor_id = '';
+        if(isset($_POST['vendor_id'])){
+            $vendor_id = $_POST['vendor_id'];
+        }
+        if(isset($_GET['vendor_id'])){
+            $vendor_id = $_GET['vendor_id'];
+        }
         if(isset($_POST['addFile'])){
-            //echo '<pre>';
-            //var_dump($_POST);
+            echo '<pre>';
+            var_dump($_POST);die;
             //var_dump($_FILES);
             $w_id = Yii::app()->session['w_id'];
             $file_type = explode('.',$_FILES['file']['name']);
@@ -559,8 +566,16 @@ class VendorController extends Controller
             $file = fopen( $_FILES['file']['tmp_name'], "rb");
             //var_dump($file);die;
         }
+        $vendorUpload = new VendorUpload();
+        $vendorUpload->unsetAttributes();
+        if(isset($_GET['VendorUpload'])){
+            $vendorUpload->attributes = $_GET['VendorUpload'];
+        }
+        $this->render('vendorS3Upload',array(
+            'model' => $vendorUpload,
+            'vendor_id' => $vendor_id,
 
-        $this->render('vendorS3Upload');
+        ));
     }
 }
 ?>

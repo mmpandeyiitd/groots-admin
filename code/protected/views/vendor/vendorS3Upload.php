@@ -28,10 +28,27 @@
             'style'=>'height:20px;'
         ),
     ));
-    echo CHtml::dropDownList('vendor_list', 0,VendorDao::allVendorDropDown(), array('style' => 'width:220.5px;'));
+    echo CHtml::dropDownList('vendor_id', 0,VendorDao::allVendorDropDown(), array('style' => 'width:220.5px;'));
     echo CHtml::dropDownList('file_type', 0,$fileTypes, array('style' => 'width:220.5px;'));
     echo CHtml::fileField('file');
     echo CHtml::submitButton('Submit', array('name' => 'addFile'));
+
+    $this->widget('zii.widgets.grid.CGridView', array(
+        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        'id' => 'order-header-grid',
+        'dataProvider' => $model->search($vendor_id),
+        'filter' => $model,
+        'columns' => array(
+            'id',
+            //'vendor_id',
+            'file_name',
+            'file_link',
+            'file_type',
+            'date',
+
+
+        )
+    ));
     ?>
 
 </form>

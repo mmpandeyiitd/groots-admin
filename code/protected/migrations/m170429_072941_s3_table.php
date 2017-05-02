@@ -15,14 +15,13 @@ class m170429_072941_s3_table extends CDbMigration
                      file_link VARCHAR (500) not null,
                      file_type VARCHAR (10) not null,
                      date date not null,
-                     status int(1) not null default 1;
+                     status int(1) not null default 1,
                      created_at datetime not null,
-                     updated_at timestamp default CURRENT_TIMESTtAMP on update CURRENT_TIMESTAMP ,
-                     uploaded_by int(11) not null,
+                     updated_at timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP ,
                      updated_by int(11) not null,
                      primary key (id),
-                     key fk_vu_1 (uploaded_by),
-                     constraint fk_ep_dpt_1 foreign key (uploaded_by) REFERENCES cb_dev_groots.groots_employee (id),
+                     key fk_vu_1 (vendor_id),
+                     constraint fk_vu_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id)
                     )ENGINE=InnoDB default CHARSET=utf8';
             $this->execute($sql);
         } catch(Exception $e){

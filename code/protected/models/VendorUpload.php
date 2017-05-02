@@ -37,8 +37,32 @@ class VendorUpload extends CActiveRecord{
 
     public function search(){
         $criteria = new CDbCriteria();
+        $criteria->condition = ' status = 1';
+        if(!empty($vendor_id)){
+            $criteria->condition .= ' and vendor_id ='.$vendor_id;
+        }
+        $criteria->compare('id', $this->id);
+        $criteria->compare('vendor_id', $this->vendor_id,true);
+        $criteria->compare('bucket', $this->bucket,true);
+        $criteria->compare('file_name', $this->file_name,true);
+        $criteria->compare('file_size', $this->file_size,true);
+        $criteria->compare('file_link', $this->file_link,true);
+        $criteria->compare('file_type', $this->file_type,true);
+        $criteria->compare('date', $this->date,true);
+        $criteria->compare('status', $this->status,true);
+        $criteria->compare('created_at', $this->created_at,true);
+        $criteria->compare('update_at', $this->updated_at,true);
+        $criteria->compare('updated_by', $this->updated_by,true);
 
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+            'pagination' => array('pageSize' => 100  ,),
+        ));
+    }
 
+    public static function model($className=__CLASS__)
+    {
+        return parent::model($className);
     }
 }
 ?>
