@@ -547,8 +547,8 @@ class VendorDao{
         return $array;
     }
 
-    public function addUploadedFileData(){
-
+    public function addUploadFileData($result,$vendor_id,$post,$file){
+        $fileSize =
     }
 
 }

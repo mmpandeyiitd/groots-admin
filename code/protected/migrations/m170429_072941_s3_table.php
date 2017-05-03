@@ -10,6 +10,7 @@ class m170429_072941_s3_table extends CDbMigration
                      id int(11) not null AUTO_INCREMENT,
                      vendor_id int(11) not null,
                      bucket VARCHAR (100) not null,
+                     file_tag VARCHAR (300) not null,
                      file_name VARCHAR (300) not null,
                      file_size decimal(10,2) not null,
                      file_link VARCHAR (500) not null,

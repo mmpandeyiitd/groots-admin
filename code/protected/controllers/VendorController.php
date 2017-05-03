@@ -545,7 +545,7 @@ class VendorController extends Controller
         OrderHeaderController::zipFilesAndDownload($pdfArray,$zipFileName);
     }
 
-    public function actionvendorS3Upload(){
+    public function actionVendorS3Upload(){
         $vendor_id = '';
         if(isset($_POST['vendor_id'])){
             $vendor_id = $_POST['vendor_id'];
@@ -556,25 +556,28 @@ class VendorController extends Controller
         if(isset($_POST['addFile'])){
             $date = $_POST['date'];
             echo '<pre>';
-            //var_dump($_POST);
-            //$file_type = explode('.',$_FILES['file']['name']);
-            //var_dump($file_type[1]);
-            //var_dump($_FILES);die;
             if(isset($_FILES['file'])){
-                $file_type = explode('.',$_FILES['file']['name']);
-                if($_POST['file_type'] != $file_type[1]){
+                $file_type = pathinfo($_FILES['file']['name'])['extension'];
+                var_dump($_FILES);die;
+                if($_POST['file_type'] != $file_type){
                     Yii::app()->user->setFlash('error', 'File Types Did Not Match');
                     Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
                 }
-                $file = fopen( $_FILES['file']['tmp_name'], "rb");
+                $targetDir = dirname(__FILE__).'/../../log/vendorUpload/';
+                if(!is_dir($targetDir)){
+                    mkdir($targetDir);
+                }
+                $target = $targetDir.'/'.$_FILES['file']['name'];
+                //$file = fopen( $_FILES['file']['tmp_name'], "rb");
+                move_uploaded_file($_FILES['file']['tmp_name'], $target);
                 require_once( dirname(__FILE__) . '/../utility/StorageClient.php');
                 $s3 = new StotageClient();
-                $result = $s3->addFile(VENDOR_UPLOAD_BUCKET, $_FILES['file']['name'], $file);
+                $result = $s3->addFile(VENDOR_UPLOAD_BUCKET, $_FILES['file']['name'],$target);
                 if(is_a($result, 'Exception')){
                     Yii::app()->user->setFlash('error', $result->getMessage());
                     Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
                 }else{
-                    VendorDao::addUploadFileData($result,$vendor_id,$date);
+                    VendorDao::addUploadFileData($result,$vendor_id,$_POST);
                 }
             }
 

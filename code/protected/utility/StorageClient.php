@@ -20,8 +20,9 @@ class StotageClient{
         //var_dump($this->s3Client);die;
     }
 
-    public function addFile($bucket,$fileName,$file){
+    public function addFile($bucket,$fileName,$filePath){
         try{
+            $client = $this->s3Client;
             if(!$this->isBucketPresent($bucket)){
                 $this->s3Client->createBucket(array('Bucket' => md5($bucket)));
                 $this->s3Client->waitUntil('BucketExists', array('Bucket' => md5($bucket)));
@@ -29,20 +30,27 @@ class StotageClient{
             $result = $this->s3Client->putObject(array(
                 'Bucket' => md5($bucket),
                 'Key' => $fileName,
-                'SourceFile' => $file,
+                'SourceFile' => $filePath,
+                'ACL'        => 'public-read'
             ));
             $this->s3Client->waitUntil('ObjectExists', array(
                 'Bucket' => md5($bucket),
                 'Key'    => $fileName
             ));
-            var_dump($result);die;
+//            $result = $this->s3Client->getObject(array(
+//                'Bucket' => md5($bucket),
+//                'Key' => $fileName,
+//            ));
             return $result;
+            //$signedUrl = $client->getObjectUrl(md5($bucket),$fileName, '+10 minutes');
+            //echo $result['@metadata']['effectiveUri'];
         }catch (S3Exception $e){
             echo $e->getMessage();
         }
     }
 
     public function isBucketPresent($bucket){
+
         $client = $this->s3Client;
         $result = $this->s3Client->listBuckets();
         foreach ($result['Buckets'] as $currentBucket){
