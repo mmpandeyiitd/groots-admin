@@ -36,7 +36,7 @@ class VendorUpload extends CActiveRecord{
         );
     }
 
-    public function search(){
+    public function search($vendor_id){
         $criteria = new CDbCriteria();
         $criteria->condition = ' status = 1';
         if(!empty($vendor_id)){

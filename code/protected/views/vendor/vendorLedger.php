@@ -25,6 +25,7 @@ $this->menu=array(
 
 <?php
 echo CHtml::submitButton('Download Ledger', array('name'=>'ledgerDownload'));
+echo CHtml::button('Upload Files', array('submit' => array('vendor/vendorS3Upload&vendor_id='.$vendor->id)));
 ?>
 
     <div class="dashboard-table">

@@ -548,7 +548,33 @@ class VendorDao{
     }
 
     public function addUploadFileData($result,$vendor_id,$post,$file){
-        $fileSize =
+        $connection = Yii::app()->db;
+        $sql = 'insert into vendor_upload values(null, '.$vendor_id.', "'.VENDOR_UPLOAD_BUCKET.'","'.$post["fileTag"].'","'.$file["file"]["name"].'"
+                ,'.($file["file"]["size"]/1000).',"'.$result["@metadata"]["effectiveUri"].'","'.$post["file_type"].'","'.$post["date"].'",1,NOW(),NOW(),
+                '.Yii::app()->user->id.')';
+        $command = $connection->createCommand($sql);
+        //$command->queryAll();
+    }
+
+    public function isLegitUpload($post){
+        $message = '';
+        if(empty($post['date'])){
+            $message = 'Plaese Enter Date';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['fileTag'])){
+            $message =  'Plaese Enter Some File Tag';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['vendor_id'])){
+            $message = 'Plaese Select a vendor';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['file_type'])){
+            $message = 'Plaese Select File Type ';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        return array('isLegit'=>true,'message'=>$message);
     }
 
 }

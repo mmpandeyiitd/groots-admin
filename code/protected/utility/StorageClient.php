@@ -45,12 +45,12 @@ class StotageClient{
             //$signedUrl = $client->getObjectUrl(md5($bucket),$fileName, '+10 minutes');
             //echo $result['@metadata']['effectiveUri'];
         }catch (S3Exception $e){
-            echo $e->getMessage();
+            return $e;
         }
     }
 
     public function isBucketPresent($bucket){
-
+        //$client->deleteBucket(array('Bucket' => md5($bucket)));die;
         $client = $this->s3Client;
         $result = $this->s3Client->listBuckets();
         foreach ($result['Buckets'] as $currentBucket){
