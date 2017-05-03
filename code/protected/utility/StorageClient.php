@@ -7,7 +7,6 @@ require_once(dirname(__FILE__).'/../config/aws-config.php');
 class StotageClient{
     public $s3Client;
     public function __construct(){
-        echo '<pre>';
         $this->s3Client = S3Client::factory(array(
             'version' => 'latest',
             'region' => REGION,
@@ -21,21 +20,37 @@ class StotageClient{
         //var_dump($this->s3Client);die;
     }
 
-    public function addFile($bucket){
+    public function addFile($bucket,$fileName,$file){
         try{
-            $client = $this->s3Client;
-            echo '<pre>';
-            $result = $this->s3Client->listBuckets();
-
-//            foreach ($result['Buckets'] as $bucket) {
-//                // Each Bucket value will contain a Name and CreationDate
-//                echo "{$bucket['Name']} - {$bucket['CreationDate']}\n";
-//            }
-
-            //var_dump($buckets);die;
+            if(!$this->isBucketPresent($bucket)){
+                $this->s3Client->createBucket(array('Bucket' => md5($bucket)));
+                $this->s3Client->waitUntil('BucketExists', array('Bucket' => md5($bucket)));
+            }
+            $result = $this->s3Client->putObject(array(
+                'Bucket' => md5($bucket),
+                'Key' => $fileName,
+                'SourceFile' => $file,
+            ));
+            $this->s3Client->waitUntil('ObjectExists', array(
+                'Bucket' => md5($bucket),
+                'Key'    => $fileName
+            ));
+            var_dump($result);die;
+            return $result;
         }catch (S3Exception $e){
             echo $e->getMessage();
         }
     }
+
+    public function isBucketPresent($bucket){
+        $client = $this->s3Client;
+        $result = $this->s3Client->listBuckets();
+        foreach ($result['Buckets'] as $currentBucket){
+            if($currentBucket['Name'] == md5($bucket))
+                return true;
+        }
+        return false;
+    }
+
 }
 ?>

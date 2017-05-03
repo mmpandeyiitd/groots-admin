@@ -34,7 +34,7 @@
     echo CHtml::submitButton('Submit', array('name' => 'addFile'));
 
     $this->widget('zii.widgets.grid.CGridView', array(
-        'itemsCssClass' => 'table table-striped table-bordered table-hover',
+        //'itemsCssClass' => 'table table-striped table-bordered table-hover',
         'id' => 'order-header-grid',
         'dataProvider' => $model->search($vendor_id),
         'filter' => $model,

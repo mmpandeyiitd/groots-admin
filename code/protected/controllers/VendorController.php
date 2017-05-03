@@ -554,17 +554,30 @@ class VendorController extends Controller
             $vendor_id = $_GET['vendor_id'];
         }
         if(isset($_POST['addFile'])){
+            $date = $_POST['date'];
             echo '<pre>';
-            var_dump($_POST);die;
-            //var_dump($_FILES);
-            $w_id = Yii::app()->session['w_id'];
-            $file_type = explode('.',$_FILES['file']['name']);
-            if($_POST['file_type'] != $file_type){
-                Yii::app()->user->setFlash('error', 'File Types Did Not Match');
-                Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+            //var_dump($_POST);
+            //$file_type = explode('.',$_FILES['file']['name']);
+            //var_dump($file_type[1]);
+            //var_dump($_FILES);die;
+            if(isset($_FILES['file'])){
+                $file_type = explode('.',$_FILES['file']['name']);
+                if($_POST['file_type'] != $file_type[1]){
+                    Yii::app()->user->setFlash('error', 'File Types Did Not Match');
+                    Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+                }
+                $file = fopen( $_FILES['file']['tmp_name'], "rb");
+                require_once( dirname(__FILE__) . '/../utility/StorageClient.php');
+                $s3 = new StotageClient();
+                $result = $s3->addFile(VENDOR_UPLOAD_BUCKET, $_FILES['file']['name'], $file);
+                if(is_a($result, 'Exception')){
+                    Yii::app()->user->setFlash('error', $result->getMessage());
+                    Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+                }else{
+                    VendorDao::addUploadFileData($result,$vendor_id,$date);
+                }
             }
-            $file = fopen( $_FILES['file']['tmp_name'], "rb");
-            //var_dump($file);die;
+
         }
         $vendorUpload = new VendorUpload();
         $vendorUpload->unsetAttributes();

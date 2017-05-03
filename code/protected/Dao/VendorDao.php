@@ -547,6 +547,10 @@ class VendorDao{
         return $array;
     }
 
+    public function addUploadedFileData(){
+
+    }
+
 }
 
 
