@@ -1346,7 +1346,7 @@ public function actionEdit($id) {
                                         margin: 8px 20px;"></a>
                                     </td>
                                     <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                                        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                                        <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                                         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                                     </td>
                                 </tr>
@@ -1441,7 +1441,7 @@ if ($_POST['status1'] == 'Paid') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1537,7 +1537,7 @@ if ($_POST['status1'] == 'Cancelled') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1631,7 +1631,7 @@ if ($_POST['status1'] == 'Out for Delivery') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1728,7 +1728,7 @@ if ($_POST['status1'] == 'Delivered') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -2131,7 +2131,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
                             margin: 8px 20px;"></a>
                         </td>
                         <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                            <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                            <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                             <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                         </td>
                     </tr>
