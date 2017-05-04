@@ -726,8 +726,8 @@ class GrootsledgerController extends Controller
                 'attributes' => array(
                     'id', 'name' , 'total_payable_amount', 'current_due_date', 'status','collection_frequency'
                 ),
-            ),
-            'pagination' => array('pageSize' => 80)
+                ),
+            'pagination' => array('pageSize' => 80),
         ));
         $this->render('pastDateCollection', array(
             'dailyDataProvider' => $dailyDataProvider,

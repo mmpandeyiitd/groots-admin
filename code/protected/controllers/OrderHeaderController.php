@@ -67,7 +67,7 @@ class OrderHeaderController extends Controller {
                 'users' => array('*'),
                 ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch','sendMailToRetailerWithOrderId'),
+                'actions' => array('create', 'update', 'admin', 'report', 'Reportnew', 'Dispatch','sendMailToRetailerWithOrderId', 'mailConfirmedOrders'),
                 'users' => array('@'),
                 ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -1225,7 +1225,7 @@ public function actionEdit($id) {
      * Manages all models.
      */
     public function actionAdmin() {
-
+        
         if($this->checkAccessByData('WarehouseEditor', array('warehouse_id'=>1))){
         }
  //print("<pre>");
@@ -1290,7 +1290,7 @@ public function actionEdit($id) {
                     }
                 }
                 if($type=='email-invoice'){
-                    $this->sendMailToRetailer($pdfArray);
+                    $this->sendMailToRetailer($pdfArray, false);
                     Yii::app()->controller->redirect("index.php?r=orderHeader/admin&w_id=".$w_id);
                 }
                 else{
@@ -1346,7 +1346,7 @@ public function actionEdit($id) {
                                         margin: 8px 20px;"></a>
                                     </td>
                                     <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                                        <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                                        <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                                         <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                                     </td>
                                 </tr>
@@ -1441,7 +1441,7 @@ if ($_POST['status1'] == 'Paid') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1537,7 +1537,7 @@ if ($_POST['status1'] == 'Cancelled') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1631,7 +1631,7 @@ if ($_POST['status1'] == 'Out for Delivery') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -1728,7 +1728,7 @@ if ($_POST['status1'] == 'Delivered') {
                     margin: 8px 20px;"></a>
                 </td>
                 <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                    <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                    <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                     <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                 </td>
             </tr>
@@ -2070,11 +2070,11 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
         //var_dump($zipName);
     }
 
-    private function sendMailToRetailer($pdfArray){
+    private function sendMailToRetailer($pdfArray, $skuShort){
         $array = array();
         //var_dump($pdfArray);die;
         foreach ($pdfArray as $each){
-            $pdf = $each['pdf'];
+            $pdf = (isset($each['pdf'])) ? $each['pdf']: null;
             $order_id = $each['order_id'];
 
             $connection = Yii::app()->secondaryDb;
@@ -2103,6 +2103,16 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
+            //die($emailurldata);die;
+            $email_message = '';
+            if($skuShort['isShort']){
+                $email_message = $skuShort['message'];
+            }
+            else{
+                $email_message = 'Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
+                        Thank you for choosing Groots!<br>';
+            }
+
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
 //                                            <br/> <a href =' . $urldata . $_POST['selectedIds'][$i] . '_' . md5('Order' . $_POST['selectedIds'][$i]) . '.' . 'pdf' . '> click here download invoice </a><br/>';
             $body_html = '<html xmlns="http://www.w3.org/1999/xhtml">
@@ -2121,7 +2131,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
                             margin: 8px 20px;"></a>
                         </td>
                         <td style="padding: 5px 10px; width:450px; background-color:#444;color: #fff;font-size: 24px; text-transform: uppercase; text-align:right;">
-                            <span style="float:right;">'. CUSTOMER_SUPPORT_NO. '</span>
+                            <span style="float:right;">'. SALES_SUPPORT_NO. '</span>
                             <img src="' . $emailurldata . 'emailimage/callIco-head.png" alt="call" width="25" style="float:right; margin:0 10px;"> 
                         </td>
                     </tr>
@@ -2136,8 +2146,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
                       <strong>Hi ' . $buyername . '</strong>
                       <br> 
                       <span style="margin-top:15px; display:block; font-size:14px; line-height:30px;">
-                        Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
-                        Thank you for choosing Groots!<br>
+                        '.$email_message.'
                     </span>
                     <br>
 
@@ -2175,17 +2184,32 @@ $body_text = '';
 if(isset($alternate_email) && !empty($alternate_email)){
     $emai_id.= ','.$alternate_email;
 }
-$mailArray = array(
-    'to' => $emai_id,
-    'from' => $from_email,
-    'fromname' => $from_name,
-    'subject' => $subject,
-    'html' => $body_html,
-    'text' => $body_text,
-    'replyTo' => $replyto,
-    'pdf' => $pdf,
-    'cc' => $cc_group,
+if($skuShort['isShort']){
+    $mailArray = array(
+        'to' => $emai_id,
+        'from' => $from_email,
+        'fromname' => $from_name,
+        'subject' => $subject,
+        'html' => $body_html,
+        'text' => $body_text,
+        'replyTo' => $replyto,
+        //'pdf' => $pdf,
+        'cc' => $cc_group,
     );
+}
+else {
+    $mailArray = array(
+        'to' => $emai_id,
+        'from' => $from_email,
+        'fromname' => $from_name,
+        'subject' => $subject,
+        'html' => $body_html,
+        'text' => $body_text,
+        'replyTo' => $replyto,
+        'pdf' => $pdf,
+        'cc' => $cc_group,
+    );
+}
 array_push($array, $mailArray);
 
 
@@ -2241,7 +2265,7 @@ public function actionSendMailToRetailerWithOrderId($orderId){
     $pdfArray[0]['pdf'] = $pdf;
     $pdfArray[0]['order_id'] = $orderId;
     try{
-        self::sendMailToRetailer($pdfArray);
+        self::sendMailToRetailer($pdfArray, false);
         $result['status'] = 1;
         $result['msg'] = 'Email sent Successfully'; 
         echo json_encode($result);  
@@ -2252,4 +2276,57 @@ public function actionSendMailToRetailerWithOrderId($orderId){
     }
 }
 
+public function actionMailConfirmedOrders(){
+    //echo '<pre>';
+    //var_dump($_POST);
+    $date = '';
+    $model = new OrderLine('search');
+    $model->unsetAttributes();
+    if (isset($_GET['OrderLine'])) {
+        $model->attributes = $_GET['OrderLine'];
+    }
+    if(isset($_POST['date'])){
+        $date = $_POST['date'];
+
+    }
+    else $date = date('Y-m-d');
+    $parentIds = $titles = array();
+    if(isset($_POST['base_product_id'])){
+        foreach($_POST['base_product_id'] as $key => $id){
+            if(isset($_POST['checkedId_'.$id])){
+                array_push($parentIds, $id);
+                array_push($titles, $_POST['title'][$key]);
+            }
+        }
+        $orderData = OrderHeaderDao::getuserIdsFromShortSku($parentIds,$date);
+        self::sendMailShortSkus($orderData,$titles);
+        //var_dump($orderData);die;
+    }
+
+    $this->render('mailConfirmedOrders',
+        array('date' => $date,
+            //'dataProvider' => $dataProvider,
+            'model' => $model));
+}
+
+public function sendMailShortSkus($orderData, $titles){
+    $pdfArray = array();
+    //$titles= implode(', ',$titles);
+    foreach ($orderData as $orderId){
+        array_push($pdfArray, array('order_id'=>$orderId));
+    }
+    $skuShort = array();
+    $skuShort['isShort'] = true;
+    $skuShort['message'] = 'Following Items are short on todays delivery';
+    foreach ($titles as $count => $title){
+        $skuShort['message'] .= $count.' '.$title.'<br>';
+    }
+    $skuShort['message'] .= '. Sorry For Inconvinience';
+    try{
+        self::sendMailToRetailer($pdfArray, $skuShort);
+        Yii::app()->user->setFlash('success','Email Sent Successfully' );
+    } catch(Exception $e){
+        Yii::app()->user->setFlash('error','Email Could Not Be Sent '.$e->getMessage() );
+    }
+}
 }
