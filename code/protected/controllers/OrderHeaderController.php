@@ -2103,7 +2103,7 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
-            die($emailurldata);die;
+            //die($emailurldata);die;
             $email_message = '';
             if($skuShort['isShort']){
                 $email_message = $skuShort['message'];
