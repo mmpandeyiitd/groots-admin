@@ -116,7 +116,8 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent){
-        //var_dump($unitPrice,$totalPrice, $vendorId);die;
+        //var_dump($unitPrice,$totalPrice, $vendorId);
+        //var_dump(empty($vendorId),$isParent);die;
         $status = 1;
         $msg = '';
         if(empty($unitPrice)){
@@ -128,6 +129,7 @@ class PurchaseHeader extends CActiveRecord
             $msg = 'Total Price Must Be Greater Than 0.!';   
         }
         else if(empty($vendorId) && !$isParent){
+            die('here');
             $status = 0;
             $msg = 'Please Select Vendor';    
         }
