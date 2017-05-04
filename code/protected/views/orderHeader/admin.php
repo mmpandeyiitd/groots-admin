@@ -10,6 +10,7 @@ if(isset($_GET['w_id'])){
 $this->menu=array(
     //array('label'=>'List InventoryHeader', 'url'=>array('index')),
     array('label'=>'Create Order', 'url'=>array('create&w_id='.$w_id)),
+    array('label' => 'Mail Short Sku', 'url' => array('mailConfirmedOrders'))
 );
 $isAdmin = false;
 if($this->checkAccess('SuperAdmin')){
@@ -105,7 +106,7 @@ if ($issuperadmin == 0) {
     ?>
 </div><!-- search-form -->
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=orderHeader/admin&w_id='.$w_id;?>">
-    <?php echo CHtml::button('Mail Short Orders' , array('name' => 'mailConfirmedOrders','style' =>'float:left;', 'class' => 'button_new', 'submit' => array('orderHeader/mailConfirmedOrders')));?>
+<!--    --><?php //echo CHtml::button('Mail Short Orders' , array('name' => 'mailConfirmedOrders','style' =>'float:left;', 'class' => 'button_new', 'submit' => array('orderHeader/mailConfirmedOrders')));?>
 
     <?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
 <?php if(Yii::app()->user->hasFlash('success')):?>
