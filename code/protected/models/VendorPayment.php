@@ -57,16 +57,16 @@ class VendorPayment extends CActiveRecord
 			array('vendor_id, status', 'numerical', 'integerOnly'=>true),
 			array('paid_amount', 'length', 'max'=>10),
 			array('payment_type', 'length', 'max'=>11),
-			array('cheque_no, debit_no', 'length', 'max'=>256),
+			array('cheque_no, debit_no,reissue_ref_no', 'length', 'max'=>256),
 			array('cheque_status', 'length', 'max'=>7),
 			array('cheque_name', 'length', 'max'=>255),
 			array('transaction_id, receiving_acc_no', 'length', 'max'=>25),
 			array('bank_name, acc_holder_name', 'length', 'max'=>300),
 			array('isfc_code', 'length', 'max'=>15),
-			array('cheque_date, comment,bussiness_name', 'safe'),
+			array('cheque_date,is_cheque_reissued, reissue_ref_no, comment,bussiness_name', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status', 'safe', 'on'=>'search'),
+			array('id, vendor_id, paid_amount, date, payment_type, cheque_no, debit_no, cheque_status, cheque_date, cheque_name, transaction_id, receiving_acc_no, bank_name, isfc_code, acc_holder_name, comment, created_at, updated_at, status,reissue_ref_no,is_cheque_reissued', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -107,6 +107,8 @@ class VendorPayment extends CActiveRecord
 			'created_at' => 'Created At',
 			'updated_at' => 'Updated At',
 			'status' => 'Status',
+            'reissue_ref_no' => 'Reissue Ref. No.',
+            'is_cheque_reissued' => 'Is Cheque Reissued'
 		);
 	}
 
@@ -156,6 +158,8 @@ class VendorPayment extends CActiveRecord
 		$criteria->compare('updated_at',$this->updated_at,true);
 		$criteria->compare('status',$this->status);
         $criteria->compare('v.bussiness_name',$this->bussiness_name,true);
+        $criteria->compare('reissue_ref_no',$this->reissue_ref_no, true);
+        $criteria->compare('is_cheque_reissued',$this->is_cheque_reissued, true);
 
         $sort = new CSort();
         $sort->attributes = array(

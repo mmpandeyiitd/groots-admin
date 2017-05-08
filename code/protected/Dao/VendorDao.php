@@ -427,6 +427,8 @@ class VendorDao{
             $tmp['cheque_status'] = (isset($ledgerRow['cheque_status']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_status']: null;
             $tmp['cheque_issue_date'] = (isset($ledgerRow['cheque_issue_date']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_issue_date']: null;
             $tmp['cheque_name'] = (isset($ledgerRow['cheque_name']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_name']: null;
+            $tmp['is_cheque_reissued'] = (isset($ledgerRow['is_cheque_reissued']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['is_cheque_reissued']: null;
+            $tmp['reissue_ref_no'] = (isset($ledgerRow['reissue_ref_no']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['reissue_ref_no']: null;
             $tmp['transaction_id'] = (isset($ledgerRow['transaction_id']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['transaction_id']: null;
             $tmp['receiving_acc_no'] = (isset($ledgerRow['receiving_acc_no']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['receiving_acc_no']: null;
             $tmp['bank_name'] = isset($ledgerRow['bank_name']) ? $ledgerRow['bank_name']: null;
