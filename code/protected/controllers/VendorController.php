@@ -559,8 +559,9 @@ class VendorController extends Controller
                 $check = VendorDao::isLegitUpload($_POST);
                 if ($check['isLegit']) {
                     $file_type = pathinfo($_FILES['file']['name'])['extension'];
-                    if ($_POST['file_type'] != $file_type) {
-                        Yii::app()->user->setFlash('error', 'File Types Did Not Match');
+                    $fileMatch = VendorDao::checkFileTypes($_POST['file_type'], $file_type);
+                    if (!$fileMatch['matched']) {
+                        Yii::app()->user->setFlash('error', $fileMatch['message']);
                         Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
                     }
                     $targetDir = dirname(__FILE__) . '/../../log/vendorUpload/';

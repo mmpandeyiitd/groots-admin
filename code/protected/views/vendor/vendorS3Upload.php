@@ -32,8 +32,7 @@ if(!empty($vendor_id)) {
 <h4><?php echo $vendor->bussiness_name.'<br>';}?></h4>
 <form name="myform" method="post" enctype="multipart/form-data" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/vendorS3Upload';?>">
     <?php
-
-    $fileTypes = array('0' =>'Select File Type', 'pdf'=>'pdf', 'doc' => 'doc', 'csv'=>'csv','xlxs'=>'xlxs');
+    $fileTypes = array('0' =>'Select File Type', 'Document'=>'Document', 'Image' => 'Image', 'Presentation'=>'Presentation','Excel'=>'Excel','Adobe' => "Adobe");
     echo 'Select Date';
     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
         //'model'=>$vendor,

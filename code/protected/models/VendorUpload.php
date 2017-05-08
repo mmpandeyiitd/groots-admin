@@ -8,13 +8,13 @@ class VendorUpload extends CActiveRecord{
 
     public function rules(){
         return array(
-            array('vendor_id, bucket,file_tag, file_name, file_size, file_link, file_type, date, status,created_at, updated_by', 'required'),
-            array('vendor_id, file_size, updated_by,status','numerical'),
+            array('bucket,file_tag, file_name, file_size, file_link, file_type, date, status,created_at, updated_by', 'required'),
+            array('vendor_id,retailer_id, file_size, updated_by,status','numerical'),
             array('bucket', 'length','max' => 100),
             array('file_name,file_tag', 'length','max' => 300),
             array('file_link', 'length','max' => 500),
             array('file_type', 'length','max' => 10),
-            array('id,vendor_id,bucket,file_tag,file_name,file_size,file_link,file_type,date,status,created_at,updated_at,update_by','safe','on'=>'search')
+            array('id,vendor_id,retailer_id,bucket,file_tag,file_name,file_size,file_link,file_type,date,status,created_at,updated_at,update_by','safe','on'=>'search')
 ,        );
     }
 

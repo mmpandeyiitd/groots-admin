@@ -9,7 +9,8 @@ class m170429_072941_s3_table extends CDbMigration
             $sql = 'create table cb_dev_groots.vendor_upload(
                      id int(11) not null AUTO_INCREMENT,
                      vendor_id int(11) not null,
-                     bucket VARCHAR (100) not null,
+                     retailer_id int(11) not null DEFAULT 0,
+                     bucket VARCHAR (100) not null DEFAULT 0,
                      file_tag VARCHAR (300) not null,
                      file_name VARCHAR (300) not null,
                      file_size decimal(10,2) not null,
@@ -22,7 +23,9 @@ class m170429_072941_s3_table extends CDbMigration
                      updated_by int(11) not null,
                      primary key (id),
                      key fk_vu_1 (vendor_id),
-                     constraint fk_vu_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id)
+                     constraint fk_vu_1 foreign key (vendor_id) REFERENCES cb_dev_groots.vendors (id),
+                     key fk_vu_2 (retailer_id),
+                     constraint fk_vu_2 foreign key (retailer_id) REFERENCES cb_dev_groots.retailer (id)
                     )ENGINE=InnoDB default CHARSET=utf8';
             $this->execute($sql);
         } catch(Exception $e){

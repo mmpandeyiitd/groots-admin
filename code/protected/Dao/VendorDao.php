@@ -580,6 +580,28 @@ class VendorDao{
         return array('isLegit'=>true,'message'=>$message);
     }
 
+    public function checkFileTypes($fileClass, $fileType){
+        $array = array('matched' => false , 'message' =>'');
+        $file_types= array();
+        $connection = Yii::app()->db;
+        $sql = 'select file_type from permitted_file_types where file_class = "'.$fileClass.'"';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        foreach ($result as $value){
+            array_push($file_types,$value['file_type']);
+        }
+        $file_types = implode(',',$file_types);
+        foreach ($result as $value){
+            if($value['file_type'] == $fileType){
+                $array['matched'] = true;
+                return $array;
+            }
+        }
+
+        $array['message'] = 'Only '.$file_types.' formats are allowed in '.$fileClass.' Category';
+        return $array;
+    }
+
 }
 
 
