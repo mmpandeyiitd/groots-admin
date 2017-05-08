@@ -552,7 +552,7 @@ class VendorDao{
 
     public function addUploadFileData($result,$vendor_id,$post,$file){
         $connection = Yii::app()->db;
-        $sql = 'insert into vendor_upload values(null, '.$vendor_id.', "'.VENDOR_UPLOAD_BUCKET.'","'.$post["fileTag"].'","'.$file["file"]["name"].'"
+        $sql = 'insert into vendor_upload values(null, '.$vendor_id.',null, "'.VENDOR_UPLOAD_BUCKET.'","'.$post["fileTag"].'","'.$file["file"]["name"].'"
                 ,'.($file["file"]["size"]/1000).',"'.$result["@metadata"]["effectiveUri"].'","'.$post["file_type"].'","'.$post["date"].'",1,NOW(),NOW(),
                 '.Yii::app()->user->id.')';
         $command = $connection->createCommand($sql);
