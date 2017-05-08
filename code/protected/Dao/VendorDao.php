@@ -605,6 +605,19 @@ class VendorDao{
         return $array;
     }
 
+    public function fileTypesDd(){
+        $array = array();
+        $connetion = Yii::app()->db;
+        $sql = 'select distinct file_class from permitted_file_types';
+        $command = $connetion->createCommand($sql);
+        $result = $command->queryAll();
+        foreach ($result as $value){
+            $array[$value['file_class']] = $value['file_class'];
+        }
+        $arrray[0] = 'Select A File';
+        return $array;
+    }
+
 }
 
 

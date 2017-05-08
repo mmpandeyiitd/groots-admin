@@ -553,7 +553,8 @@ class VendorController extends Controller
         if (isset($_GET['vendor_id'])) {
             $vendor_id = $_GET['vendor_id'];
         }
-        if (isset($_POST['addFile'])) {
+        //var_dump($_FILES);die;
+        if (isset($_POST['addFile']) && !empty($_FILES['file']['tmp_name'])) {
             $date = $_POST['date'];
             if (isset($_FILES['file'])) {
                 $check = VendorDao::isLegitUpload($_POST);
@@ -565,7 +566,14 @@ class VendorController extends Controller
                         Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
                     }
                     $targetDir = dirname(__FILE__) . '/../../log/vendorUpload/';
-                    if (!is_dir($targetDir)) {
+                    if(is_dir($targetDir)){
+                        $files = glob($targetDir.'/*'); // get all file names
+                        foreach($files as $currentFile){ // iterate files
+                            if(is_file($currentFile))
+                                unlink($currentFile); // delete file
+                        }
+                    }
+                    else{
                         mkdir($targetDir);
                     }
                     $target = $targetDir . '/' . $_FILES['file']['name'];

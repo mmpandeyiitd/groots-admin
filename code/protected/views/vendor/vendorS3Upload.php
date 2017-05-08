@@ -32,8 +32,9 @@ if(!empty($vendor_id)) {
 <h4><?php echo $vendor->bussiness_name.'<br>';}?></h4>
 <form name="myform" method="post" enctype="multipart/form-data" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/vendorS3Upload';?>">
     <?php
-    $fileTypes = array('0' =>'Select File Type', 'Document'=>'Document', 'Image' => 'Image', 'Presentation'=>'Presentation','Excel'=>'Excel','Adobe' => "Adobe");
-    echo 'Select Date';
+    echo CHtml::label('Vendor', 'vendor_id');
+    echo CHtml::dropDownList('vendor_id', (!empty($vendor_id)? $vendor_id:0),VendorDao::allVendorDropDown(), array('style' => 'width:220.5px;'));
+    echo '<br>'.'Select Date'.'<br>';
     $this->widget('zii.widgets.jui.CJuiDatePicker',array(
         //'model'=>$vendor,
         'name' => 'date',
@@ -51,8 +52,8 @@ if(!empty($vendor_id)) {
     echo '<br>';
     echo CHtml::label('File Tag', 'fileTag');
     echo CHtml::textField('fileTag','',array('style' => 'width:220.5px;'));
-    echo CHtml::dropDownList('vendor_id', (!empty($vendor_id)? $vendor_id:0),VendorDao::allVendorDropDown(), array('style' => 'width:220.5px;'));
-    echo CHtml::dropDownList('file_type', 0,$fileTypes, array('style' => 'width:220.5px;'));
+    echo CHtml::label('File Type', 'file_type');
+    echo CHtml::dropDownList('file_type', 0,VendorDao::fileTypesDd(), array('style' => 'width:220.5px;'));
     echo CHtml::fileField('file');
     echo CHtml::submitButton('Submit', array('name' => 'addFile'));
 

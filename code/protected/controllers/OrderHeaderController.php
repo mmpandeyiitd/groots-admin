@@ -2317,11 +2317,12 @@ public function sendMailShortSkus($orderData, $titles){
     }
     $skuShort = array();
     $skuShort['isShort'] = true;
-    $skuShort['message'] = 'Following Items are short on todays delivery';
+    $skuShort['message'] = 'Following Items are short on todays delivery'.'<br>';
     foreach ($titles as $count => $title){
-        $skuShort['message'] .= $count.' '.$title.'<br>';
+        $key = $count+1;
+        $skuShort['message'] .= $key.' '.$title.'<br>';
     }
-    $skuShort['message'] .= '. Sorry For Inconvinience';
+    $skuShort['message'] .= 'Sorry For Inconvinience';
     try{
         self::sendMailToRetailer($pdfArray, $skuShort);
         Yii::app()->user->setFlash('success','Email Sent Successfully' );
