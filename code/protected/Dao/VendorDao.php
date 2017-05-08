@@ -540,7 +540,7 @@ class VendorDao{
 
     public function allVendorDropdown(){
         $connection= Yii::app()->db;
-        $sql = 'select id, bussiness_name from vendors where status = 1';
+        $sql = 'select id, bussiness_name from vendors where status = 1 and allocated_warehouse_id = '.Yii::app()->session['w_id'];
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         $array = array(0=>'Select vendor');
