@@ -82,7 +82,7 @@ VendorPayment::vendorPaymentTypes();
 		<?php echo $form->error($model,'cheque_status'); ?>
 	</div>
 
-    <div class="row hide cheque">
+    <div class="row">
         <?php echo $form->labelEx($model,'is_cheque_reissued'); ?>
         <?php echo $form->dropDownList($model,'is_cheque_reissued',
             array('Yes' => 'Yes'),
@@ -91,7 +91,7 @@ VendorPayment::vendorPaymentTypes();
         <?php echo $form->error($model,'is_cheque_reissued'); ?>
     </div>
 
-    <div class="row hide cheque">
+    <div class="row">
         <?php echo $form->labelEx($model,'reissue_ref_no'); ?>
         <?php echo $form->textField($model,'reissue_ref_no',array('size'=>60,'maxlength'=>256)); ?>
         <?php echo $form->error($model,'reissue_ref_no'); ?>
