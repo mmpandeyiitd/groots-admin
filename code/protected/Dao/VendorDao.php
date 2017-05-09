@@ -241,7 +241,7 @@ class VendorDao{
         return $initialPendingDate;
     }
 
-    public function getInitialPendingDate(){
+    public function     getInitialPendingDate(){
         $connection = Yii::app()->db;
         $sql = 'select initial_pending_date from vendors limit 1';
         $command = $connection->createCommand($sql);
@@ -361,7 +361,7 @@ class VendorDao{
         //echo '<pre>';
         $connection = Yii::app()->secondaryDb;
         $base_date = self::getInitialPendingDate();
-        $orderQuery = 'select ph.id, GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
+        $orderQuery = 'select ph.id,ph.labour_cost ,GROUP_CONCAT(DISTINCT pl.urd_number order by pl.urd_number asc SEPARATOR ",") as urd_number,
                         sum(pl.order_qty) as procured_qty, sum(pl.price) as price, ph.delivery_date as date, "Order" as type
                           from purchase_line as pl left join purchase_header as ph on pl.purchase_id = ph.id 
                           where ph.delivery_date > "'.$base_date.'" and ph.status = "received" and pl.order_qty > 0 and pl.price > 0 and pl.vendor_id = '.$vendor_id.' 
@@ -384,7 +384,7 @@ class VendorDao{
         $outstanding = VendorDao::getVendorInitialPendingAmount($vendor_id);
         foreach ($ledgerData as $key => $value){
             if($value['type'] == 'Order'){
-                $outstanding+= $value['price'];
+                $outstanding+= $value['price'] + $value['labour_cost'];
             }
             else if($value['type'] == 'Payment'){
                 if(!($value['payment_type'] == 'Cheque' && $value['cheque_status'] != 'Cleared')){
@@ -395,7 +395,7 @@ class VendorDao{
             $ledgerData[$key] = $value;
 
         }
-        $dataProvider = self::makeLedgerDataProvider($ledgerData);
+        $dataProvider = self::makeLedgerDataProvider($ledgerData,$vendor_id);
         //echo '<pre>';
         //var_dump($dataProvider);die;
         $result = array('data' => $dataProvider);
@@ -408,7 +408,7 @@ class VendorDao{
 
     }
 
-    public function makeLedgerDataProvider($ledgerData){
+    public function makeLedgerDataProvider($ledgerData,$vendor_id){
         $dataProvider = array();
         foreach ($ledgerData as $ledgerRow){
             $tmp = array();
@@ -427,6 +427,8 @@ class VendorDao{
             $tmp['cheque_status'] = (isset($ledgerRow['cheque_status']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_status']: null;
             $tmp['cheque_issue_date'] = (isset($ledgerRow['cheque_issue_date']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_issue_date']: null;
             $tmp['cheque_name'] = (isset($ledgerRow['cheque_name']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['cheque_name']: null;
+            $tmp['is_cheque_reissued'] = (isset($ledgerRow['is_cheque_reissued']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['is_cheque_reissued']: null;
+            $tmp['reissue_ref_no'] = (isset($ledgerRow['reissue_ref_no']) && $ledgerRow['payment_type'] == 'Cheque') ? $ledgerRow['reissue_ref_no']: null;
             $tmp['transaction_id'] = (isset($ledgerRow['transaction_id']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['transaction_id']: null;
             $tmp['receiving_acc_no'] = (isset($ledgerRow['receiving_acc_no']) && $ledgerRow['payment_type'] == 'NetBanking') ? $ledgerRow['receiving_acc_no']: null;
             $tmp['bank_name'] = isset($ledgerRow['bank_name']) ? $ledgerRow['bank_name']: null;
@@ -434,6 +436,7 @@ class VendorDao{
             $tmp['acc_holder_name'] = isset($ledgerRow['acc_holder_name']) ? $ledgerRow['acc_holder_name']: null;
             $tmp['comment'] = isset($ledgerRow['comment']) ? $ledgerRow['comment']: null;
             $tmp['status'] = isset($ledgerRow['status']) ? $ledgerRow['status']: null;
+            $tmp['labour_cost'] = ($vendor_id == 4 && isset($ledgerRow['labour_cost']) && !empty($ledgerRow['labour_cost'])) ? $ledgerRow['labour_cost'] : '';
             array_push($dataProvider,$tmp);
         }
         return $dataProvider;
@@ -533,6 +536,86 @@ class VendorDao{
         }
         ob_flush();
 
+    }
+
+    public function allVendorDropdown(){
+        $connection= Yii::app()->db;
+        $sql = 'select id, bussiness_name from vendors where status = 1 and allocated_warehouse_id = '.Yii::app()->session['w_id'];
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        $array = array(0=>'Select vendor');
+        foreach ($result as $vendor){
+            $array[$vendor['id']] = $vendor['bussiness_name'];
+        }
+        return $array;
+    }
+
+    public function addUploadFileData($result,$vendor_id,$post,$file){
+        $connection = Yii::app()->db;
+        $sql = 'insert into vendor_upload (id , vendor_id,bucket,file_tag, file_name,file_size,file_link,file_type,date, status, created_at,
+                updated_at,updated_by) values(null, '.$vendor_id.', "'.VENDOR_UPLOAD_BUCKET.'","'.$post["fileTag"].'","'.$file["file"]["name"].'"
+                ,'.($file["file"]["size"]/1000).',"'.$result["@metadata"]["effectiveUri"].'","'.$post["file_type"].'","'.$post["date"].'",1,NOW(),NOW(),
+                '.Yii::app()->user->id.')';
+        //die($sql);
+        $command = $connection->createCommand($sql);
+        $rowCount = $command->execute();
+        //$command->queryAll();
+    }
+
+    public function isLegitUpload($post){
+        $message = '';
+        if(empty($post['date'])){
+            $message = 'Plaese Enter Date';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['fileTag'])){
+            $message =  'Plaese Enter Some File Tag';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['vendor_id'])){
+            $message = 'Plaese Select a vendor';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        if(empty($post['file_type'])){
+            $message = 'Plaese Select File Type ';
+            return array('isLegit'=>false,'message'=>$message);
+        }
+        return array('isLegit'=>true,'message'=>$message);
+    }
+
+    public function checkFileTypes($fileClass, $fileType){
+        $array = array('matched' => false , 'message' =>'');
+        $file_types= array();
+        $connection = Yii::app()->db;
+        $sql = 'select file_type from permitted_file_types where file_class = "'.$fileClass.'"';
+        $command = $connection->createCommand($sql);
+        $result = $command->queryAll();
+        foreach ($result as $value){
+            array_push($file_types,$value['file_type']);
+        }
+        $file_types = implode(',',$file_types);
+        foreach ($result as $value){
+            if($value['file_type'] == $fileType){
+                $array['matched'] = true;
+                return $array;
+            }
+        }
+
+        $array['message'] = 'Only '.$file_types.' formats are allowed in '.$fileClass.' Category';
+        return $array;
+    }
+
+    public function fileTypesDd(){
+        $array = array();
+        $connetion = Yii::app()->db;
+        $sql = 'select distinct file_class from permitted_file_types';
+        $command = $connetion->createCommand($sql);
+        $result = $command->queryAll();
+        foreach ($result as $value){
+            $array[$value['file_class']] = $value['file_class'];
+        }
+        $arrray[0] = 'Select A File';
+        return $array;
     }
 
 }

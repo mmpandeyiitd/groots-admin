@@ -1112,4 +1112,23 @@ public static function getChildBPIds($parentId){
         return $packUnitType;
     }
 
+
+    public function searchMailPendingSku(){
+        $date = '';
+        if(isset($_POST['date'])){
+            $date = $_POST['date'];
+        }
+        else $date = date('Y-m-d');
+        $criteria = new CDbCriteria();
+        $criteria->distinct = true;
+        $criteria->select = 'parent_id, title';
+        $criteria->join = ' left join groots_orders.order_line as ol on ol.base_product_id = t.base_product_id';
+        $criteria->join .= ' left join groots_orders.order_header as oh on oh.order_id = oh.order_id';
+        $criteria->condition = ' oh.status = "Confirmed" and oh.delivery_date = "'.$date.'"';
+        $criteria->order = ' title';
+        return new CActiveDataProvider($this,array(
+            'criteria' => $criteria,
+            'pagination' => array('pageSize' => 200),
+        ));
+    }
 }

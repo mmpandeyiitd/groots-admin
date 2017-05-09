@@ -12,6 +12,7 @@ $this->menu=array(
 	array('label'=>'Create Vendor', 'url'=>array('create')),
 	array('label' => 'Credit Management', 'url' => array('creditManagement')),
 	array('label' => 'Vendor Payment' , 'url' => array('vendorPayment/admin')),
+    array('label' => 'Vendor Upload', 'url' => array('vendorS3Upload')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -46,6 +47,18 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 </br>
+<?php if (Yii::app()->user->hasFlash('premission_info')): ?><div class="errorSummary"><?php echo Yii::app()->user->getFlash('premission_info'); ?></div><?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('success')):?>
+    <div class="Csv" style="color:green;">
+        <?php echo Yii::app()->user->getFlash('success'); ?>
+        <?php echo Yii::app()->user->getFlash('prod'); ?>
+    </div>
+<?php endif; ?>
+<?php if(Yii::app()->user->hasFlash('error')):?>
+    <div class="Csv" style="color:red;">
+        <?php echo Yii::app()->user->getFlash('error'); ?>
+    </div>
+<?php endif; ?>
 <form name="myform" method="post" action="<?php echo Yii::app()->getBaseUrl().'/index.php?r=vendor/admin';?>">
     <?php echo CHtml::button('All Vendor Product List', array("onclick"=>"document.location.href='".Yii::app()->controller->createUrl("vendor/downloadAllVendorProductList")."'")); ?>
     <?php echo CHtml::submitButton('Vendor master', array('name' => 'downloadVendorMaster')); ?>

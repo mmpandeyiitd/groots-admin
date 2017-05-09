@@ -350,7 +350,9 @@ class PurchaseHeaderController extends Controller
                             //var_dump($purchaseLine);
                             //echo 'here'.'<br>';
                             //var_dump($order_qty, $received_qty);
-                            if ($order_qty > 0) {
+                            //die('here');
+                            if ($order_qty > 0.00) {
+                                //die('here');
                                 $unitPrice = trim($_POST['price'][$key]);
                                 $totalPrice = trim($_POST['totalPrice'][$key]);
                                 $urd_number = trim($_POST['urd_number'][$key]);
@@ -377,10 +379,8 @@ class PurchaseHeaderController extends Controller
                                 }
 
                             }
-                            /*if($id== 1880 && $vendorId== 3){
-                                var_dump($received_qty,isset($_POST['order_qty'][$key]));
-                            }*/
-                            if (!empty($_POST['received_qty'][$key]) || $received_qty > 0 ) {
+                            if (!empty($_POST['received_qty'][$key])  || $received_qty > 0.00 ) {
+                                //$purchaseLine->purchase_id = $model->id;
                                 $purchaseLine->received_qty = $received_qty;
                                 $purchaseLine->save();
                                 if(isset($purchaseLineMap[$constraint])){

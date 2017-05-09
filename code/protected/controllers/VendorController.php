@@ -32,7 +32,8 @@ class VendorController extends Controller
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice','downloadAllVendorProductList','zipInvoicesByVendor'),
+                'actions' => array('create', 'update', 'productMap', 'creditManagement', 'vendorLedger', 'vendorScript', 'admin', 'invoice',
+                    'downloadAllVendorProductList', 'zipInvoicesByVendor', 'vendorS3Upload'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -164,8 +165,8 @@ class VendorController extends Controller
             $w_id = $_GET['w_id'];
         }
         Yii::app()->session['w_id'] = $w_id;
-        if(isset($_POST['downloadVendorMaster'])){
-           VendorDao::downloadVendorMasterReport($w_id);
+        if (isset($_POST['downloadVendorMaster'])) {
+            VendorDao::downloadVendorMasterReport($w_id);
         }
         $model = new Vendor('search');
         $model->unsetAttributes();  // clear any default values
@@ -337,8 +338,8 @@ class VendorController extends Controller
         // 	$totalPayable += $initialPendingMap[$key];
         // }
         // $payable['total'] = strval($totalPayable);
-        if(isset($_POST['downloadReport'])){
-            VendorDao::downloadCreditReport($payable, $totalPendingMap, $initialPendingMap, $lastPaymentDetails,$endDate);
+        if (isset($_POST['downloadReport'])) {
+            VendorDao::downloadCreditReport($payable, $totalPendingMap, $initialPendingMap, $lastPaymentDetails, $endDate);
             exit();
         }
         $this->render('creditManagement', array(
@@ -370,11 +371,11 @@ class VendorController extends Controller
         //$payments = VendorPayment::model()->findAllByAttributes(array('vendor_id' => $vendor_id, 'status' => 1), array('order' => 'date asc'));
         //$orders = VendorDao::getVendorOrderQuantity($vendor_id);
         //$dataProvider = Vendor::getLedgerDataProvider($payments, $orders,$vendor_id);
-        if(isset($_POST['ledgerDownload'])){
+        if (isset($_POST['ledgerDownload'])) {
             VendorDao::downloadLedger($dataProvider['data']);
             exit();
         }
-        if(isset($_POST['balance_template'])){
+        if (isset($_POST['balance_template'])) {
 
         }
         $this->render('vendorLedger', array(
@@ -422,7 +423,7 @@ class VendorController extends Controller
         }
     }
 
-    public function actionInvoice($vendorId, $purchaseId,$zip=false)
+    public function actionInvoice($vendorId, $purchaseId, $zip = false)
     {
         $model = VendorDao::getLineByPurchasId($vendorId, $purchaseId);
         //echo 'jhere';
@@ -452,13 +453,13 @@ class VendorController extends Controller
         $modelOrder->groots_pincode = $store->business_address_pincode;
         $modelOrder->groots_authorized_name = $store->store_name;
         $vendor = Vendor::model()->findByPk($vendorId);
-        if($zip == true){
-            return $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
+        if ($zip == true) {
+            return $this->createPdf($model, $newModel, $vendor, $modelOrder, $zip);
         }
-        $this->createPdf($model, $newModel, $vendor, $modelOrder,$zip);
+        $this->createPdf($model, $newModel, $vendor, $modelOrder, $zip);
     }
 
-    public function createPdf($model, $newModel, $vendor, $modelOrder,$zip)
+    public function createPdf($model, $newModel, $vendor, $modelOrder, $zip)
     {
         ob_start();
         echo $this->renderPartial('invoice', array('model' => $model, 'newModel' => $newModel,
@@ -472,15 +473,13 @@ class VendorController extends Controller
             $html2pdf = new HTML2PDF('P', 'A4', 'en');
             $html2pdf->pdf->SetTitle($title);
             $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-            if($zip==true){
+            if ($zip == true) {
                 //var_dump(array('pdf'=>$html2pdf, 'name'=>$downloadFileName));die;
-                return array('pdf'=>$html2pdf, 'name'=>$downloadFileName);
-            }
-            else{
+                return array('pdf' => $html2pdf, 'name' => $downloadFileName);
+            } else {
                 $html2pdf->Output($downloadFileName);
                 var_dump($html2pdf);
             }
-
 
 
         } catch (HTML2PDF_exception $e) {
@@ -497,7 +496,7 @@ class VendorController extends Controller
         $sql = 'select bp.base_product_id ,vpm.id , v.name , bp.title , bp.grade, vpm.created_at from vendor_product_mapping as vpm
                   left join vendors as v on v.id = vpm.vendor_id
                   left join base_product bp on bp.base_product_id = vpm.base_product_id
-                  where v.allocated_warehouse_id = "'.$w_id.'" and (bp.grade = "Unsorted" or bp.grade is null) order by v.name';
+                  where v.allocated_warehouse_id = "' . $w_id . '" and (bp.grade = "Unsorted" or bp.grade is null) order by v.name';
         $command = $connection->createCommand($sql);
         $result = $command->queryAll();
         $fileName = date('Y-m-d') . 'AllVendorProductList.csv';
@@ -528,20 +527,88 @@ class VendorController extends Controller
         }
     }
 
-    public function actionZipInvoicesByVendor($id){
+    public function actionZipInvoicesByVendor($id)
+    {
         require_once('OrderHeaderController.php');
         $vendorIds = VendorDao::getAllVendorFromPurchase($id);
         $pdfArray = array();
         //echo '<pre>';
-        foreach ($vendorIds as $value){
+        foreach ($vendorIds as $value) {
             //$pdf = self::actionInvoice($value['vendor_id'], $id,true);
             //var_dump($pdf);die;
-            array_push($pdfArray, VendorController::actionInvoice($value['vendor_id'], $id,true));
+            array_push($pdfArray, VendorController::actionInvoice($value['vendor_id'], $id, true));
             //var_dump($value['vendor_id']);
         }
         //die;
-        $zipFileName=$id."purchase".".zip";
-        OrderHeaderController::zipFilesAndDownload($pdfArray,$zipFileName);
+        $zipFileName = $id . "purchase" . ".zip";
+        OrderHeaderController::zipFilesAndDownload($pdfArray, $zipFileName);
+    }
+
+    public function actionVendorS3Upload()
+    {
+        $vendor_id = '';
+        if (isset($_POST['vendor_id'])) {
+            $vendor_id = $_POST['vendor_id'];
+        }
+        if (isset($_GET['vendor_id'])) {
+            $vendor_id = $_GET['vendor_id'];
+        }
+        //var_dump($_FILES);die;
+        if (isset($_POST['addFile']) && !empty($_FILES['file']['tmp_name'])) {
+            $date = $_POST['date'];
+            if (isset($_FILES['file'])) {
+                $check = VendorDao::isLegitUpload($_POST);
+                if ($check['isLegit']) {
+                    $file_type = pathinfo($_FILES['file']['name'])['extension'];
+                    $fileMatch = VendorDao::checkFileTypes($_POST['file_type'], $file_type);
+                    if (!$fileMatch['matched']) {
+                        Yii::app()->user->setFlash('error', $fileMatch['message']);
+                        Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+                    }
+                    $targetDir = dirname(__FILE__) . '/../../log/vendorUpload/';
+                    if(is_dir($targetDir)){
+                        $files = glob($targetDir.'/*'); // get all file names
+                        foreach($files as $currentFile){ // iterate files
+                            if(is_file($currentFile))
+                                unlink($currentFile); // delete file
+                        }
+                    }
+                    else{
+                        mkdir($targetDir);
+                    }
+                    $target = $targetDir . '/' . $_FILES['file']['name'];
+                    move_uploaded_file($_FILES['file']['tmp_name'], $target);
+                    require_once(dirname(__FILE__) . '/../utility/StorageClient.php');
+                    $s3 = new StotageClient();
+                    $result = $s3->addFile(VENDOR_UPLOAD_BUCKET, $_FILES['file']['name'],$target);
+                    if(is_a($result, 'Exception')){
+                        Yii::app()->user->setFlash('error', $result->getMessage());
+                        Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+                    }
+                    else{
+                        VendorDao::addUploadFileData($result,$vendor_id,$_POST,$_FILES);
+                    }
+                } else {
+                    Yii::app()->user->setFlash('error', $check['message']);
+                    Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+                }
+            } else {
+                Yii::app()->user->setFlash('error', 'Please Select a file to upload');
+                Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
+            }
+        }
+        $vendorUpload = new VendorUpload();
+        $vendorUpload->unsetAttributes();
+        if (isset($_GET['VendorUpload'])) {
+            $vendorUpload->attributes = $_GET['VendorUpload'];
+        }
+        //var_dump($vendor_id);die;
+        $this->render('vendorS3Upload', array(
+            'model' => $vendorUpload,
+            'vendor_id' => $vendor_id,
+
+        ));
     }
 }
+
 ?>
