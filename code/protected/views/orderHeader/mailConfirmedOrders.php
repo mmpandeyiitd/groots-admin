@@ -33,7 +33,7 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
     ),
     'value' => $date,
     'htmlOptions' => array(
-        'style' => 'float:center;', 'readonly' => 'true',
+        'style' => 'float:center;',
     ),
 
 ));
