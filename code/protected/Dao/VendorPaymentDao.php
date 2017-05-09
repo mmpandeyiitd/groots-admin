@@ -16,8 +16,7 @@ class VendorPaymentDao{
                       CASE WHEN vp.payment_type = "Cheque" THEN vp.cheque_date 
                       WHEN vp.payment_type != "Cheque" then ""
                       END as cheque_date,
-                      CASE WHEN vp.payment_type = "Cheque" THEN vp.is_cheque_reissued 
-                      WHEN vp.payment_type != "Cheque" then ""
+                      CASE WHEN vp.payment_type = "Cheque" and vp.is_cheque_reissued = "Yes" THEN vp.is_cheque_reissued 
                       END as is_cheque_reissued,
                       CASE WHEN vp.payment_type = "Cheque" THEN vp.reissue_ref_no 
                       WHEN vp.payment_type != "Cheque" then ""

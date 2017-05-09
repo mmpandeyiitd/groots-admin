@@ -2100,17 +2100,20 @@ public function zipFilesAndDownload($file_names,$archive_file_name)
             $from_email = EMAIL_SENDER;
             $replyto = REPLY_TO_EMAIL;
             $from_name = 'Groots Dashboard Admin';
-            $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
+
             //$urldata = Yii::app()->params['email_app_url'];
             $emailurldata = Yii::app()->params['email_app_url1'];
             //die($emailurldata);die;
             $email_message = '';
+            $subject = '';
             if($skuShort['isShort']){
                 $email_message = $skuShort['message'];
+                $subject = "Groots-Short Delivery Information";
             }
             else{
                 $email_message = 'Your order (' . $order_id . ') has been delivered and the Invoice is attached in this Mail. '. 'If you have a feedback, please email your concern to '.$replyto.'<br>
                         Thank you for choosing Groots!<br>';
+                $subject = 'Order Invoice-'.$retailerName.' ('.$delivery_date.')';
             }
 
 //                        $body_html = 'Hi  <br/> your order id ' . $_POST['selectedIds'][$i] . ' <br/> status now change<br>:  ' . $_POST['status1'] . ',
@@ -2317,7 +2320,7 @@ public function sendMailShortSkus($orderData, $titles){
     }
     $skuShort = array();
     $skuShort['isShort'] = true;
-    $skuShort['message'] = 'Following Items are short on todays delivery'.'<br>';
+    $skuShort['message'] = "Following Items are short in today's delivery".'<br>';
     foreach ($titles as $count => $title){
         $key = $count+1;
         $skuShort['message'] .= $key.' '.$title.'<br>';
