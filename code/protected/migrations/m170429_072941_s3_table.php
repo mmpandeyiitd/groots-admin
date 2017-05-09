@@ -9,7 +9,6 @@ class m170429_072941_s3_table extends CDbMigration
             $sql = 'create table cb_dev_groots.vendor_upload(
                      id int(11) not null AUTO_INCREMENT,
                      vendor_id int(11) not null,
-                     retailer_id int(11) DEFAULT null,
                      bucket VARCHAR (100) not null DEFAULT 0,
                      file_tag VARCHAR (300) not null,
                      file_name VARCHAR (300) not null,
