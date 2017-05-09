@@ -37,6 +37,7 @@ class OrderLine extends CActiveRecord
     public $dbadvert = null;
     public $action;
     public $store_front_name,$delivery_request_id,$delivery_tracking_number,$unit_price_discount,$total_price_discount,$product_name;
+    public $title, $parent_id;
 
     public function tableName()
     {
@@ -64,6 +65,7 @@ class OrderLine extends CActiveRecord
         // @todo Please remove those attributes that should not be searched.
         array('id, status, order_id, subscribed_product_id, base_product_id, store_id, store_name, store_email, store_front_id, store_front_name, seller_name, seller_phone, seller_address, seller_state, seller_city, colour, size, product_name, product_qty, unit_price, price', 'safe', 'on'=>'search'),
         );
+        array('base_product_id, title', 'safe');
     }
 
     /**
@@ -570,6 +572,35 @@ class OrderLine extends CActiveRecord
     {
         $sesEmail = new EmailClient();
         $sesEmail->sendEmailWithInvoices($mailArray);
+    }
+
+    public function searchMailShortOrders(){
+        $date = '';
+        if(isset($_POST['date'])){
+            $date = $_POST['date'];
+            //die($date);
+        }
+        else $date = date('Y-m-d');
+        $criteria = new CDbCriteria;
+        $criteria->select = ' case when bp.base_product_id is null then bp2.base_product_id
+                                when bp.base_product_id is not null then bp.base_product_id end as base_product_id, 
+                                case when bp.title is null then bp2.title 
+                                when bp.title is not null then bp.title end as title';
+        $criteria->distinct = true;
+        $criteria->join = ' left join order_header as oh on oh.order_id = t.order_id';
+        $criteria->join .= ' left join cb_dev_groots.base_product as bp2 on bp2.base_product_id = t.base_product_id';
+        $criteria->join .= ' left join cb_dev_groots.base_product as bp on bp.base_product_id = bp2.parent_id';
+        $criteria->condition = ' oh.status = "Confirmed" and oh.delivery_date = "'.$date.'"';
+        $criteria->order = ' title';
+        $criteria->compare('base_product_id', $this->base_product_id, true);
+        $criteria->compare('title', $this->title, true);
+        return new CActiveDataProvider($this, array(
+            'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 200,
+            ),
+        ));
+
     }
 
 }

@@ -35,7 +35,7 @@ class PurchaseHeader extends CActiveRecord
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, paid_amount,comment,invoice_number,created_at', 'safe', 'on' => 'search,update'),
+            array('id,warehouse_id,vendor_id,payment_method,payment_status,status,delivery_date, total_payable_amount, paid_amount,comment,invoice_number,created_at,labour_cost', 'safe', 'on' => 'search,update'),
         );
     }
 
@@ -116,7 +116,8 @@ class PurchaseHeader extends CActiveRecord
     }
 
     public function validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent){
-        //var_dump($unitPrice,$totalPrice, $vendorId);die;
+        //var_dump($unitPrice,$totalPrice, $vendorId);
+        //var_dump(empty($vendorId),$isParent);die;
         $status = 1;
         $msg = '';
         if(empty($unitPrice)){
@@ -128,6 +129,7 @@ class PurchaseHeader extends CActiveRecord
             $msg = 'Total Price Must Be Greater Than 0.!';   
         }
         else if(empty($vendorId) && !$isParent){
+            die('here');
             $status = 0;
             $msg = 'Please Select Vendor';    
         }

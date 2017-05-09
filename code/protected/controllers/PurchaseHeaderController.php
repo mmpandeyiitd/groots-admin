@@ -328,6 +328,8 @@ class PurchaseHeaderController extends Controller
 
 
                         foreach ($_POST['base_product_id'] as $key => $id) {
+                            //echo $id." ";
+
                             $order_qty = $received_qty = $unitPrice = $totalPrice = 0.00;
                             $vendorId = $urd_number = 0;
                             if (isset($_POST['order_qty'][$key]) && !empty($_POST['order_qty'][$key])) {
@@ -341,7 +343,7 @@ class PurchaseHeaderController extends Controller
                             if (isset($_POST['vendorId'][$key]) && !empty($_POST['vendorId'][$key])) {
                                 $vendorId = trim($_POST['vendorId'][$key]);
                             }
-                            //var_dump($vendorId);
+                            //var_dump($vendorId);die;
                             $constraint = $id . '~' . $vendorId;
                             $purchaseLine = new PurchaseLine();
                             if (isset($purchaseLineMap[$constraint])) {
@@ -350,12 +352,15 @@ class PurchaseHeaderController extends Controller
                             //var_dump($purchaseLine);
                             //echo 'here'.'<br>';
                             //var_dump($order_qty, $received_qty);
-                            if ($order_qty > 0) {
+                            //die('here');
+                            if ($order_qty > 0.00) {
+                                //die('here');
                                 $unitPrice = trim($_POST['price'][$key]);
                                 $totalPrice = trim($_POST['totalPrice'][$key]);
                                 $urd_number = trim($_POST['urd_number'][$key]);
                                 $isParent = ($_POST['parent_id'][$key] == 0) ? true : false;
                                 $flag = PurchaseHeader::validatePriceVendorInput($unitPrice, $totalPrice, $vendorId, $urd_number, $isParent);
+                                //die('here');
                                 if ($flag['status'] == 1) {
                                     $purchaseLine->purchase_id = $model->id;
                                     $purchaseLine->base_product_id = $id;
@@ -377,10 +382,8 @@ class PurchaseHeaderController extends Controller
                                 }
 
                             }
-                            if($id== 1880 && $vendorId== 3){
-                                var_dump($received_qty,isset($_POST['order_qty'][$key]));
-                            }
-                            if (isset($_POST['received_qty'][$key]) || $received_qty > 0 ) {
+                            if (!empty($_POST['received_qty'][$key])  || $received_qty > 0.00 ) {
+                                //$purchaseLine->purchase_id = $model->id;
                                 $purchaseLine->received_qty = $received_qty;
                                 $purchaseLine->save();
                                 if(isset($purchaseLineMap[$constraint])){

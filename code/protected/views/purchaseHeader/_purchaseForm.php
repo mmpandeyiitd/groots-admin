@@ -139,6 +139,12 @@ if ($this->checkAccess('SuperAdmin')) {
     </div>
 
     <div class="row">
+        <?php echo $form->labelEx($model, 'labour_cost'); ?>
+        <?php echo $form->textField($model, 'labour_cost', array('style' => 'width:100px;')) ?>
+        <?php echo $form->error($model, 'labour_cost'); ?>
+    </div>
+
+    <div class="row">
         <?php echo $form->label($model, 'comment'); ?>
         <?php echo $form->textArea($model, 'comment', array('cols' => 200, 'rows' => 4, 'style' => 'width:400px;')); ?>
         <?php echo $form->error($model, 'comment'); ?>
