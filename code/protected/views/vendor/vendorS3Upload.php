@@ -54,10 +54,11 @@ if(!empty($vendor_id)) {
     echo CHtml::textField('fileTag','',array('style' => 'width:220.5px;'));
     echo CHtml::label('File Type', 'file_type');
     echo CHtml::dropDownList('file_type', 0,VendorDao::fileTypesDd(), array('style' => 'width:220.5px;'));
+    echo $vendor_id.'<br>';
     echo CHtml::fileField('file');
     echo CHtml::submitButton('Submit', array('name' => 'addFile'));
 
-    if(!empty($vendor_id)){
+    //if(!empty($vendor_id)){
         $this->widget('zii.widgets.grid.CGridView', array(
             'itemsCssClass' => 'table table-striped table-bordered table-hover',
             'id' => 'order-header-grid',
@@ -65,6 +66,7 @@ if(!empty($vendor_id)) {
             'filter' => $model,
             'columns' => array(
                 'id',
+                'bussiness_name',
                 'date',
                 'file_tag',
                 'file_name',
@@ -79,7 +81,7 @@ if(!empty($vendor_id)) {
 
             )
         ));
-    }
+   // }
 
     ?>
 
