@@ -60,5 +60,17 @@ class StotageClient{
         return false;
     }
 
+    public function deleteFile($bucket, $key){
+        try{
+            $result = $this->s3Client->deleteObject(array(
+                'Bucket' => md5($bucket),
+                'Key' => $key
+            ));
+        } catch (S3Exception $e){
+           return $e;
+        }
+
+    }
+
 }
 ?>
