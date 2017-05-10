@@ -2,7 +2,7 @@
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 require_once( dirname(__FILE__) . '/../extensions/aws/aws-autoloader.php');
-require_once(dirname(__FILE__).'/../config/aws-config.php');
+//require_once(dirname(__FILE__).'/../config/aws-config.php');
 
 class StotageClient{
     public $s3Client;
