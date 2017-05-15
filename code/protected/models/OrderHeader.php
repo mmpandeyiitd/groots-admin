@@ -303,10 +303,10 @@ class OrderHeader extends CActiveRecord {
         $criteria->compare('order_type', $this->order_type, true);
         $startDate = Utility::getPrevDate();
         $endDate = Utility::getNextDate();
-        if($criteria->condition != ''){
+        /*if($criteria->condition != ''){
             $criteria->condition .= " and ";
         }
-        $criteria->condition .= " t.delivery_date >= '".$startDate."' and t.delivery_date <= '".$endDate."'";
+        $criteria->condition .= " t.delivery_date >= '".$startDate."' and t.delivery_date <= '".$endDate."'";*/
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
