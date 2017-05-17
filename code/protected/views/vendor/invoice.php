@@ -202,9 +202,9 @@ $text = "";
             $grandtotal = $wsptotal + $grandtotal;
             $grand_producttotal = $qtytotal + $grand_producttotal;*/
             $quantityInKg = '';
-            $quantityInKg = $model[$key]['received_qty'];
-            $subtotalQty += $model[$key]['received_qty'];
-            $qtytotal += $model[$key]['received_qty'];
+            $quantityInKg = $model[$key]['order_qty'];
+            $subtotalQty += $model[$key]['order_qty'];
+            $qtytotal += $model[$key]['order_qty'];
         //     if($model[$key]['pack_unit']=='g'){
         //        $qtytotal +=  ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
         //        $subtotalQty += ((float)$quantityInPacks) * ( (float)$model[$key]['pack_size'])/1000;
