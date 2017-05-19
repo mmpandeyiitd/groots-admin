@@ -353,7 +353,7 @@ if ($this->checkAccess('SuperAdmin')) {
                     'type' => 'raw',
                     'visible' => $visibleUnitPrice,
                     'value' => function ($data) use ($update) {
-                        return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id));
+                        return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id, 'readonly' => 'readonly'));
                     }
                 ),
                 array(
