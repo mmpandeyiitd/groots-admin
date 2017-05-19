@@ -209,7 +209,7 @@ class PurchaseHeader extends CActiveRecord
             }
             else if(!is_numeric($total_price)){
                 $result['status'] = 0;
-                $result['msg'] = 'unit price must be numeric';
+                $result['msg'] = 'total price must be numeric';
                 return $result;   
             }
             else if(!is_numeric($urd_number)){
