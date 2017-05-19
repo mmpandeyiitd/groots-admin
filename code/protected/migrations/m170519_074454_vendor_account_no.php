@@ -1,27 +1,27 @@
 <?php
 
-class m170510_110632_addZipFile extends CDbMigration
+class m170519_074454_vendor_account_no extends CDbMigration
 {
-    private $_db= '';
 	public function up()
 	{
-	    try{
-            $this->_db = 'cb_dev_groots';
+        try{
             $transaction=$this->getDbConnection()->beginTransaction();
-            $sql = 'insert into permitted_file_types values(null , "Zip", "zip"), (null, "Zip", "rar")';
+            $sql = 'alter table groots_orders.vendor_payments modify column receiving_acc_no varchar(25) not null';
+            $this->execute($sql);
+            $sql = 'alter table cb_dev_groots.vendors modify column bank_account_no VARCHAR (25) DEFAULT NULL ';
             $this->execute($sql);
             $transaction->commit();
             return true;
         }catch (Exception $e){
             echo "Exception: ".$e->getMessage()."\n";
-	        $transaction->rollback();
-	        return false;
+            $transaction->rollback();
+            return false;
         }
 	}
 
 	public function down()
 	{
-		echo "m170510_110632_addZipFile does not support migration down.\n";
+		echo "m170519_074454_vendor_account_no does not support migration down.\n";
 		return false;
 	}
 

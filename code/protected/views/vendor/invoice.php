@@ -280,15 +280,19 @@ $ascii++;
 <tr>
     <td colspan="6">
 
-        <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
-            Thank you for your business! We look forward to serving you again<br>
-            Contact email id: <?php echo SALES_SUPPORT_EMAIL;?> <br>
-            Ordering Support: <?php echo ORDER_SUPPORT_NO;?><br>
-            Customer Support: <?php echo CUSTOMER_SUPPORT_NO;?><br>
-            Sales Support: <?php echo SALES_SUPPORT_NO;?><br>
-            <br>
-            <?php echo $text;?><br>
-            All disputes are subject to the jurisdiction of the courts of Delhi.
+<!--        <p style="text-align: center; color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">-->
+<!--            Thank you for your business! We look forward to serving you again<br>-->
+<!--            Contact email id: --><?php //echo SALES_SUPPORT_EMAIL;?><!-- <br>-->
+<!--            Ordering Support: --><?php //echo ORDER_SUPPORT_NO;?><!--<br>-->
+<!--            Customer Support: --><?php //echo CUSTOMER_SUPPORT_NO;?><!--<br>-->
+<!--            Sales Support: --><?php //echo SALES_SUPPORT_NO;?><!--<br>-->
+<!--            <br>-->
+<!--            --><?php //echo $text;?><!--<br>-->
+<!--            All disputes are subject to the jurisdiction of the courts of Delhi.-->
+<!--        </p>-->
+        <p style = "color:#949494; font-size: 11px; line-height: 14px; margin-bottom: 0;">
+            <br>Vendor Signature ____________________________<br><br><br>
+            Groots Official's Signature _____________________
         </p>
     </td>
 
