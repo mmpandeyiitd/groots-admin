@@ -57,6 +57,7 @@ if(!empty($vendor_id)) {
     echo $vendor_id.'<br>';
     echo CHtml::fileField('file');
     echo CHtml::submitButton('Submit', array('name' => 'addFile'));
+    $fileNames = '';
 
     //if(!empty($vendor_id)){
         $this->widget('zii.widgets.grid.CGridView', array(
@@ -75,14 +76,47 @@ if(!empty($vendor_id)) {
                     'header'=> 'File Link',
                     'type' => 'raw',
                     'value' => function($data){
-                        return CHtml::link('Link to file', $data->file_link);
+                        return CHtml::link('Link to file', $data->file_link, array('target' => '_blank'));
                     }),
-
-
-            )
+                array(
+                    'header' => 'Delete',
+                    'type' => 'raw',
+                    'value' => function($data, $fileNames){
+                        echo CHtml::checkBox('checkedId_'.$data->id, false, array('onclick' => "onCbStateChange("."'".$data->file_tag."'".",".$data->id.")"));
+                    }
+                ),
+                array(
+                    'type' => 'raw',
+                    'value' => function($data){
+                        return CHtml::hiddenField('file_id[]', $data->id);
+                    }
+                ),
+                 array(
+                     'type' => 'raw',
+                     'value' => function($data){
+                         return CHtml::hiddenField('file_name[]', $data->file_name);
+                     }
+                 )
+            ),
         ));
    // }
 
+    echo CHtml::submitButton('Delete File', array('name' => 'deleteFile','onclick' => 'onFileDeleteClick()'));
     ?>
-
 </form>
+
+<script type="text/javascript">
+    var fileNames = '';
+    function onCbStateChange(fileTag,id){
+        var isChecked = $("#checkedId_"+id).is(':checked');
+        console.log(isChecked);
+        if(isChecked){
+            fileNames += fileTag + ' , ';
+            //alert('Are you sure you want to delete this file : '+fileTag);
+        }
+    }
+
+    function onFileDeleteClick(){
+        alert('Are you sure you want to delete this file : '+fileNames);
+    }
+</script>

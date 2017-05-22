@@ -275,12 +275,14 @@ if ($this->checkAccess('SuperAdmin')) {
                     'visible' => $visibleVendor,
                     'value' => function ($data) use ($priceMap, $w_id) {
                         $array = json_encode($priceMap);
+
                         if (isset($data->parent_id) && $data->parent_id == 0) {
-                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'disabled' => 'disabled', 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect(' . $data->parent_id . ', ' . $data->base_product_id . ', ' . $array . ')', 'class' => 'select dropDown'));
-                        } else if ($data->parent_id == null) {
-                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelectFruit(' . $data->base_product_id . ', ' . $array . ')', 'class' => 'select dropDown'));
-                        } else {
-                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', 'onclick' => 'onVendorSelect(' . $data->parent_id . ', ' . $data->base_product_id . ', ' . $array . ')', 'class' => 'select dropDown'));
+                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'disabled' => 'disabled', 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;', $array . ')', 'class' => 'select dropDown', ));
+                        } else if($data->parent_id == null){
+                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;',  $array . ')', 'class' => 'select dropDown', 'onchange' => 'onVendorSelectFruit('.$data->base_product_id.')'));
+                        }
+                        else {
+                            return CHtml::activeDropDownList($data, 'vendor_id[]', VendorDao::getVendorProductList($data->base_product_id, $w_id), array('options' => array($data->vendor_id => array('selected' => true)), 'empty' => 'Select a Vendor', 'style' => 'width:180.5px;',  $array . ')', 'class' => 'select dropDown', 'onchange' => 'onVendorSelect('.$data->parent_id.')'));
                         }
 
                     }
@@ -351,11 +353,7 @@ if ($this->checkAccess('SuperAdmin')) {
                     'type' => 'raw',
                     'visible' => $visibleUnitPrice,
                     'value' => function ($data) use ($update) {
-                        if ($data->parent_id == null) {
-                            return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id, 'onchange' => 'calculateFruitRow(' . $data->base_product_id . ')'));
-                        } else {
-                            return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id));
-                        }
+                        return CHtml::textField('price[]', $data->unit_price, array('style' => 'width:50px;', 'class' => 'price', 'id' => 'price_' . $data->base_product_id, 'readonly' => 'readonly'));
                     }
                 ),
                 array(
@@ -363,7 +361,11 @@ if ($this->checkAccess('SuperAdmin')) {
                     'type' => 'raw',
                     'visible' => $visibleTotalPrice,
                     'value' => function ($data) use ($update) {
-                        return CHtml::textField('totalPrice[]', $data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_' . $data->base_product_id));
+                        if($data->parent_id == null){
+                            return CHtml::textField('totalPrice[]', $data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_' . $data->base_product_id, 'onchange' => 'calculateFruitRow('.$data->base_product_id.')'));
+                        }else{
+                            return CHtml::textField('totalPrice[]', $data->price, array('style' => 'width:50px;', 'class' => 'totalPrice', 'id' => 'totalPrice_' . $data->base_product_id, 'onchange' => 'updateItemTotalRow('.$data->parent_id.')'));
+                        }
                     }
                 ),
                 array(
@@ -518,18 +520,20 @@ if ($this->checkAccess('SuperAdmin')) {
                 if (receivedQty && receivedQty.length > 0) {
                     totalReceived += parseFloat(receivedQty.trim());
                 }
-                var totalPrice = 0;
+                var totalPrice = $(this).find('.totalPrice').val();
 
-                var unitPrice = $(this).find('.price').val()
-                if (unitPrice && unitPrice.length > 0) {
-                    totalPrice = parseFloat(orderQty.trim()) * unitPrice;
-                    $(this).find('.totalPrice').val(totalPrice.toFixed(2));
+                var unitPrice = $(this).find('.price').val();
+                console.log(unitPrice);
+                if (totalPrice && totalPrice.length > 0) {
+                    unitPrice = parseFloat(totalPrice.trim())/parseFloat(orderQty.trim());
+                    $(this).find('.price').val(unitPrice.toFixed(2));
                 }
+                console.log(unitPrice);
                 if (parseFloat(totalPrice) > 0) {
                     netPrice += parseFloat(totalPrice);
                 }
-                if (unitPrice && unitPrice.length > 0) {
-                    netUnit += parseFloat(unitPrice.trim());
+                if (parseFloat(unitPrice) > 0) {
+                    netUnit += parseFloat(unitPrice.toFixed(4));
                 }
 
             });
@@ -620,39 +624,25 @@ if ($this->checkAccess('SuperAdmin')) {
             //console.log(row);
         }
 
-        function onVendorSelect(parent_id, baseProductId, array) {
+        function onVendorSelect(parent_id) {
             //console.log("hello");
             $(".item_" + parent_id).each(function () {
                 //console.log("hello1");
                 var vendorId = $(this).find('.dropDown').val();
                 $(this).find('.hiddenVendor').val(vendorId);
                 //console.log(vendorId);
-                if (vendorId) {
-                    var ifPrice = $(this).find('.price').val();
-                    if (!ifPrice) {
-                        var price = array[vendorId][baseProductId];
-                        $(this).find('.price').val(price);
-                    }
-                }
+
             });
-            updateItemTotalRow(parent_id);
         }
-        function onVendorSelectFruit(baseProductId, array) {
+        function onVendorSelectFruit(baseProductId) {
             //console.log("hello");
             //console.log(baseProductId);
             $(".fruit_" + baseProductId).each(function () {
                 var vendorId = $(this).find('.dropDown').val();
                 $(this).find('.hiddenVendor').val(vendorId);
                 //console.log(vendorId);
-                if (vendorId) {
-                    var ifPrice = $(this).find('.price').val();
-                    if (!ifPrice) {
-                        var price = array[vendorId][baseProductId];
-                        $(this).find('.price').val(price);
-                    }
-                }
+
             });
-            calculateFruitRow(baseProductId);
         }
 
         function copyUrd(bp_id, p_id) {
@@ -663,13 +653,13 @@ if ($this->checkAccess('SuperAdmin')) {
         }
 
         function calculateFruitRow(bp_id) {
-            //console.log('there');
+            console.log('there');
             $(".fruit_" + bp_id).each(function () {
                 var proc_qty = $(this).find('.inputs').val();
-                var unit_price = $(this).find('.price').val();
-                if(proc_qty && unit_price){
-                    var totalPrice = proc_qty*unit_price;
-                    $(this).find('.totalPrice').val(totalPrice);
+                var total_price = $(this).find('.totalPrice').val();
+                if(proc_qty && total_price){
+                    unitPrice = parseFloat(total_price.trim())/parseFloat(proc_qty.trim());
+                    $(this).find('.price').val(unitPrice.toFixed(2));
                     //console.log(totalPrice);
                 }
             });
