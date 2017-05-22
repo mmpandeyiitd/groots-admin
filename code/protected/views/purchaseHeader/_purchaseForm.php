@@ -40,7 +40,7 @@ if ($this->checkAccess('SuperAdmin')) {
     $readOnlyReceived = false;
     $readOnlyProcured = 'readonly';
     $visibleReceived = true;
-    $visibleProcured = false;
+    $visibleProcured = true;
     $visibleTotalPrice = false;
     $visibleVendor = false;
     $visibleUnitPrice = false;
