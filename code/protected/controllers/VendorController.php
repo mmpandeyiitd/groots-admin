@@ -546,6 +546,8 @@ class VendorController extends Controller
 
     public function actionVendorS3Upload()
     {
+        //echo '<pre>';
+        //var_dump($_POST);die;
         $vendor_id = '';
         if (isset($_POST['vendor_id'])) {
             $vendor_id = $_POST['vendor_id'];
@@ -597,6 +599,15 @@ class VendorController extends Controller
                 Yii::app()->controller->redirect("index.php?r=vendor/vendorS3Upload");
             }
         }
+        if(isset($_POST['deleteFile']) && isset($_POST['file_id'])){
+            $toBeDeleted = array();
+            foreach ($_POST['file_id'] as $key => $id){
+                if(isset($_POST['checkedId_'.$id])){
+                    array_push($toBeDeleted, array('id'=> $id, 'key' => $_POST['file_name'][$key]));
+                }
+            }
+            VendorUploadDao::deleteS3UploadedFile($toBeDeleted);
+        }
         $vendorUpload = new VendorUpload();
         $vendorUpload->unsetAttributes();
         if (isset($_GET['VendorUpload'])) {
@@ -609,6 +620,7 @@ class VendorController extends Controller
 
         ));
     }
+
 }
 
 ?>

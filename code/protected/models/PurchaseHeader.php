@@ -144,7 +144,7 @@ class PurchaseHeader extends CActiveRecord
     }
 
 
-    public function readInventoryUploadedFile($uploadedFile, $logfile, $w_id){
+    public function  readInventoryUploadedFile($uploadedFile, $logfile, $w_id){
         $purchase_id='';
         $first = true;
         $firstQuery = false;
@@ -160,12 +160,12 @@ class PurchaseHeader extends CActiveRecord
                 $line_id = trim($row[1]);
                 $vendor_id = trim($row[6]);
                 $order_qty = trim($row[8]);
-                $unit_price = trim($row[9]);
                 $parentId = trim($row[3]);
+                $total_price = trim($row[9]);
                 $urd_number = trim($row[10]);
-                $flag = self::validateBulkUploadRow($order_qty, $unit_price, $urd_number);
+                $flag = self::validateBulkUploadRow($order_qty, $total_price, $urd_number);
                 if($flag['status'] == 1){
-                    $total_price = $order_qty*$unit_price;
+                    $unit_price = $total_price/$order_qty;
                     $array = array('order_qty' => $order_qty, 'unit_price' => $unit_price, 'total_price' => $total_price, 'urd_number' => $urd_number);
                     if(empty($line_id)){
                         $line_id = 'NULL';
@@ -197,19 +197,19 @@ class PurchaseHeader extends CActiveRecord
         }
     }
 
-    public function validateBulkUploadRow($order_qty, $unit_price,$urd_number){
-        $all_set = (!empty($order_qty) && !empty($unit_price) && !empty($urd_number))? true:false;
-        $one_set = !$all_set && (!empty($order)||!empty($unit_price)||!empty($urd_number)) ;
-        $all_empty = (empty($order_qty) && empty($unit_price) && empty($urd_number))? true:false;
+    public function validateBulkUploadRow($order_qty, $total_price,$urd_number){
+        $all_set = (!empty($order_qty) && !empty($total_price) && !empty($urd_number))? true:false;
+        $one_set = !$all_set && (!empty($order)||!empty($total_price)||!empty($urd_number)) ;
+        $all_empty = (empty($order_qty) && empty($total_price) && empty($urd_number))? true:false;
         if($all_set){
             if(!is_numeric($order_qty)){
                 $result['status'] = 0;
                 $result['msg'] = 'order qty must be numeric';
                 return $result;
             }
-            else if(!is_numeric($unit_price)){
+            else if(!is_numeric($total_price)){
                 $result['status'] = 0;
-                $result['msg'] = 'unit price must be numeric';
+                $result['msg'] = 'total price must be numeric';
                 return $result;   
             }
             else if(!is_numeric($urd_number)){

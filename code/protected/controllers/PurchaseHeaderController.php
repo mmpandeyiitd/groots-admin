@@ -854,7 +854,6 @@ class PurchaseHeaderController extends Controller
         $cateogryarray = array();
 
         try {
-            //$a = $_POST['Buk']['assd'];
             if (isset($_POST['Bulk'])) {
                 $model->action = 'update';
                 $model->attributes = $_POST['Bulk'];
@@ -876,7 +875,6 @@ class PurchaseHeaderController extends Controller
                     }
                     $ext = pathinfo($fileName, PATHINFO_EXTENSION);
                     if ($ext != 'csv') {
-                        die('here1');
                         Yii::app()->user->setFlash('error', 'Only .csv files allowed.');
                         $this->render('bulkUploadPurchase', array('model' => $model));
                     }
@@ -902,7 +900,7 @@ class PurchaseHeaderController extends Controller
     {
         $w_id = $_GET['w_id'];
         $date = $_GET['date'];
-        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"' . $date . '" as date, pl.order_qty, pl.unit_price,"" as urd_number from cb_dev_groots.vendor_product_mapping as vpm 
+        $sql = 'select ph.id as purchase_id,pl.id,vpm.base_product_id,bp.parent_id, bp.title ,v.name,vpm.vendor_id,"' . $date . '" as date, pl.order_qty,pl.price,pl.urd_number from cb_dev_groots.vendor_product_mapping as vpm 
         inner join groots_orders.purchase_header as ph on ph.delivery_date = "' . $date . '"
         left join groots_orders.purchase_line as pl on pl.purchase_id = ph.id and pl.base_product_id = vpm.base_product_id and pl.vendor_id = vpm.vendor_id
         inner join cb_dev_groots.base_product bp on bp.base_product_id = vpm.base_product_id 
